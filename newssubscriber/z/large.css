@@ -1,0 +1,47 @@
+body, div.h, div.n {
+    min-width: 320px;
+}
+
+body, h4, h5, h6, p, ol, ul, li, blockquote, code, pre, div, span, form, input, select, textarea, table, caption, th {
+    font-size: 16px;
+}
+
+h1, span.h {
+    font-size: 22px;
+}
+
+h2 {
+    font-size: 20px;
+}
+
+h3 {
+    font-size: 18px;
+}
+
+span.fr {
+    font-size: 15px;
+}
+
+h1, h2, h3, h4.m, h5, h6, p, div.logo {
+    padding-right: 19.1%;
+    padding-left: 19.1%;
+}
+
+p.e, p.m {
+    margin: 1em 19.1%;
+}
+
+input.h {
+    margin-right: 19.1%;
+}
+
+h4 {
+    margin-right: 19.1%;
+    margin-left: 19.1%;
+    padding-right: 2%;
+    padding-left: 2%;
+}
+
+hr {
+    width: 61.8%;
+}

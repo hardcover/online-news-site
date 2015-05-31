@@ -1,0 +1,133 @@
+<?php
+/**
+ * Synchronizes the remote and local databases
+ *
+ * PHP version 5
+ *
+ * @category  Publishing
+ * @package   Online-News-Site
+ * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
+ * @copyright 2013-2015 Hardcover LLC
+ * @license   http://hardcoverwebdesign.com/license  MIT License
+ *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version   GIT: 2015-05-31
+ * @link      http://hardcoverwebdesign.com/
+ * @link      http://online-news-site.com/
+ * @link      https://github.com/hardcover/
+ */
+//
+// Loop through each remote location
+//
+$dbhRemote = new PDO($dbRemote);
+$stmt = $dbhRemote->query('SELECT remote FROM remotes');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+foreach ($stmt as $row) {
+    extract($row);
+    //
+    // Determine the missing and extra ads
+    //
+    $request = null;
+    $response = null;
+    $request['task'] = 'adSync';
+    $response = soa($remote . 'z/', $request);
+    $remoteAds = json_decode($response['remoteAds'], true);
+    if ($remoteAds == 'null' or $remoteAds == null) {
+        $remoteAds = array();
+    }
+    $ads = array();
+    $dbh = new PDO($dbAdvertising);
+    $stmt = $dbh->query('SELECT idAd FROM advertisements');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    foreach ($stmt as $row) {
+        $ads[] = $row['idAd'];
+    }
+    $dbh = null;
+    $missingAds = array_diff($ads, $remoteAds);
+    $extraAds = array_diff($remoteAds, $ads);
+    //
+    // Upload missing ads to the remote sites
+    //
+    if (count($missingAds) > 0) {
+        foreach ($missingAds as $idAd) {
+            $dbh = new PDO($dbAdvertising);
+            $stmt = $dbh->prepare('SELECT startDateAd, endDateAd, sortOrderAd, link, linkAlt, image FROM advertisements WHERE idAd=?');
+            $stmt->setFetchMode(PDO::FETCH_ASSOC);
+            $stmt->execute(array($idAd));
+            $row = $stmt->fetch();
+            $dbh = null;
+            extract($row);
+            $request = null;
+            $request['task'] = 'adInsert';
+            $request['idAd'] = $idAd;
+            $request['startDateAd'] = $startDateAd;
+            $request['endDateAd'] = $endDateAd;
+            $request['sortOrderAd'] = $sortOrderAd;
+            $request['link'] = $link;
+            $request['linkAlt'] = $linkAlt;
+            $request['image'] = $image;
+            $response = soa($remote . 'z/', $request);
+        }
+    }
+    //
+    // When extra remote ads were found above, check again and delete the extra ads
+    //
+    if (count($extraAds) > 0) {
+        $request = null;
+        $response = null;
+        $request['task'] = 'archiveSync';
+        $response = soa($remote . 'z/', $request);
+        $remoteAds = json_decode($response['remoteAds'], true);
+        if ($remoteAds == 'null' or $remoteAds == null) {
+            $remoteAds = array();
+        }
+        $dbh = new PDO($dbAdvertising);
+        $stmt = $dbh->query('SELECT idAd FROM advertisements');
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        foreach ($stmt as $row) {
+            $ads[] = $row['idAd'];
+        }
+        $dbh = null;
+        $extraAds = array_diff($remoteAds, $ads);
+        //
+        // Delete extra remote articles
+        //
+        $request = null;
+        $request['task'] = 'adDelete';
+        foreach ($extraAds as $idAd) {
+            $request['idAd'] = $idAd;
+            $response = soa($remote . 'z/', $request);
+        }
+    }
+    //
+    // Upload the current sort order and maximum number of ads
+    //
+    $request = null;
+    $response = null;
+    $sortOrder = null;
+    $request['task'] = 'adOrder';
+    $dbh = new PDO($dbAdvertising);
+    $stmt = $dbh->prepare('SELECT maxAds FROM maxAd WHERE idMaxAds=?');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $stmt->execute(array(1));
+    $row = $stmt->fetch();
+    if ($row) {
+        $request['maxAds'] = $row['maxAds'];
+    }
+    $stmt = $dbh->query('SELECT sortOrderAd, idAd FROM advertisements');
+    $stmt->setFetchMode(PDO::FETCH_NUM);
+    foreach ($stmt as $row) {
+        $sortOrder[] = $row;
+    }
+    $dbh = null;
+    $sortOrder = json_encode($sortOrder);
+    $request['sortOrder'] = $sortOrder;
+    $dbhRemote = new PDO($dbRemote);
+    $stmt = $dbhRemote->query('SELECT remote FROM remotes');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    foreach ($stmt as $row) {
+        $response = soa($row['remote'] . 'z/', $request);
+    }
+    $dbhRemote = null;
+}
+$dbhRemote = null;
+?>

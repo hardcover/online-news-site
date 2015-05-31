@@ -1,0 +1,27 @@
+body, div.h, div.n {
+    min-width: 480px;
+}
+
+body, h4, h5, h6, p, ol, ul, li, blockquote, code, pre, div, span, form, input, select, textarea, table, caption, th {
+    font-size: 17px;
+}
+
+h1, span.h {
+    font-size: 23px;
+}
+
+h2 {
+    font-size: 21px;
+}
+
+h3 {
+    font-size: 19px;
+}
+
+span.fr {
+    font-size: 16px;
+}
+
+p, li, div.n, div.t, span.fr {
+    line-height: 1.3em;
+}
