@@ -10,7 +10,7 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-05-31
+ * @version   GIT: 2015-07-21
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -20,16 +20,23 @@
 //
 $remoteClassifieds = null;
 //
-// Loop through each remote location
-//
-$dbhRemote = new PDO($dbRemote);
-$stmt = $dbhRemote->query('SELECT remote FROM remotes');
+$remotes = array();
+$dbh = new PDO($dbRemote);
+$stmt = $dbh->query('SELECT remote FROM remotes');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
-    extract($row);
+    $remotes[] = $row['remote'];
+}
+$dbh = null;
+//
+// Loop through each remote location
+//
+foreach ($stmt as $row) {
     //
     // Delete remote requests for early removal
     //
+    $request = null;
+    $response = null;
     $request['task'] = 'classifiedsEarlyRemoval';
     $response = soa($remote . 'z/', $request);
     if ($response['result'] == 'success') {
@@ -45,6 +52,7 @@ foreach ($stmt as $row) {
     // Determine the missing and extra classifieds
     //
     $classifieds = array();
+    $request = null;
     $response = null;
     $request['task'] = 'classifiedsSync';
     $response = soa($remote . 'z/', $request);
@@ -126,5 +134,4 @@ foreach ($stmt as $row) {
         $response = soa($remote . 'z/', $request);
     }
 }
-$dbhRemote = null;
 ?>

@@ -10,7 +10,7 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-05-31
+ * @version   GIT: 2015-07-21
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -93,7 +93,7 @@ if ($row['idArticle']) {
     if (isset($hdImage)) {
         $html.= '  <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="w b" alt=""></p>' . "\n\n";
     }
-    if (isset($photoCaption) and isset($photoCredit)) {
+    if ($photoCaption != '' and $photoCredit != '') {
         $html.= '  <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
     } elseif (isset($photoCaption)) {
         $html.= '  <h6>' . html($photoCaption) . "</h6>\n\n";
@@ -112,9 +112,26 @@ if ($row['idArticle']) {
     if (isset($byline) or isset($bylineDateTime)) {
         $html.= "</h5>\n\n";
     }
-    $html.= '  <p>' . nl2p($text) . "</p>\n\n";
+    $html.= Parsedown::instance()->parse($text);
+    //$html.= '  <p>' . $text . "</p>\n\n";
+    $dbh = new PDO($database2);
+    $stmt = $dbh->prepare('SELECT idPhoto, photoCredit, photoCaption FROM imageSecondary WHERE idArticle=? ORDER BY time');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $stmt->execute(array($idArticle));
+    foreach ($stmt as $row) {
+        extract($row);
+        $html.= '  <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="w b" alt=""></p>' . "\n\n";
+        if ($photoCaption != '' and $photoCredit != '') {
+            $html.= '  <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
+        } elseif (isset($photoCaption)) {
+            $html.= '  <h6>' . html($photoCaption) . "</h6>\n\n";
+        } elseif (isset($photoCredit)) {
+            $html.= '  <h6 class="r">' . $photoCredit . "</h6>\n\n";
+        }
+    }
+    $dbh = null;
     if ($database != $dbArchive) {
-        $html.= '  <p><span class="al">' . $previous . '<a class="n" href="' . $uri . '">Index</a>' . $pipe . $next;
+        $html.= '  <p><br /><span class="al">' . $previous . '<a class="n" href="' . $uri . '">Index</a>' . $pipe . $next;
         $html.= $logOutHtml . "</span><br /></p>\n";
     }
 } else {

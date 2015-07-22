@@ -10,23 +10,31 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-05-31
+ * @version   GIT: 2015-07-21
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
  */
 //
-// Loop through each remote location
+// Variables
 //
-$dbhRemote = new PDO($dbRemote);
-$stmt = $dbhRemote->query('SELECT remote FROM remotes');
+$remotes = array();
+$dbh = new PDO($dbRemote);
+$stmt = $dbh->query('SELECT remote FROM remotes');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
-    extract($row);
+    $remotes[] = $row['remote'];
+}
+$dbh = null;
+//
+// Loop through each remote location
+//
+foreach ($remotes as $remote) {
     //
     // Determine the missing and extra menu items
     //
     $request = null;
+    $response = null;
     $request['task'] = 'menuSync';
     $response = soa($remote . 'z/', $request);
     $remoteMenu = json_decode($response['remoteMenu'], true);
@@ -56,6 +64,7 @@ foreach ($stmt as $row) {
             $dbh = null;
             extract($row);
             $request = null;
+            $response = null;
             $request['task'] = 'menuInsert';
             $request['idMenu'] = $idMenu;
             $request['menuName'] = $menuName;
@@ -71,6 +80,7 @@ foreach ($stmt as $row) {
     //
     if (count($extraMenuItems) > 0) {
         $request = null;
+        $response = null;
         $request['task'] = 'menuSync';
         $response = soa($remote . 'z/', $request);
         $remoteMenu = json_decode($response['remoteMenu'], true);
@@ -89,6 +99,7 @@ foreach ($stmt as $row) {
         // Delete extra remote menu items
         //
         $request = null;
+        $response = null;
         $request['task'] = 'menuDelete';
         foreach ($extraMenuItems as $idMenu) {
             $request['idMenu'] = $idMenu;
@@ -96,5 +107,4 @@ foreach ($stmt as $row) {
         }
     }
 }
-$dbhRemote = null;
 ?>

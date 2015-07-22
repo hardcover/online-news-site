@@ -10,7 +10,7 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-05-31
+ * @version   GIT: 2015-07-21
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -20,13 +20,16 @@
 //
 $dbAdvertising = 'sqlite:' . $includesPath . '/databases/advertising.sqlite';
 $dbArchive = 'sqlite:' . $includesPath . '/databases/archive.sqlite';
+$dbArchive2 = 'sqlite:' . $includesPath . '/databases/archive2.sqlite';
 $dbClassifieds = 'sqlite:' . $includesPath . '/databases/classifieds.sqlite';
 $dbClassifiedsNew = 'sqlite:' . $includesPath . '/databases/classifiedsNew.sqlite';
 $dbEdit = 'sqlite:' . $includesPath . '/databases/edit.sqlite';
+$dbEdit2 = 'sqlite:' . $includesPath . '/databases/edit2.sqlite';
 $dbEditors = 'sqlite:' . $includesPath . '/databases/editors.sqlite';
 $dbLog = 'sqlite:' . $includesPath . '/databases/log.sqlite';
 $dbMenu = 'sqlite:' . $includesPath . '/databases/menu.sqlite';
 $dbPublished = 'sqlite:' . $includesPath . '/databases/published.sqlite';
+$dbPublished2 = 'sqlite:' . $includesPath . '/databases/published2.sqlite';
 $dbRemote = 'sqlite:' . $includesPath . '/databases/remote.sqlite';
 $dbSettings = 'sqlite:' . $includesPath . '/databases/settings.sqlite';
 $dbSubscribers = 'sqlite:' . $includesPath . '/databases/subscribers.sqlite';
@@ -81,7 +84,7 @@ $today = date("Y-m-d");
 function secure($str)
 {
     $str = stripslashes($str);                             // Magic quotes
-    //$str = html_entity_decode($str);                       // HTML chars
+    $str = html_entity_decode($str);                       // HTML chars
     //$str = strip_tags($str);                               // HTML & PHP tags
     $str = preg_replace('{^\xEF\xBB\xBF|\x1A}', '', $str); // UTF-8 BOM
     $str = str_replace("\r\n", "\n", $str);                // Windows line ends

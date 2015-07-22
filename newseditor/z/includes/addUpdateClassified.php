@@ -10,7 +10,7 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-05-31
+ * @version   GIT: 2015-07-21
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -18,11 +18,7 @@
 //
 // Add or update the remote sites
 //
-$dbhRemote = new PDO($dbRemote);
-$stmt = $dbhRemote->query('SELECT remote FROM remotes');
-$stmt->setFetchMode(PDO::FETCH_ASSOC);
-foreach ($stmt as $row) {
-    extract($row);
+foreach ($remotes as $remote) {
     $dbh = new PDO($dbClassifieds);
     $stmt = $dbh->prepare('SELECT email, review, photos FROM ads WHERE idAd=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -68,5 +64,4 @@ foreach ($stmt as $row) {
         }
     }
 }
-$dbhRemote = null;
 ?>

@@ -10,7 +10,7 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-05-31
+ * @version   GIT: 2015-07-21
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -60,6 +60,15 @@ $sortPriorityEdit = null;
 $startDateAdEdit = null;
 $startDateAdPost = inlinePost('startDateAd');
 $_FILES['image'] = isset($_FILES['image']) ? $_FILES['image'] : null;
+//
+$remotes = array();
+$dbh = new PDO($dbRemote);
+$stmt = $dbh->query('SELECT remote FROM remotes');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+foreach ($stmt as $row) {
+    $remotes[] = $row['remote'];
+}
+$dbh = null;
 //
 // Button: Add / update
 //
@@ -165,13 +174,9 @@ if (isset($_POST['addUpdate'])) {
             $request['link'] = $link;
             $request['linkAlt'] = $linkAlt;
             $request['image'] = $image;
-            $dbhRemote = new PDO($dbRemote);
-            $stmt = $dbhRemote->query('SELECT remote FROM remotes');
-            $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            foreach ($stmt as $row) {
-                $response = soa($row['remote'] . 'z/', $request);
+            foreach ($remotes as $remote) {
+                $response = soa($remote . 'z/', $request);
             }
-            $dbhRemote = null;
         }
         include $includesPath . '/sortAdvertisements.php';
         include $includesPath . '/syncAdvertisements.php';
@@ -199,14 +204,9 @@ if (isset($_POST['delete']) and isset($idAdPost)) {
         $response = null;
         $request['task'] = 'adDelete';
         $request['idAd'] = $idAd;
-        $dbh = new PDO($dbRemote);
-        $stmt = $dbh->query('SELECT remote FROM remotes');
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        foreach ($stmt as $row) {
-            extract($row);
+        foreach ($remotes as $remote) {
             $response = soa($remote . 'z/', $request);
         }
-        $dbh = null;
         include $includesPath . '/sortAdvertisements.php';
         include $includesPath . '/syncAdvertisements.php';
     } else {
@@ -326,7 +326,7 @@ $dbh = null;
     <input id="linkAlt" name="linkAlt" type="text" class="h" <?php echoIfValue($linkAltEdit); ?> /></p>
 
     <p><label for="note">Note</label><br />
-    <textarea id="note" name="note" class="h"><?php echoIfText($noteEdit); ?></textarea></p>
+    <span class="hl"><textarea id="note" name="note" class="h"><?php echoIfText($noteEdit); ?></textarea></span></p>
 
     <p><input type="submit" value="Add / update" name="addUpdate" class="button" /></p>
 

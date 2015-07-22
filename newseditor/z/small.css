@@ -26,3 +26,7 @@ h1, h2, h3, h4.m, h5, h6, p, ol, ul, div.h, div.n {
 p.e, p.m, h4, hr {
     margin: 1em 1%;
 }
+
+blockquote {
+    margin: 1em 3%;
+}

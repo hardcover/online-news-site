@@ -10,19 +10,26 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-05-31
+ * @version   GIT: 2015-07-21
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
  */
 //
-// Loop through each remote location
+// Variables
 //
-$dbhRemote = new PDO($dbRemote);
-$stmt = $dbhRemote->query('SELECT remote FROM remotes');
+$remotes = array();
+$dbh = new PDO($dbRemote);
+$stmt = $dbh->query('SELECT remote FROM remotes');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
-    extract($row);
+    $remotes[] = $row['remote'];
+}
+$dbh = null;
+//
+// Loop through each remote location
+//
+foreach ($remotes as $remote) {
     //
     // Integrate new subscribers from remote sites
     //
@@ -204,5 +211,4 @@ foreach ($stmt as $row) {
         }
     }
 }
-$dbhRemote = null;
 ?>

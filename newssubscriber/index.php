@@ -50,6 +50,12 @@ $editorView = null;
 $imagePath = 'images.php';
 $indexPath = '';
 $use = 'news';
+if (isset($_GET['a'])) {
+    $aGet = secure($_GET['a']);
+    $aGet = str_replace(strstr($aGet, '+'), '', $aGet);
+} else {
+    $aGet = null;
+}
 if (isset($_GET['m'])) {
     $mGet = secure($_GET['m']);
 } else {
@@ -253,6 +259,8 @@ echo '  </div>' . "\n\n";
 echo '  <div class="l">' . "\n";
 if (empty($_GET)) {
     include $includesPath . '/displayIndex.inc';
+} elseif (isset($aGet)) {
+    include $includesPath . '/displayArticleSEO.inc';
 } elseif ($mGet == 'article-contribution') {
     include $includesPath . '/articleContribution.php';
 } elseif ($mGet == 'classified-ads') {

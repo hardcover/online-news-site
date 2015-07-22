@@ -10,7 +10,7 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-05-31
+ * @version   GIT: 2015-07-21
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -261,7 +261,7 @@ foreach ($searchResults as $searchResult) {
     <input id="title" name="title" type="text" class="h"<?php echoIfValue($titleEdit); ?> /><input type="hidden" name="idAd"<?php echoIfValue($idAdEdit); ?> /></p>
 
     <p><label for="description">Description</label><br />
-    <textarea id="description" name="description" class="h"><?php echoIfText($descriptionEdit); ?></textarea><p>
+    <span class="hl"><textarea id="description" name="description" class="h"><?php echoIfText($descriptionEdit); ?></textarea></span><p>
 
     <p><label for="categoryId">Categories (select a subcategory)</label><br />
     <select id="categoryId" name="categoryId" size="1" class="h">

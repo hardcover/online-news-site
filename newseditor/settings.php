@@ -10,7 +10,7 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-05-31
+ * @version   GIT: 2015-07-21
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -48,6 +48,15 @@ $hash = null;
 $idRemote = null;
 $idSection = null;
 $message = null;
+//
+$remotes = array();
+$dbh = new PDO($dbRemote);
+$stmt = $dbh->query('SELECT remote FROM remotes');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+foreach ($stmt as $row) {
+    $remotes[] = $row['remote'];
+}
+$dbh = null;
 //
 // Test admin password authentication
 //
@@ -236,12 +245,11 @@ if (password_verify($adminPassPost, $row['pass'])) {
             //
             // Test the connection to the remote URI
             //
+            $request = null;
+            $response = null;
             $request['task'] = 'test';
-            $dbhRemote = new PDO($dbRemote);
-            $stmt = $dbhRemote->query('SELECT remote FROM remotes');
-            $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            foreach ($stmt as $row) {
-                $response = soa($row['remote'] . 'z/', $request);
+            foreach ($remotes as $remote) {
+                $response = soa($remote . 'z/', $request);
                 $message.= '  ' . $row['remote'] . "<br />\n";
                 if ($response['result'] == strval('success')) {
                     $message.= "  Result: success<br /><br />\n";
@@ -253,7 +261,6 @@ if (password_verify($adminPassPost, $row['pass'])) {
                     $message.= "  Result: failure<br /><br />\n";
                 }
             }
-            $dbhRemote = null;
         } else {
             $message = 'No remote site was input.';
         }
@@ -310,12 +317,10 @@ if (password_verify($adminPassPost, $row['pass'])) {
     if (isset($_POST['testConnections']) and $_POST['testConnections'] == strval('Test remote connections')) {
         $message.= "Test connection results:<br /><br />\n";
         $request = null;
+        $response = null;
         $request['task'] = 'test';
-        $dbhRemote = new PDO($dbRemote);
-        $stmt = $dbhRemote->query('SELECT remote FROM remotes');
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        foreach ($stmt as $row) {
-            $response = soa($row['remote'] . 'z/', $request);
+        foreach ($remotes as $remote) {
+            $response = soa($remote . 'z/', $request);
             $message.= '  ' . $row['remote'] . "<br />\n";
             if ($response['result'] == strval('success')) {
                 $message.= "  Result: success<br /><br />\n";
@@ -323,7 +328,6 @@ if (password_verify($adminPassPost, $row['pass'])) {
                 $message.= "  Result: failure<br /><br />\n";
             }
         }
-        $dbhRemote = null;
     }
     //
     // Change password for remote sites
@@ -343,14 +347,12 @@ if (password_verify($adminPassPost, $row['pass'])) {
         }
         $message.= "Change remote password results:<br /><br />\n";
         $request = null;
+        $response = null;
         $request['task'] = 'setCrypt';
         $request['hash'] = $newOnus;
         $request['newGig'] = $gig;
-        $dbhRemote = new PDO($dbRemote);
-        $stmt = $dbhRemote->query('SELECT remote FROM remotes');
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        foreach ($stmt as $row) {
-            $response = soa($row['remote'] . 'z/', $request);
+        foreach ($remotes as $remote) {
+            $response = soa($remote . 'z/', $request);
             $message.= '  ' . $row['remote'] . "<br />\n";
             if ($response['result'] == strval('success')) {
                 $message.= "  Result: success<br /><br />\n";
@@ -364,7 +366,6 @@ if (password_verify($adminPassPost, $row['pass'])) {
                 $message.= "  Result: failure<br /><br />\n";
             }
         }
-        $dbhRemote = null;
     }
 } elseif (isset($adminPassPost)) {
     $message = 'The admin password is invalid.';
@@ -441,7 +442,6 @@ $rowcount = null;
 $dbh = new PDO($dbRemote);
 $stmt = $dbh->query('SELECT idRemote, remote FROM remotes ORDER BY remote');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute();
 foreach ($stmt as $row) {
     extract($row);
     $rowcount++;

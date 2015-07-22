@@ -10,7 +10,7 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-05-31
+ * @version   GIT: 2015-07-21
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -23,6 +23,7 @@ if ($freeOrPaid != 'free') {
     $uri = $uriScheme . '://' . $_SERVER["HTTP_HOST"] . rtrim(dirname($_SERVER['PHP_SELF']), "/\\") . '/';
 }
 require $includesPath . '/common.php';
+require $includesPath . '/parsedown-master/Parsedown.php';
 //
 // Variables
 //
@@ -36,8 +37,10 @@ $textPost = inlinePost('text');
 //
 $archiveSync = 1;
 $database = $dbArchive;
+$database2 = $dbArchive2;
 $editorView = 1;
 $imagePath = 'imagea.php';
+$imagePath2 = 'imagea2.php';
 $menu = "\n" . '  <h4 class="m"><a class="m" href="edit.php">&nbsp;Edit&nbsp;</a><a class="m" href="published.php">&nbsp;Published&nbsp;</a><a class="m" href="preview.php">&nbsp;Preview&nbsp;</a><a class="s" href="archive.php">&nbsp;Archives&nbsp;</a></h4>' . "\n";
 $use = 'archive';
 //
@@ -126,7 +129,7 @@ if (isset($_GET['a'])) {
     //
 } else {
     echo '
-  <p>Search by any of the following criteria.</p>
+  <p>Search by any of the following criteria. Enter complete words or the beginning of words followed by an asterisk, for example, either <i>the</i> or <i>th*</i>.</p>
 
   <form method="post" action="' . $uri . 'archive.php">
     <p><label for="headline">Headline contains</label><br />
@@ -174,6 +177,7 @@ if (isset($_GET['a'])) {
                 $html.= "</p>\n\n";
             }
             if (isset($summary)) {
+                $summary = str_replace('*', '', $summary);
                 $html.= '  <p class="s">' . html($summary) . "</p>\n";
             }
         }
@@ -183,6 +187,6 @@ if (isset($_GET['a'])) {
 echo $html;
 ?>
 
-  <p><span class="al"><a class="n" href="<?php echo $uri; ?>archive.php">Archives</a> | <a class="n" href="<?php echo $uri; ?>">Index</a><?php echo $logOutHtml; ?></span><br /><p>
+  <p><br /><span class="al"><a class="n" href="<?php echo $uri; ?>archive.php">Archives</a> | <a class="n" href="<?php echo $uri; ?>">Index</a><?php echo $logOutHtml; ?></span><br /><p>
 </body>
 </html>

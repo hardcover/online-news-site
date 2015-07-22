@@ -33,11 +33,11 @@ pre, code {
     line-height: 1em;
 }
 
-h1, h3, h4, h6, hr {
+p, h1, h3, h4, h6, hr {
     clear: left;
 }
 
-h1, h2, h3, h5, h6, span, a:link {
+h1, h2, h3, h5, h6, span {
     color: #777;
 }
 
@@ -79,6 +79,7 @@ h5, h6, p, table, pre {
 
 h6 {
     margin-top: -1.3em;
+    margin-bottom: 1.3em;
 }
 
 h6, div.r, span.al, span.fr, span.h, span.p, img.fr, input.fr, #searchForm {
@@ -117,7 +118,6 @@ p.s {
 }
 
 blockquote, ol, ul {
-    margin: 1em 1em 1em 2em;
     min-width: 270px;
 }
 
@@ -137,6 +137,14 @@ sub {
     vertical-align: text-bottom;
 }
 
+em {
+    font-style: italic;
+}
+
+strong {
+    font-weight: bold;
+}
+
 hr {
     border-top: 1px solid #aaa;
     border-bottom: 0;
@@ -147,7 +155,7 @@ input, select, textarea, span.fr, p.e {
     border-radius: 4px;
 }
 
-input, select, textarea, span.fr, img.b, img.lead, img.right, a.m, a.s, h4, .button, .left, .middle, .right {
+input, select, textarea, span.fr, img.b, img.right, a.m, a.s, h4, .button, .left, .middle, .right, iframe, video {
     border: 1px solid #aaa;
 }
 
@@ -161,7 +169,7 @@ input.al, select.al, textarea.al, #searchForm .search {
     width: 5em;
 }
 
-input.h, select.h, textarea.h {
+input.h, select.h, textarea.h, span.hl {
     width: 45%;
 }
 
@@ -235,30 +243,46 @@ span.h, span.p {
     padding-left: 5%;
     width: 45%;
 }
+
 img {
     border: 0;
 }
 
-img.lead {
-    width: 61.8%;
+img.lead, img.lead2, img.lead3, img.lead4 {
     float: left;
     margin: .4em 1em 1em 0;
+}
+
+img.lead {
+    width: 61.8%;
+}
+
+img.lead2 {
+    width: 38.2%;
+}
+
+img.lead3 {
+    width: 19.1%;
+}
+
+img.lead4 {
+    width: 9.55%;
 }
 
 img.logo {
     width: 38.2%;
 }
 
-img.right {
-    width: 100%;
-}
-
 img.s {
     width: 61.8%;
 }
 
-img.w {
-    width: 96%;
+img.w, iframe, video {
+    width: 100%;
+}
+
+iframe, video {
+    margin-top: 1em;
 }
 
 a:active {
@@ -266,8 +290,12 @@ a:active {
     top: 1px;
 }
 
-a.n:link, a:visited, a.n:visited, a.n:hover, a.n:focus, a.n:active {
+a:link, a.n:link, a.n:visited, a.n:hover, a.n:focus, a.n:active {
     color: #00a;
+}
+
+a:visited {
+    color: #636;
 }
 
 a.n:link, a.n:visited, a.m, a.s, h4, .button, .left, .middle, .right {

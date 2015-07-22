@@ -10,23 +10,31 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-05-31
+ * @version   GIT: 2015-07-21
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
  */
 //
-// Loop through each remote location
+// Variables
 //
-$dbhRemote = new PDO($dbRemote);
-$stmt = $dbhRemote->query('SELECT remote FROM remotes');
+$remotes = array();
+$dbh = new PDO($dbRemote);
+$stmt = $dbh->query('SELECT remote FROM remotes');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
-    extract($row);
+    $remotes[] = $row['remote'];
+}
+$dbh = null;
+//
+// Loop through each remote location
+//
+foreach ($remotes as $remote) {
     //
     // Get the IDs of the new ads
     //
     $classifieds = array();
+    $request = null;
     $response = null;
     $request['task'] = 'classifiedsSyncNew';
     $response = soa($remote . 'z/', $request);
@@ -40,8 +48,8 @@ foreach ($stmt as $row) {
     // Download new classifieds from remote sites
     //
     foreach ($classifieds as $classified) {
-        $response = null;
         $request = null;
+        $response = null;
         $request['task'] = 'classifiedsNewDownload';
         $request['idAd'] = $classified;
         $response = soa($remote . 'z/', $request);
@@ -57,6 +65,7 @@ foreach ($stmt as $row) {
             //
             $photos = json_decode($photos, true);
             $request = null;
+            $response = null;
             $request['task'] = 'classifiedsNewDownloadPhoto';
             $request['idAd'] = $classified;
             $i = null;
@@ -77,6 +86,7 @@ foreach ($stmt as $row) {
             // Delete the ad from the classifiedsNew database
             //
             $request = null;
+            $response = null;
             $request['task'] = 'classifiedsNewCleanUp';
             $request['idAd'] = $classified;
             $response = soa($remote . 'z/', $request);
@@ -84,6 +94,8 @@ foreach ($stmt as $row) {
         //
         // Determine the missing and extra classifieds
         //
+        $request = null;
+        $response = null;
         $request['task'] = 'classifiedsSync';
         $response = soa($remote . 'z/', $request);
         $remoteClassifieds = json_decode($response['remoteClassifieds'], true);
@@ -104,6 +116,8 @@ foreach ($stmt as $row) {
         // When extra remote classifieds were found above, check again and delete the extra classifieds
         //
         if (count($extraClassifieds) > 0) {
+            $request = null;
+            $response = null;
             $request['task'] = 'classifiedsSync';
             $response = soa($remote . 'z/', $request);
             $remoteClassifieds = json_decode($response['remoteClassifieds'], true);
@@ -122,6 +136,7 @@ foreach ($stmt as $row) {
             // Delete extra remote classifieds
             //
             foreach ($extraClassifieds as $idAd) {
+                $request = null;
                 $response = null;
                 $request['task'] = 'classifiedsDelete';
                 $request['idAd'] = $idAd;
@@ -130,5 +145,4 @@ foreach ($stmt as $row) {
         }
     }
 }
-$dbhRemote = null;
 ?>

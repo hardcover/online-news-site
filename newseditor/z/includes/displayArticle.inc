@@ -10,7 +10,7 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-05-31
+ * @version   GIT: 2015-07-21
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -30,22 +30,22 @@ if ($row['idArticle']) {
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute(array(secure($_GET['a'])));
     $row = $stmt->fetch();
-    $dbh = null;
     extract($row);
     //
     // Set previous and next links
     //
     $order = array();
     if (is_null($editorView)){
-        $stmt = $dbh->query('SELECT idArticle, sortOrderArticle FROM articles WHERE idSection = ? AND publicationDate <= "' . $datePost . '" AND "' . $datePost . '" <= endDate ORDER BY sortOrderArticle');
+        $stmt = $dbh->prepare('SELECT idArticle, sortOrderArticle FROM articles WHERE idSection = ? AND publicationDate <= "' . $datePost . '" AND "' . $datePost . '" <= endDate ORDER BY sortOrderArticle');
     } else {
-        $stmt = $dbh->query('SELECT idArticle, sortOrderArticle FROM articles WHERE idSection = ? ORDER BY sortOrderArticle');
+        $stmt = $dbh->prepare('SELECT idArticle, sortOrderArticle FROM articles WHERE idSection = ? ORDER BY sortOrderArticle');
     }
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute(array($idSection));
     foreach ($stmt as $row) {
         $order[$row['sortOrderArticle']] = $row['idArticle'];
     }
+    $dbh = null;
     if (isset($order[$sortOrderArticle - 1])) {
         $previous = '<a class="n" href="' . $uri . $use . '.php?a=' . $order[$sortOrderArticle - 1] . '">Previous</a> | ';
     } else {
@@ -82,9 +82,9 @@ if ($row['idArticle']) {
         $html.= '  <h3>' . html($standfirst) . "</h3>\n\n";
     }
     if (isset($hdImage)) {
-        $html.= '  <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="w" alt=""></p>' . "\n\n";
+        $html.= '  <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="w b" alt=""></p>' . "\n\n";
     }
-    if (isset($photoCaption) and isset($photoCredit)) {
+    if ($photoCaption != '' and $photoCredit != '') {
         $html.= '  <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
     } elseif (isset($photoCaption)) {
         $html.= '  <h6>' . html($photoCaption) . "</h6>\n\n";
@@ -103,9 +103,26 @@ if ($row['idArticle']) {
     if (isset($byline) or isset($bylineDateTime)) {
         $html.= "</h5>\n\n";
     }
-    $html.= '  <p>' . nl2p($text) . "</p>\n";
+    $html.= Parsedown::instance()->parse($text);
+    //$html.= '  <p>' . nl2p($text) . "</p>\n\n";
+    $dbh = new PDO($database2);
+    $stmt = $dbh->prepare('SELECT idPhoto, photoCredit, photoCaption FROM imageSecondary WHERE idArticle=? ORDER BY time');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $stmt->execute(array($idArticle));
+    foreach ($stmt as $row) {
+        extract($row);
+        $html.= '  <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="w b" alt=""></p>' . "\n\n";
+        if ($photoCaption != '' and $photoCredit != '') {
+            $html.= '  <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
+        } elseif (isset($photoCaption)) {
+            $html.= '  <h6>' . html($photoCaption) . "</h6>\n\n";
+        } elseif (isset($photoCredit)) {
+            $html.= '  <h6 class="r">' . $photoCredit . "</h6>\n\n";
+        }
+    }
+    $dbh = null;
     if ($database != $dbArchive) {
-        $html.= '  <p><span class="al">' . $previous . '<a class="n" href="' . $use . '.php">Index</a>' . $pipe . $next . '</span></p>' . "\n\n";;
+        $html.= '  <p><br /><span class="al">' . $previous . '<a class="n" href="' . $use . '.php">Index</a>' . $pipe . $next . '</span><br /></p>' . "\n";;
     }
 } else {
     header('Location: ' . $uri);

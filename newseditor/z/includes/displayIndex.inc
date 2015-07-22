@@ -10,7 +10,7 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-05-31
+ * @version   GIT: 2015-07-21
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -21,10 +21,14 @@
 $html = null;
 if ($use == 'edit') {
     $database = $dbEdit;
+    $database2 = $dbEdit2;
     $imagePath = 'imagee.php';
+    $imagePath2 = 'imagee2.php';
 } elseif ($use == 'published') {
     $database = $dbPublished;
+    $database2 = $dbPublished2;
     $imagePath = 'imagep.php';
+    $imagePath2 = 'imagep2.php';
 }
 //
 // Program
@@ -66,11 +70,14 @@ if (isset($_GET['a'])) {
                 }
                 $count++;
                 $html.= '  <h2><a class="n" href="' . $use . '.php?a=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
-                $html.= '  <p class="s"><a href="' . $use . '.php?a=' . $idArticle . '">';
-                if ($thumbnailImageWidth != null) {
-                    $html.= '<img class="fr b" src="' . $imagePath . '?i=' . muddle($idArticle) . 't" width="' . $thumbnailImageWidth . '" height="' . $thumbnailImageHeight . '" alt="">';
+                if ($summary != '') {
+                    $html.= '  <p class="s"><a href="' . $use . '.php?a=' . $idArticle . '">';
+                    if ($thumbnailImageWidth != null) {
+                        $html.= '<img class="fr b" src="' . $imagePath . '?i=' . muddle($idArticle) . 't" width="' . $thumbnailImageWidth . '" height="' . $thumbnailImageHeight . '" alt="">';
+                    }
+                    $summary = str_replace('*', '', $summary);
+                    $html.= '</a>' . html($summary) . "</p>\n";
                 }
-                $html.= '</a>' . html($summary) . "</p>\n";
                 //
                 // Modify for different uses, no include for subscribers
                 //

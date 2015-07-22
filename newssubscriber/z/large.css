@@ -22,7 +22,7 @@ span.fr {
     font-size: 15px;
 }
 
-h1, h2, h3, h4.m, h5, h6, p, div.logo {
+h1, h2, h3, h4.m, h5, h6, p, ol, ul, div.logo {
     padding-right: 19.1%;
     padding-left: 19.1%;
 }

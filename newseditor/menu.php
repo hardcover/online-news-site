@@ -10,7 +10,7 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-05-31
+ * @version   GIT: 2015-07-21
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -74,6 +74,15 @@ $dbh = null;
 if ($row) {
     $classifiedsEdit = 1;
 }
+//
+$remotes = array();
+$dbh = new PDO($dbRemote);
+$stmt = $dbh->query('SELECT remote FROM remotes');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+foreach ($stmt as $row) {
+    $remotes[] = $row['remote'];
+}
+$dbh = null;
 //
 // Test admin password authentication
 //
@@ -197,19 +206,21 @@ if (password_verify($adminPassPost, $row['pass'])) {
             //
             // Update remote sites
             //
-            $request = null;
-            $request['task'] = 'menuInsert';
-            $request['idMenu'] = $idMenu;
-            $request['menuName'] = $menuNamePost;
-            $request['menuSortOrder'] = $menuSortOrderPost;
-            $request['menuPath'] = $menuPath;
-            $request['menuContent'] = $menuContentPost;
-            $dbhRemote = new PDO($dbRemote);
-            $stmt = $dbhRemote->query('SELECT remote FROM remotes');
-            $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $dbhRemote = null;
-            foreach ($stmt as $row) {
-                $response = soa($row['remote'] . 'z/', $request);
+            foreach ($remotes as $remote) {
+                $request = null;
+                $response = null;
+                $request['task'] = 'menuDelete';
+                $request['idMenu'] = $idMenu;
+                $response = soa($remote . 'z/', $request);
+                $request = null;
+                $response = null;
+                $request['task'] = 'menuInsert';
+                $request['idMenu'] = $idMenu;
+                $request['menuName'] = $menuNamePost;
+                $request['menuSortOrder'] = $menuSortOrderPost;
+                $request['menuPath'] = $menuPath;
+                $request['menuContent'] = $menuContentPost;
+                $response = soa($remote . 'z/', $request);
             }
         } else {
             $message = 'No menu name was input.';
@@ -235,14 +246,11 @@ if (password_verify($adminPassPost, $row['pass'])) {
                 // Update remote sites
                 //
                 $request = null;
+                $response = null;
                 $request['task'] = 'menuDelete';
                 $request['idMenu'] = $idMenu;
-                $dbhRemote = new PDO($dbRemote);
-                $stmt = $dbhRemote->query('SELECT remote FROM remotes');
-                $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                $dbhRemote = null;
-                foreach ($stmt as $row) {
-                    $response = soa($row['remote'] . 'z/', $request);
+                foreach ($remotes as $remote) {
+                    $response = soa($remote . 'z/', $request);
                 }
             } else {
                 $message = 'The menu name was not found.';
@@ -281,15 +289,12 @@ if (password_verify($adminPassPost, $row['pass'])) {
         $dbh = null;
         $sortOrder = json_encode($sortOrder);
         $request = null;
+        $response = null;
         $request['task'] = 'menuOrder';
         $request['sortOrder'] = $sortOrder;
-        $dbhRemote = new PDO($dbRemote);
-        $stmt = $dbhRemote->query('SELECT remote FROM remotes');
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        foreach ($stmt as $row) {
-            $response = soa($row['remote'] . 'z/', $request);
+        foreach ($remotes as $remote) {
+            $response = soa($remote . 'z/', $request);
         }
-        $dbhRemote = null;
         include $includesPath . '/syncMenu.php';
     }
 } elseif (isset($_POST['addUpdate']) or isset($_POST['delete'])) {
@@ -367,11 +372,11 @@ $dbh = null;
       <input type="checkbox" name="classifieds"<?php echoIfYes($classifiedsEdit); ?> /> Enable classified ads
     </label></p>
 
-    <p><input type="submit" value="Update" name="updatePredefined" class="button" /></p>
+    <p><input type="submit" value="Update predefs" name="updatePredefined" class="button" /></p>
 
     <h1>Add, update and delete menu items</h1>
 
-    <p>The name and sort order fields required to add or update a menu item. Menu names must be unique.</p>
+    <p>The name and sort order fields required to add or update a menu item. Menu names must be unique and may not contain ampersands (&amp;).</p>
 
     <p><label for="menuName">Name / Page title</label><br />
     <input id="menuName" name="menuName" type="text" class="h"<?php echoIfValue($menuNameEdit); ?> /></p>
@@ -379,67 +384,11 @@ $dbh = null;
     <p><label for="menuSortOrder">Sort order</label><br />
     <input id="menuSortOrder" name="menuSortOrder" type="text" class="h"<?php echoIfValue($menuSortOrderEdit); ?> /><input name="idMenu" type="hidden" <?php echoIfValue($idMenuEdit); ?> /></p>
 
-    <p><label for="menuContent">Page content *</label><br />
-    <textarea id="menuContent" name="menuContent" class="h" rows="8"><?php echoIfText($menuContentEdit); ?></textarea></p>
+    <p><label for="menuContent">Page content is entered in either HTML or the <a href="markdown.html" target="_blank">markdown syntax</a>. Enter iframe and video tags inside paragraph tags, for example, &lt;p&gt;&lt;iframe height="315"&gt;&lt;/iframe&gt;&lt;/p&gt;.</label><br />
+    <span class="hl"><textarea id="menuContent" name="menuContent" class="h" rows="8"><?php echoIfText($menuContentEdit); ?></textarea></span></p>
 
     <p class="b"><input type="submit" value="Add / update" name="addUpdate" class="button" /><br />
     <input type="submit" value="Delete" name="delete" class="button" /><input type="hidden" name="existing"<?php echoIfValue($edit); ?> /></p>
   </form>
-
-  <p>* Page content is entered in the markdown syntax, a common format within web-based content management systems. By abbreviating some HTML, markdown makes it easier to read and proof the input content. For markup not covered by markdown syntax, like tables and images, use regular HTML. The text below this point can be cut and pasted into the page content input field above to see the result on the subscriber site.</p>
-
-  <p>Headers use one to six hash characters at the start of the line, corresponding to header levels on through six. For example:</p>
-
-  <p># This is an H1</p>
-
-  <p>## This is an H2</p>
-
-  <p>### This is an H3</p>
-
-  <p>For links, the anchor text is delimited by [square brackets]. To create an inline link, use a set of regular parentheses immediately after the link text’s closing square bracket. Inside the parentheses, put the URL where you want the link to point.</p>
-
-  <p>[This link](http://example.net/) is for a web page.</p>
-
-  <p>This link, [John Doe](mailto:john.doe@example.net), is for an e-mail address.</p>
-
-  <p>Like tables, images must be entered with regular HTML, for example:</p>
-
-  <p>&lt;img src="images/sample.png" alt="" width="310" height="74" /&gt;</p>
-
-  <p>Markdown supports unordered (bulleted) and ordered (numbered) lists. Unordered lists use a dash followed by a space:</p>
-
-  <p>- Red<br />
-  - Green<br />
-  - Blue</p>
-
-  <p>Ordered lists use numbers followed by periods:</p>
-
-  <p>1. Bird<br />
-  2. McHale<br />
-  3. Parish</p>
-
-  <p>It’s important to note it’s possible to trigger an ordered list by accident, by writing something like this:</p>
-
-  <p>1986. What a great season.</p>
-
-  <p>To avoid the result, escape the period with two preceding backslashes:</p>
-
-  <p>1986\\. What a great season.</p>
-
-  <p>Markdown provides backslash escapes for the characters below, which all can have an interpreted meaning within markdown depending upon where they occur. See the full <a href="http://daringfireball.net/projects/markdown/syntax/" target="_blank">markdown documentation</a> for more information. When one of the characters is interpreted but is supposed to be as typed, then add two backslashes before the character.</p>
-
-  <p>\ backslash<br />
-  ` backtick<br />
-  * asterisk<br />
-  _ underscore<br />
-  {} curly braces<br />
-  [] square brackets<br />
-  () parentheses<br />
-  &gt; greater than<br />
-  # hash mark<br />
-  + plus sign<br />
-  - minus sign (hyphen)<br />
-  . dot<br />
-  ! exclamation mark</p>
 </body>
 </html>

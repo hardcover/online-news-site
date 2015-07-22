@@ -10,7 +10,7 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-05-31
+ * @version   GIT: 2015-07-21
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -306,11 +306,10 @@ function syncRemotes()
         }
     }
     $dbh = null;
-    $dbhRemote = new PDO($dbRemote);
-    $stmt = $dbhRemote->query('SELECT remote FROM remotes');
-    $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    foreach ($stmt as $row) {
+    foreach ($remotes as $remote) {
         extract($row);
+        $request = null;
+        $response = null;
         $request['task'] = 'classifiedsSyncSections';
         $request['sections'] = json_encode($sections);
         $response = soa($remote . 'z/', $request);

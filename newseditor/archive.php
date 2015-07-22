@@ -10,7 +10,7 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-05-31
+ * @version   GIT: 2015-07-21
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -19,6 +19,7 @@ session_start();
 require 'z/system/configuration.php';
 require $includesPath . '/authorization.php';
 require $includesPath . '/common.php';
+require $includesPath . '/parsedown-master/Parsedown.php';
 //
 // Variables
 //
@@ -31,12 +32,23 @@ $textPost = inlinePost('text');
 //
 $archiveSync = 1;
 $database = $dbArchive;
+$database2 = $dbArchive2;
 $editorView = 1;
 $imagePath = 'imagea.php';
+$imagePath2 = 'imagea2.php';
 $menu = "\n" . '  <h4 class="m"><a class="m" href="edit.php">&nbsp;Edit&nbsp;</a><a class="m" href="published.php">&nbsp;Published&nbsp;</a><a class="m" href="preview.php">&nbsp;Preview&nbsp;</a><a class="s" href="archive.php">&nbsp;Archives&nbsp;</a></h4>' . "\n";
 $publishedIndexAdminLinks = null;
 $title = 'Archives';
 $use = 'archive';
+//
+$remotes = array();
+$dbh = new PDO($dbRemote);
+$stmt = $dbh->query('SELECT remote FROM remotes');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+foreach ($stmt as $row) {
+    $remotes[] = $row['remote'];
+}
+$dbh = null;
 //
 // Build the SQL query
 //
@@ -80,17 +92,38 @@ if (isset($_POST['delete'])) {
     $stmt = $dbh->prepare('DELETE FROM articles WHERE idArticle=?');
     $stmt->execute(array($idArticle));
     $dbh = null;
+    $dbh = new PDO($dbArchive2);
+    $stmt = $dbh->prepare('DELETE FROM imageSecondary WHERE idArticle=?');
+    $stmt->execute(array($idArticle));
+    $dbh = null;
+    $request = null;
+    $response = null;
+    $request['task'] = 'archiveDelete';
+    $request['idArticle'] = $idArticle;
+    foreach ($remotes as $remote) {
+        $response = soa($remote . 'z/', $request);
+    }
     include $includesPath . '/syncArticles.php';
 }
 //
 // Button: Return to edit
 //
 if (isset($_POST['edit'])) {
-    $idArticleMove = $idArticle;
     $dbFrom = $dbArchive;
-    $dbTo = $dbEdit;
-    include $includesPath . '/moveRow.php';
+    include $includesPath . '/moveArticle.php';
     include $includesPath . '/syncArticles.php';
+    $request = null;
+    $response = null;
+    $request['task'] = 'archiveNull';
+    $request['idArticle'] = $idArticle;
+    foreach ($remotes as $remote) {
+        $response = soa($remote . 'z/', $request);
+    }
+    foreach ($remotes as $remote) {
+        $request = null;
+        $response = null;
+        $request['task'] = 'sitemap';
+    }
 }
 //
 // HTML
@@ -125,7 +158,7 @@ if (isset($_GET['a'])) {
     //
 } else {
     echo '
-  <p>Search by any of the following criteria.</p>
+  <p>Search by any of the following criteria. Enter complete words or the beginning of words followed by an asterisk, for example, either <i>the</i> or <i>th*</i>.</p>
 
   <form method="post" action="' . $uri . 'archive.php">
     <p><label for="headline">Headline contains</label><br />
@@ -173,6 +206,7 @@ if (isset($_GET['a'])) {
                 $html.= "</p>\n\n";
             }
             if (isset($summary)) {
+                $summary = str_replace('*', '', $summary);
                 $html.= '  <p class="s">' . html($summary) . "</p>\n";
             }
             if (isset($editorView) and $editorView == 1) {

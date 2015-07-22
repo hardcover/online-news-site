@@ -10,38 +10,14 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-05-31
+ * @version   GIT: 2015-07-21
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
  */
 //
-// Move expired articles from published to the archive
-//
-$expired = null;
-$dbh = new PDO($dbPublished);
-$stmt = $dbh->query('SELECT idArticle FROM articles WHERE endDate < "' . $today . '"');
-$stmt->setFetchMode(PDO::FETCH_ASSOC);
-foreach ($stmt as $row) {
-    $expired[] = $row['idArticle'];
-}
-$dbh = null;
-$archive = 'archive';
-$dbFrom = $dbPublished;
-$dbTo = $dbArchive;
-if (is_array($expired)) {
-    foreach ($expired as $idArticleMove) {
-        include $includesPath . '/moveRow.php';
-    }
-}
-//
-// Download latest contributed articles
-//
-require $includesPath . '/syncArticles.php';
-//
 // Variables
 //
-$archive = null;
 $bylineEdit = null;
 $bylinePost = inlinePost('byline');
 $dbFrom = null;
@@ -56,9 +32,7 @@ $idArticle = inlinePost('idArticle');
 $idArticleEdit = null;
 $idSectionEdit = null;
 $idSectionPost = inlinePost('idSection');
-$photoCaptionEdit = null;
 $photoCaptionPost = inlinePost('photoCaption');
-$photoCreditEdit = null;
 $photoCreditPost = inlinePost('photoCredit');
 $publicationDateEdit = null;
 $publicationDatePost = inlinePost('publicationDate');
@@ -88,19 +62,60 @@ if ($bylinePost != null) {
 //
 if ($use == 'edit') {
     $database = $dbEdit;
+    $database2 = $dbEdit2;
     $imagePath = 'imagee.php';
-    $soa = null;
+    $imagePath2 = 'imagee2.php';
 } elseif ($use == 'published') {
     $database = $dbPublished;
+    $database2 = $dbPublished2;
     $imagePath = 'imagep.php';
-    $soa = 1;
+    $imagePath2 = 'imagep2.php';
 }
 if (!isset($_FILES['image'])) {
     $_FILES['image'] = null;
 }
 $byline = $endDate = $headline = $idSection = $message = $photoCaption = $photoCredit = $publicationDate = $publish = $sortOrderArticle = $standfirst = $text = null;
-$summaryPost = substr(preg_replace("'\s+'", ' ', $textPost), 0, 500);
-$summaryPost = str_replace(strrchr($summaryPost, ' '), ' ', $summaryPost);
+if (strlen($textPost) > 500) {
+    $summaryPost = substr(preg_replace("'\s+'", ' ', $textPost), 0, 500);
+    $summaryPost = str_replace(strrchr($summaryPost, ' '), ' ', $summaryPost);
+} else {
+    $summaryPost = $textPost;
+}
+if (strpos($summaryPost, '<') === false) {
+    $summaryPost = $summaryPost . ' (continued)';
+} else {
+    $summaryPost = null;
+}
+//
+$remotes = array();
+$dbh = new PDO($dbRemote);
+$stmt = $dbh->query('SELECT remote FROM remotes');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+foreach ($stmt as $row) {
+    $remotes[] = $row['remote'];
+}
+$dbh = null;
+//
+// Move expired articles from published to the archive
+//
+$expired = null;
+$dbh = new PDO($dbPublished);
+$stmt = $dbh->query('SELECT idArticle FROM articles WHERE endDate < "' . $today . '"');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+foreach ($stmt as $row) {
+    $expired[] = $row['idArticle'];
+}
+$dbh = null;
+$dbFrom = $dbPublished;
+if (is_array($expired)) {
+    foreach ($expired as $idArticle) {
+        include $includesPath . '/moveArticle.php';
+    }
+}
+//
+// Download the latest contributed articles
+//
+require $includesPath . '/syncArticles.php';
 //
 // Button: Add / Update
 //
@@ -108,12 +123,23 @@ if (isset($_POST['addUpdate']) and isset($bylinePost)) {
     //
     // Determine insert or update
     //
-    if ($_POST['existing'] == null) {
-        $dbh = new PDO($database);
+    if (empty($_POST['existing'])) {
+        $dbh = new PDO($dbArchive);
         $stmt = $dbh->prepare('INSERT INTO articles (headline) VALUES (?)');
         $stmt->execute(array(null));
         $idArticle = $dbh->lastInsertId();
+        $stmt = $dbh->prepare('UPDATE articles SET idArticle=? WHERE rowid=?');
+        $stmt->execute(array($idArticle, $idArticle));
         $dbh = null;
+        $dbh = new PDO($database);
+        $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE idArticle=?');
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute(array($idArticle));
+        $row = $stmt->fetch();
+        if (empty($row)) {
+            $stmt = $dbh->prepare('INSERT INTO articles (idArticle) VALUES (?)');
+            $stmt->execute(array($idArticle));
+        }
     } else {
         //
         // Adjust sort order when increasing the sort position of an exisiting article
@@ -132,106 +158,165 @@ if (isset($_POST['addUpdate']) and isset($bylinePost)) {
     // Store the image, if any
     //
     if ($_FILES['image']['size'] > 0 and $_FILES['image']['error'] == 0) {
+        //
+        // Verify JPG file
+        //
         $sizes = getimagesize($_FILES['image']['tmp_name']);
         if ($sizes['mime'] == 'image/jpeg') {
             //
-            // Save the original image and calculate the aspect ratio
+            // Variables
             //
             $widthOriginal = $sizes['0'];
             $heightOriginal = $sizes['1'];
             $aspectRatio = $widthOriginal / $heightOriginal;
-            $dbh = new PDO($database);
-            $stmt = $dbh->prepare('UPDATE articles SET originalImage=?, originalImageWidth=?, originalImageHeight=? WHERE idArticle=?');
-            $stmt->execute(array(file_get_contents($_FILES['image']['tmp_name']), $widthOriginal, $heightOriginal, $idArticle));
-            $dbh = null;
-            //
-            // Create and save the thumbnail image
-            //
-            $heightThumbnail = 71 * 2; // Double pixels for retina displays
-            $widthThumbnail = round($heightThumbnail * $aspectRatio);
-            $thumbnail = imagecreatetruecolor($widthThumbnail, $heightThumbnail);
-            $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
-            imagecopyresized($thumbnail, $srcImage, 0, 0, 0, 0, $widthThumbnail, $heightThumbnail, ImageSX($srcImage), ImageSY($srcImage));
-            ob_start();
-            imagejpeg($thumbnail, null, 90);
-            imagedestroy($thumbnail);
-            $thumbnailImage = ob_get_contents();
-            ob_end_clean();
-            $heightThumbnail = $heightThumbnail / 2; // Display size
-            $widthThumbnail = round($widthThumbnail / 2);
-            $dbh = new PDO($database);
-            $stmt = $dbh->prepare('UPDATE articles SET thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=? WHERE idArticle=?');
-            $stmt->execute(array($thumbnailImage, $widthThumbnail, $heightThumbnail, $idArticle));
-            $dbh = null;
-            //
-            // Create and save the HD image
-            //
             $widthHD = 1920;
             $heightHD = round($widthHD / $aspectRatio);
-            $hd = imagecreatetruecolor($widthHD, $heightHD);
-            $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
-            imagecopyresized($hd, $srcImage, 0, 0, 0, 0, $widthHD, $heightHD, ImageSX($srcImage), ImageSY($srcImage));
-            ob_start();
-            imagejpeg($hd, null, 90);
-            imagedestroy($hd);
-            $hdImage = ob_get_contents();
-            ob_end_clean();
+            //
+            // Determine if the image is the primary image or a secondary image
+            //
             $dbh = new PDO($database);
-            $stmt = $dbh->prepare('UPDATE articles SET hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
-            $stmt->execute(array($hdImage, $widthHD, $heightHD, $idArticle));
+            $stmt = $dbh->prepare('SELECT originalImageWidth FROM articles WHERE idArticle=?');
+            $stmt->setFetchMode(PDO::FETCH_ASSOC);
+            $stmt->execute(array($idArticle));
+            $row = $stmt->fetch();
             $dbh = null;
+            if (empty($row['originalImageWidth'])) {
+                //
+                // Primary image
+                //
+                // Save the original image dimensions
+                //
+                $dbh = new PDO($database);
+                $stmt = $dbh->prepare('UPDATE articles SET originalImageWidth=?, originalImageHeight=? WHERE idArticle=?');
+                $stmt->execute(array($widthOriginal, $heightOriginal, $idArticle));
+                $dbh = null;
+                //
+                // Create and save the thumbnail image
+                //
+                $heightThumbnail = 71 * 2; // Double pixels for retina displays
+                $widthThumbnail = round($heightThumbnail * $aspectRatio);
+                $thumbnail = imagecreatetruecolor($widthThumbnail, $heightThumbnail);
+                $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
+                imagecopyresized($thumbnail, $srcImage, 0, 0, 0, 0, $widthThumbnail, $heightThumbnail, ImageSX($srcImage), ImageSY($srcImage));
+                ob_start();
+                imagejpeg($thumbnail, null, 90);
+                imagedestroy($thumbnail);
+                $thumbnailImage = ob_get_contents();
+                ob_end_clean();
+                $heightThumbnail = $heightThumbnail / 2; // Display size
+                $widthThumbnail = round($widthThumbnail / 2);
+                $dbh = new PDO($database);
+                $stmt = $dbh->prepare('UPDATE articles SET thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=? WHERE idArticle=?');
+                $stmt->execute(array($thumbnailImage, $widthThumbnail, $heightThumbnail, $idArticle));
+                $dbh = null;
+                //
+                // Create and save the HD image, photo credit and caption
+                //
+                $hd = imagecreatetruecolor($widthHD, $heightHD);
+                $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
+                imagecopyresized($hd, $srcImage, 0, 0, 0, 0, $widthHD, $heightHD, ImageSX($srcImage), ImageSY($srcImage));
+                ob_start();
+                imagejpeg($hd, null, 90);
+                imagedestroy($hd);
+                $hdImage = ob_get_contents();
+                ob_end_clean();
+                $dbh = new PDO($database);
+                $stmt = $dbh->prepare('UPDATE articles SET photoCredit=?, photoCaption=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
+                $stmt->execute(array($photoCreditPost, $photoCaptionPost, $hdImage, $widthHD, $heightHD, $idArticle));
+                $dbh = null;
+            } else {
+                //
+                // Secondary images
+                //
+                // Create and save the HD image, photo credit and caption
+                //
+                $hd = imagecreatetruecolor($widthHD, $heightHD);
+                $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
+                imagecopyresized($hd, $srcImage, 0, 0, 0, 0, $widthHD, $heightHD, ImageSX($srcImage), ImageSY($srcImage));
+                ob_start();
+                imagejpeg($hd, null, 90);
+                imagedestroy($hd);
+                $hdImage = ob_get_contents();
+                ob_end_clean();
+                $dbh = new PDO($database2);
+                $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?)');
+                $stmt->execute(array($idArticle, $hdImage, $photoCreditPost, $photoCaptionPost, time()));
+                $dbh = null;
+                //
+                // For published articles, upload the current secondary image, photo credit and caption
+                //
+                if ($use == 'published') {
+                    $request = null;
+                    $response = null;
+                    $request['task'] = 'updateInsert4';
+                    $request['idArticle'] = $idArticle;
+                    $request['image'] = $hdImage;
+                    $request['photoCredit'] = $photoCreditPost;
+                    $request['photoCaption'] = $photoCaptionPost;
+                    foreach ($remotes as $remote) {
+                        $response = soa($remote . 'z/', $request);
+                    }
+                }
+            }
         } else {
             $message = 'The uploaded file was not in the JPG format.';
         }
+    } elseif (isset($_FILES['image']['error']) and $_FILES['image']['error'] == 1) {
+        $message = 'The uploaded image exceeds the upload_max_filesize directive in php.ini.';
+    } elseif (isset($_FILES['image']['error']) and ($_FILES['image']['error'] != 4 and $_FILES['image']['error'] != 1)) {
+        $message = 'There was an unknown error with the uploaded image.';
     }
     //
     // Send the non-image information to the database
     //
     $dbh = new PDO($database);
-    $stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, endDate=?, idSection=?, sortOrderArticle=?, byline=?, headline=?, standfirst=?, text=?, summary=?, photoCredit=?, photoCaption=? WHERE idArticle=?');
-    $stmt->execute(array($publicationDatePost, $endDatePost, $idSectionPost, $sortOrderArticlePost, $bylinePost, $headlinePost, $standfirstPost, $textPost, $summaryPost, $photoCreditPost, $photoCaptionPost, $idArticle));
+    $stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, endDate=?, idSection=?, sortOrderArticle=?, byline=?, headline=?, standfirst=?, text=?, summary=? WHERE idArticle=?');
+    $stmt->execute(array($publicationDatePost, $endDatePost, $idSectionPost, $sortOrderArticlePost, $bylinePost, $headlinePost, $standfirstPost, $textPost, $summaryPost, $idArticle));
     $dbh = null;
-    if ($soa == 1) {
+    //
+    // For published articles, add or update the remote site
+    //
+    if ($use == 'published') {
         $idSection = $idSectionPost;
-        //
-        // Loop through each remote location
-        //
-        $dbhRemote = new PDO($dbRemote);
-        $stmt = $dbhRemote->query('SELECT remote FROM remotes');
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        foreach ($stmt as $row) {
+        foreach ($remotes as $remote) {
             extract($row);
             include $includesPath . '/addUpdateArticle.php';
         }
-        $dbhRemote = null;
         include $includesPath . '/sortPublished.php';
         include $includesPath . '/syncArticles.php';
     }
+    //
+    // Update sitemap.xml
+    //
+    if (empty($_POST['existing']) and $use == 'published') {
+        $request = null;
+        $response = null;
+        foreach ($remotes as $remote) {
+            extract($row);
+            $request['task'] = 'sitemap';
+        }
+    }
 }
 //
-// Button: Delete photo
+// Button: Delete photos
 //
 if (isset($_POST['deletePhoto']) and isset($idArticle)) {
     $dbh = new PDO($database);
-    $stmt = $dbh->prepare('UPDATE articles SET photoCredit=?, photoCaption=?, originalImage=?, originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
-    $stmt->execute(array(null, null, null, null, null, null, null, null, null, null, null, $idArticle));
+    $stmt = $dbh->prepare('UPDATE articles SET photoCredit=?, photoCaption=?, originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
+    $stmt->execute(array(null, null, null, null, null, null, null, null, null, null, $idArticle));
     $dbh = null;
-    $dbh = new PDO($dbPublished);
-    $stmt = $dbh->prepare('UPDATE articles SET photoCredit=?, photoCaption=?, originalImage=?, originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
-    $stmt->execute(array(null, null, null, null, null, null, null, null, null, null, null, $idArticle));
+    $dbh = new PDO($database2);
+    $stmt = $dbh->prepare('DELETE FROM imageSecondary WHERE idArticle=?');
+    $stmt->execute(array($idArticle));
     $dbh = null;
-    if ($soa == 1) {
+    if ($use == 'published') {
         $request = null;
+        $response = null;
         $request['task'] = 'publishedDeletePhoto';
         $request['idArticle'] = $idArticle;
-        $dbhRemote = new PDO($dbRemote);
-        $stmt = $dbhRemote->query('SELECT remote FROM remotes');
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        foreach ($stmt as $row) {
-            extract($row);
+        foreach ($remotes as $remote) {
             $response = soa($remote . 'z/', $request);
         }
-        $dbhRemote = null;
         include $includesPath . '/syncArticles.php';
     }
 }
@@ -240,27 +325,32 @@ if (isset($_POST['deletePhoto']) and isset($idArticle)) {
 //
 if (isset($_POST['delete']) and isset($idArticle)) {
     $dbh = new PDO($database);
-    $stmt = $dbh->prepare('SELECT idSection FROM articles WHERE idArticle=?');
-    $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idArticle));
-    $row = $stmt->fetch();
-    extract($row);
     $stmt = $dbh->prepare('DELETE FROM articles WHERE idArticle=?');
     $stmt->execute(array($idArticle));
     $dbh = null;
-    if ($soa == 1) {
+    $dbh = new PDO($database2);
+    $stmt = $dbh->prepare('DELETE FROM imageSecondary WHERE idArticle=?');
+    $stmt->execute(array($idArticle));
+    $dbh = null;
+    $dbh = new PDO($dbArchive);
+    $stmt = $dbh->prepare('DELETE FROM articles WHERE idArticle=?');
+    $stmt->execute(array($idArticle));
+    $dbh = null;
+    if ($use == 'published') {
         $request = null;
+        $response = null;
         $request['task'] = 'publishedDelete';
         $request['idArticle'] = $idArticle;
-        $dbhRemote = new PDO($dbRemote);
-        $stmt = $dbhRemote->query('SELECT remote FROM remotes');
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        foreach ($stmt as $row) {
-            $response = soa($row['remote'] . 'z/', $request);
+        foreach ($remotes as $remote) {
+            $response = soa($remote . 'z/', $request);
         }
-        $dbhRemote = null;
         include $includesPath . '/sortPublished.php';
         include $includesPath . '/syncArticles.php';
+    }
+    foreach ($remotes as $remote) {
+        $request = null;
+        $response = null;
+        $request['task'] = 'sitemap';
     }
 }
 //
@@ -268,7 +358,7 @@ if (isset($_POST['delete']) and isset($idArticle)) {
 //
 if (isset($_POST['edit'])) {
     $dbh = new PDO($database);
-    $stmt = $dbh->prepare('SELECT publicationDate, endDate, idSection, sortOrderArticle, byline, headline, standfirst, text, photoCredit, photoCaption FROM articles WHERE idArticle=?');
+    $stmt = $dbh->prepare('SELECT publicationDate, endDate, idSection, sortOrderArticle, byline, headline, standfirst, text FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute(array($idArticle));
     $row = $stmt->fetch();
@@ -279,8 +369,6 @@ if (isset($_POST['edit'])) {
     $headlineEdit = $headline;
     $idArticleEdit = $idArticle;
     $idSectionEdit = $idSection;
-    $photoCaptionEdit = $photoCaption;
-    $photoCreditEdit = $photoCredit;
     $publicationDateEdit = $publicationDate;
     $sortOrderArticleEdit = $sortOrderArticle;
     $standfirstEdit = $standfirst;
@@ -317,29 +405,44 @@ if (isset($_POST['publish'])
     if ($row) {
         extract($row);
         if (isset($_POST['archive']) and $_POST['archive'] == 'Archive') {
-            $archive = 'archive';
             $dbFrom = $dbPublished;
-            $dbTo = $dbArchive;
         } else {
             if (isset($publicationDate) and isset($endDate)) {
-                $archive = null;
                 $dbFrom = $dbEdit;
-                $dbTo = $dbPublished;
             } else {
                 $message = 'Publication dates are required fields.';
             }
         }
-        if (isset($dbFrom) and isset($dbTo)) {
-            $idArticleMove = $idArticle;
-            include $includesPath . '/moveRow.php';
+        //
+        // Move the article
+        //
+        if (isset($dbFrom)) {
+            include $includesPath . '/moveArticle.php';
             include $includesPath . '/sortPublished.php';
             include $includesPath . '/syncArticles.php';
-            if ($archive = 'archive') {
+            if ($dbFrom == $dbPublished) {
                 $archiveSync = 1;
                 include $includesPath . '/sortPublished.php';
                 include $includesPath . '/syncArticles.php';
             }
         }
+    }
+}
+//
+// Move expired articles from published to the archive
+//
+$expired = null;
+$dbh = new PDO($dbPublished);
+$stmt = $dbh->query('SELECT idArticle FROM articles WHERE endDate < "' . $today . '"');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+foreach ($stmt as $row) {
+    $expired[] = $row['idArticle'];
+}
+$dbh = null;
+$dbFrom = $dbPublished;
+if (is_array($expired)) {
+    foreach ($expired as $idArticle) {
+        include $includesPath . '/moveArticle.php';
     }
 }
 //
@@ -386,7 +489,7 @@ $dbh = null;
 ?>
     </datalist>
 
-    <p><label for="publicationDate">Publication dates</label><br />
+    <p><label for="publicationDate">Publication dates (expired articles move to the archives)</label><br />
     <input id="publicationDate" name="publicationDate" type="text" class="datepicker h" placeholder="Start date"<?php echoIfValue($publicationDateEdit); ?> /> <input name="endDate" type="text" class="datepicker h" placeholder="End date"<?php echoIfValue($endDateEdit); ?> /></p>
 
     <p><label for="idSection">Section</label><br />
@@ -428,20 +531,22 @@ if ($use == 'published') {
     <p><label for="standfirst">Standfirst</label><br />
     <input id="standfirst" name="standfirst" type="text" class="w"<?php echoIfValue($standfirstEdit); ?> /></p>
 
-    <p><label for="text">Text</label><br />
+    <p><label for="text">Article text is entered in either HTML or the <a href="markdown.html" target="_blank">markdown syntax</a>. Enter iframe and video tags inside paragraph tags, for example, &lt;p&gt;&lt;iframe&gt;&lt;/iframe&gt;&lt;/p&gt;.</label><br />
     <textarea id="text" name="text" rows="9" class="w"><?php echoIfText($textEdit); ?></textarea></p>
-
-    <p><label for="photoCredit">Photo credit</label><br />
-    <input id="photoCredit" name="photoCredit" type="text" class="w"<?php echoIfValue($photoCreditEdit); ?> /></p>
-
-    <p><label for="photoCaption">Photo caption</label><br />
-    <input id="photoCaption" name="photoCaption" type="text" class="w" autocomplete="on"<?php echoIfValue($photoCaptionEdit); ?> /></p>
 
     <p><label for="image">Photo upload (JPG image only)</label><br />
     <input id="image" name="image" type="file" class="w" accept="image/jpeg" /></p>
 
-    <p><input type="submit" value="Add / update" name="addUpdate" class="left" /><input type="submit" value="Delete photo" name="deletePhoto" class="right" /><input type="hidden" name="existing"<?php echoIfValue($edit); ?> /></p>
+    <p><label for="photoCaption">Photo caption</label><br />
+    <input id="photoCaption" name="photoCaption" type="text" class="w" autocomplete="on" /></p>
+
+    <p><label for="photoCredit">Photo credit</label><br />
+    <input id="photoCredit" name="photoCredit" type="text" class="w" /></p>
+
+    <p><input type="submit" value="Add / update" name="addUpdate" class="left" /><input type="submit" value="Delete photos" name="deletePhoto" class="right" /><input type="hidden" name="existing"<?php echoIfValue($edit); ?> /></p>
   </form>
+
+  <p>When there are photos, upload the primary photo first. Then edit the article to upload secondary photos one at a time. To correct an error in a caption or in the order of the photos, delete the photos and begin again.</p>
 
 <?php
 require $includesPath . '/displayIndex.inc';

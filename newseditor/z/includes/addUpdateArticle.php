@@ -1,6 +1,6 @@
 <?php
 /**
- * Updates a published article that has just been edited
+ * Adds or updates a remote article from the same database on the main system
  *
  * PHP version 5
  *
@@ -10,16 +10,13 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-05-31
+ * @version   GIT: 2015-07-21
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
  */
-if (!isset($archive)) {
-    $archive = null;
-}
 //
-// Upload the updated article to the remote sites
+// Copy the non-image information
 //
 $dbh = new PDO($database);
 $stmt = $dbh->prepare('SELECT publicationDate, endDate, idSection, sortOrderArticle, byline, headline, standfirst, text, summary, photoCredit, photoCaption FROM articles WHERE idArticle=?');
@@ -29,6 +26,8 @@ $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
     extract($row);
+    $request = null;
+    $response = null;
     $request['task'] = 'updateInsert1';
     $request['archive'] = $archive;
     $request['idArticle'] = $idArticle;
@@ -43,7 +42,9 @@ if ($row) {
     $request['summary'] = $summary;
     $request['photoCredit'] = $photoCredit;
     $request['photoCaption'] = $photoCaption;
-    $response = soa($remote . 'z/', $request);
+    foreach ($remotes as $remote) {
+        $response = soa($remote . 'z/', $request);
+    }
     //
     // Check for an image
     //
@@ -53,9 +54,9 @@ if ($row) {
     $stmt->execute(array($idArticle));
     $row = $stmt->fetch();
     $dbh = null;
-    if ($row['thumbnailImageWidth'] != null) {
+    if ($row['thumbnailImageWidth'] != '') {
         //
-        // Upload the published thumbnail and other small items
+        // Copy the thumbnail and other small items
         //
         $request = null;
         $dbh = new PDO($database);
@@ -65,16 +66,19 @@ if ($row) {
         $row = $stmt->fetch();
         $dbh = null;
         if ($response['result'] == 'success') {
+            $request = null;
             $response = null;
             $request['task'] = 'updateInsert2';
             $request['archive'] = $archive;
+            $request['idArticle'] = $idArticle;
             $request['thumbnailImage'] = $row['thumbnailImage'];
             $request['thumbnailImageWidth'] = $row['thumbnailImageWidth'];
             $request['thumbnailImageHeight'] = $row['thumbnailImageHeight'];
             $request['hdImageWidth'] = $row['hdImageWidth'];
             $request['hdImageHeight'] = $row['hdImageHeight'];
-            $request['idArticle'] = $idArticle;
-            $response = soa($remote . 'z/', $request);
+            foreach ($remotes as $remote) {
+                $response = soa($remote . 'z/', $request);
+            }
         }
         //
         // Upload the published HD image
@@ -87,12 +91,56 @@ if ($row) {
         $row = $stmt->fetch();
         $dbh = null;
         if ($response['result'] == 'success') {
+            $request = null;
             $response = null;
             $request['task'] = 'updateInsert3';
             $request['archive'] = $archive;
-            $request['hdImage'] = $row['hdImage'];
             $request['idArticle'] = $idArticle;
-            $response = soa($remote . 'z/', $request);
+            $request['hdImage'] = $row['hdImage'];
+            foreach ($remotes as $remote) {
+                $response = soa($remote . 'z/', $request);
+            }
+        }
+    }
+    //
+    // Move the secondary images
+    //
+    $request = null;
+    $response = null;
+    if ($database2 == $dbArchive2) {
+        $request['task'] = 'archiveSync2';
+    } else {
+        $request['task'] = 'publishedSync2';
+    }
+    $request['idArticle'] = $idArticle;
+    $dbh = new PDO($database2);
+    $stmt = $dbh->prepare('SELECT count(*) FROM imageSecondary WHERE idArticle=?');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $stmt->execute(array($idArticle));
+    $row = $stmt->fetch();
+    $dbh = null;
+    $imagesMain = $row['count(*)'];
+    foreach ($remotes as $remote) {
+        $response = soa($remote . 'z/', $request);
+        if ($imagesMain != $response['remotePhotos']) {
+            $dbh = new PDO($database2);
+            $stmt = $dbh->prepare('SELECT image, photoCredit, photoCaption, time FROM imageSecondary WHERE idArticle=? ORDER BY time');
+            $stmt->setFetchMode(PDO::FETCH_ASSOC);
+            $stmt->execute(array($idArticle));
+            foreach ($stmt as $row) {
+                $request = null;
+                $response = null;
+                $request['task'] = 'updateInsert4';
+                $request['archive'] = $archive;
+                $request['idArticle'] = $idArticle;
+                $request['image'] = $row['image'];
+                $request['photoCredit'] = $row['photoCredit'];
+                $request['photoCaption'] = $row['photoCaption'];
+                foreach ($remotes as $remote) {
+                    $response = soa($remote . 'z/', $request);
+                }
+            }
+            $dbh = null;
         }
     }
 }

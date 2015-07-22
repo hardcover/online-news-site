@@ -10,7 +10,7 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-05-31
+ * @version   GIT: 2015-07-21
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -65,21 +65,26 @@ if (isset($_GET['a'])) {
                 //
                 // Format the photograph for the lead article differently for subscribers
                 //
+                $summary = str_replace('*', '', $summary);
                 if ($sortOrderSection == 1 and $count == 1) {
                     if ($thumbnailImageWidth != null) {
                         $html.= '    <p>' . "\n" . '    <a href="' . $use . '.php?a=' . $idArticle . '">';
                         $html.= '<img class="lead b" src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" alt="">';
-                        $html.= '</a>' . html($summary) . " (continued)</p>\n";
+                        $html.= '</a>' . html($summary) . "</p>\n";
                     } else {
-                        $html.= '    <p>' . "\n" . html($summary) . " (continued)</p>\n";
+                        if ($summary != '') {
+                            $html.= '    <p>' . "\n" . html($summary) . "</p>\n";
+                        }
                     }
                 } else {
                     if ($thumbnailImageWidth != null) {
                         $html.= '    <p class="s"><a href="' . $use . '.php?a=' . $idArticle . '">';
                         $html.= '<img class="fr b" src="' . $imagePath . '?i=' . muddle($idArticle) . 't" width="' . $thumbnailImageWidth . '" height="' . $thumbnailImageHeight . '" alt="">';
-                        $html.= '</a>' . html($summary) . " (continued)</p>\n";
+                        $html.= '</a>' . html($summary) . "</p>\n";
                     } else {
-                        $html.= '    <p class="s">' . html($summary) . " (continued)</p>\n";
+                        if ($summary != '') {
+                            $html.= '    <p class="s">' . html($summary) . "</p>\n";
+                        }
                     }
                 }
             }

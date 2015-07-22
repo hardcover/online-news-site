@@ -10,7 +10,7 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-05-31
+ * @version   GIT: 2015-07-21
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -68,6 +68,15 @@ if ($passPost != null) {
 } else {
     $hash = null;
 }
+//
+$remotes = array();
+$dbh = new PDO($dbRemote);
+$stmt = $dbh->query('SELECT remote FROM remotes');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+foreach ($stmt as $row) {
+    $remotes[] = $row['remote'];
+}
+$dbh = null;
 //
 // Button: Add / update
 //
@@ -143,17 +152,13 @@ if (isset($_POST['delete'])) {
             //
             // Update remote sites
             //
+            $request = null;
             $response = null;
             $request['task'] = 'subscriberDelete';
             $request['idUser'] = $idUser;
-            $dbh = new PDO($dbRemote);
-            $stmt = $dbh->query('SELECT remote FROM remotes');
-            $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            foreach ($stmt as $row) {
-                extract($row);
+            foreach ($remotes as $remote) {
                 $response = soa($remote . 'z/', $request);
             }
-            $dbh = null;
         } else {
             $message = 'The e-mail address was not found.';
         }
@@ -307,7 +312,7 @@ $dbh = null;
     <input name="dCityRegionPostal" type="text" class="h" placeholder="City Region Post Code" <?php echoIfValue($dCityRegionPostalEdit); ?> /></p>
 
     <p><label for="note">Note</label><br />
-    <textarea id="note" name="note" class="h"><?php echoIfText($noteEdit); ?></textarea></p>
+    <span class="hl"><textarea id="note" name="note" class="h"><?php echoIfText($noteEdit); ?></textarea></span></p>
 
     <p class="b"><input type="submit" value="Add / update" name="addUpdate" class="button" /><br />
     <input type="submit" value="Delete" name="delete" class="button" /><input type="hidden" name="existing"<?php echoIfValue($edit); ?> /></p>

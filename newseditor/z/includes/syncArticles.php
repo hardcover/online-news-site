@@ -10,24 +10,17 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-05-31
+ * @version   GIT: 2015-07-21
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
  */
-if (!isset($archive)) {
-    $archive = null;
-}
 //
 // Loop through each remote location
 //
-$dbhRemote = new PDO($dbRemote);
-$stmt = $dbhRemote->query('SELECT remote FROM remotes');
-$stmt->setFetchMode(PDO::FETCH_ASSOC);
-foreach ($stmt as $row) {
-    extract($row);
+foreach ($remotes as $remote) {
     //
-    // Download contributed articles
+    // Download contributed articles to the edit database
     //
     $request = null;
     $response = null;
@@ -43,10 +36,16 @@ foreach ($stmt as $row) {
             $response = soa($remote . 'z/', $request);
             if ($response['result'] = 'success') {
                 extract($response);
-                $dbh = new PDO($dbEdit);
-                $stmt = $dbh->prepare('INSERT INTO articles (idSection, byline, headline, standfirst, text, summary, photoCredit, photoCaption) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
-                $stmt->execute(array($idSection, $byline, $headline, $standfirst, $text, $summary, $photoCredit, $photoCaption));
+                $dbh = new PDO($dbArchive);
+                $stmt = $dbh->prepare('INSERT INTO articles (headline) VALUES (?)');
+                $stmt->execute(array(null));
                 $idArticle = $dbh->lastInsertId();
+                $stmt = $dbh->prepare('UPDATE articles SET idArticle=? WHERE rowid=?');
+                $stmt->execute(array($idArticle, $idArticle));
+                $dbh = null;
+                $dbh = new PDO($dbEdit);
+                $stmt = $dbh->prepare('INSERT INTO articles (idArticle, idSection, byline, headline, standfirst, text, summary, photoCredit, photoCaption) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
+                $stmt->execute(array($idArticle, $idSection, $byline, $headline, $standfirst, $text, $summary, $photoCredit, $photoCaption));
                 $dbh = null;
                 if (isset($thumbnailImageWidth) and $thumbnailImageWidth != 'null') {
                     $request = null;
@@ -73,23 +72,51 @@ foreach ($stmt as $row) {
                         }
                     }
                 }
+                $request = null;
+                $response = null;
+                $request['task'] = 'downloadContribution4a';
+                $request['idArticle'] = $idArticleRemote;
+                $response = soa($remote . 'z/', $request);
+                if (isset($response['idPhotos'])) {
+                    $idPhotos = json_decode($response['idPhotos'], true);
+                    $request = null;
+                    $request['task'] = 'downloadContribution4b';
+                    foreach ($idPhotos as $idPhoto) {
+                        $request['idPhoto'] = $idPhoto;
+                        $response = null;
+                        $response = soa($remote . 'z/', $request);
+                        if (isset($response['hdImage'])) {
+                            $dbh = new PDO($dbEdit2);
+                            $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?)');
+                            $stmt->execute(array($idArticle, $response['hdImage'], $response['photoCredit'], $response['photoCaption'], time()));
+                            $dbh = null;
+                        }
+                    }
+                }
             }
-            $request = null;
-            $response = null;
-            $request['task'] = 'downloadContributionDelete';
-            $request['idArticle'] = $idArticleRemote;
-            $response = soa($remote . 'z/', $request);
+            if ($response['result'] = 'success') {
+                $request = null;
+                $response = null;
+                $request['task'] = 'downloadContributionDelete';
+                $request['idArticle'] = $idArticleRemote;
+                $response = soa($remote . 'z/', $request);
+            }
         }
     }
     //
     // Determine the published or archive databases
     //
-    if (isset($archiveSync)) {
-        $request['task'] = 'archiveSync';
-        $database = $dbArchive;
-    } else {
+    $request = null;
+    $response = null;
+    if (empty($archiveSync)) {
         $request['task'] = 'publishedSync';
         $database = $dbPublished;
+        $database2 = $dbPublished2;
+    } else {
+        $request['task'] = 'archiveSync';
+        $database = $dbArchive;
+        $database2 = $dbArchive2;
+        $archive = 'archive';
     }
     //
     // Determine the missing and extra articles
@@ -121,6 +148,8 @@ foreach ($stmt as $row) {
     // When extra remote articles were found above, check again and delete the extra articles
     //
     if (count($extraArticles) > 0) {
+        $request = null;
+        $response = null;
         if (isset($archiveSync)) {
             $request['task'] = 'archiveSync';
         } else {
@@ -143,6 +172,8 @@ foreach ($stmt as $row) {
         // Delete extra remote articles
         //
         if (isset($archiveSync)) {
+            $request = null;
+            $response = null;
             $request['task'] = 'archiveDelete';
         } else {
             $request['task'] = 'publishedDelete';
@@ -153,5 +184,19 @@ foreach ($stmt as $row) {
         }
     }
 }
-$dbhRemote = null;
+//
+// Reset database variables
+//
+if ($use == 'edit') {
+    $database = $dbEdit;
+    $database2 = $dbEdit2;
+    $imagePath = 'imagee.php';
+    $imagePath2 = 'imagee2.php';
+} elseif ($use == 'published') {
+    $database = $dbPublished;
+    $database2 = $dbPublished2;
+    $imagePath = 'imagep.php';
+    $imagePath2 = 'imagep2.php';
+}
+
 ?>
