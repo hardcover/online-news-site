@@ -10,15 +10,13 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-07-21
+ * @version   GIT: 2015-07-26
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
  */
 //
 // Variables
-//
-$remoteClassifieds = null;
 //
 $remotes = array();
 $dbh = new PDO($dbRemote);
@@ -31,10 +29,11 @@ $dbh = null;
 //
 // Loop through each remote location
 //
-foreach ($stmt as $row) {
+foreach ($remotes as $remote) {
     //
     // Delete remote requests for early removal
     //
+    $remoteClassifieds = array();
     $request = null;
     $response = null;
     $request['task'] = 'classifiedsEarlyRemoval';
@@ -51,7 +50,7 @@ foreach ($stmt as $row) {
     //
     // Determine the missing and extra classifieds
     //
-    $classifieds = array();
+    $remoteClassifieds = array();
     $request = null;
     $response = null;
     $request['task'] = 'classifiedsSync';

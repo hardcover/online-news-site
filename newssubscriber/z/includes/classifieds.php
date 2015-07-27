@@ -40,10 +40,10 @@ if (isset($_GET['s'])) {
     $stmt->execute(array($idSubsection));
     foreach ($stmt as $row) {
         extract($row);
-        echo '    <p><a href="' . $uri . '?m=classified-ads&amp;a=' . $idAd . '">' . $title . "</a></p>\n\n";
+        echo '    <p><a href="' . $uri . '?m=classified-ads&amp;c=' . $idAd . '">' . $title . "</a></p>\n\n";
     }
     $dbh = null;
-} elseif (!isset($_GET['a'])) {
+} elseif (!isset($_GET['c'])) {
     //
     // List all ads when there are less than 99
     //
@@ -75,7 +75,7 @@ if (isset($_GET['s'])) {
                 echo '    <h3>' . $section . ', ' . $subsection . "</h3>\n\n";
                 $categoryIdPrior = $categoryId;
             }
-            echo '    <p><a href="' . $uri . '?m=classified-ads&amp;a=' . $idAd . '">' . $title . "</a></p>\n\n";
+            echo '    <p><a href="' . $uri . '?m=classified-ads&amp;c=' . $idAd . '">' . $title . "</a></p>\n\n";
         }
         $dbh = null;
     } else {
@@ -113,7 +113,7 @@ if (isset($_GET['s'])) {
     //
     // List the specified ad
     //
-    $idAd = filter_var($_GET['a'], FILTER_VALIDATE_INT);
+    $idAd = filter_var($_GET['c'], FILTER_VALIDATE_INT);
     $dbh = new PDO($dbClassifieds);
     $stmt = $dbh->prepare('SELECT email, title, description, categoryId, review, startDate, duration, photos FROM ads WHERE idAd=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);

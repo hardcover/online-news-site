@@ -131,7 +131,7 @@ if ($row['idArticle']) {
     }
     $dbh = null;
     if ($database != $dbArchive) {
-        $html.= '  <p><br /><span class="al">' . $previous . '<a class="n" href="' . $uri . '">Index</a>' . $pipe . $next;
+        $html.= "\n" . '  <p><br /><span class="al">' . $previous . '<a class="n" href="' . $uri . '">Index</a>' . $pipe . $next;
         $html.= $logOutHtml . "</span><br /></p>\n";
     }
 } else {

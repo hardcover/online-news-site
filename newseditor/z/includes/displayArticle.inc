@@ -10,7 +10,7 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-07-21
+ * @version   GIT: 2015-07-26
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -122,7 +122,7 @@ if ($row['idArticle']) {
     }
     $dbh = null;
     if ($database != $dbArchive) {
-        $html.= '  <p><br /><span class="al">' . $previous . '<a class="n" href="' . $use . '.php">Index</a>' . $pipe . $next . '</span><br /></p>' . "\n";;
+        $html.= "\n" . '  <p><br /><span class="al">' . $previous . '<a class="n" href="' . $use . '.php">Index</a>' . $pipe . $next . '</span><br /></p>' . "\n";;
     }
 } else {
     header('Location: ' . $uri);

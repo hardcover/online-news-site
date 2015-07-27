@@ -10,7 +10,7 @@
  * @copyright 2013-2015 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version   GIT: 2015-05-31
+ * @version   GIT: 2015-07-26
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -72,12 +72,9 @@ if (isset($_POST['addUpdate'])) {
     //
     // Apply the update except for the image
     //
-    if (empty($emailPost)) {
-        $emailPost = muddle($_SESSION['username']);
-    }
     $dbh = new PDO($dbClassifiedsNew);
     $stmt = $dbh->prepare('UPDATE ads SET email=?, title=?, description=?, categoryId=?, startDate=?, duration=?, photos=? WHERE idAd=?');
-    $stmt->execute(array($emailPost, $titlePost, $descriptionPost, $categoryIdPost, $startDatePost, $durationPost, $_SESSION['userId'], $idAdPost));
+    $stmt->execute(array(muddle($_SESSION['username']), $titlePost, $descriptionPost, $categoryIdPost, $startDatePost, $durationPost, $_SESSION['userId'], $idAdPost));
     $dbh = null;
     //
     // Store the image, if any
@@ -147,41 +144,72 @@ if (isset($_POST['delete']) and isset($idAdPost)) {
 //
 // Button: Publish
 //
-if (isset($_POST['publish']) and isset($idAdPost)) {
-    $dbh = new PDO($dbClassifieds);
-    $stmt = $dbh->query('DELETE FROM ads WHERE title IS NULL');
-    $stmt = $dbh->prepare('INSERT INTO ads (title) VALUES (?)');
-    $stmt->execute(array(null));
-    $idAdPublish = $dbh->lastInsertId();
-    $num = array();
-    foreach ($photosOrdered as $photo) {
-        $dbh = new PDO($dbClassifiedsNew);
-        $stmt = $dbh->prepare('SELECT photo' . $photo . ' FROM ads WHERE idAd=?');
-        $stmt->setFetchMode(PDO::FETCH_NUM);
-        $stmt->execute(array($idAdPost));
-        $row = $stmt->fetch();
+if (isset($_POST['publish'])) {
+    //
+    // Determine insert or update
+    //
+    if (empty($idAdPost)) {
+        $dbh = new PDO($dbClassifieds);
+        $stmt = $dbh->query('DELETE FROM ads WHERE title IS NULL');
+        $stmt = $dbh->prepare('INSERT INTO ads (title) VALUES (?)');
+        $stmt->execute(array(null));
+        $idAdPost = $dbh->lastInsertId();
         $dbh = null;
-        if (isset($row['0'])) {
-            $num[] = 1;
-            $dbh = new PDO($dbClassifieds);
-            $stmt = $dbh->prepare('UPDATE ads SET photo' . $photo . '=? WHERE idAd=?');
-            $stmt->execute(array($row['0'], $idAdPublish));
-            $dbh = null;
-        } else {
-            $num[] = 0;
-        }
     }
-    $photosPublished = json_encode($num);
-    $dbh = new PDO($dbClassifieds);
-    $stmt = $dbh->prepare('UPDATE ads SET email=?, title=?, description=?, categoryId=?, review=?, startDate=?, duration=?, photos=? WHERE idAd=?');
-    $stmt->execute(array($_SESSION['username'], $titlePost, $descriptionPost, $categoryIdPost, $review, $startDatePost, $durationPost, $photosPublished, $idAdPublish));
-    $dbh = null;
-    $dbh = new PDO($dbClassifiedsNew);
-    $stmt = $dbh->prepare('DELETE FROM ads WHERE idAd=?');
-    $stmt->execute(array($idAdPost));
-    $dbh = null;
-    include $includesPath . '/addUpdateClassified.php';
-    include $includesPath . '/syncClassifieds.php';
+    if (is_null($titlePost)) {
+        $message = 'Title is a required field.';
+    }
+    if (is_null($descriptionPost)) {
+        $message = 'Description is a required field.';
+    }
+    if (is_null($categoryIdPost)) {
+        $message = 'Category is a required field and must be a subcategory.';
+    }
+    if (is_null($startDatePost)) {
+        $message = 'Start date is a required field.';
+    }
+    if (is_null($durationPost)) {
+        $message = 'Duration is a required field.';
+    }
+    if (is_null($startDatePost) and is_null($durationPost)) {
+        $message = 'Start date and duration are required fields.';
+    }
+    if (isset($titlePost) and isset($descriptionPost) and isset($categoryIdPost) and isset($startDatePost) and isset($durationPost)) {
+        $dbh = new PDO($dbClassifieds);
+        $stmt = $dbh->query('DELETE FROM ads WHERE title IS NULL');
+        $stmt = $dbh->prepare('INSERT INTO ads (title) VALUES (?)');
+        $stmt->execute(array(null));
+        $idAdPublish = $dbh->lastInsertId();
+        $num = array();
+        foreach ($photosOrdered as $photo) {
+            $dbh = new PDO($dbClassifiedsNew);
+            $stmt = $dbh->prepare('SELECT photo' . $photo . ' FROM ads WHERE idAd=?');
+            $stmt->setFetchMode(PDO::FETCH_NUM);
+            $stmt->execute(array($idAdPost));
+            $row = $stmt->fetch();
+            $dbh = null;
+            if (isset($row['0'])) {
+                $num[] = 1;
+                $dbh = new PDO($dbClassifieds);
+                $stmt = $dbh->prepare('UPDATE ads SET photo' . $photo . '=? WHERE idAd=?');
+                $stmt->execute(array($row['0'], $idAdPublish));
+                $dbh = null;
+            } else {
+                $num[] = 0;
+            }
+        }
+        $photosPublished = json_encode($num);
+        $dbh = new PDO($dbClassifieds);
+        $stmt = $dbh->prepare('UPDATE ads SET email=?, title=?, description=?, categoryId=?, review=?, startDate=?, duration=?, photos=? WHERE idAd=?');
+        $stmt->execute(array(muddle($_SESSION['username']), $titlePost, $descriptionPost, $categoryIdPost, $review, $startDatePost, $durationPost, $photosPublished, $idAdPublish));
+        $dbh = null;
+        $dbh = new PDO($dbClassifiedsNew);
+        $stmt = $dbh->prepare('DELETE FROM ads WHERE idAd=?');
+        $stmt->execute(array($idAdPost));
+        $dbh = null;
+        include $includesPath . '/addUpdateClassified.php';
+        include $includesPath . '/syncClassifieds.php';
+    }
 }
 //
 // Button: Delete photos
@@ -303,6 +331,5 @@ if (isset($idAdEdit)) {
     }
 }
 ?>
-<?php echo "<pre>\n"; print_r($_POST); echo "</pre>\n"; ?>
 </body>
 </html>
