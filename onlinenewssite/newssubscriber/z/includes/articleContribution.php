@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-09-19
+ * @version:  2016-09-21
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -48,6 +48,7 @@ $idSectionEdit = null;
 $idSectionPost = inlinePost('idSection');
 $imagePath = 'imagee.php';
 $imagePath2 = 'imagee2.php';
+$message = null;
 $photoCaptionEdit = null;
 $photoCaptionPost = inlinePost('photoCaption');
 $photoCreditEdit = null;
@@ -73,120 +74,131 @@ if (strlen($textPost) > 500) {
 //
 // Button: Add / Update
 //
-if (isset($_POST['addUpdate']) and isset($bylinePost)) {
+if (isset($_POST['addUpdate'])) {
     //
-    // Determine insert or update
+    // Create messages if the minimum fields are blank
     //
-    if ($_POST['existing'] == null) {
+    if (empty($headlinePost)) {
+        $message.= 'Headline is a required field. ';
+    }
+    if (empty($idSectionPost)) {
+        $message.= 'Section is a required field. Define the newspaper sections in administrative settings.';
+    }
+    if (empty($message)) {
+        //
+        // Determine insert or update
+        //
+        if ($_POST['existing'] == null) {
+            $dbh = new PDO($dbEdit);
+            $stmt = $dbh->prepare('INSERT INTO articles (headline) VALUES (?)');
+            $stmt->execute(array(null));
+            $idArticle = $dbh->lastInsertId();
+            $stmt = $dbh->prepare('UPDATE articles SET idArticle=? WHERE rowid=?');
+            $stmt->execute(array($idArticle, $idArticle));
+            $dbh = null;
+        }
+        //
+        // Store the image, if any
+        //
+        if ($_FILES['image']['size'] > 0 and $_FILES['image']['error'] == 0) {
+            $sizes = getimagesize($_FILES['image']['tmp_name']);
+            if ($sizes['mime'] == 'image/jpeg') {
+                //
+                // Variables
+                //
+                $widthOriginal = $sizes['0'];
+                $heightOriginal = $sizes['1'];
+                $aspectRatio = $widthOriginal / $heightOriginal;
+                $widthHD = 1920;
+                $heightHD = round($widthHD / $aspectRatio);
+                //
+                // Determine if the image is the primary image or a secondary image
+                //
+                $dbh = new PDO($dbEdit);
+                $stmt = $dbh->prepare('SELECT originalImageWidth FROM articles WHERE idArticle=?');
+                $stmt->setFetchMode(PDO::FETCH_ASSOC);
+                $stmt->execute(array($idArticle));
+                $row = $stmt->fetch();
+                $dbh = null;
+                if (empty($row['originalImageWidth'])) {
+                    //
+                    // Primary image
+                    //
+                    // Save the original image dimensions
+                    //
+                    $dbh = new PDO($dbEdit);
+                    $stmt = $dbh->prepare('UPDATE articles SET originalImageWidth=?, originalImageHeight=? WHERE idArticle=?');
+                    $stmt->execute(array($widthOriginal, $heightOriginal, $idArticle));
+                    $dbh = null;
+                    //
+                    // Create and save the thumbnail image
+                    //
+                    $heightThumbnail = 63 * 2; // Double pixels for retina displays
+                    $widthThumbnail = round($heightThumbnail * $aspectRatio);
+                    $thumbnail = imagecreatetruecolor($widthThumbnail, $heightThumbnail);
+                    $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
+                    imagecopyresized($thumbnail, $srcImage, 0, 0, 0, 0, $widthThumbnail, $heightThumbnail, ImageSX($srcImage), ImageSY($srcImage));
+                    ob_start();
+                    imagejpeg($thumbnail, null, 90);
+                    imagedestroy($thumbnail);
+                    $thumbnailImage = ob_get_contents();
+                    ob_end_clean();
+                    $heightThumbnail = $heightThumbnail / 2; // Display size
+                    $widthThumbnail = round($widthThumbnail / 2);
+                    $dbh = new PDO($dbEdit);
+                    $stmt = $dbh->prepare('UPDATE articles SET thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=? WHERE idArticle=?');
+                    $stmt->execute(array($thumbnailImage, $widthThumbnail, $heightThumbnail, $idArticle));
+                    $dbh = null;
+                    //
+                    // Create and save the HD image, photo credit and caption
+                    //
+                    $hd = imagecreatetruecolor($widthHD, $heightHD);
+                    $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
+                    imagecopyresized($hd, $srcImage, 0, 0, 0, 0, $widthHD, $heightHD, ImageSX($srcImage), ImageSY($srcImage));
+                    ob_start();
+                    imagejpeg($hd, null, 90);
+                    imagedestroy($hd);
+                    $hdImage = ob_get_contents();
+                    ob_end_clean();
+                    $dbh = new PDO($dbEdit);
+                    $stmt = $dbh->prepare('UPDATE articles SET photoCredit=?, photoCaption=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
+                    $stmt->execute(array($photoCreditPost, $photoCaptionPost, $hdImage, $widthHD, $heightHD, $idArticle));
+                    $dbh = null;
+                } else {
+                    //
+                    // Secondary images
+                    //
+                    // Create and save the HD image, photo credit and caption
+                    //
+                    $hd = imagecreatetruecolor($widthHD, $heightHD);
+                    $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
+                    imagecopyresized($hd, $srcImage, 0, 0, 0, 0, $widthHD, $heightHD, ImageSX($srcImage), ImageSY($srcImage));
+                    ob_start();
+                    imagejpeg($hd, null, 90);
+                    imagedestroy($hd);
+                    $hdImage = ob_get_contents();
+                    ob_end_clean();
+                    $dbh = new PDO($dbEdit2);
+                    $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?)');
+                    $stmt->execute(array($idArticle, $hdImage, $photoCreditPost, $photoCaptionPost, time()));
+                    $dbh = null;
+                }
+            } else {
+                $message = 'The uploaded file was not in the JPG format.';
+            }
+        } elseif (isset($_FILES['image']['error']) and $_FILES['image']['error'] == 1) {
+            $message = 'The uploaded image exceeds the upload_max_filesize directive in php.ini.';
+        } elseif (isset($_FILES['image']['error']) and ($_FILES['image']['error'] != 4 and $_FILES['image']['error'] != 1)) {
+            $message = 'There was an unknown error with the uploaded image.';
+        }
+        //
+        // Send the non-image information to the database
+        //
         $dbh = new PDO($dbEdit);
-        $stmt = $dbh->prepare('INSERT INTO articles (headline) VALUES (?)');
-        $stmt->execute(array(null));
-        $idArticle = $dbh->lastInsertId();
-        $stmt = $dbh->prepare('UPDATE articles SET idArticle=? WHERE rowid=?');
-        $stmt->execute(array($idArticle, $idArticle));
+        $stmt = $dbh->prepare('UPDATE articles SET userId=?, idSection=?, sortOrderArticle=?, byline=?, headline=?, standfirst=?, text=?, summary=?, photoCredit=?, photoCaption=? WHERE idArticle=?');
+        $stmt->execute(array($_SESSION['userId'], $idSectionPost, time() + 900, $bylinePost, $headlinePost, $standfirstPost, $textPost, $summaryPost, $photoCreditPost, $photoCaptionPost, $idArticle));
         $dbh = null;
     }
-    //
-    // Store the image, if any
-    //
-    if ($_FILES['image']['size'] > 0 and $_FILES['image']['error'] == 0) {
-        $sizes = getimagesize($_FILES['image']['tmp_name']);
-        if ($sizes['mime'] == 'image/jpeg') {
-            //
-            // Variables
-            //
-            $widthOriginal = $sizes['0'];
-            $heightOriginal = $sizes['1'];
-            $aspectRatio = $widthOriginal / $heightOriginal;
-            $widthHD = 1920;
-            $heightHD = round($widthHD / $aspectRatio);
-            //
-            // Determine if the image is the primary image or a secondary image
-            //
-            $dbh = new PDO($dbEdit);
-            $stmt = $dbh->prepare('SELECT originalImageWidth FROM articles WHERE idArticle=?');
-            $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $stmt->execute(array($idArticle));
-            $row = $stmt->fetch();
-            $dbh = null;
-            if (empty($row['originalImageWidth'])) {
-                //
-                // Primary image
-                //
-                // Save the original image dimensions
-                //
-                $dbh = new PDO($dbEdit);
-                $stmt = $dbh->prepare('UPDATE articles SET originalImageWidth=?, originalImageHeight=? WHERE idArticle=?');
-                $stmt->execute(array($widthOriginal, $heightOriginal, $idArticle));
-                $dbh = null;
-                //
-                // Create and save the thumbnail image
-                //
-                $heightThumbnail = 71 * 2; // Double pixels for retina displays
-                $widthThumbnail = round($heightThumbnail * $aspectRatio);
-                $thumbnail = imagecreatetruecolor($widthThumbnail, $heightThumbnail);
-                $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
-                imagecopyresized($thumbnail, $srcImage, 0, 0, 0, 0, $widthThumbnail, $heightThumbnail, ImageSX($srcImage), ImageSY($srcImage));
-                ob_start();
-                imagejpeg($thumbnail, null, 90);
-                imagedestroy($thumbnail);
-                $thumbnailImage = ob_get_contents();
-                ob_end_clean();
-                $heightThumbnail = $heightThumbnail / 2; // Display size
-                $widthThumbnail = round($widthThumbnail / 2);
-                $dbh = new PDO($dbEdit);
-                $stmt = $dbh->prepare('UPDATE articles SET thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=? WHERE idArticle=?');
-                $stmt->execute(array($thumbnailImage, $widthThumbnail, $heightThumbnail, $idArticle));
-                $dbh = null;
-                //
-                // Create and save the HD image, photo credit and caption
-                //
-                $hd = imagecreatetruecolor($widthHD, $heightHD);
-                $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
-                imagecopyresized($hd, $srcImage, 0, 0, 0, 0, $widthHD, $heightHD, ImageSX($srcImage), ImageSY($srcImage));
-                ob_start();
-                imagejpeg($hd, null, 90);
-                imagedestroy($hd);
-                $hdImage = ob_get_contents();
-                ob_end_clean();
-                $dbh = new PDO($dbEdit);
-                $stmt = $dbh->prepare('UPDATE articles SET photoCredit=?, photoCaption=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
-                $stmt->execute(array($photoCreditPost, $photoCaptionPost, $hdImage, $widthHD, $heightHD, $idArticle));
-                $dbh = null;
-            } else {
-                //
-                // Secondary images
-                //
-                // Create and save the HD image, photo credit and caption
-                //
-                $hd = imagecreatetruecolor($widthHD, $heightHD);
-                $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
-                imagecopyresized($hd, $srcImage, 0, 0, 0, 0, $widthHD, $heightHD, ImageSX($srcImage), ImageSY($srcImage));
-                ob_start();
-                imagejpeg($hd, null, 90);
-                imagedestroy($hd);
-                $hdImage = ob_get_contents();
-                ob_end_clean();
-                $dbh = new PDO($dbEdit2);
-                $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?)');
-                $stmt->execute(array($idArticle, $hdImage, $photoCreditPost, $photoCaptionPost, time()));
-                $dbh = null;
-            }
-        } else {
-            $message = 'The uploaded file was not in the JPG format.';
-        }
-    } elseif (isset($_FILES['image']['error']) and $_FILES['image']['error'] == 1) {
-        $message = 'The uploaded image exceeds the upload_max_filesize directive in php.ini.';
-    } elseif (isset($_FILES['image']['error']) and ($_FILES['image']['error'] != 4 and $_FILES['image']['error'] != 1)) {
-        $message = 'There was an unknown error with the uploaded image.';
-    }
-    //
-    // Send the non-image information to the database
-    //
-    $dbh = new PDO($dbEdit);
-    $stmt = $dbh->prepare('UPDATE articles SET userId=?, idSection=?, sortOrderArticle=?, byline=?, headline=?, standfirst=?, text=?, summary=?, photoCredit=?, photoCaption=? WHERE idArticle=?');
-    $stmt->execute(array($_SESSION['userId'], $idSectionPost, time() + 900, $bylinePost, $headlinePost, $standfirstPost, $textPost, $summaryPost, $photoCreditPost, $photoCaptionPost, $idArticle));
-    $dbh = null;
 }
 //
 // Button: Delete photos
@@ -247,7 +259,7 @@ echoIfMessage($message);
 
     <form class="wait" method="post" action="<?php echo $uri; ?>?m=article-contribution" enctype="multipart/form-data">
       <p><label for="byline">Byline</label><br />
-      <input id="byline" name="byline" type="text" class="w" required autofocus<?php echoIfValue($bylineEdit); ?> /><input type="hidden" name="idArticle" value="<?php echo $idArticleEdit; ?>"></p>
+      <input id="byline" name="byline" type="text" class="w" autofocus<?php echoIfValue($bylineEdit); ?> /><input type="hidden" name="idArticle" value="<?php echo $idArticleEdit; ?>"></p>
 
       <p><label for="idSection">Section</label><br />
       <select id="idSection" name="idSection">

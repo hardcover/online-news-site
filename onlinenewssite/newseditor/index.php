@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-09-19
+ * @version:  2016-09-21
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -37,7 +37,7 @@ require $includesPath . '/password.php';
 //
 // Variables
 //
-$installedVersion = '2016-09-19';
+$installedVersion = '2016-09-21';
 $message = null;
 $passPost = inlinePost('pass');
 $userPost = inlinePost('user');
@@ -153,13 +153,13 @@ if ($fp and isset($response)) {
 } else {
     $response = null;
 }
-if (is_null($response)) {
+if (empty($response)) {
     $versionMessage = null;
 } else {
     if ($installedVersion == $response) {
         $versionMessage = null;
     } else {
-        $versionMessage = "\n" . '  <p><a href="http://online-news-site.com/download.php" target="_blank">A newer version of Online News Site is available</a>.' . "</p>\n";
+        $versionMessage = '<a href="http://online-news-site.com/download.php" target="_blank">A new version of Online News Site is available</a>.';
     }
 }
 //
@@ -186,6 +186,6 @@ require $includesPath . '/header1.inc';
 
     <p><input type="submit" name="login" class="button" value="Log in" /></p>
   </form>
-<?php echo $versionMessage; ?>
+<?php echo "\n  <p>Version " . $installedVersion . '. ' . $versionMessage . "</p>\n"; ?>
 </body>
 </html>
