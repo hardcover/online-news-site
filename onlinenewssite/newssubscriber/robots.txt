@@ -1,0 +1,3 @@
+User-Agent: *
+Disallow: /z/
+Allow: /z/images/

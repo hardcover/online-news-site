@@ -1,0 +1,386 @@
+/**
+ * Add custom styles to a file named local.css in the same directory.
+ * Do not modify this file as it will be overwritten by software updates.
+ */
+html {
+    color: #000;
+    background: #fff;
+}
+
+body, h4, h5, h6, p, code, pre, div, form, table {
+    margin: 0;
+    padding: 0;
+}
+
+body, h1, h2, h3, h4, h5, h6, p, ol, ul, li, blockquote, code, pre, div, span, form, input, select, textarea, .button, table, caption, th {
+    font-style: normal;
+}
+
+body, h1, h3, h4, h5, h6, p, ol, ul, li, blockquote, code, pre, div, span, form, input, select, textarea, .button, table, caption, th, a.n:link {
+    font-weight: normal;
+}
+
+body, h4, h5, h6, p, ol, ul, li, blockquote, code, pre, div, span, form, input, select, textarea, .button, table, caption, th {
+    font-size: 16px;
+}
+
+h1, span.h {
+    font-size: 22px;
+}
+
+h2 {
+    font-size: 20px;
+}
+
+h3 {
+    font-size: 18px;
+}
+
+span.fr {
+    font-size: 15px;
+}
+
+caption, th {
+    font-weight: bold;
+}
+
+body, h1, h2, h3, h4, h5, h6, div, span, form, input, select, textarea, .button, caption, th, p.e {
+    font-family: Menlo, "Lucida Grande", "Segoe UI Regular", Verdana, Arial, Helvetica, clean, sans-serif;
+}
+
+p, blockquote, li, span.p {
+    font-family: Georgia, "Times New Roman", serif;
+}
+
+pre, code {
+    font-family: monospace;
+    line-height: 1em;
+}
+
+p, h1, h3, h4, h6, hr {
+    clear: left;
+}
+
+h1, h2, h3, h5, h6, span {
+    color: #777;
+}
+
+h1, h3, div.n, p.e, p.m {
+    margin: 1em 0;
+}
+
+h1#waiting {
+    position: absolute;
+    top: 0;
+    margin: 0;
+    padding: 3em 0;
+    width: 100%;
+    background: #ffc;
+}
+
+h2 {
+    margin-top: 0;
+    margin-bottom: .3em;
+}
+
+h4 {
+    padding: .2em 1em .2em 1em;
+    margin-bottom: 1em;
+}
+
+h4.m {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+h4, span.p, a.n:link, a.m:link, a.m:visited, a.m:hover, a.s:hover, a.m:focus, a.s:focus, .button:hover, .button:focus {
+    color: #000;
+}
+
+h5, h6, p, table, pre {
+    margin-bottom: 1em;
+}
+
+h6 {
+    margin-top: -1.3em;
+    margin-bottom: 1.3em;
+}
+
+h6, div.r, span.al, span.fr, span.h, span.p, img.fr, input.fr, #searchForm {
+    float: right;
+}
+
+p, li, div.n, div.t, span.fr {
+    line-height: 1.5em;
+}
+
+p.b {
+    line-height: 4em;
+}
+
+p.bw, span.bw {
+    word-wrap: break-word;
+}
+
+p.e, p.m {
+    padding: .1em 1%;
+}
+
+p.e {
+    border: 1px solid #f22;
+    background-color: #fee;
+}
+
+p.m {
+    border: 1px solid #a60;
+    background-color: #fffff7;
+}
+
+p.s {
+    height: 6em;
+    overflow: hidden;
+}
+
+blockquote, ol, ul {
+    min-width: 270px;
+}
+
+ol {
+    list-style: decimal outside;
+}
+
+ul {
+    list-style: disc outside;
+}
+
+sup {
+    vertical-align: text-top;
+}
+
+sub {
+    vertical-align: text-bottom;
+}
+
+em {
+    font-style: italic;
+}
+
+strong {
+    font-weight: bold;
+}
+
+hr {
+    border-top: 1px solid #aaa;
+    border-bottom: 0;
+    height: 0px;
+}
+
+input, select, textarea, span.fr, p.e {
+    border-radius: 5px;
+}
+
+input, select, textarea, span.fr, img.b, img.right, a.m, a.s, h4, iframe, video {
+    border: 1px solid #aaa;
+}
+
+input, select, textarea {
+    padding: 9px;
+    background: #f5f5f9;
+    background: linear-gradient(#fff, #f5f5f9);
+}
+
+input.al, select.al, textarea.al, #searchForm .search {
+    width: 5em;
+}
+
+input.h, select.h, textarea.h, span.hl {
+    width: 38%;
+}
+
+input.w, select.w, textarea.w {
+    width: 98%;
+}
+
+input.paypal {
+    margin: 0;
+    border: 0;
+    padding: 0 0 0 1%;
+    vertical-align: text-bottom;
+}
+
+div.h, div.n {
+    background: #dededf;
+}
+
+div.h {
+    background: linear-gradient(#c4d3d5, #eee);
+    padding-top: .5em;
+}
+
+div.logo, div.n {
+    clear: both;
+    margin: 0;
+}
+
+div.n {
+    padding: 1em 0;
+    background: #860003;
+    background: linear-gradient(#860003, #860003);
+    border-top: 1px solid #aaa;
+    border-bottom: 1px solid #aaa;
+}
+
+div.logo {
+    padding-top: .5em;
+}
+
+div.l {
+    width: 61.8%;
+    margin: 0 0 0 1.5%;
+    padding: 1em 1.5% 0 0;
+}
+
+div.r {
+    width: 32.2%;
+    margin: 1em 1.5% 0 0;
+    padding: 0 0 0 1.5%;
+    border-left: 1px solid #aaa;
+}
+
+span.al {
+    display: inline-block;
+}
+
+span.fr, img.fr {
+    margin: .4em 0 1em 2%;
+}
+
+span.fr, img.fr, span.h, span.p {
+    clear: right;
+}
+
+span.fr {
+    width: 34.2%;
+    background: #fafeff;
+    background: linear-gradient(#fafeff, #f0fdff);
+}
+
+span.fr {
+    padding: 2%;
+}
+
+span.h, span.p {
+    margin: 0 0 2% 2%;
+    padding-left: 5%;
+    width: 45%;
+}
+
+img {
+    border: 0;
+}
+
+img.lead, img.lead2, img.lead3, img.lead4 {
+    float: left;
+    clear: left;
+    margin: .4em 1em 1em 0;
+}
+
+img.lead {
+    width: 61.8%;
+}
+
+img.lead2 {
+    width: 38.2%;
+}
+
+img.lead3 {
+    width: 19.1%;
+}
+
+img.lead4 {
+    width: 9.55%;
+}
+
+img.logo {
+    width: 38.2%;
+}
+
+img.s {
+    width: 61.8%;
+}
+
+img.w, iframe, video {
+    width: 100%;
+}
+
+iframe, video {
+    margin-top: 1em;
+}
+
+a:active {
+    position: relative;
+    top: 1px;
+}
+
+a:link, a.n:link, a.n:visited, a.n:hover, a.n:focus, a.n:active {
+    color: #00a;
+}
+
+a:visited {
+    color: #636;
+}
+
+a.n:link, a.n:visited, a.m, a.s, h4, .button {
+    text-decoration: none;
+}
+
+a.n:active, a.n:focus, a.n:hover {
+    text-decoration: underline;
+}
+
+a.m, a.s {
+    padding-top: 9px;
+    padding-bottom: 9px;
+}
+
+a.m:link, a.m:visited, h4, .button {
+    background: #dededf;
+    background: linear-gradient(#eef2f3, #cdcdcd);
+}
+
+a.m:active, a.s:link, a.s:visited, a.s:active, .button:active {
+    background: #7cc7ff;
+    background: linear-gradient(#ffffff, #f0f0f0);
+}
+
+a.m:hover, a.s:hover, a.m:focus, a.s:focus, .button:hover {
+    background: #bababc;
+    background: linear-gradient(#c4d3d5, #a9a9a9);
+}
+
+#searchForm {
+    margin: 0 0 .5em 1em;
+}
+
+#searchForm .search {
+    margin-top: .5em;
+    background: transparent;
+}
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+p.c, caption, th, h1#waiting {
+    text-align: center;
+}
+
+caption {
+    margin-bottom: .5em;
+}
+
+th {
+    border: 1px solid #000;
+    padding: .5em;
+}

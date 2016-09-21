@@ -1,0 +1,31 @@
+/**
+ * Do not modify this file as it will be overwritten by software updates.
+ */
+body, h4, h5, h6, p, ol, ul, li, blockquote, div, span, form, input, select, textarea, table, caption, th {
+    font-size: 16px;
+}
+
+h1, span.h {
+    font-size: 22px;
+}
+
+h2 {
+    font-size: 20px;
+}
+
+h3 {
+    font-size: 18px;
+}
+
+h1, h2, h3, h4.m, h5, h6, p, ol, ul, div.h, div.n {
+    padding-right: 19.1%;
+    padding-left: 19.1%;
+}
+
+p.e, p.m, h4, hr {
+    margin: 1em 19.1%;
+}
+
+blockquote {
+    margin: 1em 21%;
+}
