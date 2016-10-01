@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-09-19
+ * @version:  2016-10-01
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -23,7 +23,7 @@
 //
 $gmtOffset = '-8';
 //
-// INPUT: Path to the includes folder, without trailing /
+// INPUT: Relative path to the includes folder, without trailing /
 //
 $includesPath = 'z/includes';
 //

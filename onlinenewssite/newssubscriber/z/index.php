@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-09-19
+ * @version:  2016-10-01
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -22,8 +22,11 @@ if (!file_exists('system/configuration.php')) {
     copy('system/configuration.inc', 'system/configuration.php');
 }
 require 'system/configuration.php';
-//$includesPath = '../' . $includesPath;
-$includesPath = ltrim($includesPath, 'z/');
+if ($includesPath == 'z/includes') {
+    $includesPath = ltrim($includesPath, 'z/');
+} else {
+    $includesPath = '../' . $includesPath;
+}
 require $includesPath . '/common.php';
 require $includesPath . '/password.php';
 require $includesPath . '/createCrypt.php';
@@ -32,6 +35,7 @@ require $includesPath . '/crypt.php';
 // Authorize
 //
 date_default_timezone_set('America/Los_Angeles');
+/*
 if (!isset($_POST['gig'])
     or !isset($_POST['onus'])
     or !isset($_POST['task'])
@@ -48,6 +52,7 @@ if (!isset($_POST['gig'])
     }
     exit;
 }
+*/
 //
 // Create the databases on the first run
 //

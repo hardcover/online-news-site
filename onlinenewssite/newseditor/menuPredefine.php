@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-09-19
+ * @version:  2016-10-01
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -44,7 +44,7 @@ $classifiedsPost = inlinePost('classifieds');
 $edit = inlinePost('edit');
 $message = null;
 //
-// Variables for predefined menu items
+// Archive search edit variable
 //
 $dbh = new PDO($dbSettings);
 $stmt = $dbh->prepare('SELECT access FROM archiveAccess WHERE idAccess=?');
@@ -57,6 +57,9 @@ if ($row) {
 } else {
     $archiveEdit = null;
 }
+//
+// Calendar edit variable
+//
 $dbh = new PDO($dbSettings);
 $stmt = $dbh->prepare('SELECT access FROM calendarAccess WHERE idCalendarAccess=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -68,6 +71,9 @@ if ($row) {
 } else {
     $calendarEdit = null;
 }
+//
+// Classified ads edit variable
+//
 $dbh = new PDO($dbMenu);
 $stmt = $dbh->prepare('SELECT idMenu FROM menu WHERE menuName=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -106,9 +112,6 @@ if (isset($_POST['updatePredefined'])) {
     $stmt->execute(array($access));
     $dbh = null;
     include $includesPath . '/syncSettings.php';
-    //
-    // Enable archive access
-    //
     $dbh = new PDO($dbMenu);
     $stmt = $dbh->prepare('DELETE FROM menu WHERE menuName = ?');
     $stmt->execute(array('Archive search'));
@@ -125,6 +128,19 @@ if (isset($_POST['updatePredefined'])) {
     //
     // Enable calendar access
     //
+    if ($calendarPost == strval('on')) {
+        $access = 1;
+        $calendarEdit = 1;
+    } else {
+        $access = null;
+        $calendarEdit = null;
+    }
+    $dbh = new PDO($dbSettings);
+    $stmt = $dbh->query('DELETE FROM calendarAccess');
+    $stmt = $dbh->prepare('INSERT INTO calendarAccess (access) VALUES (?)');
+    $stmt->execute(array($access));
+    $dbh = null;
+    include $includesPath . '/syncSettings.php';
     $dbh = new PDO($dbMenu);
     $stmt = $dbh->prepare('DELETE FROM menu WHERE menuName = ?');
     $stmt->execute(array('Calendar'));

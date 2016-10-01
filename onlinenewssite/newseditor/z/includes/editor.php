@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-09-21
+ * @version:  2016-10-01
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -208,7 +208,7 @@ if (isset($_POST['addUpdate'])) {
                     //
                     // Create and save the thumbnail image
                     //
-                    $heightThumbnail = 63 * 2; // Double pixels for 4K displays
+                    $heightThumbnail = 84 * 2; // Double pixels for 4K displays
                     $widthThumbnail = round($heightThumbnail * $aspectRatio);
                     $thumbnail = imagecreatetruecolor($widthThumbnail, $heightThumbnail);
                     $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);

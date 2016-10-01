@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-09-19
+ * @version:  2016-10-01
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -278,7 +278,7 @@ $dbh = null;
     <p><label for="menuSortOrder">Sort order</label><br />
     <input id="menuSortOrder" name="menuSortOrder" type="text" class="h"<?php echoIfValue($menuSortOrderEdit); ?> /><input name="idMenu" type="hidden" <?php echoIfValue($idMenuEdit); ?> /></p>
 
-    <p><label for="menuContent">Page content is entered in either HTML or the <a href="markdown.html" target="_blank">markdown syntax</a>. Enter iframe and video tags inside paragraph tags, for example, &lt;p&gt;&lt;iframe height="315"&gt;&lt;/iframe&gt;&lt;/p&gt;.</label><br />
+    <p><label for="menuContent">Page content is entered as <a href="markdown.html" target="_blank">markdown syntax</a>, HTML or a custom program. Enter iframe and video tags inside paragraph tags, for example, &lt;p&gt;&lt;iframe height="315"&gt;&lt;/iframe&gt;&lt;/p&gt;. Locate custom programs in the news subscriber directory includes/custom/programs. Reference them here with the word "require" and the name of the program in the page content field without quotes or punctuation, for example: require contact-form.php</label><br />
     <span class="hl"><textarea id="menuContent" name="menuContent" class="h" rows="8"><?php echoIfText($menuContentEdit); ?></textarea></span></p>
 
     <p class="b"><input type="submit" value="Add / update" name="addUpdate" class="button" /><br />
