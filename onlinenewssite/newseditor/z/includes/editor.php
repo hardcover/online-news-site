@@ -305,11 +305,12 @@ if (isset($_POST['addUpdate'])) {
         // Update sitemap.xml
         //
         if (empty($_POST['existing']) and $use == 'published') {
-            $request = null;
+            $request = array();
+            $request['task'] = 'sitemap';
             $response = null;
             foreach ($remotes as $remote) {
                 extract($row);
-                $request['task'] = 'sitemap';
+                $response = soa($remote . 'z/', $request);
             }
         }
     }

@@ -301,17 +301,6 @@ if (isset($_POST['addUpdate'])) {
             include $includesPath . '/sortPublished.php';
             include $includesPath . '/syncArticles.php';
         }
-        //
-        // Update sitemap.xml
-        //
-        if (empty($_POST['existing']) and $use == 'published') {
-            $request = null;
-            $response = null;
-            foreach ($remotes as $remote) {
-                extract($row);
-                $request['task'] = 'sitemap';
-            }
-        }
     }
 }
 //

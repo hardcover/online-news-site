@@ -35,7 +35,6 @@ require $includesPath . '/crypt.php';
 // Authorize
 //
 date_default_timezone_set('America/Los_Angeles');
-/*
 if (!isset($_POST['gig'])
     or !isset($_POST['onus'])
     or !isset($_POST['task'])
@@ -52,7 +51,6 @@ if (!isset($_POST['gig'])
     }
     exit;
 }
-*/
 //
 // Create the databases on the first run
 //

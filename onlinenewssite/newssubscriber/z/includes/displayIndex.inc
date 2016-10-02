@@ -41,7 +41,7 @@ if (isset($_GET['a'])) {
             // Omit the first section divider for subscribers
             //
             if ($sortOrderSection == 1 and is_null($editorView)) {
-                // Do nothing $html.= '    <p><br /></p>' . "\n\n";
+                // Do nothing
             } else {
                 $html.= "\n" . '    <h4>' . $section . "</h4>\n\n";
             }
