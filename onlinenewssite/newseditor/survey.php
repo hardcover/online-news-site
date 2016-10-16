@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-01
+ * @version:  2016-10-16
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -68,6 +68,12 @@ $publicationDatePost = inlinePost('publicationDate');
 $questionEdit = null;
 $questionPost = inlinePost('question');
 //
+if ($publicationDatePost === $today) {
+    $publicationTimePost = time();
+} else {
+    $publicationTimePost = strtotime($publicationDatePost);
+}
+//
 $remotes = array();
 $dbh = new PDO($dbRemote);
 $stmt = $dbh->query('SELECT remote FROM remotes');
@@ -114,8 +120,8 @@ if (isset($_POST['update'])) {
     $stmt->execute(array($idArticleEdit));
     $row = $stmt->fetch();
     if ($row) {
-        $stmt = $dbh->prepare('UPDATE articles SET headline=?, publicationDate=?, endDate=?, survey=?, idSection=? WHERE idArticle=?');
-        $stmt->execute(array($questionPost, $publicationDatePost, $endDatePost, 1, $idSectionPost, $idArticleEdit));
+        $stmt = $dbh->prepare('UPDATE articles SET headline=?, publicationDate=?, publicationTime=?, endDate=?, survey=?, idSection=? WHERE idArticle=?');
+        $stmt->execute(array($questionPost, $publicationDatePost, $publicationTimePost, $endDatePost, 1, $idSectionPost, $idArticleEdit));
     }
     $dbh = null;
     $dbh = new PDO($dbPublished);
@@ -126,8 +132,8 @@ if (isset($_POST['update'])) {
     $dbh = null;
     if ($row) {
         $dbh = new PDO($dbPublished);
-        $stmt = $dbh->prepare('UPDATE articles SET headline=?, publicationDate=?, endDate=?, survey=?, idSection=? WHERE idArticle=?');
-        $stmt->execute(array($questionPost, $publicationDatePost, $endDatePost, 1, $idSectionPost, $idArticleEdit));
+        $stmt = $dbh->prepare('UPDATE articles SET headline=?, publicationDate=?, publicationTime=?, endDate=?, survey=?, idSection=? WHERE idArticle=?');
+        $stmt->execute(array($questionPost, $publicationDatePost, $publicationTimePost, $endDatePost, 1, $idSectionPost, $idArticleEdit));
         $dbh = null;
         //
         // For published surveys, update the survey title on the remote sites
@@ -206,6 +212,9 @@ if (isset($_POST['update'])) {
         }
     }
 }
+//
+// Set the edit variables
+//
 $dbh = new PDO($dbEdit);
 $stmt = $dbh->prepare('SELECT publicationDate, endDate, headline, idSection FROM articles WHERE idArticle=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -332,7 +341,6 @@ if (isset($_POST['reset'])) {
     header('Location: ' . $uri . 'survey.php');
     exit;
 }
-
 //
 // HTML
 //

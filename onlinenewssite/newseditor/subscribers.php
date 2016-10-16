@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-01
+ * @version:  2016-10-16
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -83,7 +83,7 @@ $dbh = null;
 //
 if (isset($_POST['addUpdate'])) {
     //
-    // Determine insert or update, check for unique e-mail address
+    // Determine insert or update, check for unique email address
     //
     if ($_POST['existing'] == null) {
         $dbh = new PDO($dbSubscribers);
@@ -130,7 +130,7 @@ if (isset($_POST['addUpdate'])) {
         //
         include $includesPath . '/syncSubscribers.php';
     } else {
-        $message = 'No e-mail address was input.';
+        $message = 'No email address was input.';
     }
 }
 //
@@ -161,10 +161,10 @@ if (isset($_POST['delete'])) {
                 $response = soa($remote . 'z/', $request);
             }
         } else {
-            $message = 'The e-mail address was not found.';
+            $message = 'The email address was not found.';
         }
     } else {
-        $message = 'No e-mail address was input.';
+        $message = 'No email address was input.';
     }
 }
 //
@@ -293,9 +293,9 @@ $dbh = null;
   <form class="wait" action="<?php echo $uri; ?>subscribers.php" method="post">
     <h1>Add, update and delete users</h1>
 
-    <p>Email and password are required for add. Password is not required for an update unless the password is changing. The e-mail address only is required for delete and to update the e-mail address. E-mail addresses must be unique.</p>
+    <p>Email and password are required for add. Password is not required for an update unless the password is changing. The email address only is required for delete and to update the email address. Email addresses must be unique.</p>
 
-    <p><label for="email">E-mail</label><br />
+    <p><label for="email">Email</label><br />
     <input id="email" name="email" type="text" class="h" required<?php echoIfValue($emailEdit); ?> /><input name="idUser" type="hidden" <?php echoIfValue($idUserEdit); ?> /></p>
 
     <p><label for="pass">Password</label><br />

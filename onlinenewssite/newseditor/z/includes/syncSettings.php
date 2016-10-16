@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-01
+ * @version:  2016-10-16
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -50,6 +50,16 @@ if ($row) {
     $request['calendarAccess'] = json_encode($row);
 }
 //
+// Update email alert for classifieds
+//
+$dbh = new PDO($dbSettings);
+$stmt = $dbh->query('SELECT idClassified, emailClassified FROM alertClassified');
+$stmt->setFetchMode(PDO::FETCH_NUM);
+$row = $stmt->fetch();
+if ($row) {
+    $request['alertClassified'] = json_encode($row);
+}
+//
 // Update newspaper name
 //
 $stmt = $dbh->query('SELECT idName, name, description FROM names');
@@ -57,6 +67,15 @@ $stmt->setFetchMode(PDO::FETCH_NUM);
 $row = $stmt->fetch();
 if ($row) {
     $request['name'] = json_encode($row);
+}
+//
+// Update registration information
+//
+$stmt = $dbh->query('SELECT idRegistration, information FROM registration');
+$stmt->setFetchMode(PDO::FETCH_NUM);
+$row = $stmt->fetch();
+if ($row) {
+    $request['information'] = json_encode($row);
 }
 //
 // Update newpaper sections

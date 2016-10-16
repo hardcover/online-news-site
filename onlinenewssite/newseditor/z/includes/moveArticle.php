@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-01
+ * @version:  2016-10-16
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -49,7 +49,7 @@ if ($dbFrom == $dbEdit) {
 // Move the non-image information
 //
 $dbh = new PDO($dbFrom);
-$stmt = $dbh->prepare('SELECT publicationDate, endDate, survey, idSection, sortOrderArticle, byline, headline, standfirst, text, summary, photoCredit, photoCaption FROM articles WHERE idArticle=?');
+$stmt = $dbh->prepare('SELECT publicationDate, publicationTime, endDate, survey, genre, keywords, idSection, sortOrderArticle, byline, headline, standfirst, text, summary, photoCredit, photoCaption FROM articles WHERE idArticle=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute(array($idArticle));
 $row = $stmt->fetch();
@@ -76,6 +76,30 @@ if ($dbFrom == $dbPublished) {
         $stmt->execute(array($idArticle, $idArticle));
         $dbh = null;
     }
+    //
+    // When moving surveys to the archive, copy the votes to the local survey database
+    //
+    if ($survey === strval(1)) {
+        $request = null;
+        $response = null;
+        $request['task'] = 'surveyVotesDownload';
+        $request['idArticle'] = $idArticle;
+        foreach ($remotes as $remote) {
+            $response = soa($remote . 'z/', $request);
+        }
+        if ($response['result'] === 'success') {
+            $remoteVotes = json_decode($response['remoteVotes'], true);
+            $dbh = new PDO($dbSurvey);
+            $dbh->beginTransaction();
+            foreach ($remoteVotes as $remoteVote) {
+                $remoteVote = json_decode($remoteVote, true);
+                $stmt = $dbh->prepare('INSERT INTO tally (idTally, idArticle, idAnswer, ipAddress) VALUES (?, ?, ?, ?)');
+                $stmt->execute($remoteVote);
+            }
+            $dbh->commit();
+            $dbh = null;
+        }
+    }
 } else {
     //
     // Whatevs for other article databases
@@ -94,8 +118,8 @@ if ($dbFrom == $dbPublished) {
     }
 }
 $dbh = new PDO($dbTo);
-$stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, endDate=?, survey=?, idSection=?, byline=?, headline=?, standfirst=?, text=?, summary=?, photoCredit=?, photoCaption=? WHERE idArticle=?');
-$stmt->execute(array($publicationDate, $endDate, $survey, $idSection, $byline, $headline, $standfirst, $text, $summary, $photoCredit, $photoCaption, $idArticle));
+$stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, publicationTime=?, endDate=?, survey=?, genre=?, keywords=?, idSection=?, byline=?, headline=?, standfirst=?, text=?, summary=?, photoCredit=?, photoCaption=? WHERE idArticle=?');
+$stmt->execute(array($publicationDate, $publicationTime, $endDate, $survey, $genre, $keywords, $idSection, $byline, $headline, $standfirst, $text, $summary, $photoCredit, $photoCaption, $idArticle));
 $dbh = null;
 if ($dbFrom != $dbArchive) {
     $request = null;
@@ -104,8 +128,11 @@ if ($dbFrom != $dbArchive) {
     $request['archive'] = $archive;
     $request['idArticle'] = $idArticle;
     $request['publicationDate'] = $publicationDate;
+    $request['publicationTime'] = $publicationTime;
     $request['endDate'] = $endDate;
     $request['survey'] = $survey;
+    $request['genre'] = $genre;
+    $request['keywords'] = $keywords;
     $request['idSection'] = $idSection;
     $request['sortOrderArticle'] = $sortOrderArticle;
     $request['byline'] = $byline;
@@ -220,14 +247,14 @@ if ($row['thumbnailImageWidth'] != null) {
 // Verify the move on the main system before deleting the From article
 //
 $dbh = new PDO($dbFrom);
-$stmt = $dbh->prepare('SELECT publicationDate, endDate, survey, idSection, byline, headline, text FROM articles WHERE idArticle=?');
+$stmt = $dbh->prepare('SELECT publicationDate, publicationTime, endDate, survey, genre, keywords, idSection, byline, headline, text FROM articles WHERE idArticle=?');
 $stmt->setFetchMode(PDO::FETCH_NUM);
 $stmt->execute(array($idArticle));
 $row = $stmt->fetch();
 $dbh = null;
 $from = $row;
 $dbh = new PDO($dbTo);
-$stmt = $dbh->prepare('SELECT publicationDate, endDate, survey, idSection, byline, headline, text FROM articles WHERE idArticle=?');
+$stmt = $dbh->prepare('SELECT publicationDate, publicationTime, endDate, survey, genre, keywords, idSection, byline, headline, text FROM articles WHERE idArticle=?');
 $stmt->setFetchMode(PDO::FETCH_NUM);
 $stmt->execute(array($idArticle));
 $row = $stmt->fetch();

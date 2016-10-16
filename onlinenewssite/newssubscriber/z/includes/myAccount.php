@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-01
+ * @version:  2016-10-16
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -95,7 +95,7 @@ echoIfMessage($message);
 echo '    <h1>Manage my account</h1>' . "\n\n";
 echo '    <p>' . $payStatusEdit . "</p>\n\n";
 echo '    <form method="post" action="' . $uri . '?m=my-account">' . "\n";
-echo '      <p><label for="email">E-mail</label><br />' . "\n";
+echo '      <p><label for="email">Email</label><br />' . "\n";
 echo '      <input id="email" name="email" type="email" class="w"' . $emailEdit . ' /></p>' . "\n\n";
 echo "      <p><label>\n";
 echo '        <input type="checkbox" name="emailNews" value="1"' . $emailNewsEdit . ' /> Also email the news to the email address above' . "\n";

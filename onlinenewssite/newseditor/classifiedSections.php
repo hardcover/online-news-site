@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-01
+ * @version:  2016-10-16
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -69,7 +69,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
     //
     if (isset($_POST['addUpdate'])) {
         //
-        // Determine insert or update, check for unique e-mail address
+        // Determine insert or update, check for unique email address
         //
         if ($_POST['existing'] == null) {
             if ($parentSectionPost == 0) {

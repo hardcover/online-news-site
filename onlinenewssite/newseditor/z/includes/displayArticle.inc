@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-01
+ * @version:  2016-10-16
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -95,17 +95,19 @@ if ($row['idArticle']) {
     } elseif (isset($photoCredit)) {
         $html.= '  <h6 class="r">' . $photoCredit . "</h6>\n\n";
     }
-    $html.= '  <h5>';
-    if (isset($byline)) {
+    if (!empty($byline) or !empty($bylineDateTime)) {
+        $html.= '  <h5>';
+    }
+    if (!empty($byline)) {
         $html.= 'By ' . $byline;
     }
-    if (isset($byline) and isset($bylineDateTime)) {
+    if (!empty($byline) and !empty($bylineDateTime)) {
         $html.= ', ';
     }
-    if (isset($bylineDateTime)) {
+    if (!empty($bylineDateTime)) {
         $html.= html($bylineDateTime);
     }
-    if (isset($byline) or isset($bylineDateTime)) {
+    if (!empty($byline) or !empty($bylineDateTime)) {
         $html.= "</h5>\n\n";
     }
     $html.= Parsedown::instance()->parse($text);
@@ -119,6 +121,9 @@ if ($row['idArticle']) {
         $stmt->execute(array($aGet));
         $row = $stmt->fetch();
         $total = $row['count(idArticle)'];
+        if ($total == 0) {
+            $total = 1;
+        }
         $stmt = $dbh->prepare('SELECT idAnswer, answer FROM answers WHERE idArticle=? ORDER BY sortOrder');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute(array($aGet));

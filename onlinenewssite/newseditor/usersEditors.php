@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-01
+ * @version:  2016-10-16
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -227,7 +227,7 @@ $dbh = null;
     <p><label for="pass">Password</label><br />
     <input id="pass" name="pass" type="text" class="h" /></p>
 
-    <p><label for="email">E-mail (optional, for display on the public site)</label><br />
+    <p><label for="email">Email (optional, for display on the public site)</label><br />
     <input id="email" name="email" type="email" class="h"<?php echoIfValue($emailEdit); ?> /></p>
 
     <p class="b"><input type="submit" class="button" value="Add / update" name="addUpdate" /><br />

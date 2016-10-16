@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-01
+ * @version:  2016-10-16
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -41,13 +41,11 @@ if (!isset($_POST['gig'])
     or (strval(base64_decode($_POST['gig'])) !== strval(date($gig)))
     or (!password_verify(base64_decode($_POST['onus']), $hash))
 ) {
-    if (substr(phpversion(), 0, 3) != '5.2') {
-        header_remove();
-    }
-    if (substr(phpversion(), 0, 3) != '5.2' and substr(phpversion(), 0, 3) != '5.3') {
-        http_response_code(404);
-    } else {
+    header_remove();
+    if (substr(phpversion(), 0, 3) < '5.4') {
         header(' ', true, 404);
+    } else {
+        http_response_code(404);
     }
     exit;
 }
@@ -238,8 +236,8 @@ if ($task == 'updateInsert1') {
     $stmt->execute(array($idArticle));
     $row = $stmt->fetch();
     if ($row) {
-        $stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, endDate=?, survey=?, idSection=?, sortOrderArticle=?, byline=?, headline=?, standfirst=?, text=?, summary=?, photoCredit=?, photoCaption=?, originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE ' . $column . '=?');
-        $stmt->execute(array(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $idArticle));
+        $stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, publicationTime=?, endDate=?, survey=?, genre=?, keywords=?, idSection=?, sortOrderArticle=?, byline=?, headline=?, standfirst=?, text=?, summary=?, photoCredit=?, photoCaption=?, originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE ' . $column . '=?');
+        $stmt->execute(array(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $idArticle));
     } else {
         if ($column == 'idArticle') {
             $stmt = $dbh->prepare('INSERT INTO articles (idArticle) VALUES (?)');
@@ -249,8 +247,8 @@ if ($task == 'updateInsert1') {
             $stmt->execute(array($idArticle, $idArticle));
         }
     }
-    $stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, endDate=?, survey=?, idSection=?, sortOrderArticle=?, byline=?, headline=?, standfirst=?, text=?, summary=?, photoCredit=?, photoCaption=? WHERE ' . $column . '=?');
-    $stmt->execute(array($publicationDate, $endDate, $survey, $idSection, $sortOrderArticle, $byline, $headline, $standfirst, $text, $summary, $photoCredit, $photoCaption, $idArticle));
+    $stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, publicationTime=?, endDate=?, survey=?, genre=?, keywords=?, idSection=?, sortOrderArticle=?, byline=?, headline=?, standfirst=?, text=?, summary=?, photoCredit=?, photoCaption=? WHERE ' . $column . '=?');
+    $stmt->execute(array($publicationDate, $publicationTime, $endDate, $survey, $genre, $keywords, $idSection, $sortOrderArticle, $byline, $headline, $standfirst, $text, $summary, $photoCredit, $photoCaption, $idArticle));
     $dbh = null;
     $response['result'] = 'success';
 }
@@ -601,10 +599,20 @@ if ($task == 'menuSync') {
 // Settings
 //
 if ($task == 'settingsUpdate') {
+    $alertClassified = isset($alertClassified) ? json_decode($alertClassified, true) : null;
     $archiveAccess = isset($archiveAccess) ? json_decode($archiveAccess, true) : null;
     $calendarAccess = isset($calendarAccess) ? json_decode($calendarAccess, true) : null;
+    $information = isset($information) ? json_decode($information, true) : null;
     $name = isset($name) ? json_decode($name, true) : null;
     $sortOrder = isset($sortOrder) ? json_decode($sortOrder, true) : null;
+    //
+    $dbh = new PDO($dbSettings);
+    $stmt = $dbh->query('DELETE from alertClassified');
+    if (is_array($alertClassified)) {
+        $stmt = $dbh->prepare('INSERT INTO alertClassified (idClassified, emailClassified) VALUES (?, ?)');
+        $stmt->execute($alertClassified);
+    }
+    $dbh = null;
     //
     $dbh = new PDO($dbSettings);
     $stmt = $dbh->query('DELETE from archiveAccess');
@@ -612,6 +620,7 @@ if ($task == 'settingsUpdate') {
         $stmt = $dbh->prepare('INSERT INTO archiveAccess (idAccess, access) VALUES (?, ?)');
         $stmt->execute($archiveAccess);
     }
+    $dbh = null;
     //
     $dbh = new PDO($dbSettings);
     $stmt = $dbh->query('DELETE from calendarAccess');
@@ -619,13 +628,25 @@ if ($task == 'settingsUpdate') {
         $stmt = $dbh->prepare('INSERT INTO calendarAccess (idCalendarAccess, access) VALUES (?, ?)');
         $stmt->execute($calendarAccess);
     }
+    $dbh = null;
     //
+    $dbh = new PDO($dbSettings);
     $stmt = $dbh->query('DELETE from names');
     if (is_array($name)) {
         $stmt = $dbh->prepare('INSERT INTO names (idName, name, description) VALUES (?, ?, ?)');
         $stmt->execute($name);
     }
+    $dbh = null;
     //
+    $dbh = new PDO($dbSettings);
+    $stmt = $dbh->query('DELETE from registration');
+    if (is_array($information)) {
+        $stmt = $dbh->prepare('INSERT INTO registration (idRegistration, information) VALUES (?, ?)');
+        $stmt->execute($information);
+    }
+    $dbh = null;
+    //
+    $dbh = new PDO($dbSettings);
     $stmt = $dbh->query('DELETE from sections');
     if (is_array($sortOrder)) {
         $dbh->beginTransaction();
@@ -676,9 +697,21 @@ if ($task == 'dbTest') {
     $response['result'] = 'success';
 }
 //
-// sitemap.xml
+// sitemap.xml, sitemap-news.xml, rss.xml
 //
 if ($task == 'sitemap') {
+    //
+    // Also write a sitemap-news.xml file when the custom program exists
+    //
+    if (file_exists($includesPath . '/custom/programs/sitemapNews.php')) {
+        include $includesPath . '/custom/programs/sitemapNews.php';
+    }
+    //
+    // Also write an rss.xml file when the custom program exists
+    //
+    if (file_exists($includesPath . '/custom/programs/rss.php')) {
+        include $includesPath . '/custom/programs/rss.php';
+    }
     /**
      * Function to write a <url><loc> line </loc></url> to the sitemap.xml file
      *
@@ -690,7 +723,7 @@ if ($task == 'sitemap') {
     function urlLoc($uri, $page)
     {
         global $fp;
-        $h = preg_replace('/\%/', ' percentage', $page['1']);
+        $h = preg_replace('/\%/', ' percentage', $page['2']);
         $h = preg_replace('/\@/', ' at ', $h);
         $h = preg_replace('/\&/', ' and ', $h);
         $h = preg_replace('/\s[\s]+/', '-', $h);
@@ -698,7 +731,7 @@ if ($task == 'sitemap') {
         $h = preg_replace('/^[\-]+/', '', $h);
         $h = preg_replace('/[\-]+$/', '', $h);
         $headline = strtolower($h);
-        fwrite($fp, utf8_encode('  <url><loc>' . $uri . '?a=' . $page['0'] . '+' . $headline . '</loc></url>' . "\n"));
+        fwrite($fp, utf8_encode('  <url><loc>' . $uri . '?a=' . $page['0'] . '+' . $headline . '</loc><lastmod>' . $page[1] . '</lastmod></url>' . "\n"));
     }
     //
     // Variables
@@ -720,7 +753,6 @@ if ($task == 'sitemap') {
         //
         $numOfSiteMaps = intval(($row['0'] + 25000) / 49996);
         $fp = fopen('../sitemap_index.xml', 'w');
-        fwrite($fp, pack("CCC", 0xef, 0xbb, 0xbf));
         fwrite($fp, utf8_encode('<?xml version="1.0" encoding="UTF-8"?>' . "\n"));
         fwrite($fp, utf8_encode('<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n"));
         $mapCount = null;
@@ -738,7 +770,7 @@ if ($task == 'sitemap') {
         fwrite($fp, utf8_encode('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n"));
         fwrite($fp, utf8_encode('  <url><loc>' . $uri . '</loc><priority>1.0</priority></url>' . "\n"));
         $dbh = new PDO($dbPublished);
-        $stmt = $dbh->query('SELECT idArticle, headline FROM articles ORDER BY idArticle DESC');
+        $stmt = $dbh->query('SELECT idArticle, publicationDate, headline FROM articles ORDER BY publicationDate DESC, idArticle DESC');
         $stmt->setFetchMode(PDO::FETCH_NUM);
         foreach ($stmt as $row) {
             $lineCount++;
@@ -746,7 +778,7 @@ if ($task == 'sitemap') {
         }
         $dbh = null;
         $dbh = new PDO($dbArchive);
-        $stmt = $dbh->query('SELECT idArticle, headline FROM articles WHERE headline IS NOT NULL ORDER BY rowid DESC');
+        $stmt = $dbh->query('SELECT idArticle, publicationDate, headline FROM articles WHERE headline IS NOT NULL ORDER BY publicationDate DESC, rowid DESC');
         $stmt->setFetchMode(PDO::FETCH_NUM);
         foreach ($stmt as $row) {
             $lineCount++;
@@ -769,20 +801,19 @@ if ($task == 'sitemap') {
         //
         // Write when there is only one sitemap
         //
-        echo '<pre>';
         $fp = fopen('../sitemap.xml', 'w');
         fwrite($fp, utf8_encode('<?xml version="1.0" encoding="UTF-8"?>' . "\n"));
         fwrite($fp, utf8_encode('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n"));
         fwrite($fp, utf8_encode('  <url><loc>' . $uri . '</loc></url>' . "\n"));
         $dbh = new PDO($dbPublished);
-        $stmt = $dbh->query('SELECT idArticle, headline FROM articles ORDER BY idArticle DESC');
+        $stmt = $dbh->query('SELECT idArticle, publicationDate, headline FROM articles ORDER BY publicationDate DESC, idArticle DESC');
         $stmt->setFetchMode(PDO::FETCH_NUM);
         foreach ($stmt as $row) {
             urlLoc($uri, $row);
         }
         $dbh = null;
         $dbh = new PDO($dbArchive);
-        $stmt = $dbh->query('SELECT idArticle, headline FROM articles WHERE headline IS NOT NULL ORDER BY rowid DESC');
+        $stmt = $dbh->query('SELECT idArticle, publicationDate, headline FROM articles WHERE headline IS NOT NULL ORDER BY publicationDate DESC, rowid DESC');
         $stmt->setFetchMode(PDO::FETCH_NUM);
         foreach ($stmt as $row) {
             urlLoc($uri, $row);
@@ -965,6 +996,19 @@ if ($task == 'surveyUpdate') {
     $dbh = null;
     $response['result'] = 'success';
 }
+if ($task == 'surveyVotesDownload') {
+    $votes = array();
+    $dbh = new PDO($dbSurvey);
+    $stmt = $dbh->prepare('SELECT * FROM tally WHERE idArticle=?');
+    $stmt->setFetchMode(PDO::FETCH_NUM);
+    $stmt->execute(array($idArticle));
+    foreach ($stmt as $row) {
+        $votes[] = json_encode($row);
+    }
+    $dbh = null;
+    $response['remoteVotes'] = json_encode($votes);
+    $response['result'] = 'success';
+}
 //
 // Test
 //
@@ -1025,6 +1069,7 @@ if (($task == 'adDelete'
     or $task == 'subscribersUpload'
     or $task == 'surveySync'
     or $task == 'surveyUpdate'
+    or $task == 'surveyVotesDownload'
     or $task == 'test'
     or $task == 'updateInsert1'
     or $task == 'updateInsert2'

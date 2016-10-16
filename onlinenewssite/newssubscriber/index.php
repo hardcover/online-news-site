@@ -10,14 +10,14 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-01
+ * @version:  2016-10-16
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
  */
 @session_start();
 //
-// Check for existing custom files, create if not found
+// Check for existing configuration file and logo, create if not found
 //
 if (!file_exists('z/system/configuration.php')) {
     copy('z/system/configuration.inc', 'z/system/configuration.php');
@@ -25,13 +25,16 @@ if (!file_exists('z/system/configuration.php')) {
 if (!file_exists('images/logo.png')) {
     copy('images/evaluation.logo.png', 'images/logo.png');
 }
+//
+// Requires
+//
 require 'z/system/configuration.php';
+require $includesPath . '/common.php';
 require $includesPath . '/parsedown-master/Parsedown.php';
 $uri = $uriScheme . '://' . $_SERVER["HTTP_HOST"] . rtrim(dirname($_SERVER['PHP_SELF']), "/\\") . '/';
 //
 // Create the databases on the first run
 //
-require $includesPath . '/common.php';
 require $includesPath . '/createSubscriber1.php';
 require $includesPath . '/createSubscriber2.php';
 require $includesPath . '/createCrypt.php';
@@ -47,7 +50,7 @@ $imagePath = 'images.php';
 $indexPath = '';
 $use = 'news';
 //
-// Articles
+// Article variable
 //
 if (isset($_GET['a'])) {
     $aGet = secure($_GET['a']);
@@ -56,15 +59,15 @@ if (isset($_GET['a'])) {
     $aGet = null;
 }
 //
-// Menu items
-///
+// Menu variable
+//
 if (isset($_GET['m'])) {
     $mGet = secure($_GET['m']);
 } else {
     $mGet = null;
 }
 //
-// Tasks like login
+// Task variable
 //
 if (isset($_GET['t'])) {
     $tGet = secure($_GET['t']);
@@ -72,7 +75,7 @@ if (isset($_GET['t'])) {
     $tGet = null;
 }
 //
-// Verification of registration
+// Verification of registration variable
 //
 if (isset($_GET['v'])) {
     $vGet = secure($_GET['v']);
@@ -97,11 +100,43 @@ if ($row) {
 }
 //
 $loginButtons= '    <form method="post" action="post.php">
-      <span class="al"><input name="email" type="email" class="al" placeholder="E-mail" /> <input name="pass" type="password" class="al" placeholder="Password" /> <input name="login" type="submit" class="button" value="Log in" /> <input name="register" type="submit" class="button" value="Register" />&nbsp;</span>
+      <span class="al"><input name="email" type="email" class="al" placeholder="Email" /> <input name="pass" type="password" class="al" placeholder="Password" /> <input name="login" type="submit" class="button" value="Log in" /> <input name="register" type="submit" class="button" value="Register" />&nbsp;</span>
     </form>' . "\n\n";
 $logoutButtons= '    <form method="post" action="logout.php">
       <span class="al"><input type="submit" class="button" name="login" value="Log out" />&nbsp;</span>
     </form>' . "\n\n";
+//
+// Optional classifieds email alert, check for classified ads ready for review
+//
+$dbh = new PDO($dbSettings);
+$stmt = $dbh->query('SELECT emailClassified FROM alertClassified');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+$row = $stmt->fetch();
+$dbh = null;
+if ($row) {
+    $dbh = new PDO($dbClassifiedsNew);
+    $stmt = $dbh->prepare('SELECT review FROM ads WHERE review >= ? AND payment != ?');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $stmt->execute(array(time() + (15 * 60), 1));
+    $row = $stmt->fetch();
+    $dbh = null;
+    if ($row) {
+        $to = $emailClassified;
+        $subject = "Classified ad requires review\r\n";
+        $body = "\r\n";
+        $headers = 'From: noreply@' . $_SERVER["HTTP_HOST"] . "\r\n";
+        $headers.= 'MIME-Version: 1.0' . "\r\n";
+        $headers.= 'Content-Type: text/plain; charset=utf-8; format=flowed' . "\r\n";
+        $headers.= 'Content-Transfer-Encoding: 7bit' . "\r\n";
+        $result = mail($to, $subject, $body, $headers);
+        if ($result == true) {
+            $dbh = new PDO($dbClassifiedsNew);
+            $stmt = $dbh->prepare('UPDATE ads SET payment=? WHERE review >= ?');
+            $stmt->execute(array(1, time() + (15 * 60)));
+            $dbh = null;
+        }
+    }
+}
 //
 // Delete expired registrations and password change requests
 //
@@ -129,7 +164,7 @@ if (isset($tGet) and $tGet == 'l' and isset($vGet)) {
         $dbh = new PDO($dbSubscribersNew);
         $stmt = $dbh->prepare('UPDATE users SET verify=?, verified=? WHERE verify=?');
         $stmt->execute(array(null, 1, $vGet));
-        $_SESSION['message'] = 'The e-mail address is confirmed. Log in to submit classified ads, subscribe to the news, etc. Visit <a class="n" href="' . $uri . '?m=my-account">My account</a> after logging in to set your account preferences.';
+        $_SESSION['message'] = 'The email address is confirmed. Log in to submit classified ads, subscribe to the news, etc. Visit <a class="n" href="' . $uri . '?m=my-account">My account</a> after logging in to set your account preferences.';
         $dbh = null;
     }
 }

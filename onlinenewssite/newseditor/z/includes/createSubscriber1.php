@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-01
+ * @version:  2016-10-16
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -25,7 +25,7 @@ $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "advertisements" ("idAd" INTEGER
 $dbh = null;
 //
 $dbh = new PDO($dbArchive);
-$stmt = $dbh->query('CREATE VIRTUAL TABLE IF NOT EXISTS "articles" USING fts4 ("idArticle", "publicationDate", "endDate", "survey", "idSection", "sortOrderArticle", "sortPriority", "byline", "headline", "standfirst", "text", "summary", "photoCredit", "photoCaption", "originalImageWidth", "originalImageHeight", "thumbnailImage", "thumbnailImageWidth", "thumbnailImageHeight", "hdImage", "hdImageWidth", "hdImageHeight")');
+$stmt = $dbh->query('CREATE VIRTUAL TABLE IF NOT EXISTS "articles" USING fts4 ("idArticle", "publicationDate", "publicationTime" INTEGER, "endDate", "survey", "genre", "keywords", "idSection", "sortOrderArticle", "sortPriority", "byline", "headline", "standfirst", "text", "summary", "evolve", "expand", "extend", "photoCredit", "photoCaption", "originalImageWidth", "originalImageHeight", "thumbnailImage", "thumbnailImageWidth", "thumbnailImageHeight", "hdImage", "hdImageWidth", "hdImageHeight")');
 $dbh = null;
 //
 $dbh = new PDO($dbArchive2);
@@ -74,7 +74,7 @@ $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "ads" ("idAd" INTEGER PRIMARY KE
 $dbh = null;
 //
 $dbh = new PDO($dbEdit);
-$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "articles" ("idArticle" INTEGER, "userId" INTEGER, "publicationDate", "endDate", "survey" INTEGER, "idSection" INTEGER, "sortOrderArticle" INTEGER, "sortPriority" INTEGER NOT NULL DEFAULT (2), "byline", "headline", "standfirst", "text", "summary", "photoCredit", "photoCaption", "originalImageWidth" INTEGER, "originalImageHeight" INTEGER, "thumbnailImage", "thumbnailImageWidth" INTEGER, "thumbnailImageHeight" INTEGER, "hdImage", "hdImageWidth" INTEGER, "hdImageHeight" INTEGER)');
+$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "articles" ("idArticle" INTEGER, "userId" INTEGER, "publicationDate", "publicationTime" INTEGER, "endDate", "survey" INTEGER, "genre", "keywords", "idSection" INTEGER, "sortOrderArticle" INTEGER, "sortPriority" INTEGER NOT NULL DEFAULT (2), "byline", "headline", "standfirst", "text", "summary", "evolve", "expand", "extend", "photoCredit", "photoCaption", "originalImageWidth" INTEGER, "originalImageHeight" INTEGER, "thumbnailImage", "thumbnailImageWidth" INTEGER, "thumbnailImageHeight" INTEGER, "hdImage", "hdImageWidth" INTEGER, "hdImageHeight" INTEGER)');
 $dbh = null;
 //
 $dbh = new PDO($dbEdit2);
@@ -86,7 +86,7 @@ $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "menu" ("idMenu" INTEGER PRIMARY
 $dbh = null;
 //
 $dbh = new PDO($dbPublished);
-$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "articles" ("idArticle" INTEGER, "publicationDate", "endDate", "survey" INTEGER, "idSection" INTEGER, "sortOrderArticle" INTEGER, "sortPriority" INTEGER NOT NULL DEFAULT (2), "byline", "headline", "standfirst", "text", "summary", "photoCredit", "photoCaption", "originalImageWidth" INTEGER, "originalImageHeight" INTEGER, "thumbnailImage", "thumbnailImageWidth" INTEGER, "thumbnailImageHeight" INTEGER, "hdImage", "hdImageWidth" INTEGER, "hdImageHeight" INTEGER)');
+$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "articles" ("idArticle" INTEGER, "publicationDate", "publicationTime" INTEGER, "endDate", "survey" INTEGER, "genre", "keywords", "idSection" INTEGER, "sortOrderArticle" INTEGER, "sortPriority" INTEGER NOT NULL DEFAULT (2), "byline", "headline", "standfirst", "text", "summary", "evolve", "expand", "extend", "photoCredit", "photoCaption", "originalImageWidth" INTEGER, "originalImageHeight" INTEGER, "thumbnailImage", "thumbnailImageWidth" INTEGER, "thumbnailImageHeight" INTEGER, "hdImage", "hdImageWidth" INTEGER, "hdImageHeight" INTEGER)');
 $dbh = null;
 //
 $dbh = new PDO($dbPublished2);
@@ -94,10 +94,18 @@ $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "imageSecondary" ("idPhoto" INTE
 $dbh = null;
 //
 $dbh = new PDO($dbSettings);
+$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "alertClassified" ("idClassified" INTEGER PRIMARY KEY, "emailClassified")');
 $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "archiveAccess" ("idAccess" INTEGER PRIMARY KEY, "access" INTEGER)');
 $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "calendarAccess" ("idCalendarAccess" INTEGER PRIMARY KEY, "access" INTEGER)');
 $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "sections" ("idSection" INTEGER PRIMARY KEY, "section", "sortOrderSection" INTEGER, "sortPriority" INTEGER NOT NULL DEFAULT (2))');
 $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "names" ("idName" INTEGER PRIMARY KEY, "name", "description")');
+$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "registration" ("idRegistration" INTEGER PRIMARY KEY, "information")');
+$stmt = $dbh->query('SELECT idRegistration FROM registration');
+$row = $stmt->fetch();
+if ($row === false) {
+    $stmt = $dbh->prepare('INSERT INTO registration (information) VALUES (?)');
+    $stmt->execute(array('A free registration is required to place classified ads and to submit other site forms. A paid registration might be required to access some site content. All registrations begin with an email and password. The email must be verified before the registration can be used to log in. Instructions to verify the email address will follow after the information below is sent.'));
+}
 $dbh = null;
 //
 $dbh = new PDO($dbSubscribers);

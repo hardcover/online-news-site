@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-01
+ * @version:  2016-10-16
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -19,7 +19,7 @@
 // Copy the non-image information
 //
 $dbh = new PDO($database);
-$stmt = $dbh->prepare('SELECT publicationDate, endDate, survey, idSection, sortOrderArticle, byline, headline, standfirst, text, summary, photoCredit, photoCaption FROM articles WHERE idArticle=?');
+$stmt = $dbh->prepare('SELECT publicationDate, publicationTime, endDate, survey, genre, keywords, idSection, sortOrderArticle, byline, headline, standfirst, text, summary, photoCredit, photoCaption FROM articles WHERE idArticle=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute(array($idArticle));
 $row = $stmt->fetch();
@@ -32,8 +32,11 @@ if ($row) {
     $request['archive'] = $archive;
     $request['idArticle'] = $idArticle;
     $request['publicationDate'] = $publicationDate;
+    $request['publicationTime'] = $publicationTime;
     $request['endDate'] = $endDate;
     $request['survey'] = $survey;
+    $request['genre'] = $genre;
+    $request['keywords'] = $survey;
     $request['idSection'] = $idSection;
     $request['sortOrderArticle'] = $sortOrderArticle;
     $request['byline'] = $byline;

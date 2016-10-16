@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-01
+ * @version:  2016-10-16
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -32,10 +32,12 @@ if ($_SESSION['username'] != 'admin') {
 // Variables
 //
 $adminPassPost = inlinePost('adminPass');
+$emailClassifiedPost = inlinePost('emailClassified');
 $editPost = inlinePost('edit');
 $idNamePost = inlinePost('idName');
 $idRemotePost = inlinePost('idRemote');
 $idSectionPost = inlinePost('idSection');
+$informationPost = inlinePost('information');
 $newAdminPassOnePost = inlinePost('newAdminPassOne');
 $newAdminPassTwoPost = inlinePost('newAdminPassTwo');
 $newsDescriptionPost = inlinePost('newsDescription');
@@ -203,6 +205,66 @@ if (password_verify($adminPassPost, $row['pass'])) {
         $sortOrderSectionPost = null;
     }
     //
+    // Button: Add / update registration information
+    //
+    if (isset($_POST['addUpdateRegistration'])) {
+        if (is_null($informationPost)) {
+            $message = 'Registration information is required.';
+        } else {
+            $dbh = new PDO($dbSettings);
+            $stmt = $dbh->query('DELETE FROM registration');
+            $stmt = $dbh->prepare('INSERT INTO registration (information) VALUES (?)');
+            $stmt->execute(array($informationPost));
+            $dbh = null;
+            //
+            // Update the remote databases
+            //
+            include $includesPath . '/syncSettings.php';
+            //
+            // Clear registration information for display
+            //
+            $informationPost = null;
+        }
+    }
+    //
+    // Button: Add / update email alert for classifieds
+    //
+    if (isset($_POST['addUpdateEmailClassified'])) {
+        if (is_null($emailClassifiedPost)) {
+            $message = 'Email is required.';
+        } else {
+            $dbh = new PDO($dbSettings);
+            $stmt = $dbh->query('DELETE FROM alertClassified');
+            $stmt = $dbh->prepare('INSERT INTO alertClassified (emailClassified) VALUES (?)');
+            $stmt->execute(array($emailClassifiedPost));
+            $dbh = null;
+            //
+            // Update the remote databases
+            //
+            include $includesPath . '/syncSettings.php';
+            //
+            // Clear email addreess for display
+            //
+            $emailClassifiedPost = null;
+        }
+    }
+    //
+    // Button: Delete email alert for classifieds
+    //
+    if (isset($_POST['deleteEmailClassified'])) {
+        $dbh = new PDO($dbSettings);
+        $stmt = $dbh->query('DELETE FROM alertClassified');
+        $dbh = null;
+        //
+        // Update the remote databases
+        //
+        include $includesPath . '/syncSettings.php';
+        //
+        // Clear email addreess for display
+        //
+        $emailClassifiedPost = null;
+    }
+    //
     // Button: Add / update URI
     //
     if (isset($_POST['addUpdateURI'])) {
@@ -355,7 +417,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
     //
     // Change password for remote sites
     //
-    if (isset($_POST['changeRemotePass']) and $_POST['changeRemotePass'] == strval('Change remote password')) {
+    if (isset($_POST['changeRemotePass']) and $_POST['changeRemotePass'] == strval('Change remote passwords')) {
         //
         $remotes = array();
         $dbh = new PDO($dbRemote);
@@ -377,7 +439,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
             $character = $notRandom{$position};
             $gig.= $character;
         }
-        $message.= "Change remote password results:<br /><br />\n";
+        $message.= "Change remote passwords result:<br /><br />\n";
         $request = null;
         $response = null;
         $request['task'] = 'setCrypt';
@@ -468,6 +530,32 @@ foreach ($stmt as $row) {
 }
 $dbh = null;
 ?>
+  <h1><span class="h">Registration information</span></h1>
+
+<?php
+$dbh = new PDO($dbSettings);
+$stmt = $dbh->query('SELECT idRegistration, information FROM registration');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+$row = $stmt->fetch();
+$dbh = null;
+echo '  <form action="' . $uri . 'settings.php" method="post">' . "\n";
+echo '    <p><span class="p">' . $row['information'] . "<br />\n";
+echo '    <input type="hidden" name="idRegistration" value="' . $row['idRegistration'] . '" /><input type="hidden" name="information" value="' . $row['information'] . '" /><input type="submit" value="Edit" name="edit" class="button" /></span></p>' . "\n";
+echo "  </form>\n\n";
+?>
+  <h1><span class="h">Email alert for classifieds</span></h1>
+
+<?php
+$dbh = new PDO($dbSettings);
+$stmt = $dbh->query('SELECT idClassified, emailClassified FROM alertClassified');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+$row = $stmt->fetch();
+$dbh = null;
+echo '  <form action="' . $uri . 'settings.php" method="post">' . "\n";
+echo '    <p><span class="p">' . $row['emailClassified'] . "<br />\n";
+echo '    <input type="hidden" name="idClassified" value="' . $row['idClassified'] . '" /><input type="hidden" name="emailClassified" value="' . $row['emailClassified'] . '" /><input type="submit" value="Edit" name="edit" class="button" /></span></p>' . "\n";
+echo "  </form>\n\n";
+?>
   <h1><span class="h">Remote URIs</span></h1>
 
 <?php
@@ -515,6 +603,23 @@ $dbh = null;
     <p class="b"><input type="submit" value="Add / update" name="addUpdateSection" class="button" /><br />
     <input type="submit" value="Delete" name="deleteSection" class="button" /><input name="idSection" type="hidden"<?php echoIfValue($idSectionPost); ?> /><input type="hidden" name="existing"<?php echoIfValue($editPost); ?> /></p>
 
+    <h1>Registration information</h1>
+
+    <p><label for="information">Information</label><br />
+    <span class="hl"><textarea id="information" name="information" class="h"><?php echoIfText($informationPost); ?></textarea></span></p>
+
+    <p class="b"><input type="submit" value="Add / update" name="addUpdateRegistration" class="button" /></p>
+
+    <h1>Email alert for classifieds</h1>
+
+    <p>Enter an email address to receive alerts when a classified ad requires review.</p>
+
+    <p><label for="emailClassified">Email</label><br />
+    <input id="emailClassified" name="emailClassified" type="email" class="h"<?php echoIfValue($emailClassifiedPost); ?> /></p>
+
+    <p class="b"><input type="submit" value="Add / update" name="addUpdateEmailClassified" class="button" /><br />
+    <input type="submit" value="Delete" name="deleteEmailClassified" class="button" /><input name="idRemote" type="hidden" <?php echoIfValue($idRemotePost); ?> /><input type="hidden" name="existing"<?php echoIfValue($editPost); ?> /></p>
+
     <h1>Remote sites URIs</h1>
 
     <p>Enter the URIs of the remote sites with a trailing slash. For example: http://www.mysite.com/</p>
@@ -533,7 +638,7 @@ $dbh = null;
 
     <p>As with the admin password, the password for remote sites must be changed while the system is being set up. The system will choose a set of random passwords (authentication requires more than one). There is no recommendation for changing the passwords after that. A password change failure will require manual intervention to correct. Because the passwords incorporate the date in order to change daily, they will not work around midnight when the clocks on the systems are a little out of sync.</p>
 
-    <p><input type="submit" value="Change remote password" name="changeRemotePass" class="button" /></p>
+    <p><input type="submit" value="Change remote passwords" name="changeRemotePass" class="button" /></p>
 
     <h1>Change the admin password</h1>
 

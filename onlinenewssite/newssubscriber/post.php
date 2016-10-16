@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-01
+ * @version:  2016-10-16
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -127,12 +127,12 @@ if ((isset($_POST['login'])
             $dbh = null;
             $body = 'To continue registration, visit the link below within fifteen minutes from when registration was begun and from the same computer. If activation has not been completed by then, begin registration again.' . "\n\n";
             $body.= $uri . '?t=l&v=' . $verify . "\r\n";
-            $subject = 'Confirm e-mail address at ' . $name . "\r\n";
+            $subject = 'Confirm email address at ' . $name . "\r\n";
             mail($emailPost . "\r\n", $subject, $body, $headers);
-            $message = 'Check your e-mail for a message from us. Visit the link in the e-mail to confirm the e-mail address and continue registration.';
+            $message = 'Check your email for a message from us. Visit the link in the email to confirm the email address and continue registration.';
         } else {
             //
-            // Set message for failed log in attempt when the e-mail is not found
+            // Set message for failed log in attempt when the email is not found
             //
             $message = 'Login credentials are incorrect.';
         }
@@ -248,12 +248,12 @@ if ((isset($_POST['login'])
         } else {
             if (isset($_POST['register'])) {
                 //
-                // Set message for when a registration is begun again within the fifteen minute time for e-mail confirmation
+                // Set message for when a registration is begun again within the fifteen minute time for email confirmation
                 //
-                $message = 'Check your e-mail for a message from us. Visit the link in the e-mail to confirm the e-mail address and continue registration.';
+                $message = 'Check your email for a message from us. Visit the link in the email to confirm the email address and continue registration.';
             } else {
                 //
-                // Set message for when the e-mail is found but the password is incorrect in a log in
+                // Set message for when the email is found but the password is incorrect in a log in
                 //
                 $message = 'Login credentials are incorrect.';
             }
@@ -288,7 +288,7 @@ if (isset($_POST['email']) and isset($_POST['forgot']) and isset($_POST['forgotP
     $body.= $uri . '?t=p&v=' . $verify . "\r\n";
     $subject = 'Password change request at ' . $name . "\r\n";
     @mail($emailPost . "\r\n", $subject, $body, $headers);
-    $message = 'Check your e-mail for a message from us. Visit the link in the e-mail to change the password. Then return here to log in.';
+    $message = 'Check your email for a message from us. Visit the link in the email to change the password. Then return here to log in.';
 }
 //
 // Reset password

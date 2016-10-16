@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-01
+ * @version:  2016-10-16
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -32,6 +32,8 @@ $idArticle = inlinePost('idArticle');
 $idArticleEdit = null;
 $idSectionEdit = null;
 $idSectionPost = inlinePost('idSection');
+$keywordsEdit = null;
+$keywordsPost = inlinePost('keywords');
 $message = null;
 $photoCaptionPost = inlinePost('photoCaption');
 $photoCreditPost = inlinePost('photoCredit');
@@ -45,6 +47,12 @@ $standfirstEdit = null;
 $standfirstPost = securePost('standfirst');
 $textEdit = null;
 $textPost = securePost('text');
+//
+if ($publicationDatePost === $today) {
+    $publicationTimePost = time();
+} else {
+    $publicationTimePost = strtotime($publicationDatePost);
+}
 //
 if ($bylinePost != null) {
     $dbh = new PDO($dbEditors);
@@ -75,7 +83,7 @@ if ($use == 'edit') {
 if (!isset($_FILES['image'])) {
     $_FILES['image'] = null;
 }
-$byline = $endDate = $headline = $idSection = $photoCaption = $photoCredit = $publicationDate = $publish = $sortOrderArticle = $standfirst = $text = null;
+//$byline = $endDate = $headline = $idSection = $photoCaption = $photoCredit = $publicationDate = $publish = $sortOrderArticle = $standfirst = $text = null;
 if (strlen($textPost) > 500) {
     $summaryPost = substr(preg_replace("'\s+'", ' ', $textPost), 0, 500);
     $summaryPost = str_replace(strrchr($summaryPost, ' '), ' ', $summaryPost);
@@ -285,8 +293,8 @@ if (isset($_POST['addUpdate'])) {
         // Send the non-image information to the database
         //
         $dbh = new PDO($database);
-        $stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, endDate=?, idSection=?, sortOrderArticle=?, byline=?, headline=?, standfirst=?, text=?, summary=? WHERE idArticle=?');
-        $stmt->execute(array($publicationDatePost, $endDatePost, $idSectionPost, $sortOrderArticlePost, $bylinePost, $headlinePost, $standfirstPost, $textPost, $summaryPost, $idArticle));
+        $stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, publicationTime=?, endDate=?, idSection=?, sortOrderArticle=?, byline=?, headline=?, standfirst=?, text=?, summary=? WHERE idArticle=?');
+        $stmt->execute(array($publicationDatePost, $publicationTimePost, $endDatePost, $idSectionPost, $sortOrderArticlePost, $bylinePost, $headlinePost, $standfirstPost, $textPost, $summaryPost, $idArticle));
         $dbh = null;
         //
         // For published articles, add or update the remote site
@@ -302,7 +310,7 @@ if (isset($_POST['addUpdate'])) {
             include $includesPath . '/syncArticles.php';
         }
         //
-        // Update sitemap.xml
+        // Update sitemaps and rss
         //
         if (empty($_POST['existing']) and $use == 'published') {
             $request = array();
@@ -374,13 +382,25 @@ if (isset($_POST['delete']) and isset($idArticle)) {
         $response = null;
         $request['task'] = 'sitemap';
     }
+    //
+    // Update sitemaps and rss
+    //
+    if ($use == 'published') {
+        $request = array();
+        $request['task'] = 'sitemap';
+        $response = null;
+        foreach ($remotes as $remote) {
+            extract($row);
+            $response = soa($remote . 'z/', $request);
+        }
+    }
 }
 //
 // Button: Edit
 //
 if (isset($_POST['edit'])) {
     $dbh = new PDO($database);
-    $stmt = $dbh->prepare('SELECT publicationDate, endDate, idSection, sortOrderArticle, byline, headline, standfirst, text FROM articles WHERE idArticle=?');
+    $stmt = $dbh->prepare('SELECT publicationDate, endDate, keywords, idSection, sortOrderArticle, byline, headline, standfirst, text FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute(array($idArticle));
     $row = $stmt->fetch();
@@ -390,6 +410,7 @@ if (isset($_POST['edit'])) {
     $endDateEdit = $endDate;
     $headlineEdit = $headline;
     $idArticleEdit = $idArticle;
+    $keywordsEdit = $keywords;
     $idSectionEdit = $idSection;
     $publicationDateEdit = $publicationDate;
     $sortOrderArticleEdit = $sortOrderArticle;
@@ -499,8 +520,9 @@ echoIfMessage($message);
     <datalist id="bylineList">
 <?php
 $dbh = new PDO($dbEditors);
-$stmt = $dbh->query('SELECT user, fullName FROM users ORDER BY fullName');
+$stmt = $dbh->prepare('SELECT user, fullName FROM users WHERE userType=? ORDER BY fullName');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
+$stmt->execute(array(1));
 foreach ($stmt as $row) {
     extract($row);
     if ($user != 'admin') {

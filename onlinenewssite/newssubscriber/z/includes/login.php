@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-01
+ * @version:  2016-10-16
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -38,17 +38,22 @@ if (isset($_SESSION['message'])) {
 } else {
     $message = null;
 }
+$information = null;
+$dbh = new PDO($dbSettings);
+$stmt = $dbh->query('SELECT information FROM registration');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+$row = $stmt->fetch();
+extract($row);
+$dbh = null;
 //
 // HTML
 //
 echoIfMessage($message);
+echo "    <h1>Log in / Register</h1>\n\n";
+echo '    <p>' . $information . "</p>\n\n";
 ?>
-    <h1>Log in / Register</h1>
-
-    <p>A free registration is required to place classified ads and to submit other site forms. A paid registration might be required to access some site content. All registrations begin with an e-mail and password. The e-mail must be verified before the registration can be used to log in. Instructions to verify the e-mail address will follow after the information below is sent.</p>
-
     <form action="<?php echo $uri; ?>post.php" method="post">
-      <p><label for="email">E-mail</label><br />
+      <p><label for="email">Email</label><br />
       <input id="email" name="email" type="email" class="w" required autofocus /></p>
 
       <p><label for="pass">Password</label><br />

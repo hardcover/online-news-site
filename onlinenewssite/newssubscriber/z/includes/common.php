@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-01
+ * @version:  2016-10-16
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -26,12 +26,10 @@ $dbClassifieds = 'sqlite:' . $includesPath . '/databases/classifieds.sqlite';
 $dbClassifiedsNew = 'sqlite:' . $includesPath . '/databases/classifiedsNew.sqlite';
 $dbEdit = 'sqlite:' . $includesPath . '/databases/edit.sqlite';
 $dbEdit2 = 'sqlite:' . $includesPath . '/databases/edit2.sqlite';
-$dbEditors = 'sqlite:' . $includesPath . '/databases/editors.sqlite';
 $dbLog = 'sqlite:' . $includesPath . '/databases/log.sqlite';
 $dbMenu = 'sqlite:' . $includesPath . '/databases/menu.sqlite';
 $dbPublished = 'sqlite:' . $includesPath . '/databases/published.sqlite';
 $dbPublished2 = 'sqlite:' . $includesPath . '/databases/published2.sqlite';
-$dbRemote = 'sqlite:' . $includesPath . '/databases/remote.sqlite';
 $dbSettings = 'sqlite:' . $includesPath . '/databases/settings.sqlite';
 $dbSubscribers = 'sqlite:' . $includesPath . '/databases/subscribers.sqlite';
 $dbSubscribersNew = 'sqlite:' . $includesPath . '/databases/subscribersNew.sqlite';

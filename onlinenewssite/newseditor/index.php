@@ -10,7 +10,7 @@
  * @copyright 2016 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
  *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-01
+ * @version:  2016-10-16
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -27,17 +27,45 @@ if (!file_exists('z/system/configuration.php')) {
 // Reset authorization
 //
 require 'z/system/configuration.php';
+//
+// Optional $_GET authorization
+//
+if (empty($_POST['login']) or $_POST['login'] !== 'Log in') {
+    if (file_exists($includesPath . '/custom/programs/getAuthorization.php')) {
+        include $includesPath . '/custom/programs/getAuthorization.php';
+        if (isset($_GET['k'])) {
+            $kGet = filter_var($_GET['k'], FILTER_SANITIZE_STRING);
+        } else {
+            $kGet = null;
+        }
+        if ($kGet !== $getAuthorization) {
+            header_remove();
+            if (substr(phpversion(), 0, 3) < '5.4') {
+                header(' ', true, 404);
+            } else {
+                http_response_code(404);
+            }
+            exit;
+        }
+    }
+}
+//
+// Log out if logged in
+//
 $uri = $uriScheme . '://' . $_SERVER["HTTP_HOST"] . rtrim(dirname($_SERVER['PHP_SELF']), "/\\") . '/';
 if (isset($_SESSION['auth'])) {
     include 'logout.php';
     exit;
 }
+//
+// Requires
+//
 require $includesPath . '/common.php';
 require $includesPath . '/password.php';
 //
 // Variables
 //
-$installedVersion = '2016-10-01';
+$installedVersion = '2016-10-16';
 $message = null;
 $passPost = inlinePost('pass');
 $userPost = inlinePost('user');
