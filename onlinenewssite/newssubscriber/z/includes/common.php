@@ -7,10 +7,10 @@
  * @category  Publishing
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2016 Hardcover LLC
+ * @copyright 2018 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
- *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-16
+ *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 01 08
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -203,16 +203,42 @@ function echoIfYes($str)
     }
 }
 /**
- * Function to show a selcted radio button when the value is null
+ * Function to echo input values, when they exist
+ *
+ * @param string $str The value
+ *
+ * @return The appropriate HTML and value
+ */
+function returnIfValue($str)
+{
+    if ($str != null) {
+        return ' value="' . html($str) . '"';
+    }
+}
+/**
+ * Function to return textarea values, when they exist
+ *
+ * @param string $str The value
+ *
+ * @return The appropriate HTML and value
+ */
+function returnIfText($str)
+{
+    if ($str != null) {
+        return html($str);
+    }
+}
+/**
+ * Function to show a selected radio button when the value is 1
  *
  * @param string $str The value
  *
  * @return The appropriate HTML
  */
-function echoIfNo($str)
+function returnIfYes($str)
 {
-    if ($str == null) {
-        echo ' checked';
+    if ($str == 1) {
+        return ' checked';
     }
 }
 /**
@@ -246,64 +272,24 @@ function plain($str)
     }
 }
 /**
- * Function for HTML request/response RPC SOA, posts a request array and captures the response array
- *
- * @param string $uri     The URI to post to
- * @param array  $request The request associated array
+ * Function to echo the maximum upload file size
  *
  * @return The response associated array
  */
-function soa($uri, $request)
+function uploadFilesizeMaximum()
 {
-    include 'crypt.php';
-    $request['onus'] = $onus;
-    date_default_timezone_set('America/Los_Angeles');
-    $request['gig'] = date($gig);
-    $request = http_build_query(array_map('base64_encode', $request));
-    $ctx = stream_context_create(
-        array(
-            'ssl' => array(
-                'allow_self_signed' => true,
-                'verify_peer' => false,
-                'verify_peer_name' => false),
-            'http' => array(
-                'method' => 'POST',
-                'header' => 'Content-Type: application/x-www-form-urlencoded',
-                'content' => $request))
-    );
-    $fp = @fopen($uri, 'rb', false, $ctx);
-    //
-    // Check for and log any errors in the response
-    //
-    $redFlag = null;
-    if (!$fp) {
-        $redFlag.= "Can not find the URI.\n";
-    }
-    $response = @stream_get_contents($fp);
-    if ($response == false) {
-        $redFlag.= "The URI contained no information.\n";
-    }
-    if (strpos($response, 'Fatal error:') !== false or strpos($response, 'Notice:') !== false or strpos($response, 'Warning:') !== false) {
-        $redFlag.= strip_tags(str_replace(array('[',']'), array('<','>'), $response)) . "\n";
-    }
-    if ($redFlag != null) {
-        $prior = file_exists('error_log') ? file_get_contents('error_log') : null;
-        file_put_contents('error_log', date('g:i a, l, F j, Y') . "\n" . $uri . "\n" . $redFlag . "\n" . $prior);
-    } else {
-        $response = json_decode($response, true);
-        if (is_array($response)) {
-            //
-            // Return the response array when there are no errors
-            //
-            $response = array_map('base64_decode', $response);
-            return $response;
+    $postMaxSize = @intval(@ini_get('post_max_size'));
+    $uploadMaxFilesize = @intval(@ini_get('upload_max_filesize'));
+    if (!empty($postMaxSize) and !empty($uploadMaxFilesize)) {
+        if ($postMaxSize < $uploadMaxFilesize) {
+            $maxFileSize = intval($postMaxSize - 1);
         } else {
-            //
-            // Write an error to error_log
-            //
-            $prior = file_exists('error_log') ? file_get_contents('error_log') : null;
-            file_put_contents('error_log', date('g:i a, l, F j, Y') . "\n" . $uri . "\nResponse is not an array.\n" . $prior);
+            $maxFileSize = intval($uploadMaxFilesize - 1);
         }
+        $maxFileSize = ', ' . $maxFileSize . ' MB maximum filesize';
+    } else {
+        $maxFileSize = null;
     }
+    echo $maxFileSize;
 }
 ?>

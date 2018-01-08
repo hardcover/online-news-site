@@ -7,10 +7,10 @@
  * @category  Publishing
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2016 Hardcover LLC
+ * @copyright 2018 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
- *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-16
+ *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 01 08
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -40,12 +40,13 @@ $annualDayOfWeekPost = securePost('annualDayOfWeek');
 $annualEventEdit = null;
 $annualEventPost = securePost('annualEvent');
 $datePost = inlinePost('date');
-$idAnnualEdit = inlinePost('idAnnual');
 $idAnnualDayOfWeekEdit = null;
+$idAnnualEdit = inlinePost('idAnnual');
 $idMonthlyDayOfWeekEdit = null;
 $idOneTimeEvent = null;
 $idOneTimeEventEdit = null;
 $idOneTimeEventPost = inlinePost('idOneTimeEvent');
+$idWeeklyDayOfWeekEdit = null;
 $message = null;
 $monthlyDayOfWeekEdit = null;
 $monthlyDayOfWeekPost = securePost('monthlyDayOfWeek');
@@ -53,6 +54,8 @@ $noteEdit = null;
 $notePost = securePost('note');
 $oneTimeEventEdit = null;
 $oneTimeEventPost = securePost('oneTimeEvent');
+$weeklyDayOfWeekEdit = null;
+$weeklyDayOfWeekPost = securePost('weeklyDayOfWeek');
 //
 $remotes = array();
 $dbh = new PDO($dbRemote);
@@ -96,6 +99,16 @@ $dbh = null;
 if ($row) {
     $idOneTimeEventEdit = $row['idOneTimeEvent'];
     $oneTimeEventEdit = $row['description'];
+}
+$dbh = new PDO($dbCalendar);
+$stmt = $dbh->prepare('SELECT idWeeklyDayOfWeek, description FROM weeklyDayOfWeek WHERE date=?');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+$stmt->execute(array($dayOfTheWeek));
+$row = $stmt->fetch();
+$dbh = null;
+if ($row) {
+    $idWeeklyDayOfWeekEdit = $row['idWeeklyDayOfWeek'];
+    $weeklyDayOfWeekEdit = $row['description'];
 }
 $dbh = new PDO($dbCalendar);
 $stmt = $dbh->prepare('SELECT idMonthlyDayOfWeek, description FROM monthlyDayOfWeek WHERE date=?');
@@ -164,7 +177,32 @@ if (isset($_POST['update']) and isset($datePost)) {
     }
     $oneTimeEventEdit = $oneTimeEventPost;
     //
-    // Montly event on the same day of the same week
+    // Weekly event on the same day of the week
+    //
+    $dateDescription = $dayOfTheWeek;
+    if (isset($idWeeklyDayOfWeekEdit)) {
+        if (empty($weeklyDayOfWeekPost)) {
+            $dbh = new PDO($dbCalendar);
+            $stmt = $dbh->prepare('DELETE FROM weeklyDayOfWeek WHERE idWeeklyDayOfWeek=?');
+            $stmt->execute(array($idWeeklyDayOfWeekEdit));
+            $dbh = null;
+        } else {
+            $dbh = new PDO($dbCalendar);
+            $stmt = $dbh->prepare('UPDATE weeklyDayOfWeek SET description=? WHERE idWeeklyDayOfWeek=?');
+            $stmt->execute(array($weeklyDayOfWeekPost, $idWeeklyDayOfWeekEdit));
+            $dbh = null;
+        }
+    } else {
+        if (isset($weeklyDayOfWeekPost)) {
+            $dbh = new PDO($dbCalendar);
+            $stmt = $dbh->prepare('INSERT INTO weeklyDayOfWeek (date, description) VALUES (?, ?)');
+            $stmt->execute(array($dateDescription, $weeklyDayOfWeekPost));
+            $dbh = null;
+        }
+    }
+    $weeklyDayOfWeekEdit = $weeklyDayOfWeekPost;
+    //
+    // Monthly event on the same day of the same week
     //
     $dateDescription = $week . ' ' . $dayOfTheWeek;
     if (isset($idMonthlyDayOfWeekEdit)) {
@@ -264,6 +302,11 @@ if (isset($_POST['update']) and isset($datePost)) {
     foreach ($stmt as $row) {
         $annualDayOfWeek[] = json_encode($row);
     }
+    $stmt = $dbh->query('SELECT * FROM weeklyDayOfWeek ORDER BY idWeeklyDayOfWeek');
+    $stmt->setFetchMode(PDO::FETCH_NUM);
+    foreach ($stmt as $row) {
+        $weeklyDayOfWeek[] = json_encode($row);
+    }
     $stmt = $dbh->query('SELECT * FROM monthlyDayOfWeek ORDER BY idMonthlyDayOfWeek');
     $stmt->setFetchMode(PDO::FETCH_NUM);
     foreach ($stmt as $row) {
@@ -284,6 +327,7 @@ if (isset($_POST['update']) and isset($datePost)) {
     $request['annual'] = json_encode($annual);
     $request['annualDayOfWeek'] = json_encode($annualDayOfWeek);
     $request['monthlyDayOfWeek'] = json_encode($monthlyDayOfWeek);
+    $request['weeklyDayOfWeek'] = json_encode($weeklyDayOfWeek);
     $request['oneTimeEvent'] = json_encode($oneTimeEvent);
     if ($row) {
         $request['note'] = $row['description'];
@@ -312,9 +356,9 @@ require $includesPath . '/header1.inc';
   <link rel="stylesheet" type="text/css" href="z/base.css" />
   <link rel="stylesheet" type="text/css" media="(max-width: 768px)" href="z/small.css" />
   <link rel="stylesheet" type="text/css" media="(min-width: 768px)" href="z/large.css" />
-  <script type="text/javascript" src="z/jquery.js"></script>
-  <script type="text/javascript" src="z/jquery-ui.js"></script>
-  <script type="text/javascript" src="z/datepicker.js"></script>
+  <script src="z/jquery.min.js"></script>
+  <script src="z/jquery-ui.min.js"></script>
+  <script src="z/datepicker.js"></script>
 </head>
 
 <?php require $includesPath . '/body.inc'; ?>
@@ -354,6 +398,13 @@ for ($i = 0; $i < 371; $i++) {
     $stmt = $dbh->prepare('SELECT description FROM oneTimeEvent WHERE date=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute(array($selectDate));
+    $row = $stmt->fetch();
+    if (isset($row['description'])) {
+        $description.= $row['description'] . ' ';
+    }
+    $stmt = $dbh->prepare('SELECT description FROM weeklyDayOfWeek WHERE date=?');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $stmt->execute(array($dayOfTheWeekSelect));
     $row = $stmt->fetch();
     if (isset($row['description'])) {
         $description.= $row['description'] . ' ';
@@ -406,19 +457,27 @@ if (empty($datePost)) {
     echo '    <p class="b"><input type="submit" value="Select" name="select" class="button" /></p>' . "\n";
 } else {
     echo '    <input id="idOneTimeEvent" name="idOneTimeEvent" type="hidden" value="' . $idOneTimeEventEdit . '" /><input id="date" name="date" type="hidden" value="' . $datePost . '" />' . "\n\n";
-    echo '    <p><label for="date">One-time event ' . $dayOfTheWeek . ', ' . $month . ' ' . $dayOfTheMonth . ', ' . $year . ".</label><br />\n";
-    echo '    <span class="hl"><textarea id="oneTimeEvent" name="oneTimeEvent" class="h">' . $oneTimeEventEdit . "</textarea></span>\n\n";
+    echo '    <p><label for="oneTimeEvent">One-time event ' . $dayOfTheWeek . ', ' . $month . ' ' . $dayOfTheMonth . ', ' . $year . ".</label><br />\n";
+    echo '    <span class="hl"><textarea id="oneTimeEvent" name="oneTimeEvent" class="h">' . $oneTimeEventEdit . "</textarea></span></p>\n\n";
+    //
+    echo '    <input id="idWeeklyDayOfWeek" name="idWeeklyDayOfWeek" type="hidden" value="' . $idWeeklyDayOfWeekEdit . '" />' . "\n\n";
+    echo '    <p><label for="weeklyDayOfWeek">Weekly event each ' . $dayOfTheWeek . ".</label><br />\n";
+    echo '    <span class="hl"><textarea id="weeklyDayOfWeek" name="weeklyDayOfWeek" class="h">' . $weeklyDayOfWeekEdit . "</textarea></span></p>\n\n";
+    //
     echo '    <input id="idMonthlyDayOfWeek" name="idMonthlyDayOfWeek" type="hidden" value="' . $idMonthlyDayOfWeekEdit . '" />' . "\n\n";
-    echo '    <p><label for="date">Monthly event each ' . $week . ' ' . $dayOfTheWeek . ".</label><br />\n";
-    echo '    <span class="hl"><textarea id="monthlyDayOfWeek" name="monthlyDayOfWeek" class="h">' . $monthlyDayOfWeekEdit . "</textarea></span>\n\n";
+    echo '    <p><label for="monthlyDayOfWeek">Monthly event each ' . $week . ' ' . $dayOfTheWeek . ".</label><br />\n";
+    echo '    <span class="hl"><textarea id="monthlyDayOfWeek" name="monthlyDayOfWeek" class="h">' . $monthlyDayOfWeekEdit . "</textarea></span></p>\n\n";
+    //
     echo '    <input id="idAnnual" name="idAnnual" type="hidden" value="' . $idAnnualEdit . '" />' . "\n\n";
-    echo '    <p><label for="date">Annual event each ' . $month . ' ' . $dayOfTheMonth . ".</label><br />\n";
-    echo '    <span class="hl"><textarea id="annualEvent" name="annualEvent" class="h">' . $annualEventEdit . "</textarea></span>\n\n";
+    echo '    <p><label for="annualEvent">Annual event each ' . $month . ' ' . $dayOfTheMonth . ".</label><br />\n";
+    echo '    <span class="hl"><textarea id="annualEvent" name="annualEvent" class="h">' . $annualEventEdit . "</textarea></span></p>\n\n";
+    //
     echo '    <input id="idAnnualDayOfWeek" name="idAnnualDayOfWeek" type="hidden" value="' . $idAnnualDayOfWeekEdit . '" />' . "\n\n";
-    echo '    <p><label for="date">Annual event each ' . $week . ' ' . $dayOfTheWeek . ' of  ' . $month . ".</label><br />\n";
-    echo '    <span class="hl"><textarea id="annualDayOfWeek" name="annualDayOfWeek" class="h">' . $annualDayOfWeekEdit . "</textarea></span>\n\n";
+    echo '    <p><label for="annualDayOfWeek">Annual event each ' . $week . ' ' . $dayOfTheWeek . ' of  ' . $month . ".</label><br />\n";
+    echo '    <span class="hl"><textarea id="annualDayOfWeek" name="annualDayOfWeek" class="h">' . $annualDayOfWeekEdit . "</textarea></span></p>\n\n";
+    //
     echo '    <p><label for="note">Calendar-bottom note</label><br />' . "\n";
-    echo '    <span class="hl"><textarea id="note" name="note" class="h">' . $noteEdit . "</textarea></span>\n\n";
+    echo '    <span class="hl"><textarea id="note" name="note" class="h">' . $noteEdit . "</textarea></span></p>\n\n";
     echo '    <p class="b"><input type="submit" class="button" value="Update" name="update" /> <input type="submit" class="button" value="Reset" name="reset" /></p>' . "\n";
 }
 ?>

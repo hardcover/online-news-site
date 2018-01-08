@@ -7,10 +7,10 @@
  * @category  Publishing
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2016 Hardcover LLC
+ * @copyright 2018 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
- *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-16
+ *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 01 08
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -59,11 +59,6 @@ if (isset($_GET['a'])) {
         // Send unpaid subscribers to the payment page
         //
         header('Location: ' . $uri . '?t=pay', true);
-    } else {
-        //
-        // When payment is not an issue, send the subscriber to the news detail page
-        //
-        //header('Location: ' . $uri . 'news.php?a=' . $_SESSION['a'], true);
     }
 }
 if ((isset($_SESSION['a']) and empty($_GET['a']))

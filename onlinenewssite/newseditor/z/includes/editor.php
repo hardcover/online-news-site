@@ -7,10 +7,10 @@
  * @category  Publishing
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2016 Hardcover LLC
+ * @copyright 2018 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
- *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-16
+ *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 01 08
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -74,23 +74,26 @@ if ($use == 'edit') {
     $database2 = $dbEdit2;
     $imagePath = 'imagee.php';
     $imagePath2 = 'imagee2.php';
+    $required = null;
 } elseif ($use == 'published') {
     $database = $dbPublished;
     $database2 = $dbPublished2;
     $imagePath = 'imagep.php';
     $imagePath2 = 'imagep2.php';
+    $required = ' required';
 }
 if (!isset($_FILES['image'])) {
     $_FILES['image'] = null;
 }
-//$byline = $endDate = $headline = $idSection = $photoCaption = $photoCredit = $publicationDate = $publish = $sortOrderArticle = $standfirst = $text = null;
 if (strlen($textPost) > 500) {
-    $summaryPost = substr(preg_replace("'\s+'", ' ', $textPost), 0, 500);
-    $summaryPost = str_replace(strrchr($summaryPost, ' '), ' ', $summaryPost);
+    $summaryPost = preg_replace("'\s+'", ' ', $textPost);
+    $summaryPost = substr($summaryPost, 0, 500);
+    $tail = strrchr($summaryPost, ' ');
+    $summaryPost = rtrim($summaryPost, $tail);
 } else {
     $summaryPost = $textPost;
 }
-if (strpos($summaryPost, '<') === false) {
+if (strpos($summaryPost, '<') === false and strlen($summaryPost) > 1) {
     $summaryPost = $summaryPost . ' (continued)';
 } else {
     $summaryPost = null;
@@ -192,7 +195,7 @@ if (isset($_POST['addUpdate'])) {
                 $widthOriginal = $sizes['0'];
                 $heightOriginal = $sizes['1'];
                 $aspectRatio = $widthOriginal / $heightOriginal;
-                $widthHD = 1920;
+                $widthHD = 3840;
                 $heightHD = round($widthHD / $aspectRatio);
                 //
                 // Determine if the image is the primary image or a secondary image
@@ -207,11 +210,11 @@ if (isset($_POST['addUpdate'])) {
                     //
                     // Primary image
                     //
-                    // Save the original image dimensions
+                    // Save the original image information
                     //
                     $dbh = new PDO($database);
-                    $stmt = $dbh->prepare('UPDATE articles SET originalImageWidth=?, originalImageHeight=? WHERE idArticle=?');
-                    $stmt->execute(array($widthOriginal, $heightOriginal, $idArticle));
+                    $stmt = $dbh->prepare('UPDATE articles SET photoName=?, originalImageWidth=?, originalImageHeight=? WHERE idArticle=?');
+                    $stmt->execute(array($_FILES['image']['name'], $widthOriginal, $heightOriginal, $idArticle));
                     $dbh = null;
                     //
                     // Create and save the thumbnail image
@@ -239,7 +242,7 @@ if (isset($_POST['addUpdate'])) {
                     $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
                     imagecopyresized($hd, $srcImage, 0, 0, 0, 0, $widthHD, $heightHD, ImageSX($srcImage), ImageSY($srcImage));
                     ob_start();
-                    imagejpeg($hd, null, 90);
+                    imagejpeg($hd, null, 60);
                     imagedestroy($hd);
                     $hdImage = ob_get_contents();
                     ob_end_clean();
@@ -257,13 +260,13 @@ if (isset($_POST['addUpdate'])) {
                     $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
                     imagecopyresized($hd, $srcImage, 0, 0, 0, 0, $widthHD, $heightHD, ImageSX($srcImage), ImageSY($srcImage));
                     ob_start();
-                    imagejpeg($hd, null, 90);
+                    imagejpeg($hd, null, 60);
                     imagedestroy($hd);
                     $hdImage = ob_get_contents();
                     ob_end_clean();
                     $dbh = new PDO($database2);
-                    $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?)');
-                    $stmt->execute(array($idArticle, $hdImage, $photoCreditPost, $photoCaptionPost, time()));
+                    $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoName, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?, ?)');
+                    $stmt->execute(array($idArticle, $hdImage, $_FILES['image']['name'], $photoCreditPost, $photoCaptionPost, time()));
                     $dbh = null;
                     //
                     // For published articles, upload the current secondary image, photo credit and caption
@@ -274,6 +277,7 @@ if (isset($_POST['addUpdate'])) {
                         $request['task'] = 'updateInsert4';
                         $request['idArticle'] = $idArticle;
                         $request['image'] = $hdImage;
+                        $request['photoName'] = $_FILES['image']['name'];
                         $request['photoCredit'] = $photoCreditPost;
                         $request['photoCaption'] = $photoCaptionPost;
                         foreach ($remotes as $remote) {
@@ -328,8 +332,8 @@ if (isset($_POST['addUpdate'])) {
 //
 if (isset($_POST['deletePhoto']) and isset($idArticle)) {
     $dbh = new PDO($database);
-    $stmt = $dbh->prepare('UPDATE articles SET photoCredit=?, photoCaption=?, originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
-    $stmt->execute(array(null, null, null, null, null, null, null, null, null, null, $idArticle));
+    $stmt = $dbh->prepare('UPDATE articles SET photoName=?, photoCredit=?, photoCaption=?, originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
+    $stmt->execute(array(null, null, null, null, null, null, null, null, null, null, null, $idArticle));
     $dbh = null;
     $dbh = new PDO($database2);
     $stmt = $dbh->prepare('DELETE FROM imageSecondary WHERE idArticle=?');
@@ -390,8 +394,10 @@ if (isset($_POST['delete']) and isset($idArticle)) {
         $request['task'] = 'sitemap';
         $response = null;
         foreach ($remotes as $remote) {
-            extract($row);
-            $response = soa($remote . 'z/', $request);
+            if ($row) {
+                extract($row);
+                $response = soa($remote . 'z/', $request);
+            }
         }
     }
 }
@@ -501,9 +507,9 @@ echo '  <title>' . $title . "</title>\n";
   <link rel="stylesheet" type="text/css" href="z/base.css" />
   <link rel="stylesheet" type="text/css" media="(max-width: 768px)" href="z/small.css" />
   <link rel="stylesheet" type="text/css" media="(min-width: 768px)" href="z/large.css" />
-  <script type="text/javascript" src="z/jquery.js"></script>
-  <script type="text/javascript" src="z/jquery-ui.js"></script>
-  <script type="text/javascript" src="z/datepicker.js"></script>
+  <script src="z/jquery.min.js"></script>
+  <script src="z/jquery-ui.min.js"></script>
+  <script src="z/datepicker.js"></script>
 </head>
 
 <?php
@@ -534,7 +540,7 @@ $dbh = null;
     </datalist>
 
     <p><label for="publicationDate">Publication dates (expired articles move to the archives)</label><br />
-    <input id="publicationDate" name="publicationDate" type="text" class="datepicker h" placeholder="Start date"<?php echoIfValue($publicationDateEdit); ?> /> <input name="endDate" type="text" class="datepicker h" placeholder="End date"<?php echoIfValue($endDateEdit); ?> /></p>
+    <input id="publicationDate" name="publicationDate" type="text" class="datepicker h" placeholder="Start date"<?php echoIfValue($publicationDateEdit); echo $required; ?> /> <input name="endDate" type="text" class="datepicker h" placeholder="End date"<?php echoIfValue($endDateEdit); echo $required; ?> /></p>
 
     <p><label for="idSection">Section</label><br />
     <select id="idSection" name="idSection">
@@ -575,10 +581,10 @@ if ($use == 'published') {
     <p><label for="standfirst">Standfirst</label><br />
     <input id="standfirst" name="standfirst" type="text" class="w"<?php echoIfValue($standfirstEdit); ?> /></p>
 
-    <p><label for="text">Article text is entered in either HTML or the <a href="markdown.html" target="_blank">markdown syntax</a>. Enter iframe and video tags inside paragraph tags, for example, &lt;p&gt;&lt;iframe&gt;&lt;/iframe&gt;&lt;/p&gt;.</label><br />
+    <p><label for="text">Article text is entered in either HTML or the <a href="markdown.html" target="_blank">markdown syntax</a>. Enter iframe and video tags inside paragraph tags, for example, &lt;p&gt;&lt;iframe height="315"&gt;&lt;/iframe&gt;&lt;/p&gt;. Do not enter a width attribute.</label><br />
     <textarea id="text" name="text" rows="9" class="w"><?php echoIfText($textEdit); ?></textarea></p>
 
-    <p><label for="image">Photo upload (JPG image only)</label><br />
+    <p><label for="image">Photo upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br />
     <input id="image" name="image" type="file" class="w" accept="image/jpeg" /></p>
 
     <p><label for="photoCaption">Photo caption</label><br />

@@ -1,16 +1,17 @@
 <?php
 /**
  * Create the subscriber databases on the first run
+ * Identical in newseditor and newssubscriber
  *
  * PHP version 7
  *
  * @category  Publishing
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2016 Hardcover LLC
+ * @copyright 2018 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
- *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-16
+ *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 01 08
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -25,11 +26,11 @@ $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "advertisements" ("idAd" INTEGER
 $dbh = null;
 //
 $dbh = new PDO($dbArchive);
-$stmt = $dbh->query('CREATE VIRTUAL TABLE IF NOT EXISTS "articles" USING fts4 ("idArticle", "publicationDate", "publicationTime" INTEGER, "endDate", "survey", "genre", "keywords", "idSection", "sortOrderArticle", "sortPriority", "byline", "headline", "standfirst", "text", "summary", "evolve", "expand", "extend", "photoCredit", "photoCaption", "originalImageWidth", "originalImageHeight", "thumbnailImage", "thumbnailImageWidth", "thumbnailImageHeight", "hdImage", "hdImageWidth", "hdImageHeight")');
+$stmt = $dbh->query('CREATE VIRTUAL TABLE IF NOT EXISTS "articles" USING fts4 ("idArticle", "publicationDate", "publicationTime" INTEGER, "endDate", "survey", "genre", "keywords", "idSection", "sortOrderArticle", "sortPriority", "byline", "headline", "standfirst", "text", "summary", "evolve", "expand", "extend", "photoName", "photoCredit", "photoCaption", "originalImageWidth", "originalImageHeight", "thumbnailImage", "thumbnailImageWidth", "thumbnailImageHeight", "hdImage", "hdImageWidth", "hdImageHeight")');
 $dbh = null;
 //
 $dbh = new PDO($dbArchive2);
-$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "imageSecondary" ("idPhoto" INTEGER PRIMARY KEY, "idArticle" INTEGER, image, photoCredit, photoCaption, "time" INTEGER)');
+$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "imageSecondary" ("idPhoto" INTEGER PRIMARY KEY, "idArticle" INTEGER, image, photoName, photoCredit, photoCaption, "time" INTEGER)');
 $dbh = null;
 //
 $dbh = new PDO($dbCalendar);
@@ -38,6 +39,7 @@ $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "annualDayOfWeek" ("idAnnualDayO
 $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "monthlyDayOfWeek" ("idMonthlyDayOfWeek" INTEGER PRIMARY KEY, "date", "description")');
 $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "note" ("idNote" INTEGER PRIMARY KEY, "description")');
 $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "oneTimeEvent" ("idOneTimeEvent" INTEGER PRIMARY KEY, "date", "description")');
+$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "weeklyDayOfWeek" ("idWeeklyDayOfWeek" INTEGER PRIMARY KEY, "date", "description")');
 //
 $dbh = new PDO($dbClassifieds);
 $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "sections" ("idSection" INTEGER PRIMARY KEY, "section", "sortOrderSection" INTEGER, "sortPriority" INTEGER NOT NULL DEFAULT (2))');
@@ -74,11 +76,11 @@ $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "ads" ("idAd" INTEGER PRIMARY KE
 $dbh = null;
 //
 $dbh = new PDO($dbEdit);
-$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "articles" ("idArticle" INTEGER, "userId" INTEGER, "publicationDate", "publicationTime" INTEGER, "endDate", "survey" INTEGER, "genre", "keywords", "idSection" INTEGER, "sortOrderArticle" INTEGER, "sortPriority" INTEGER NOT NULL DEFAULT (2), "byline", "headline", "standfirst", "text", "summary", "evolve", "expand", "extend", "photoCredit", "photoCaption", "originalImageWidth" INTEGER, "originalImageHeight" INTEGER, "thumbnailImage", "thumbnailImageWidth" INTEGER, "thumbnailImageHeight" INTEGER, "hdImage", "hdImageWidth" INTEGER, "hdImageHeight" INTEGER)');
+$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "articles" ("idArticle" INTEGER, "userId" INTEGER, "publicationDate", "publicationTime" INTEGER, "endDate", "survey" INTEGER, "genre", "keywords", "idSection" INTEGER, "sortOrderArticle" INTEGER, "sortPriority" INTEGER NOT NULL DEFAULT (2), "byline", "headline", "standfirst", "text", "summary", "evolve", "expand", "extend", "photoName", "photoCredit", "photoCaption", "originalImageWidth" INTEGER, "originalImageHeight" INTEGER, "thumbnailImage", "thumbnailImageWidth" INTEGER, "thumbnailImageHeight" INTEGER, "hdImage", "hdImageWidth" INTEGER, "hdImageHeight" INTEGER)');
 $dbh = null;
 //
 $dbh = new PDO($dbEdit2);
-$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "imageSecondary" ("idPhoto" INTEGER PRIMARY KEY, "idArticle" INTEGER, image, photoCredit, photoCaption, "time" INTEGER)');
+$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "imageSecondary" ("idPhoto" INTEGER PRIMARY KEY, "idArticle" INTEGER, image, photoName, photoCredit, photoCaption, "time" INTEGER)');
 $dbh = null;
 //
 $dbh = new PDO($dbMenu);
@@ -86,11 +88,11 @@ $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "menu" ("idMenu" INTEGER PRIMARY
 $dbh = null;
 //
 $dbh = new PDO($dbPublished);
-$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "articles" ("idArticle" INTEGER, "publicationDate", "publicationTime" INTEGER, "endDate", "survey" INTEGER, "genre", "keywords", "idSection" INTEGER, "sortOrderArticle" INTEGER, "sortPriority" INTEGER NOT NULL DEFAULT (2), "byline", "headline", "standfirst", "text", "summary", "evolve", "expand", "extend", "photoCredit", "photoCaption", "originalImageWidth" INTEGER, "originalImageHeight" INTEGER, "thumbnailImage", "thumbnailImageWidth" INTEGER, "thumbnailImageHeight" INTEGER, "hdImage", "hdImageWidth" INTEGER, "hdImageHeight" INTEGER)');
+$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "articles" ("idArticle" INTEGER, "publicationDate", "publicationTime" INTEGER, "endDate", "survey" INTEGER, "genre", "keywords", "idSection" INTEGER, "sortOrderArticle" INTEGER, "sortPriority" INTEGER NOT NULL DEFAULT (2), "byline", "headline", "standfirst", "text", "summary", "evolve", "expand", "extend", "photoName", "photoCredit", "photoCaption", "originalImageWidth" INTEGER, "originalImageHeight" INTEGER, "thumbnailImage", "thumbnailImageWidth" INTEGER, "thumbnailImageHeight" INTEGER, "hdImage", "hdImageWidth" INTEGER, "hdImageHeight" INTEGER)');
 $dbh = null;
 //
 $dbh = new PDO($dbPublished2);
-$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "imageSecondary" ("idPhoto" INTEGER PRIMARY KEY, "idArticle" INTEGER, image, photoCredit, photoCaption, "time" INTEGER)');
+$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "imageSecondary" ("idPhoto" INTEGER PRIMARY KEY, "idArticle" INTEGER, image, photoName, photoCredit, photoCaption, "time" INTEGER)');
 $dbh = null;
 //
 $dbh = new PDO($dbSettings);

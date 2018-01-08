@@ -7,10 +7,10 @@
  * @category  Publishing
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2016 Hardcover LLC
+ * @copyright 2018 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
- *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-16
+ *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 01 08
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -62,13 +62,16 @@ if ($row['idArticle']) {
         $dbh = null;
     }
     $key = array_search($aGet, $articlesOrder);
-    if ($key === 0) {
+    if (empty($key)) {
+        $key = 0;
+    }
+    if ($key === 0 or $key === 1) {
         $previous = null;
     } else {
         $previous = $articlesOrder[$key - 1];
         $previous = '<a class="n" href="' . $uri . $use . '.php?a=' . $previous . '">Previous</a> | ';
     }
-    if ($key + 1 === count($articlesOrder)) {
+    if ($key === count($articlesOrder) or $key + 1 === count($articlesOrder)) {
         $next = null;
         $pipe = null;
     } else {
@@ -267,6 +270,6 @@ if ($row['idArticle']) {
         $html.= $logOutHtml . "</span><br /></p>\n";
     }
 } else {
-    header('Location: ' . $uri);
+    header('Location:' . $uri);
 }
 ?>

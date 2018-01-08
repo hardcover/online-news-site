@@ -7,10 +7,10 @@
  * @category  Publishing
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2016 Hardcover LLC
+ * @copyright 2018 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
- *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-16
+ *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 01 08
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -49,7 +49,7 @@ if (isset($_GET['a'])) {
             // Pull all articles in editing, by date range in published
             //
             if (is_null($editorView)) {
-                $stmt = $dbh->prepare('SELECT idArticle, sortOrderArticle, headline, summary, thumbnailImageWidth, thumbnailImageHeight FROM articles WHERE idSection = ? AND publicationDate <= "' . $datePost . '" AND "' . $datePost . '" <= endDate ORDER BY sortOrderArticle');
+                $stmt = $dbh->prepare('SELECT idArticle, sortOrderArticle, headline, standfirst, summary, thumbnailImageWidth FROM articles WHERE idSection = ? AND publicationDate <= "' . $datePost . '" AND "' . $datePost . '" <= endDate ORDER BY sortOrderArticle');
             } else {
                 $stmt = $dbh->prepare('SELECT idArticle, publicationDate, headline, summary, thumbnailImageWidth, thumbnailImageHeight FROM articles WHERE idSection = ? ORDER BY sortOrderArticle');
             }
@@ -62,29 +62,16 @@ if (isset($_GET['a'])) {
                 }
                 $count++;
                 $html.= '    <h2><a class="n" href="' . $use . '.php?a=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
-                //
-                // Format the photograph for the lead article differently for subscribers
-                //
-                $summary = str_replace('*', '', $summary);
-                if ($sortOrderSection == 1 and $count == 1) {
-                    if ($thumbnailImageWidth != null) {
-                        $html.= '    <p>' . "\n" . '    <a href="' . $use . '.php?a=' . $idArticle . '">';
-                        $html.= '<img class="lead b" src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" alt="">';
-                        $html.= '</a>' . html($summary) . "</p>\n";
-                    } else {
-                        if ($summary != '') {
-                            $html.= '    <p>' . "\n" . html($summary) . "</p>\n";
-                        }
-                    }
+                if (!empty($standfirst)) {
+                    $html.= '    <h5>' . html($standfirst) . "</h5>\n\n";
+                }
+                if ($thumbnailImageWidth != null) {
+                    $html.= '    <p><a href="' . $use . '.php?a=' . $idArticle . '">';
+                    $html.= '<img class="lead w b" src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" alt="">';
+                    $html.= '</a>' . html($summary) . "</p>\n";
                 } else {
-                    if ($thumbnailImageWidth != null) {
-                        $html.= '    <p class="s"><a href="' . $use . '.php?a=' . $idArticle . '">';
-                        $html.= '<img class="fr b" src="' . $imagePath . '?i=' . muddle($idArticle) . 't" width="' . $thumbnailImageWidth . '" height="' . $thumbnailImageHeight . '" alt="">';
-                        $html.= '</a>' . html($summary) . "</p>\n";
-                    } else {
-                        if ($summary != '') {
-                            $html.= '    <p class="s">' . html($summary) . "</p>\n";
-                        }
+                    if ($summary != '') {
+                        $html.= '    <p>' . "\n" . html($summary) . "</p>\n";
                     }
                 }
             }

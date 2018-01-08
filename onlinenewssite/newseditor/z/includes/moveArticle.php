@@ -7,10 +7,10 @@
  * @category  Publishing
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2016 Hardcover LLC
+ * @copyright 2018 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
- *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-16
+ *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 01 08
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -49,7 +49,7 @@ if ($dbFrom == $dbEdit) {
 // Move the non-image information
 //
 $dbh = new PDO($dbFrom);
-$stmt = $dbh->prepare('SELECT publicationDate, publicationTime, endDate, survey, genre, keywords, idSection, sortOrderArticle, byline, headline, standfirst, text, summary, photoCredit, photoCaption FROM articles WHERE idArticle=?');
+$stmt = $dbh->prepare('SELECT publicationDate, publicationTime, endDate, survey, genre, keywords, idSection, sortOrderArticle, byline, headline, standfirst, text, summary, evolve, expand, extend, photoName, photoCredit, photoCaption FROM articles WHERE idArticle=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute(array($idArticle));
 $row = $stmt->fetch();
@@ -118,8 +118,8 @@ if ($dbFrom == $dbPublished) {
     }
 }
 $dbh = new PDO($dbTo);
-$stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, publicationTime=?, endDate=?, survey=?, genre=?, keywords=?, idSection=?, byline=?, headline=?, standfirst=?, text=?, summary=?, photoCredit=?, photoCaption=? WHERE idArticle=?');
-$stmt->execute(array($publicationDate, $publicationTime, $endDate, $survey, $genre, $keywords, $idSection, $byline, $headline, $standfirst, $text, $summary, $photoCredit, $photoCaption, $idArticle));
+$stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, publicationTime=?, endDate=?, survey=?, genre=?, keywords=?, idSection=?, byline=?, headline=?, standfirst=?, text=?, summary=?, evolve=?, expand=?, extend=?, photoName=?, photoCredit=?, photoCaption=? WHERE idArticle=?');
+$stmt->execute(array($publicationDate, $publicationTime, $endDate, $survey, $genre, $keywords, $idSection, $byline, $headline, $standfirst, $text, $summary, $evolve, $expand, $extend, $photoName, $photoCredit, $photoCaption, $idArticle));
 $dbh = null;
 if ($dbFrom != $dbArchive) {
     $request = null;
@@ -140,6 +140,10 @@ if ($dbFrom != $dbArchive) {
     $request['standfirst'] = $standfirst;
     $request['text'] = $text;
     $request['summary'] = $summary;
+    $request['evolve'] = $photoCredit;
+    $request['expand'] = $photoCredit;
+    $request['extend'] = $photoCredit;
+    $request['photoName'] = $photoCredit;
     $request['photoCredit'] = $photoCredit;
     $request['photoCaption'] = $photoCaption;
     foreach ($remotes as $remote) {
@@ -219,13 +223,13 @@ if ($row['thumbnailImageWidth'] != null) {
     // Move the secondary images
     //
     $dbhF = new PDO($dbFrom2);
-    $stmt = $dbhF->prepare('SELECT image, photoCredit, photoCaption, time FROM imageSecondary WHERE idArticle=? ORDER BY time');
+    $stmt = $dbhF->prepare('SELECT image, photoName, photoCredit, photoCaption, time FROM imageSecondary WHERE idArticle=? ORDER BY time');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute(array($idArticle));
     foreach ($stmt as $row) {
         $dbh = new PDO($dbTo2);
-        $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?)');
-        $stmt->execute(array($idArticle, $row['image'], $row['photoCredit'], $row['photoCaption'], $row['time']));
+        $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoName, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?, ?)');
+        $stmt->execute(array($idArticle, $row['image'], $row['photoName'], $row['photoCredit'], $row['photoCaption'], $row['time']));
         $dbh = null;
         if ($dbFrom != $dbArchive) {
             $request = null;
@@ -234,6 +238,7 @@ if ($row['thumbnailImageWidth'] != null) {
             $request['archive'] = $archive;
             $request['idArticle'] = $idArticle;
             $request['image'] = $row['image'];
+            $request['photoName'] = $row['photoName'];
             $request['photoCredit'] = $row['photoCredit'];
             $request['photoCaption'] = $row['photoCaption'];
             foreach ($remotes as $remote) {

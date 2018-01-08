@@ -7,10 +7,10 @@
  * @category  Publishing
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2016 Hardcover LLC
+ * @copyright 2018 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
- *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-16
+ *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 01 08
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -176,8 +176,8 @@ if ($task == 'archiveSync2') {
 //
 if ($task == 'publishedDeletePhoto') {
     $dbh = new PDO($dbPublished);
-    $stmt = $dbh->prepare('UPDATE articles SET photoCredit=?, photoCaption=?, originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
-    $stmt->execute(array(null, null, null, null, null, null, null, null, null, null, $idArticle));
+    $stmt = $dbh->prepare('UPDATE articles SET photoName=?, photoCredit=?, photoCaption=?, originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
+    $stmt->execute(array(null, null, null, null, null, null, null, null, null, null, null, $idArticle));
     $dbh = null;
     $dbh = new PDO($dbPublished2);
     $stmt = $dbh->prepare('DELETE FROM imageSecondary WHERE idArticle=?');
@@ -236,8 +236,8 @@ if ($task == 'updateInsert1') {
     $stmt->execute(array($idArticle));
     $row = $stmt->fetch();
     if ($row) {
-        $stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, publicationTime=?, endDate=?, survey=?, genre=?, keywords=?, idSection=?, sortOrderArticle=?, byline=?, headline=?, standfirst=?, text=?, summary=?, photoCredit=?, photoCaption=?, originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE ' . $column . '=?');
-        $stmt->execute(array(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $idArticle));
+        $stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, publicationTime=?, endDate=?, survey=?, genre=?, keywords=?, idSection=?, sortOrderArticle=?, byline=?, headline=?, standfirst=?, text=?, summary=?, evolve=?, expand=?, extend=?, photoName=?, photoCredit=?, photoCaption=?, originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE ' . $column . '=?');
+        $stmt->execute(array(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $idArticle));
     } else {
         if ($column == 'idArticle') {
             $stmt = $dbh->prepare('INSERT INTO articles (idArticle) VALUES (?)');
@@ -247,8 +247,8 @@ if ($task == 'updateInsert1') {
             $stmt->execute(array($idArticle, $idArticle));
         }
     }
-    $stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, publicationTime=?, endDate=?, survey=?, genre=?, keywords=?, idSection=?, sortOrderArticle=?, byline=?, headline=?, standfirst=?, text=?, summary=?, photoCredit=?, photoCaption=? WHERE ' . $column . '=?');
-    $stmt->execute(array($publicationDate, $publicationTime, $endDate, $survey, $genre, $keywords, $idSection, $sortOrderArticle, $byline, $headline, $standfirst, $text, $summary, $photoCredit, $photoCaption, $idArticle));
+    $stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, publicationTime=?, endDate=?, survey=?, genre=?, keywords=?, idSection=?, sortOrderArticle=?, byline=?, headline=?, standfirst=?, text=?, summary=?, evolve=?, expand=?, extend=?, photoName=?, photoCredit=?, photoCaption=? WHERE ' . $column . '=?');
+    $stmt->execute(array($publicationDate, $publicationTime, $endDate, $survey, $genre, $keywords, $idSection, $sortOrderArticle, $byline, $headline, $standfirst, $text, $summary, $evolve, $expand, $extend, $photoName, $photoCredit, $photoCaption, $idArticle));
     $dbh = null;
     $response['result'] = 'success';
 }
@@ -268,8 +268,8 @@ if ($task == 'updateInsert3') {
 }
 if ($task == 'updateInsert4') {
     $dbh = new PDO($db2);
-    $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?)');
-    $stmt->execute(array($idArticle, $image, $photoCredit, $photoCaption, time()));
+    $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoName, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?, ?)');
+    $stmt->execute(array($idArticle, $image, $photoName, $photoCredit, $photoCaption, time()));
     $dbh = null;
     $response['result'] = 'success';
 }
@@ -290,7 +290,7 @@ if ($task == 'downloadContributionIDs') {
 }
 if ($task == 'downloadContribution1') {
     $dbh = new PDO($dbEdit);
-    $stmt = $dbh->prepare('SELECT idArticle, idSection, byline, headline, standfirst, text, summary, photoCredit, photoCaption, thumbnailImageWidth FROM articles WHERE idArticle=?');
+    $stmt = $dbh->prepare('SELECT idArticle, idSection, byline, headline, standfirst, text, summary, evolve, expand, extend, photoName, photoCredit, photoCaption, thumbnailImageWidth FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute(array($idArticle));
     $row = $stmt->fetch();
@@ -340,12 +340,13 @@ if ($task == 'downloadContribution4a') {
 if ($task == 'downloadContribution4b') {
     $idPhotos = array();
     $dbh = new PDO($dbEdit2);
-    $stmt = $dbh->prepare('SELECT image, photoCredit, photoCaption FROM imageSecondary WHERE idPhoto=?');
+    $stmt = $dbh->prepare('SELECT image, photoName, photoCredit, photoCaption FROM imageSecondary WHERE idPhoto=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute(array($idPhoto));
     $row = $stmt->fetch();
     if ($row) {
         $response['hdImage'] = $row['image'];
+        $response['photoName'] = $row['photoName'];
         $response['photoCredit'] = $row['photoCredit'];
         $response['photoCaption'] = $row['photoCaption'];
     }
@@ -369,6 +370,7 @@ if ($task == 'calendarSync') {
     $annual = json_decode($annual, true);
     $annualDayOfWeek = json_decode($annualDayOfWeek, true);
     $monthlyDayOfWeek = json_decode($monthlyDayOfWeek, true);
+    $weeklyDayOfWeek = json_decode($weeklyDayOfWeek, true);
     $oneTimeEvent = json_decode($oneTimeEvent, true);
     $dbh = new PDO($dbCalendar);
     $dbh->beginTransaction();
@@ -385,6 +387,11 @@ if ($task == 'calendarSync') {
     $stmt = $dbh->query('DELETE FROM monthlyDayOfWeek');
     foreach ($monthlyDayOfWeek as $row) {
         $stmt = $dbh->prepare('INSERT INTO monthlyDayOfWeek (idMonthlyDayOfWeek, date, description) VALUES (?, ?, ?)');
+        $stmt->execute(json_decode($row, true));
+    }
+    $stmt = $dbh->query('DELETE FROM weeklyDayOfWeek');
+    foreach ($weeklyDayOfWeek as $row) {
+        $stmt = $dbh->prepare('INSERT INTO weeklyDayOfWeek (idWeeklyDayOfWeek, date, description) VALUES (?, ?, ?)');
         $stmt->execute(json_decode($row, true));
     }
     $stmt = $dbh->query('DELETE FROM oneTimeEvent');
@@ -701,6 +708,23 @@ if ($task == 'dbTest') {
 //
 if ($task == 'sitemap') {
     //
+    // Variables
+    //
+    $uri = $uriScheme . '://' . $_SERVER["HTTP_HOST"] . '/';
+    $dbh = new PDO($dbSettings);
+    $stmt = $dbh->prepare('SELECT name, description FROM names WHERE idName=?');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $stmt->execute(array(1));
+    $row = $stmt->fetch();
+    $dbh = null;
+    //
+    if ($row) {
+        extract($row);
+    } else {
+        $name = null;
+        $description = null;
+    }
+    //
     // Also write a sitemap-news.xml file when the custom program exists
     //
     if (file_exists($includesPath . '/custom/programs/sitemapNews.php')) {
@@ -733,12 +757,6 @@ if ($task == 'sitemap') {
         $headline = strtolower($h);
         fwrite($fp, utf8_encode('  <url><loc>' . $uri . '?a=' . $page['0'] . '+' . $headline . '</loc><lastmod>' . $page[1] . '</lastmod></url>' . "\n"));
     }
-    //
-    // Variables
-    //
-    $uri = $uriScheme . '://' . $_SERVER["HTTP_HOST"] . rtrim(dirname($_SERVER['PHP_SELF']), "/\\") . '/';
-    $uri = str_replace('z/', '', $uri);
-    array_map("unlink", glob('../*xml*'));
     //
     // Determine the number of needed sitemap files
     //

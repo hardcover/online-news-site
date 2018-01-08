@@ -7,10 +7,10 @@
  * @category  Publishing
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2016 Hardcover LLC
+ * @copyright 2018 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
- *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-16
+ *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 01 08
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -108,14 +108,14 @@ if (isset($_POST['addUpdate'])) {
                 //
                 // Reduce an oversize image
                 //
-                if ($widthOriginal > 1920) {
-                    $widthHD = 1920;
+                if ($widthOriginal > 3840) {
+                    $widthHD = 3840;
                     $heightHD = round($widthHD / $aspectRatio);
                     $hd = imagecreatetruecolor($widthHD, $heightHD);
                     $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
                     imagecopyresized($hd, $srcImage, 0, 0, 0, 0, $widthHD, $heightHD, ImageSX($srcImage), ImageSY($srcImage));
                     ob_start();
-                    imagejpeg($hd, null, 90);
+                    imagejpeg($hd, null, 60);
                     imagedestroy($hd);
                     $hdImage = ob_get_contents();
                     ob_end_clean();
@@ -252,9 +252,9 @@ require $includesPath . '/header1.inc';
   <link rel="stylesheet" type="text/css" href="z/base.css" />
   <link rel="stylesheet" type="text/css" media="(max-width: 768px)" href="z/small.css" />
   <link rel="stylesheet" type="text/css" media="(min-width: 768px)" href="z/large.css" />
-  <script type="text/javascript" src="z/jquery.js"></script>
-  <script type="text/javascript" src="z/jquery-ui.js"></script>
-  <script type="text/javascript" src="z/datepicker.js"></script>
+  <script src="z/jquery.min.js"></script>
+  <script src="z/jquery-ui.min.js"></script>
+  <script src="z/datepicker.js"></script>
 </head>
 <?php require $includesPath . '/body.inc'; ?>
 
@@ -308,10 +308,10 @@ $dbh = null;
     <p><label for="duration">Duration (weeks)</label><br />
     <input type="number" id="duration" name="duration" class="h"<?php echoIfValue($durationEdit); ?> /></p>
 
-    <p><label for="image">Photo upload (JPG image only)</label><br />
+    <p><label for="image">Photo upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br />
     <input id="image" name="image" type="file" class="w" accept="image/jpeg"></p>
 
-    <p>Up to seven images may be included in an ad. Upload one image at a time. Edit the listing to add each additional image. JPG is the only permitted image format. The best image size is 1920 pixels wide. Larger images are reduced to that width.</p>
+    <p>Up to seven images may be included in an ad. Upload one image at a time. Edit the listing to add each additional image. JPG is the only permitted image format. The best image size is 3840 pixels wide. Larger images are reduced to that width.</p>
 
     <p><input type="submit" class="button" name="addUpdate" value="Add/update"/> <input type="submit" class="button" name="publish" value="Publish" /></p>
 

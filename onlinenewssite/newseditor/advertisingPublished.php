@@ -7,10 +7,10 @@
  * @category  Publishing
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2016 Hardcover LLC
+ * @copyright 2018 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
- *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-16
+ *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 01 08
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -122,9 +122,9 @@ if (isset($_POST['addUpdate'])) {
                 $stmt = $dbh->prepare('UPDATE advertisements SET originalImage=?, originalImageWidth=?, originalImageHeight=? WHERE idAd=?');
                 $stmt->execute(array(file_get_contents($_FILES['image']['tmp_name']), $widthOriginal, $heightOriginal, $idAd));
                 $dbh = null;
-                if ($widthOriginal == 640) {
+                if ($widthOriginal == 1280) {
                     //
-                    // If the original width is 640, then use the original image without resizing
+                    // If the original width is 1280, then use the original image without resizing
                     //
                     $dbh = new PDO($dbAdvertising);
                     $stmt = $dbh->prepare('UPDATE advertisements SET image=?, imageWidth=?, imageHeight=? WHERE idAd=?');
@@ -134,7 +134,7 @@ if (isset($_POST['addUpdate'])) {
                     //
                     // Else resize the image for use
                     //
-                    $width = 640;
+                    $width = 1280;
                     $height = round($width / $aspectRatio);
                     $hd = imagecreatetruecolor($width, $height);
                     $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
@@ -250,9 +250,9 @@ require $includesPath . '/header1.inc';
   <link rel="stylesheet" type="text/css" href="z/base.css" />
   <link rel="stylesheet" type="text/css" media="(max-width: 768px)" href="z/small.css" />
   <link rel="stylesheet" type="text/css" media="(min-width: 768px)" href="z/large.css" />
-  <script type="text/javascript" src="z/jquery.js"></script>
-  <script type="text/javascript" src="z/jquery-ui.js"></script>
-  <script type="text/javascript" src="z/datepicker.js"></script>
+  <script src="z/jquery.min.js"></script>
+  <script src="z/jquery-ui.min.js"></script>
+  <script src="z/datepicker.js"></script>
 </head>
 
 <?php require $includesPath . '/body.inc';?>
@@ -332,6 +332,6 @@ $dbh = null;
     <p><input type="submit" value="Delete" name="delete" class="button" /><input type="hidden" name="existing"<?php echoIfValue($edit); ?> /></p>
   </form>
 
-  <p>The optimal image size for ads is 640 pixels wide. Because ads contain text, unlike photographs, the optimal image quality for ads is 100 percent, to eliminate compression artifacts.</p>
+  <p>The optimal image size for ads is 1280 pixels wide. Because ads contain text, unlike photographs, the optimal image quality for ads is 100 percent, to eliminate compression artifacts.</p>
 </body>
 </html>

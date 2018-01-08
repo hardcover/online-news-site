@@ -7,10 +7,10 @@
  * @category  Publishing
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2016 Hardcover LLC
+ * @copyright 2018 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
- *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-16
+ *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 01 08
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -62,7 +62,7 @@ if (strlen($textPost) > 500) {
 } else {
     $summaryPost = $textPost;
 }
-if (strpos($summaryPost, '<') === false) {
+if (strpos($summaryPost, '<') === false and strlen($summaryPost) > 1) {
     $summaryPost = $summaryPost . ' (continued)';
 } else {
     $summaryPost = null;
@@ -117,7 +117,7 @@ if (isset($_POST['addUpdate'])) {
                 $widthOriginal = $sizes['0'];
                 $heightOriginal = $sizes['1'];
                 $aspectRatio = $widthOriginal / $heightOriginal;
-                $widthHD = 1920;
+                $widthHD = 3840;
                 $heightHD = round($widthHD / $aspectRatio);
                 //
                 // Determine if the image is the primary image or a secondary image
@@ -132,11 +132,11 @@ if (isset($_POST['addUpdate'])) {
                     //
                     // Primary image
                     //
-                    // Save the original image dimensions
+                    // Save the original image information
                     //
                     $dbh = new PDO($dbEdit);
-                    $stmt = $dbh->prepare('UPDATE articles SET originalImageWidth=?, originalImageHeight=? WHERE idArticle=?');
-                    $stmt->execute(array($widthOriginal, $heightOriginal, $idArticle));
+                    $stmt = $dbh->prepare('UPDATE articles SET photoName=?, originalImageWidth=?, originalImageHeight=? WHERE idArticle=?');
+                    $stmt->execute(array($_FILES['image']['name'], $widthOriginal, $heightOriginal, $idArticle));
                     $dbh = null;
                     //
                     // Create and save the thumbnail image
@@ -164,7 +164,7 @@ if (isset($_POST['addUpdate'])) {
                     $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
                     imagecopyresized($hd, $srcImage, 0, 0, 0, 0, $widthHD, $heightHD, ImageSX($srcImage), ImageSY($srcImage));
                     ob_start();
-                    imagejpeg($hd, null, 90);
+                    imagejpeg($hd, null, 60);
                     imagedestroy($hd);
                     $hdImage = ob_get_contents();
                     ob_end_clean();
@@ -182,13 +182,13 @@ if (isset($_POST['addUpdate'])) {
                     $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
                     imagecopyresized($hd, $srcImage, 0, 0, 0, 0, $widthHD, $heightHD, ImageSX($srcImage), ImageSY($srcImage));
                     ob_start();
-                    imagejpeg($hd, null, 90);
+                    imagejpeg($hd, null, 60);
                     imagedestroy($hd);
                     $hdImage = ob_get_contents();
                     ob_end_clean();
                     $dbh = new PDO($dbEdit2);
-                    $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?)');
-                    $stmt->execute(array($idArticle, $hdImage, $photoCreditPost, $photoCaptionPost, time()));
+                    $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoName, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?, ?)');
+                    $stmt->execute(array($idArticle, $hdImage, $_FILES['image']['name'], $photoCreditPost, $photoCaptionPost, time()));
                     $dbh = null;
                 }
             } else {
@@ -213,8 +213,8 @@ if (isset($_POST['addUpdate'])) {
 //
 if (isset($_POST['deletePhoto']) and isset($idArticle)) {
     $dbh = new PDO($dbEdit);
-    $stmt = $dbh->prepare('UPDATE articles SET photoCredit=?, photoCaption=?, originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
-    $stmt->execute(array(null, null, null, null, null, null, null, null, null, null, $idArticle));
+    $stmt = $dbh->prepare('UPDATE articles SET photoName=?, photoCredit=?, photoCaption=?, originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
+    $stmt->execute(array(null, null, null, null, null, null, null, null, null, null, null, $idArticle));
     $dbh = null;
     $dbh = new PDO($dbEdit2);
     $stmt = $dbh->prepare('DELETE FROM imageSecondary WHERE idArticle=?');
@@ -263,7 +263,7 @@ if (isset($_POST['edit'])) {
 echo "  <h1>Article contribution</h1>\n";
 echoIfMessage($message);
 ?>
-  <p>Fifteen minutes from the last time an edit was made to a submitted article, the article becomes available to be sent to the editor after which it will no longer be available for edit here.</p>
+  <p>Fifteen minutes from the last edit, the article becomes available to be sent to the editor after which it will no longer be available to edit here.</p>
 
   <form class="wait" method="post" action="<?php echo $uri; ?>?m=article-contribution" enctype="multipart/form-data">
     <p><label for="byline">Byline</label><br />
@@ -311,7 +311,7 @@ if ($use == 'published') {
     <p><label for="text">Article text is entered in either HTML or the <a href="http://daringfireball.net/projects/markdown/syntax/" target="_blank">markdown syntax</a>. Enter iframe and video tags inside paragraph tags, for example, &lt;p&gt;&lt;iframe&gt;&lt;/iframe&gt;&lt;/p&gt;.</label><br />
     <textarea id="text" name="text" rows="9" class="w"><?php echoIfText($textEdit); ?></textarea></p>
 
-    <p><label for="image">Photo upload (JPG image only)</label><br />
+    <p><label for="image">Photo upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br />
     <input id="image" name="image" type="file" class="w" accept="image/jpeg" /></p>
 
     <p><label for="photoCaption">Photo caption</label><br />

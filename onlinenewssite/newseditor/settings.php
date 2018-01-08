@@ -7,10 +7,10 @@
  * @category  Publishing
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2016 Hardcover LLC
+ * @copyright 2018 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
- *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-16
+ *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 01 08
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -486,7 +486,7 @@ if (isset($editPost)) {
 //
 require $includesPath . '/header1.inc';
 echo "  <title>Settings maintenance</title>\n";
-echo '  <script type="text/javascript" src="z/wait.js"></script>' . "\n";
+echo '  <script src="z/wait.js"></script>' . "\n";
 require $includesPath . '/header2.inc';
 require $includesPath . '/body.inc';
 ?>

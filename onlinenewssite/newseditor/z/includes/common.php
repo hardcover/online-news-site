@@ -7,10 +7,10 @@
  * @category  Publishing
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2016 Hardcover LLC
+ * @copyright 2018 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
- *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-16
+ *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 01 08
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -205,19 +205,6 @@ function echoIfYes($str)
     }
 }
 /**
- * Function to show a selcted radio button when the value is null
- *
- * @param string $str The value
- *
- * @return The appropriate HTML
- */
-function echoIfNo($str)
-{
-    if ($str == null) {
-        echo ' checked';
-    }
-}
-/**
  * Function to obfuscate a string value for human and simple machine readers
  *
  * @param string $str The original string value
@@ -246,6 +233,27 @@ function plain($str)
     } else {
         return base64_decode(str_rot13($str));
     }
+}
+/**
+ * Function to echo the maximum upload file size
+ *
+ * @return The response associated array
+ */
+function uploadFilesizeMaximum()
+{
+    $postMaxSize = @intval(@ini_get('post_max_size'));
+    $uploadMaxFilesize = @intval(@ini_get('upload_max_filesize'));
+    if (!empty($postMaxSize) and !empty($uploadMaxFilesize)) {
+        if ($postMaxSize < $uploadMaxFilesize) {
+            $maxFileSize = intval($postMaxSize - 1);
+        } else {
+            $maxFileSize = intval($uploadMaxFilesize - 1);
+        }
+        $maxFileSize = ', ' . $maxFileSize . ' MB maximum filesize';
+    } else {
+        $maxFileSize = null;
+    }
+    echo $maxFileSize;
 }
 /**
  * Function for HTML request/response RPC SOA, posts a request array and captures the response array

@@ -198,7 +198,7 @@ input.h, select.h, textarea.h, span.hl {
 }
 
 input.w, select.w, textarea.w {
-    width: 98%;
+    width: 96.5%;
 }
 
 input.paypal {
@@ -280,8 +280,8 @@ img {
 }
 
 img.lead, img.lead2, img.lead3, img.lead4 {
-    float: left;
-    clear: left;
+    float: both;
+    clear: none;
     margin: .4em 1em 1em 0;
 }
 

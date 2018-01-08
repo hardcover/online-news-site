@@ -7,10 +7,10 @@
  * @category  Publishing
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2016 Hardcover LLC
+ * @copyright 2018 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
- *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-16
+ *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 01 08
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -19,7 +19,7 @@
 // Copy the non-image information
 //
 $dbh = new PDO($database);
-$stmt = $dbh->prepare('SELECT publicationDate, publicationTime, endDate, survey, genre, keywords, idSection, sortOrderArticle, byline, headline, standfirst, text, summary, photoCredit, photoCaption FROM articles WHERE idArticle=?');
+$stmt = $dbh->prepare('SELECT publicationDate, publicationTime, endDate, survey, genre, keywords, idSection, sortOrderArticle, byline, headline, standfirst, text, summary, evolve, expand, extend, photoName, photoCredit, photoCaption FROM articles WHERE idArticle=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute(array($idArticle));
 $row = $stmt->fetch();
@@ -44,6 +44,10 @@ if ($row) {
     $request['standfirst'] = $standfirst;
     $request['text'] = $text;
     $request['summary'] = $summary;
+    $request['evolve'] = $photoCredit;
+    $request['expand'] = $photoCredit;
+    $request['extend'] = $photoCredit;
+    $request['photoName'] = $photoCredit;
     $request['photoCredit'] = $photoCredit;
     $request['photoCaption'] = $photoCaption;
     foreach ($remotes as $remote) {
@@ -128,7 +132,7 @@ if ($row) {
         $response = soa($remote . 'z/', $request);
         if ($imagesMain != $response['remotePhotos']) {
             $dbh = new PDO($database2);
-            $stmt = $dbh->prepare('SELECT image, photoCredit, photoCaption, time FROM imageSecondary WHERE idArticle=? ORDER BY time');
+            $stmt = $dbh->prepare('SELECT image, photoName, photoCredit, photoCaption, time FROM imageSecondary WHERE idArticle=? ORDER BY time');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
             $stmt->execute(array($idArticle));
             foreach ($stmt as $row) {
@@ -138,6 +142,7 @@ if ($row) {
                 $request['archive'] = $archive;
                 $request['idArticle'] = $idArticle;
                 $request['image'] = $row['image'];
+                $request['photoName'] = $row['photoName'];
                 $request['photoCredit'] = $row['photoCredit'];
                 $request['photoCaption'] = $row['photoCaption'];
                 foreach ($remotes as $remote) {

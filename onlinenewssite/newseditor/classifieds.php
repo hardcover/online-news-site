@@ -7,10 +7,10 @@
  * @category  Publishing
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2016 Hardcover LLC
+ * @copyright 2018 Hardcover LLC
  * @license   http://hardcoverwebdesign.com/license  MIT License
- *.@license   http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2016-10-16
+ *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 01 08
  * @link      http://hardcoverwebdesign.com/
  * @link      http://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -107,9 +107,9 @@ require $includesPath . '/header1.inc';
   <link rel="stylesheet" type="text/css" href="z/base.css" />
   <link rel="stylesheet" type="text/css" media="(max-width: 768px)" href="z/small.css" />
   <link rel="stylesheet" type="text/css" media="(min-width: 768px)" href="z/large.css" />
-  <script type="text/javascript" src="z/jquery.js"></script>
-  <script type="text/javascript" src="z/jquery-ui.js"></script>
-  <script type="text/javascript" src="z/datepicker.js"></script>
+  <script src="z/jquery.min.js"></script>
+  <script src="z/jquery-ui.min.js"></script>
+  <script src="z/datepicker.js"></script>
 </head>
 <?php require $includesPath . '/body.inc'; ?>
 
