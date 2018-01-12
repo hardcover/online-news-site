@@ -29,5 +29,5 @@ $includesPath = 'z/includes';
 //
 // INPUT: URI scheme, http or https
 //
-$uriScheme = 'http';
+$uriScheme = 'https';
 ?>
