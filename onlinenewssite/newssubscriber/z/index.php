@@ -8,11 +8,11 @@
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2018 Hardcover LLC
- * @license   http://hardcoverwebdesign.com/license  MIT License
- *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 01 08
- * @link      http://hardcoverwebdesign.com/
- * @link      http://online-news-site.com/
+ * @license   https://hardcoverwebdesign.com/license  MIT License
+ *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 03 17
+ * @link      https://hardcoverwebdesign.com/
+ * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
  */
 //
@@ -708,7 +708,7 @@ if ($task == 'dbTest') {
 //
 if ($task == 'sitemap') {
     //
-    // Variables
+    // sitemap.xml
     //
     $uri = $uriScheme . '://' . $_SERVER["HTTP_HOST"] . '/';
     $dbh = new PDO($dbSettings);
@@ -723,18 +723,6 @@ if ($task == 'sitemap') {
     } else {
         $name = null;
         $description = null;
-    }
-    //
-    // Also write a sitemap-news.xml file when the custom program exists
-    //
-    if (file_exists($includesPath . '/custom/programs/sitemapNews.php')) {
-        include $includesPath . '/custom/programs/sitemapNews.php';
-    }
-    //
-    // Also write an rss.xml file when the custom program exists
-    //
-    if (file_exists($includesPath . '/custom/programs/rss.php')) {
-        include $includesPath . '/custom/programs/rss.php';
     }
     /**
      * Function to write a <url><loc> line </loc></url> to the sitemap.xml file
@@ -840,6 +828,91 @@ if ($task == 'sitemap') {
         fwrite($fp, utf8_encode('</urlset>' . "\n"));
         fclose($fp);
         $fp = null;
+    }
+    //
+    // sitemap-news.xml
+    //
+    $twoDaysAgo = date("Y-m-d", time() - 172800);
+    $dbh = new PDO($dbSettings);
+    $stmt = $dbh->prepare('SELECT name FROM names WHERE idName=?');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $stmt->execute(array(1));
+    $row = $stmt->fetch();
+    $dbh = null;
+    extract($row);
+    //
+    // Begin the sitemap-news.xml file
+    //
+    $fp = fopen('../sitemap-news.xml', 'w');
+    fwrite($fp, utf8_encode('<?xml version="1.0" encoding="UTF-8"?>' . "\n"));
+    fwrite($fp, utf8_encode('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' . "\n"));
+    fwrite($fp, utf8_encode('        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">' . "\n"));
+    //
+    // Add articles
+    //
+    $dbhSection = new PDO($dbSettings);
+    $stmt = $dbhSection->query('SELECT idSection, section, sortOrderSection FROM sections ORDER BY sortOrderSection');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    foreach ($stmt as $row) {
+        extract($row);
+        $dbh = new PDO($dbPublished);
+        $stmt = $dbh->prepare('SELECT idSection FROM articles WHERE idSection=?');
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute(array($idSection));
+        $row = $stmt->fetch();
+        if ($row) {
+            $stmt = $dbh->prepare('SELECT idArticle, publicationTime, survey, keywords, headline, text FROM articles WHERE idSection = ? AND publicationDate <= "' . $today . '" AND publicationDate >= "' . $twoDaysAgo . '" ORDER BY sortOrderArticle');
+            $stmt->setFetchMode(PDO::FETCH_ASSOC);
+            $stmt->execute(array($idSection));
+            foreach ($stmt as $row) {
+                extract($row);
+                if ($survey !== strval(1) and !empty($text) and strpos($text, '<') === false) {
+                    $h = preg_replace('/\%/', ' percentage', $headline);
+                    $h = preg_replace('/\@/', ' at ', $h);
+                    $h = preg_replace('/\&/', ' and ', $h);
+                    $h = preg_replace('/\s[\s]+/', '-', $h);
+                    $h = preg_replace('/[\s\W]+/', '-', $h);
+                    $h = preg_replace('/^[\-]+/', '', $h);
+                    $h = preg_replace('/[\-]+$/', '', $h);
+                    $headlineSEO = strtolower($h);
+                    //
+                    $str = str_replace('&', '&amp;', $headline);
+                    $str = str_replace("\'", '&apos;', $str);
+                    $str = str_replace('"', '&quot;', $str);
+                    $str = str_replace('>', '&gt;', $str);
+                    $headline = str_replace('<', '&lt;', $str);
+                    //
+                    fwrite($fp, utf8_encode('  <url>' . "\n"));
+                    fwrite($fp, utf8_encode('    <loc>' . $uriScheme . '://' . $_SERVER["HTTP_HOST"] . '/?a=' . $idArticle . '+' . $headlineSEO . '</loc>' . "\n"));
+                    fwrite($fp, utf8_encode('    <news:news>' . "\n"));
+                    fwrite($fp, utf8_encode('      <news:publication>' . "\n"));
+                    fwrite($fp, utf8_encode('        <news:name>' . $name . '</news:name>' . "\n"));
+                    fwrite($fp, utf8_encode('        <news:language>en</news:language>' . "\n"));
+                    fwrite($fp, utf8_encode('      </news:publication>' . "\n"));
+                    if (!empty($genre)) {
+                        fwrite($fp, utf8_encode('      <news:genres>' . $genre . '</news:genres>' . "\n"));
+                    }
+                    fwrite($fp, utf8_encode('      <news:publication_date>' . date(DATE_W3C, $publicationTime) . '</news:publication_date>' . "\n"));
+                    fwrite($fp, utf8_encode('      <news:title>' . $headline . '</news:title>' . "\n"));
+                    if (!empty($keywords)) {
+                        fwrite($fp, utf8_encode('      <news:keywords>' . $keywords . '</news:keywords>' . "\n"));
+                    }
+                    fwrite($fp, utf8_encode('    </news:news>' . "\n"));
+                    fwrite($fp, utf8_encode('  </url>' . "\n"));
+                }
+            }
+        }
+        $dbh = null;
+    }
+    $dbhSection = null;
+    fwrite($fp, utf8_encode('</urlset>' . "\n"));
+    fclose($fp);
+    $fp = null;
+    //
+    // rss.xml
+    //
+    if (file_exists($includesPath . '/custom/programs/rss.php')) {
+        include $includesPath . '/custom/programs/rss.php';
     }
     $response['result'] = 'success';
 }

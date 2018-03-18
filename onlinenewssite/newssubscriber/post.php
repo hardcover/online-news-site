@@ -8,11 +8,11 @@
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2018 Hardcover LLC
- * @license   http://hardcoverwebdesign.com/license  MIT License
- *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 01 08
- * @link      http://hardcoverwebdesign.com/
- * @link      http://online-news-site.com/
+ * @license   https://hardcoverwebdesign.com/license  MIT License
+ *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 03 17
+ * @link      https://hardcoverwebdesign.com/
+ * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
  */
 session_start();
@@ -125,7 +125,7 @@ if ((isset($_POST['login'])
             $stmt->execute(array(muddle($emailPost), $hashPass, $_SERVER['REMOTE_ADDR'], $verify, time() + 900));
             $idUser = $dbh->lastInsertId();
             $dbh = null;
-            $body = 'To continue registration, visit the link below within fifteen minutes from when registration was begun and from the same computer. If activation has not been completed by then, begin registration again.' . "\n\n";
+            $body = 'To continue registration, visit the link below within fifteen minutes from when registration was begun and from the same computer. If activation has not been completed by then, then begin registration again.' . "\n\n";
             $body.= $uri . '?t=l&v=' . $verify . "\r\n";
             $subject = 'Confirm email address at ' . $name . "\r\n";
             mail($emailPost . "\r\n", $subject, $body, $headers);

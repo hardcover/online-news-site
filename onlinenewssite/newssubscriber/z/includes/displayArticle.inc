@@ -8,11 +8,11 @@
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2018 Hardcover LLC
- * @license   http://hardcoverwebdesign.com/license  MIT License
- *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 01 08
- * @link      http://hardcoverwebdesign.com/
- * @link      http://online-news-site.com/
+ * @license   https://hardcoverwebdesign.com/license  MIT License
+ *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 03 17
+ * @link      https://hardcoverwebdesign.com/
+ * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
  */
 //
@@ -270,6 +270,6 @@ if ($row['idArticle']) {
         $html.= $logOutHtml . "</span><br /></p>\n";
     }
 } else {
-    header('Location:' . $uri);
+    echo '<meta HTTP-EQUIV="REFRESH" content="2; url=' . $uri . '">';
 }
 ?>

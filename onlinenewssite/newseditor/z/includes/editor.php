@@ -8,11 +8,11 @@
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2018 Hardcover LLC
- * @license   http://hardcoverwebdesign.com/license  MIT License
- *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 01 08
- * @link      http://hardcoverwebdesign.com/
- * @link      http://online-news-site.com/
+ * @license   https://hardcoverwebdesign.com/license  MIT License
+ *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 03 17
+ * @link      https://hardcoverwebdesign.com/
+ * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
  */
 //
@@ -195,7 +195,7 @@ if (isset($_POST['addUpdate'])) {
                 $widthOriginal = $sizes['0'];
                 $heightOriginal = $sizes['1'];
                 $aspectRatio = $widthOriginal / $heightOriginal;
-                $widthHD = 3840;
+                $widthHD = 2370;
                 $heightHD = round($widthHD / $aspectRatio);
                 //
                 // Determine if the image is the primary image or a secondary image
@@ -223,7 +223,7 @@ if (isset($_POST['addUpdate'])) {
                     $widthThumbnail = round($heightThumbnail * $aspectRatio);
                     $thumbnail = imagecreatetruecolor($widthThumbnail, $heightThumbnail);
                     $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
-                    imagecopyresized($thumbnail, $srcImage, 0, 0, 0, 0, $widthThumbnail, $heightThumbnail, ImageSX($srcImage), ImageSY($srcImage));
+                    imagecopyresampled($thumbnail, $srcImage, 0, 0, 0, 0, $widthThumbnail, $heightThumbnail, ImageSX($srcImage), ImageSY($srcImage));
                     ob_start();
                     imagejpeg($thumbnail, null, 90);
                     imagedestroy($thumbnail);
@@ -240,9 +240,9 @@ if (isset($_POST['addUpdate'])) {
                     //
                     $hd = imagecreatetruecolor($widthHD, $heightHD);
                     $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
-                    imagecopyresized($hd, $srcImage, 0, 0, 0, 0, $widthHD, $heightHD, ImageSX($srcImage), ImageSY($srcImage));
+                    imagecopyresampled($hd, $srcImage, 0, 0, 0, 0, $widthHD, $heightHD, ImageSX($srcImage), ImageSY($srcImage));
                     ob_start();
-                    imagejpeg($hd, null, 60);
+                    imagejpeg($hd, null, 83);
                     imagedestroy($hd);
                     $hdImage = ob_get_contents();
                     ob_end_clean();
@@ -258,9 +258,9 @@ if (isset($_POST['addUpdate'])) {
                     //
                     $hd = imagecreatetruecolor($widthHD, $heightHD);
                     $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
-                    imagecopyresized($hd, $srcImage, 0, 0, 0, 0, $widthHD, $heightHD, ImageSX($srcImage), ImageSY($srcImage));
+                    imagecopyresampled($hd, $srcImage, 0, 0, 0, 0, $widthHD, $heightHD, ImageSX($srcImage), ImageSY($srcImage));
                     ob_start();
-                    imagejpeg($hd, null, 60);
+                    imagejpeg($hd, null, 83);
                     imagedestroy($hd);
                     $hdImage = ob_get_contents();
                     ob_end_clean();
@@ -381,11 +381,6 @@ if (isset($_POST['delete']) and isset($idArticle)) {
         include $includesPath . '/sortPublished.php';
         include $includesPath . '/syncArticles.php';
     }
-    foreach ($remotes as $remote) {
-        $request = null;
-        $response = null;
-        $request['task'] = 'sitemap';
-    }
     //
     // Update sitemaps and rss
     //
@@ -474,6 +469,16 @@ if (isset($_POST['publish'])
             include $includesPath . '/moveArticle.php';
             include $includesPath . '/sortPublished.php';
             include $includesPath . '/syncArticles.php';
+        }
+        //
+        // Update sitemaps and rss
+        //
+        $request = array();
+        $request['task'] = 'sitemap';
+        $response = null;
+        foreach ($remotes as $remote) {
+            extract($row);
+            $response = soa($remote . 'z/', $request);
         }
     }
 }

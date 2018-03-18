@@ -8,11 +8,11 @@
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2018 Hardcover LLC
- * @license   http://hardcoverwebdesign.com/license  MIT License
- *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 01 08
- * @link      http://hardcoverwebdesign.com/
- * @link      http://online-news-site.com/
+ * @license   https://hardcoverwebdesign.com/license  MIT License
+ *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 03 17
+ * @link      https://hardcoverwebdesign.com/
+ * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
  */
 @session_start();
@@ -56,6 +56,7 @@ $use = 'news';
 if (isset($_GET['a'])) {
     $aGet = secure($_GET['a']);
     $aGet = str_replace(strstr($aGet, '+'), '', $aGet);
+    $aGet = str_replace(strstr($aGet, ' '), '', $aGet);
 } else {
     $aGet = null;
 }
@@ -182,7 +183,7 @@ if (isset($tGet) and $tGet == 'l' and isset($vGet)) {
 require $includesPath . '/header1.inc';
 echo '  <title>' . $name . "</title>\n";
 echo '  <meta name="description" content="' . $description . '" />' . "\n";
-echo '  <meta name="application-name" content="Online News Site http://online-news-site.com/" />' . "\n";
+echo '  <meta name="application-name" content="Online News Site https://online-news-site.com/" />' . "\n";
 require $includesPath . '/header2Two.inc';
 if (file_exists('z/local.css')) {
     echo '  <link rel="stylesheet" type="text/css" href="z/local.css" />' . "\n";
@@ -305,7 +306,7 @@ if (empty($_GET)) {
     include $includesPath . '/archive.php';
 } elseif (isset($aGet)) {
     include $includesPath . '/displayArticleSEO.inc';
-} elseif ($mGet == 'archive') {
+} elseif ($mGet == 'archive-search') {
     include $includesPath . '/archive.php';
 } elseif ($mGet == 'article-contribution') {
     include $includesPath . '/articleContribution.php';

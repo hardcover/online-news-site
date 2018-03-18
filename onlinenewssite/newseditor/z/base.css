@@ -24,7 +24,7 @@ caption, th {
 }
 
 body, h1, h2, h3, h4, h5, h6, div, span, form, input, select, textarea, caption, th, .button, p.e {
-    font-family: Menlo, "Lucida Grande", "Segoe UI Regular", Verdana, Arial, Helvetica, clean, sans-serif;
+    font-family: "Segoe UI Regular", "San Francisco", "Lucida Grande", Verdana, Arial, Helvetica, clean, sans-serif;
 }
 
 p, blockquote, li, span.p {

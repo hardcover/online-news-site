@@ -8,11 +8,11 @@
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2018 Hardcover LLC
- * @license   http://hardcoverwebdesign.com/license  MIT License
- *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 01 08
- * @link      http://hardcoverwebdesign.com/
- * @link      http://online-news-site.com/
+ * @license   https://hardcoverwebdesign.com/license  MIT License
+ *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 03 17
+ * @link      https://hardcoverwebdesign.com/
+ * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
  */
 session_start();
@@ -108,14 +108,14 @@ if (isset($_POST['addUpdate'])) {
                 //
                 // Reduce an oversize image
                 //
-                if ($widthOriginal > 3840) {
-                    $widthHD = 3840;
+                if ($widthOriginal > 2370) {
+                    $widthHD = 2370;
                     $heightHD = round($widthHD / $aspectRatio);
                     $hd = imagecreatetruecolor($widthHD, $heightHD);
                     $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
-                    imagecopyresized($hd, $srcImage, 0, 0, 0, 0, $widthHD, $heightHD, ImageSX($srcImage), ImageSY($srcImage));
+                    imagecopyresampled($hd, $srcImage, 0, 0, 0, 0, $widthHD, $heightHD, ImageSX($srcImage), ImageSY($srcImage));
                     ob_start();
-                    imagejpeg($hd, null, 60);
+                    imagejpeg($hd, null, 83);
                     imagedestroy($hd);
                     $hdImage = ob_get_contents();
                     ob_end_clean();
@@ -311,7 +311,7 @@ $dbh = null;
     <p><label for="image">Photo upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br />
     <input id="image" name="image" type="file" class="w" accept="image/jpeg"></p>
 
-    <p>Up to seven images may be included in an ad. Upload one image at a time. Edit the listing to add each additional image. JPG is the only permitted image format. The best image size is 3840 pixels wide. Larger images are reduced to that width.</p>
+    <p>Up to seven images may be included in an ad. Upload one image at a time. Edit the listing to add each additional image. JPG is the only permitted image format. The best image size is 2370 pixels wide. Larger images are reduced to that width.</p>
 
     <p><input type="submit" class="button" name="addUpdate" value="Add/update"/> <input type="submit" class="button" name="publish" value="Publish" /></p>
 

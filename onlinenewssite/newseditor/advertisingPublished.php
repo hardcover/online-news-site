@@ -8,11 +8,11 @@
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2018 Hardcover LLC
- * @license   http://hardcoverwebdesign.com/license  MIT License
- *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 01 08
- * @link      http://hardcoverwebdesign.com/
- * @link      http://online-news-site.com/
+ * @license   https://hardcoverwebdesign.com/license  MIT License
+ *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 03 17
+ * @link      https://hardcoverwebdesign.com/
+ * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
  */
 session_start();
@@ -122,9 +122,9 @@ if (isset($_POST['addUpdate'])) {
                 $stmt = $dbh->prepare('UPDATE advertisements SET originalImage=?, originalImageWidth=?, originalImageHeight=? WHERE idAd=?');
                 $stmt->execute(array(file_get_contents($_FILES['image']['tmp_name']), $widthOriginal, $heightOriginal, $idAd));
                 $dbh = null;
-                if ($widthOriginal == 1280) {
+                if ($widthOriginal == 770) {
                     //
-                    // If the original width is 1280, then use the original image without resizing
+                    // If the original width is 770, then use the original image without resizing
                     //
                     $dbh = new PDO($dbAdvertising);
                     $stmt = $dbh->prepare('UPDATE advertisements SET image=?, imageWidth=?, imageHeight=? WHERE idAd=?');
@@ -134,11 +134,11 @@ if (isset($_POST['addUpdate'])) {
                     //
                     // Else resize the image for use
                     //
-                    $width = 1280;
+                    $width = 770;
                     $height = round($width / $aspectRatio);
                     $hd = imagecreatetruecolor($width, $height);
                     $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
-                    imagecopyresized($hd, $srcImage, 0, 0, 0, 0, $width, $height, ImageSX($srcImage), ImageSY($srcImage));
+                    imagecopyresampled($hd, $srcImage, 0, 0, 0, 0, $width, $height, ImageSX($srcImage), ImageSY($srcImage));
                     ob_start();
                     imagejpeg($hd, null, 100);
                     imagedestroy($hd);
@@ -315,7 +315,7 @@ $dbh = null;
     <input name="payStatus" type="radio" value="0"<?php echoIfYes($notPaidEdit); ?> /> Not paid
     </label></p>
 
-    <p><label for="image">Ad image upload (JPG image only)</label><br />
+    <p><label for="image">Ad image upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br />
     <input type="file" class="h" accept="image/jpeg" id="image" name="image" /><br /></p>
 
     <p><label for="link">Link from ad (optional)</label><br />
@@ -332,6 +332,6 @@ $dbh = null;
     <p><input type="submit" value="Delete" name="delete" class="button" /><input type="hidden" name="existing"<?php echoIfValue($edit); ?> /></p>
   </form>
 
-  <p>The optimal image size for ads is 1280 pixels wide. Because ads contain text, unlike photographs, the optimal image quality for ads is 100 percent, to eliminate compression artifacts.</p>
+  <p>The optimal image size for ads is 770 pixels or wider. Because ads contain text, unlike photographs, the optimal image quality for ads is 100 percent, to eliminate compression artifacts.</p>
 </body>
 </html>

@@ -8,11 +8,11 @@
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2018 Hardcover LLC
- * @license   http://hardcoverwebdesign.com/license  MIT License
- *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 01 08
- * @link      http://hardcoverwebdesign.com/
- * @link      http://online-news-site.com/
+ * @license   https://hardcoverwebdesign.com/license  MIT License
+ *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 03 17
+ * @link      https://hardcoverwebdesign.com/
+ * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
  */
 //
@@ -270,7 +270,7 @@ function soa($uri, $request)
     date_default_timezone_set('America/Los_Angeles');
     $request['gig'] = date($gig);
     $request = http_build_query(array_map('base64_encode', $request));
-    $ctx = stream_context_create(
+    stream_context_set_default(
         array(
             'ssl' => array(
                 'allow_self_signed' => true,
@@ -281,7 +281,7 @@ function soa($uri, $request)
                 'header' => 'Content-Type: application/x-www-form-urlencoded',
                 'content' => $request))
     );
-    $fp = @fopen($uri, 'rb', false, $ctx);
+    $fp = @fopen($uri, 'rb', false);
     //
     // Check for and log any errors in the response
     //

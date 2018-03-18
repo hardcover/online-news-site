@@ -8,11 +8,11 @@
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2018 Hardcover LLC
- * @license   http://hardcoverwebdesign.com/license  MIT License
- *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 01 08
- * @link      http://hardcoverwebdesign.com/
- * @link      http://online-news-site.com/
+ * @license   https://hardcoverwebdesign.com/license  MIT License
+ *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 03 17
+ * @link      https://hardcoverwebdesign.com/
+ * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
  */
 @session_start();
@@ -65,7 +65,7 @@ require $includesPath . '/password.php';
 //
 // Variables
 //
-$installedVersion = '2018 01 08';
+$installedVersion = '2018 03 17';
 $message = null;
 $passPost = inlinePost('pass');
 $userPost = inlinePost('user');
@@ -167,8 +167,8 @@ $dbh = null;
 $request['phpversion'] = phpversion();
 $request['version'] = $installedVersion;
 $request = http_build_query(array_map('base64_encode', $request));
-$ctx = stream_context_create(array('http' => array('method' => 'POST', 'header' => 'Content-Type: application/x-www-form-urlencoded', 'content' => $request)));
-$fp = @fopen('http://online-news-site.com/v/', 'rb', false, $ctx);
+stream_context_set_default(array('http' => array('method' => 'POST', 'header' => 'Content-Type: application/x-www-form-urlencoded', 'content' => $request)));
+$fp = @fopen('https://online-news-site.com/v/', 'rb', false);
 $response = @stream_get_contents($fp);
 if ($fp and isset($response)) {
     $response = json_decode($response, true);
@@ -187,7 +187,7 @@ if (empty($response)) {
     if ($installedVersion == $response) {
         $versionMessage = null;
     } else {
-        $versionMessage = '<a href="http://online-news-site.com/download.php" target="_blank">A new version of Online News Site is available</a>.';
+        $versionMessage = '<a href="https://online-news-site.com/download.php" target="_blank">A new version of Online News Site is available</a>.';
     }
 }
 //
@@ -196,7 +196,7 @@ if (empty($response)) {
 require $includesPath . '/header1.inc';
 ?>
   <title>Online News Site</title>
-  <meta name="generator" content="Online News Site, free open source news publishing software, http://online-news-site.com/" />
+  <meta name="generator" content="Online News Site, free open source news publishing software, https://online-news-site.com/" />
 <?php require $includesPath . '/header2.inc'; ?>
 <body>
   <p><br />

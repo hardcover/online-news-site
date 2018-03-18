@@ -45,7 +45,7 @@ caption, th {
 }
 
 body, h1, h2, h3, h4, h5, h6, div, span, form, input, select, textarea, .button, caption, th, p.e {
-    font-family: Menlo, "Lucida Grande", "Segoe UI Regular", Verdana, Arial, Helvetica, clean, sans-serif;
+    font-family: "Segoe UI Regular", "San Francisco", "Lucida Grande", Verdana, Arial, Helvetica, clean, sans-serif;
 }
 
 p, blockquote, li, span.p {
@@ -57,7 +57,7 @@ pre, code {
     line-height: 1em;
 }
 
-p, h1, h3, h4, h6, hr {
+p, h1, h2, h3, h4, h6, hr {
     clear: left;
 }
 
@@ -279,8 +279,14 @@ img {
     border: 0;
 }
 
-img.lead, img.lead2, img.lead3, img.lead4 {
+img.lead {
     float: both;
+    clear: none;
+    margin: .4em 1em 1em 0;
+}
+
+img.lead2, img.lead3, img.lead4 {
+    float: left;
     clear: none;
     margin: .4em 1em 1em 0;
 }

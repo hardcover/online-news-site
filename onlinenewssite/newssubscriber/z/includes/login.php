@@ -8,11 +8,11 @@
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2018 Hardcover LLC
- * @license   http://hardcoverwebdesign.com/license  MIT License
- *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 01 08
- * @link      http://hardcoverwebdesign.com/
- * @link      http://online-news-site.com/
+ * @license   https://hardcoverwebdesign.com/license  MIT License
+ *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 03 17
+ * @link      https://hardcoverwebdesign.com/
+ * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
  */
 //
@@ -54,7 +54,7 @@ echo '    <p>' . $information . "</p>\n\n";
 ?>
     <form action="<?php echo $uri; ?>post.php" method="post">
       <p><label for="email">Email</label><br />
-      <input id="email" name="email" type="email" class="w" required autofocus /></p>
+      <input id="email" name="email" type="email" class="w" required /></p>
 
       <p><label for="pass">Password</label><br />
       <input id="pass" name="pass" type="password" class="w" required /></p>

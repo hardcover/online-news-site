@@ -8,11 +8,11 @@
  * @package   Online-News-Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2018 Hardcover LLC
- * @license   http://hardcoverwebdesign.com/license  MIT License
- *            http://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 01 08
- * @link      http://hardcoverwebdesign.com/
- * @link      http://online-news-site.com/
+ * @license   https://hardcoverwebdesign.com/license  MIT License
+ *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
+ * @version:  2018 03 17
+ * @link      https://hardcoverwebdesign.com/
+ * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
  */
 @session_start();
@@ -38,7 +38,7 @@ $database2 = $dbArchive2;
 $editorView = 1;
 $imagePath = 'imagea.php';
 $imagePath2 = 'imagea2.php';
-$use = '?m=archive';
+$use = '?m=archive-search';
 //
 if (isset($_SESSION['userId'])) {
     $logOutHtml = ' | <a class="n" href="' . $uri . 'logout.php">Log out</a>';
@@ -107,9 +107,9 @@ if (isset($_GET['a'])) {
     echo '
     <p>Search by any of the following criteria. Enter complete words or the beginning of words followed by an asterisk, for example, either <i>the</i> or <i>th*</i>.</p>
 
-    <form method="post" action="' . $uri . '?m=archive">
+    <form method="post" action="' . $uri . '?m=archive-search">
       <p><label for="headline">Headline contains</label><br />
-      <input id="headline" name="headline" type="text" class="w" autofocus /></p>
+      <input id="headline" name="headline" type="text" class="w" /></p>
 
       <p><label for="startDate">Publication date range search</label><br />
       <input id="startDate" name="startDate" type="text" class="datepicker h" placeholder="Start date" /> <input name="endDate" type="text" class="datepicker h" placeholder="End date" /></p>
