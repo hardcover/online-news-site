@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -18,12 +18,12 @@
 $dbh = new PDO($dbPublished);
 $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE idArticle=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($idArticle));
+$stmt->execute([$idArticle]);
 $row = $stmt->fetch();
 if ($row) {
     $stmt = $dbh->prepare('SELECT idSection, sortOrderArticle FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $row = $stmt->fetch();
     if ($row) {
         extract($row);
@@ -38,30 +38,30 @@ if ($row) {
             $sortOrderArticleNew = $sortOrderArticle;
         }
         $stmt = $dbh->prepare('UPDATE articles SET sortOrderArticle=?, sortPriority=? WHERE idArticle=?');
-        $stmt->execute(array($sortOrderArticleNew, '1', $idArticle));
+        $stmt->execute([$sortOrderArticleNew, '1', $idArticle]);
     }
     $stmt = $dbh->prepare('SELECT idArticle, sortOrderArticle FROM articles WHERE idSection=? ORDER BY sortOrderArticle, sortPriority');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idSection));
+    $stmt->execute([$idSection]);
     $count = null;
     foreach ($stmt as $row) {
         extract($row);
         $count++;
         $stmt = $dbh->prepare('UPDATE articles SET sortOrderArticle=? WHERE idArticle=?');
-        $stmt->execute(array($count, $idArticle));
+        $stmt->execute([$count, $idArticle]);
     }
     //
     // Restore presort settings
     //
     $stmt = $dbh->prepare('UPDATE articles SET sortPriority=? WHERE idSection=?');
-    $stmt->execute(array(2, $idSection));
+    $stmt->execute([2, $idSection]);
     //
     // Update the remote databases
     //
     $sortOrder = null;
     $stmt = $dbh->prepare('SELECT publicationDate, endDate, sortOrderArticle, idArticle FROM articles WHERE idSection=?');
     $stmt->setFetchMode(PDO::FETCH_NUM);
-    $stmt->execute(array($idSection));
+    $stmt->execute([$idSection]);
     foreach ($stmt as $row) {
         $sortOrder[] = $row;
     }

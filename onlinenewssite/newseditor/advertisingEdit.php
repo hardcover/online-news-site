@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -25,7 +25,7 @@ require $includesPath . '/common.php';
 $dbh = new PDO($dbEditors);
 $stmt = $dbh->prepare('SELECT userType FROM users WHERE idUser=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($_SESSION['userId']));
+$stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
 if (empty($row['userType']) or $row['userType'] != 3) {
@@ -60,7 +60,7 @@ $startDateAdEdit = null;
 $startDateAdPost = inlinePost('startDateAd');
 $_FILES['image'] = isset($_FILES['image']) ? $_FILES['image'] : null;
 //
-$remotes = array();
+$remotes = [];
 $dbh = new PDO($dbRemote);
 $stmt = $dbh->query('SELECT remote FROM remotes');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -79,14 +79,14 @@ if (isset($_POST['addUpdate'])) {
         $dbh = new PDO($dbAdvertising);
         $stmt = $dbh->query('DELETE FROM advertisements WHERE organization IS NULL');
         $stmt = $dbh->prepare('INSERT INTO advertisements (organization) VALUES (?)');
-        $stmt->execute(array(null));
+        $stmt->execute([null]);
         $idAd = $dbh->lastInsertId();
         $dbh = null;
     } else {
         $dbh = new PDO($dbAdvertising);
         $stmt = $dbh->prepare('SELECT idAd FROM advertisements WHERE idAd=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($idAdPost));
+        $stmt->execute([$idAdPost]);
         $row = $stmt->fetch();
         $dbh = null;
         extract($row);
@@ -98,13 +98,13 @@ if (isset($_POST['addUpdate'])) {
         $dbh = new PDO($dbAdvertising);
         $stmt = $dbh->prepare('SELECT idAd, sortOrderAd FROM advertisements WHERE idAd=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($idAd));
+        $stmt->execute([$idAd]);
         $row = $stmt->fetch();
         if ($sortOrderAdPost > $row['sortOrderAd']) {
             $sortOrderAdPost++;
         }
         $stmt = $dbh->prepare('UPDATE advertisements SET startDateAd=?, endDateAd=?, sortOrderAd=?, sortPriority=?, organization=?, payStatus=?, link=?, linkAlt=?, enteredBy=?, note=? WHERE idAd=?');
-        $stmt->execute(array($startDateAdPost, $endDateAdPost, $sortOrderAdPost, 1, $organizationPost, $payStatusPost, $linkPost, $linkAltPost, $_SESSION['username'], $notePost, $idAd));
+        $stmt->execute([$startDateAdPost, $endDateAdPost, $sortOrderAdPost, 1, $organizationPost, $payStatusPost, $linkPost, $linkAltPost, $_SESSION['username'], $notePost, $idAd]);
         $dbh = null;
         //
         // Create and save the image
@@ -120,7 +120,7 @@ if (isset($_POST['addUpdate'])) {
                 $aspectRatio = $widthOriginal / $heightOriginal;
                 $dbh = new PDO($dbAdvertising);
                 $stmt = $dbh->prepare('UPDATE advertisements SET originalImage=?, originalImageWidth=?, originalImageHeight=? WHERE idAd=?');
-                $stmt->execute(array(file_get_contents($_FILES['image']['tmp_name']), $widthOriginal, $heightOriginal, $idAd));
+                $stmt->execute([file_get_contents($_FILES['image']['tmp_name']), $widthOriginal, $heightOriginal, $idAd]);
                 $dbh = null;
                 if ($widthOriginal == 1280) {
                     //
@@ -128,7 +128,7 @@ if (isset($_POST['addUpdate'])) {
                     //
                     $dbh = new PDO($dbAdvertising);
                     $stmt = $dbh->prepare('UPDATE advertisements SET image=?, imageWidth=?, imageHeight=? WHERE idAd=?');
-                    $stmt->execute(array(file_get_contents($_FILES['image']['tmp_name']), $widthOriginal, $heightOriginal, $idAd));
+                    $stmt->execute([file_get_contents($_FILES['image']['tmp_name']), $widthOriginal, $heightOriginal, $idAd]);
                     $dbh = null;
                 } else {
                     //
@@ -146,7 +146,7 @@ if (isset($_POST['addUpdate'])) {
                     ob_end_clean();
                     $dbh = new PDO($dbAdvertising);
                     $stmt = $dbh->prepare('UPDATE advertisements SET image=?, imageWidth=?, imageHeight=? WHERE idAd=?');
-                    $stmt->execute(array($image, $width, $height, $idAd));
+                    $stmt->execute([$image, $width, $height, $idAd]);
                     $dbh = null;
                 }
             } else {
@@ -159,7 +159,7 @@ if (isset($_POST['addUpdate'])) {
         $dbh = new PDO($dbAdvertising);
         $stmt = $dbh->prepare('SELECT startDateAd, endDateAd, sortOrderAd, link, linkAlt, image FROM advertisements WHERE idAd=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($idAd));
+        $stmt->execute([$idAd]);
         $row = $stmt->fetch();
         $dbh = null;
         if ($row) {
@@ -188,14 +188,14 @@ if (isset($_POST['delete']) and isset($idAdPost)) {
     $dbh = new PDO($dbAdvertising);
     $stmt = $dbh->prepare('SELECT idAd FROM advertisements WHERE idAd=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idAdPost));
+    $stmt->execute([$idAdPost]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {
         extract($row);
         $dbh = new PDO($dbAdvertising);
         $stmt = $dbh->prepare('DELETE FROM advertisements WHERE idAd=?');
-        $stmt->execute(array($idAd));
+        $stmt->execute([$idAd]);
         $dbh = null;
         //
         // Update remote sites
@@ -219,7 +219,7 @@ if (isset($_POST['edit'])) {
     $dbh = new PDO($dbAdvertising);
     $stmt = $dbh->prepare('SELECT startDateAd, endDateAd, sortOrderAd, sortPriority, organization, payStatus, link, linkAlt, note FROM advertisements WHERE idAd=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idAdPost));
+    $stmt->execute([$idAdPost]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {
@@ -269,7 +269,7 @@ $rowcount = null;
 $dbh = new PDO($dbAdvertising);
 $stmt = $dbh->prepare('SELECT idAd, organization, link, linkAlt, enteredBy, note, imageWidth, imageHeight FROM advertisements WHERE ((? >= startDateAd AND ? >= endDateAd) OR (? >= startDateAd AND ? >= endDateAd) OR startDateAd IS NULL OR endDateAd IS NULL) ORDER BY organization');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($today, $today));
+$stmt->execute([$today, $today]);
 foreach ($stmt as $row) {
     extract($row);
     if ($imageWidth == 0) {

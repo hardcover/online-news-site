@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -25,27 +25,27 @@ $aGet = secure($_GET['a']);
 $dbh = new PDO($database);
 $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE idArticle=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array(secure($aGet)));
+$stmt->execute([secure($aGet)]);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row['idArticle']) {
     $dbh = new PDO($database);
     $stmt = $dbh->prepare('SELECT * FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array(secure($aGet)));
+    $stmt->execute([secure($aGet)]);
     $row = $stmt->fetch();
     extract($row);
     //
     // Set previous and next links
     //
-    $order = array();
+    $order = [];
     if (is_null($editorView)){
         $stmt = $dbh->prepare('SELECT idArticle, sortOrderArticle FROM articles WHERE idSection = ? AND publicationDate <= "' . $datePost . '" AND "' . $datePost . '" <= endDate ORDER BY sortOrderArticle');
     } else {
         $stmt = $dbh->prepare('SELECT idArticle, sortOrderArticle FROM articles WHERE idSection = ? ORDER BY sortOrderArticle');
     }
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idSection));
+    $stmt->execute([$idSection]);
     foreach ($stmt as $row) {
         $order[$row['sortOrderArticle']] = $row['idArticle'];
     }
@@ -68,7 +68,7 @@ if ($row['idArticle']) {
     $dbh = new PDO($dbSettings);
     $stmt = $dbh->prepare('SELECT section FROM sections WHERE idSection=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idSection));
+    $stmt->execute([$idSection]);
     $row = $stmt->fetch();
     $dbh = null;
     extract($row);
@@ -118,7 +118,7 @@ if ($row['idArticle']) {
         $dbh = new PDO($dbSurvey);
         $stmt = $dbh->prepare('SELECT count(idArticle) FROM tally WHERE idArticle=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($aGet));
+        $stmt->execute([$aGet]);
         $row = $stmt->fetch();
         $total = $row['count(idArticle)'];
         if ($total == 0) {
@@ -126,12 +126,12 @@ if ($row['idArticle']) {
         }
         $stmt = $dbh->prepare('SELECT idAnswer, answer FROM answers WHERE idArticle=? ORDER BY sortOrder');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($aGet));
+        $stmt->execute([$aGet]);
         foreach ($stmt as $row) {
             extract($row);
             $stmt = $dbh->prepare('SELECT count(idAnswer) FROM tally WHERE idAnswer=?');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $stmt->execute(array($idAnswer));
+            $stmt->execute([$idAnswer]);
             $row = $stmt->fetch();
             $each = $row['count(idAnswer)'];
             $html.= '<p><meter min="0" max="' . $total . '" value="' . $each . '" title="' . $answer . '">' . $answer . '"</meter> ' . $answer . ', ' . $each . "</p>\n\n";
@@ -142,7 +142,7 @@ if ($row['idArticle']) {
         $dbh = new PDO($database2);
         $stmt = $dbh->prepare('SELECT idPhoto, photoCredit, photoCaption FROM imageSecondary WHERE idArticle=? ORDER BY time');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($idArticle));
+        $stmt->execute([$idArticle]);
         foreach ($stmt as $row) {
             extract($row);
             $html.= '  <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="w b" alt=""></p>' . "\n\n";

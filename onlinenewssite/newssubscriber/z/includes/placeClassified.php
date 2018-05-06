@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -32,7 +32,7 @@ $idAdPost = inlinePost('idAd');
 $invoiceEdit = null;
 $invoicePost = inlinePost('invoice');
 $message = null;
-$photosOrdered = array(1, 2, 3, 4, 5, 6, 7);
+$photosOrdered = [1, 2, 3, 4, 5, 6, 7];
 $photosReverse = array_reverse($photosOrdered);
 $photoAvailable = null;
 $titleEdit = null;
@@ -47,7 +47,7 @@ if (isset($idAdPost)) {
 $dbh = new PDO($dbSubscribers);
 $stmt = $dbh->prepare('SELECT email FROM users WHERE idUser=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($_SESSION['userId']));
+$stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
@@ -56,7 +56,7 @@ if ($row) {
     $dbh = new PDO($dbSubscribersNew);
     $stmt = $dbh->prepare('SELECT email FROM users WHERE idUser=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($_SESSION['userId']));
+    $stmt->execute([$_SESSION['userId']]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {
@@ -74,7 +74,7 @@ if (isset($_POST['addUpdate'])) {
         $dbh = new PDO($dbClassifiedsNew);
         $stmt = $dbh->query('DELETE FROM ads WHERE title IS NULL');
         $stmt = $dbh->prepare('INSERT INTO ads (title) VALUES (?)');
-        $stmt->execute(array(null));
+        $stmt->execute([null]);
         $idAdPost = $dbh->lastInsertId();
         $dbh = null;
     }
@@ -83,7 +83,7 @@ if (isset($_POST['addUpdate'])) {
     //
     $dbh = new PDO($dbClassifiedsNew);
     $stmt = $dbh->prepare('UPDATE ads SET email=?, title=?, description=?, categoryId=?, review=?, invoice=? WHERE idAd=?');
-    $stmt->execute(array($email, $titlePost, $descriptionPost, $categoryIdPost, time(), $invoicePost, $idAdPost));
+    $stmt->execute([$email, $titlePost, $descriptionPost, $categoryIdPost, time(), $invoicePost, $idAdPost]);
     $dbh = null;
     //
     // Store the image, if any
@@ -98,7 +98,7 @@ if (isset($_POST['addUpdate'])) {
                 $dbh = new PDO($dbClassifiedsNew);
                 $stmt = $dbh->prepare('SELECT photo' . $photo . ' FROM ads WHERE idAd=?');
                 $stmt->setFetchMode(PDO::FETCH_NUM);
-                $stmt->execute(array($idAdPost));
+                $stmt->execute([$idAdPost]);
                 $row = $stmt->fetch();
                 $dbh = null;
                 if ($row['0'] == '') {
@@ -133,7 +133,7 @@ if (isset($_POST['addUpdate'])) {
                 }
                 $dbh = new PDO($dbClassifiedsNew);
                 $stmt = $dbh->prepare('UPDATE ads SET photo' . $photoAvailable . '=? WHERE idAd=?');
-                $stmt->execute(array($hdImage, $idAdPost));
+                $stmt->execute([$hdImage, $idAdPost]);
                 $dbh = null;
             }
         } else {
@@ -153,7 +153,7 @@ if (isset($_POST['addUpdate'])) {
 if (isset($_POST['deletePending']) and isset($idAdPost)) {
     $dbh = new PDO($dbClassifiedsNew);
     $stmt = $dbh->prepare('DELETE FROM ads WHERE idAd=?');
-    $stmt->execute(array($idAdPost));
+    $stmt->execute([$idAdPost]);
     $dbh = null;
 }
 //
@@ -162,7 +162,7 @@ if (isset($_POST['deletePending']) and isset($idAdPost)) {
 if (isset($_POST['photoDelete']) and isset($idAdPost)) {
     $dbh = new PDO($dbClassifiedsNew);
     $stmt = $dbh->prepare('UPDATE ads SET photo1=?, photo2=?, photo3=?, photo4=?, photo5=?, photo6=?, photo7=? WHERE idAd=?');
-    $stmt->execute(array(null, null, null, null, null, null, null, $idAdPost));
+    $stmt->execute([null, null, null, null, null, null, null, $idAdPost]);
     $dbh = null;
 }
 //
@@ -171,7 +171,7 @@ if (isset($_POST['photoDelete']) and isset($idAdPost)) {
 if (isset($_POST['deleteApproved']) and isset($idAdPost)) {
     $dbh = new PDO($dbClassifieds);
     $stmt = $dbh->prepare('UPDATE ads SET duration=? WHERE idAd=?');
-    $stmt->execute(array(null, $idAdPost));
+    $stmt->execute([null, $idAdPost]);
     $dbh = null;
 }
 //
@@ -181,7 +181,7 @@ if (isset($_POST['edit']) and isset($idAdPost)) {
     $dbh = new PDO($dbClassifiedsNew);
     $stmt = $dbh->prepare('SELECT title, description, categoryId, invoice, photo1 FROM ads WHERE idAd=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idAdPost));
+    $stmt->execute([$idAdPost]);
     $row = $stmt->fetch();
     if ($row) {
         $categoryIdEdit = $row['categoryId'];
@@ -213,7 +213,7 @@ $i = null;
 $dbh = new PDO($dbClassifiedsNew);
 $stmt = $dbh->prepare('SELECT idAd, title, description, startDate FROM ads WHERE email=? ORDER BY title');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($email));
+$stmt->execute([$email]);
 foreach ($stmt as $row) {
     extract($row);
     $i++;
@@ -234,7 +234,7 @@ $ii = null;
 $dbh = new PDO($dbClassifieds);
 $stmt = $dbh->prepare('SELECT idAd, title, description, review, startDate, duration FROM ads WHERE email=? ORDER BY title');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($email));
+$stmt->execute([$email]);
 foreach ($stmt as $row) {
     extract($row);
     $ii++;
@@ -284,7 +284,7 @@ foreach ($stmt as $row) {
     echo '        <option value="">' . html($section) . "</option>\n";
     $stmt = $dbh->prepare('SELECT idSubsection, subsection FROM subsections WHERE parentId=? ORDER BY sortOrderSubsection');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idSection));
+    $stmt->execute([$idSection]);
     foreach ($stmt as $row) {
         extract($row);
         if ($idSubsection == $categoryIdEdit) {
@@ -312,7 +312,7 @@ if (isset($idAdEdit)) {
         $dbh = new PDO($dbClassifiedsNew);
         $stmt = $dbh->prepare('SELECT photo' . $photo . ' FROM ads WHERE idAd=?');
         $stmt->setFetchMode(PDO::FETCH_NUM);
-        $stmt->execute(array($idAdEdit));
+        $stmt->execute([$idAdEdit]);
         $row = $stmt->fetch();
         $dbh = null;
         if ($row['0'] != '') {

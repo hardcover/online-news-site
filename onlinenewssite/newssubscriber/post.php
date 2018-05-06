@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -19,7 +19,6 @@ session_start();
 session_regenerate_id(true);
 require 'z/system/configuration.php';
 require $includesPath . '/common.php';
-require $includesPath . '/password.php';
 $uri = $uriScheme . '://' . $_SERVER["HTTP_HOST"] . rtrim(dirname($_SERVER['PHP_SELF']), "/\\") . '/';
 //
 // Exit if no post array
@@ -52,7 +51,7 @@ $headers.= 'Content-Transfer-Encoding: 7bit' . "\r\n";
 $dbh = new PDO($dbSettings);
 $stmt = $dbh->prepare('SELECT name FROM names WHERE idName=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array(1));
+$stmt->execute([1]);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
@@ -70,10 +69,10 @@ if (isset($emailPost) and isset($passPost) and isset($_POST['login'])) {
     $dbh = new PDO($dbLog);
     $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "login" ("idUser" INTEGER PRIMARY KEY, "email", "legibleTime", ipAddress, "time" INTEGER)');
     $stmt = $dbh->prepare('INSERT INTO login (email, legibleTime, ipAddress, time) VALUES (?, ?, ?, ?)');
-    $stmt->execute(array(muddle($emailPost), $legibleTime, $_SERVER['REMOTE_ADDR'], $now));
+    $stmt->execute([muddle($emailPost), $legibleTime, $_SERVER['REMOTE_ADDR'], $now]);
     $stmt = $dbh->prepare('SELECT count(*) FROM login WHERE email=? AND time > ?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array(muddle($emailPost), $lastHour));
+    $stmt->execute([muddle($emailPost), $lastHour]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row['count(*)'] > 5) {
@@ -95,7 +94,7 @@ if ((isset($_POST['login'])
     $dbh = new PDO($dbSubscribersNew);
     $stmt = $dbh->prepare('SELECT idUser, pass, verified, payStatus FROM users WHERE email=? LIMIT 1');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array(muddle($emailPost)));
+    $stmt->execute([muddle($emailPost)]);
     $row = $stmt->fetch();
     $dbh = null;
     $rowSubscribersNew = $row;
@@ -106,7 +105,7 @@ if ((isset($_POST['login'])
     $dbh = new PDO($dbSubscribers);
     $stmt = $dbh->prepare('SELECT idUser, pass, payStatus FROM users WHERE email=? LIMIT 1');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array(muddle($emailPost)));
+    $stmt->execute([muddle($emailPost)]);
     $row = $stmt->fetch();
     $dbh = null;
     $rowSubscribers = $row;
@@ -122,7 +121,7 @@ if ((isset($_POST['login'])
             $hashPass = password_hash($passPost, PASSWORD_DEFAULT);
             $dbh = new PDO($dbSubscribersNew);
             $stmt = $dbh->prepare('INSERT INTO users (email, pass, ipAddress, verify, time) VALUES (?, ?, ?, ?, ?)');
-            $stmt->execute(array(muddle($emailPost), $hashPass, $_SERVER['REMOTE_ADDR'], $verify, time() + 900));
+            $stmt->execute([muddle($emailPost), $hashPass, $_SERVER['REMOTE_ADDR'], $verify, time() + 900]);
             $idUser = $dbh->lastInsertId();
             $dbh = null;
             $body = 'To continue registration, visit the link below within fifteen minutes from when registration was begun and from the same computer. If activation has not been completed by then, then begin registration again.' . "\n\n";
@@ -144,14 +143,14 @@ if ((isset($_POST['login'])
             $dbh = new PDO($dbSubscribers);
             $stmt = $dbh->prepare('SELECT * FROM users WHERE idUser=?');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $stmt->execute(array($rowSubscribers['idUser']));
+            $stmt->execute([$rowSubscribers['idUser']]);
             $row = $stmt->fetch();
             $rowS = $row;
             $dbh = null;
             $dbh = new PDO($dbSubscribersNew);
             $stmt = $dbh->prepare('SELECT * FROM users WHERE idUser=?');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $stmt->execute(array($rowSubscribersNew['idUser']));
+            $stmt->execute([$rowSubscribersNew['idUser']]);
             $row = $stmt->fetch();
             $dbh = null;
             if ($rowS == $row) {
@@ -160,7 +159,7 @@ if ((isset($_POST['login'])
                 //
                 $dbh = new PDO($dbSubscribersNew);
                 $stmt = $dbh->prepare('DELETE FROM users WHERE idUser=?');
-                $stmt->execute(array($rowSubscribersNew['idUser']));
+                $stmt->execute([$rowSubscribersNew['idUser']]);
                 $dbh = null;
             } else {
                 //
@@ -170,11 +169,11 @@ if ((isset($_POST['login'])
                 $idUser = $rowSubscribers['idUser'];
                 $dbh = new PDO($dbSubscribers);
                 $stmt = $dbh->prepare('UPDATE users SET email=?, payerEmail=?, payerFirstName=?, payerLastName=?, ipAddress=?, verify=?, verified=?, time=?, pass=?, payStatus=?, paid=?, paymentDate=?, note=?, contributor=?, classifiedOnly=?, deliver=?, deliver2=?, deliveryAddress=?, dCityRegionPostal=?, billingAddress=?, bCityRegionPostal=?, soa=?, evolve=?, expand=?, extend=? WHERE idUser=?');
-                $stmt->execute(array($email, $payerEmail, $payerFirstName, $payerLastName, $ipAddress, $verify, $verified, $time, $pass, $payStatus, $paid, $paymentDate, $note, $contributor, $classifiedOnly, $deliver, $deliver2, $deliveryAddress, $dCityRegionPostal, $billingAddress, $bCityRegionPostal, 1, $evolve, $expand, $extend, $idUser));
+                $stmt->execute([$email, $payerEmail, $payerFirstName, $payerLastName, $ipAddress, $verify, $verified, $time, $pass, $payStatus, $paid, $paymentDate, $note, $contributor, $classifiedOnly, $deliver, $deliver2, $deliveryAddress, $dCityRegionPostal, $billingAddress, $bCityRegionPostal, 1, $evolve, $expand, $extend, $idUser]);
                 $dhh = null;
                 $dbh = new PDO($dbSubscribersNew);
                 $stmt = $dbh->prepare('DELETE FROM users WHERE idUser=?');
-                $stmt->execute(array($rowSubscribersNew['idUser']));
+                $stmt->execute([$rowSubscribersNew['idUser']]);
                 $dbh = null;
             }
         }
@@ -190,7 +189,7 @@ if ((isset($_POST['login'])
             //
             $dbh = new PDO($dbLog);
             $stmt = $dbh->prepare('UPDATE login SET time=? WHERE email=?');
-            $stmt->execute(array(null, muddle($emailPost)));
+            $stmt->execute([null, muddle($emailPost)]);
             $dbh = null;
             if ($database === 's') {
                 if ($rowSubscribers['payStatus'] >= time()) {
@@ -213,7 +212,7 @@ if ((isset($_POST['login'])
                     $newHash = password_hash($passPost, PASSWORD_DEFAULT);
                     $dbh = new PDO($dbSubscribers);
                     $stmt = $dbh->prepare('UPDATE users SET pass=? WHERE idUser=?');
-                    $stmt->execute(array($newHash, $idUser));
+                    $stmt->execute([$newHash, $idUser]);
                     $dbh = null;
                 }
             }
@@ -267,21 +266,21 @@ if (isset($_POST['email']) and isset($_POST['forgot']) and isset($_POST['forgotP
     $dbh = new PDO($dbSubscribers);
     $stmt = $dbh->prepare('SELECT idUser FROM users WHERE email=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array(muddle($emailPost)));
+    $stmt->execute([muddle($emailPost)]);
     $row = $stmt->fetch();
     if ($row) {
         $stmt = $dbh->prepare('UPDATE users SET ipAddress=?, verify=?, time=? WHERE idUser=?');
-        $stmt->execute(array($_SERVER['REMOTE_ADDR'], $verify, time() + 900, $row['idUser']));
+        $stmt->execute([$_SERVER['REMOTE_ADDR'], $verify, time() + 900, $row['idUser']]);
     }
     $dbh = null;
     $dbh = new PDO($dbSubscribersNew);
     $stmt = $dbh->prepare('SELECT idUser FROM users WHERE email=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array(muddle($emailPost)));
+    $stmt->execute([muddle($emailPost)]);
     $row = $stmt->fetch();
     if ($row) {
         $stmt = $dbh->prepare('UPDATE users SET ipAddress=?, verify=?, time=? WHERE idUser=?');
-        $stmt->execute(array($_SERVER['REMOTE_ADDR'], $verify, time() + 900, $row['idUser']));
+        $stmt->execute([$_SERVER['REMOTE_ADDR'], $verify, time() + 900, $row['idUser']]);
     }
     $dbh = null;
     $body = 'To change the password, visit the link below within fifteen minutes from when the request was made and from the same computer. If the password has not been completed by then, begin a new password change request.' . "\n\n";
@@ -307,21 +306,21 @@ if (isset($_POST['resetPassword']) and isset($verifyPost)) {
         $dbh = new PDO($dbSubscribersNew);
         $stmt = $dbh->prepare('SELECT idUser FROM users WHERE verify=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($verifyPost));
+        $stmt->execute([$verifyPost]);
         $row = $stmt->fetch();
         if ($row) {
             $stmt = $dbh->prepare('UPDATE users SET pass=? WHERE idUser=?');
-            $stmt->execute(array($newHash, $row['idUser']));
+            $stmt->execute([$newHash, $row['idUser']]);
         }
         $dbh = null;
         $dbh = new PDO($dbSubscribers);
         $stmt = $dbh->prepare('SELECT idUser FROM users WHERE verify=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($verifyPost));
+        $stmt->execute([$verifyPost]);
         $row = $stmt->fetch();
         if ($row) {
             $stmt = $dbh->prepare('UPDATE users SET pass=?, soa=? WHERE idUser=?');
-            $stmt->execute(array($newHash, 1, $row['idUser']));
+            $stmt->execute([$newHash, 1, $row['idUser']]);
         }
         $dbh = null;
     }

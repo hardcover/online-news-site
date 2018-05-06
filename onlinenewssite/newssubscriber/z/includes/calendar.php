@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -45,35 +45,35 @@ for ($i = 0; $i < 31; $i++) {
     $dbh = new PDO($dbCalendar);
     $stmt = $dbh->prepare('SELECT description FROM oneTimeEvent WHERE date=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($selectDate));
+    $stmt->execute([$selectDate]);
     $row = $stmt->fetch();
     if (isset($row['description'])) {
         $description.= '    ' . Parsedown::instance()->parse($row['description']) . "\n";
     }
     $stmt = $dbh->prepare('SELECT description FROM annualDayOfWeek WHERE date=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($weekSelect . ' ' . $dayOfTheWeekSelect . ' of ' . $monthSelect));
+    $stmt->execute([$weekSelect . ' ' . $dayOfTheWeekSelect . ' of ' . $monthSelect]);
     $row = $stmt->fetch();
     if (isset($row['description'])) {
         $description.= '    ' . Parsedown::instance()->parse($row['description']) . "\n";
     }
     $stmt = $dbh->prepare('SELECT description FROM annual WHERE date=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array(substr($selectDate, -5)));
+    $stmt->execute([substr($selectDate, -5)]);
     $row = $stmt->fetch();
     if (isset($row['description'])) {
         $description.= '    ' . Parsedown::instance()->parse($row['description']) . "\n";
     }
     $stmt = $dbh->prepare('SELECT description FROM monthlyDayOfWeek WHERE date=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($weekSelect . ' ' . $dayOfTheWeekSelect));
+    $stmt->execute([$weekSelect . ' ' . $dayOfTheWeekSelect]);
     $row = $stmt->fetch();
     if (isset($row['description'])) {
         $description.= '    ' . Parsedown::instance()->parse($row['description']) . "\n";
     }
     $stmt = $dbh->prepare('SELECT description FROM weeklyDayOfWeek WHERE date=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($dayOfTheWeekSelect));
+    $stmt->execute([$dayOfTheWeekSelect]);
     $row = $stmt->fetch();
     if (isset($row['description'])) {
         $description.= '    ' . Parsedown::instance()->parse($row['description']) . "\n";

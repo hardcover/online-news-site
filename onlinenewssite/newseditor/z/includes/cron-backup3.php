@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -28,24 +28,9 @@ date_default_timezone_set('America/Los_Angeles');
 $startTime = time();
 $today = date("Y-m-d");
 $prior = null;
-$databases = array(
-    'databases/advertising.sqlite',
-    'databases/archive.sqlite',
-    'databases/archive2.sqlite',
-    'databases/calendar.sqlite',
-    'databases/calendar.sqlite',
-    'databases/classifieds.sqlite',
-    'databases/classifiedsNew.sqlite',
-    'databases/edit.sqlite',
-    'databases/edit2.sqlite',
-    'databases/log.sqlite',
-    'databases/menu.sqlite',
-    'databases/published.sqlite',
-    'databases/published2.sqlite',
-    'databases/settings.sqlite',
-    'databases/subscribers.sqlite',
-    'databases/survey.sqlite',
-);
+$databases = [
+    'databases/archive2.sqlite'
+];
 //
 // Create the back up directory for today
 //
@@ -54,20 +39,6 @@ if (!file_exists($pathToBackupDirectory . 'backup')) {
 }
 if (!file_exists($pathToBackupDirectory . 'backup/' . $today)) {
     mkdir($pathToBackupDirectory . 'backup/' . $today, 0755);
-}
-//
-// Delete back ups older than 30 days
-//
-$folders = scandir($pathToBackupDirectory . 'backup');
-$folders = array_diff($folders, array('.', '..'));
-arsort($folders);
-$i = 0;
-foreach ($folders as $folder) {
-    $i++;
-    if ($i > 30) {
-        array_map('unlink', glob($pathToBackupDirectory . 'backup/' . $folder . '/*'));
-        rmdir($pathToBackupDirectory . 'backup/' . $folder);
-    }
 }
 //
 // Create the back up databases
@@ -85,7 +56,7 @@ foreach ($databases as $database) {
     $dbhMemory = new PDO('sqlite::memory:');
     $stmt = $dbh->prepare('SELECT name, sql FROM sqlite_master WHERE type=? ORDER BY name');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array('table'));
+    $stmt->execute(['table']);
     foreach ($stmt as $row) {
         extract($row);
         $stmt = $dbhMemory->query($sql);
@@ -111,7 +82,7 @@ foreach ($databases as $database) {
     $stmt = $dbh->query('PRAGMA page_size = 4096');
     $stmt = $dbhMemory->prepare('SELECT name, sql FROM sqlite_master WHERE type=? ORDER BY name');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array('table'));
+    $stmt->execute(['table']);
     foreach ($stmt as $row) {
         extract($row);
         $stmt = $dbh->query($sql);

@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -19,7 +19,6 @@ session_start();
 require 'z/system/configuration.php';
 require $includesPath . '/authorization.php';
 require $includesPath . '/common.php';
-require $includesPath . '/password.php';
 require $includesPath . '/crypt.php';
 //
 // User-group authorization
@@ -51,7 +50,7 @@ $idRemote = null;
 $idSection = null;
 $message = null;
 //
-$remotes = array();
+$remotes = [];
 $dbh = new PDO($dbRemote);
 $stmt = $dbh->query('SELECT remote FROM remotes');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -68,7 +67,7 @@ if (isset($_POST['adminPass']) and ($_POST['adminPass'] == null or $_POST['admin
 $dbh = new PDO($dbEditors);
 $stmt = $dbh->prepare('SELECT pass FROM users WHERE user=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($_SESSION['username']));
+$stmt->execute([$_SESSION['username']]);
 $row = $stmt->fetch();
 $dbh = null;
 if (password_verify($adminPassPost, $row['pass'])) {
@@ -82,7 +81,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
             $dbh = new PDO($dbSettings);
             $stmt = $dbh->query('DELETE FROM names');
             $stmt = $dbh->prepare('INSERT INTO names (name, description) VALUES (?, ?)');
-            $stmt->execute(array($newsNamePost, $newsDescriptionPost));
+            $stmt->execute([$newsNamePost, $newsDescriptionPost]);
             $dbh = null;
             //
             // Update the remote databases
@@ -127,14 +126,14 @@ if (password_verify($adminPassPost, $row['pass'])) {
             if ($_POST['existing'] == null) {
                 $dbh = new PDO($dbSettings);
                 $stmt = $dbh->prepare('INSERT INTO sections (idSection) VALUES (?)');
-                $stmt->execute(array(null));
+                $stmt->execute([null]);
                 $idSection = $dbh->lastInsertId();
                 $dbh = null;
             } else {
                 $dbh = new PDO($dbSettings);
                 $stmt = $dbh->prepare('SELECT idSection FROM sections WHERE idSection=?');
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                $stmt->execute(array($idSectionPost));
+                $stmt->execute([$idSectionPost]);
                 $row = $stmt->fetch();
                 $dbh = null;
                 if (isset($row['idSection'])) {
@@ -151,7 +150,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
                 $dbh = new PDO($dbSettings);
                 $stmt = $dbh->prepare('SELECT sortOrderSection FROM sections WHERE idSection=?');
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                $stmt->execute(array($idSection));
+                $stmt->execute([$idSection]);
                 $row = $stmt->fetch();
                 if ($row
                     and !empty($row['sortOrderSection'])
@@ -163,7 +162,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
                 // Apply update
                 //
                 $stmt = $dbh->prepare('UPDATE sections SET section=?, sortOrderSection=?, sortPriority=? WHERE idSection=?');
-                $stmt->execute(array($sectionPost, $sortOrderSectionPost, 1, $idSection));
+                $stmt->execute([$sectionPost, $sortOrderSectionPost, 1, $idSection]);
                 $dbh = null;
             }
         }
@@ -174,7 +173,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
     if (isset($_POST['deleteSection']) and isset($idSectionPost)) {
         $dbh = new PDO($dbSettings);
         $stmt = $dbh->prepare('DELETE FROM sections WHERE idSection=?');
-        $stmt->execute(array($idSectionPost));
+        $stmt->execute([$idSectionPost]);
         $dbh = null;
     }
     //
@@ -189,10 +188,10 @@ if (password_verify($adminPassPost, $row['pass'])) {
             extract($row);
             $count++;
             $stmt = $dbh->prepare('UPDATE sections SET sortOrderSection=? WHERE idSection=?');
-            $stmt->execute(array($count, $idSection));
+            $stmt->execute([$count, $idSection]);
         }
         $stmt = $dbh->prepare('UPDATE sections SET sortPriority=?');
-        $stmt->execute(array(2));
+        $stmt->execute([2]);
         $dbh = null;
         //
         // Update the remote databases
@@ -214,7 +213,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
             $dbh = new PDO($dbSettings);
             $stmt = $dbh->query('DELETE FROM registration');
             $stmt = $dbh->prepare('INSERT INTO registration (information) VALUES (?)');
-            $stmt->execute(array($informationPost));
+            $stmt->execute([$informationPost]);
             $dbh = null;
             //
             // Update the remote databases
@@ -236,7 +235,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
             $dbh = new PDO($dbSettings);
             $stmt = $dbh->query('DELETE FROM alertClassified');
             $stmt = $dbh->prepare('INSERT INTO alertClassified (emailClassified) VALUES (?)');
-            $stmt->execute(array($emailClassifiedPost));
+            $stmt->execute([$emailClassifiedPost]);
             $dbh = null;
             //
             // Update the remote databases
@@ -274,14 +273,14 @@ if (password_verify($adminPassPost, $row['pass'])) {
         if ($_POST['existing'] == null) {
             $dbh = new PDO($dbRemote);
             $stmt = $dbh->prepare('INSERT INTO remotes (idRemote) VALUES (?)');
-            $stmt->execute(array(null));
+            $stmt->execute([null]);
             $idRemote = $dbh->lastInsertId();
             $dbh = null;
         } else {
             $dbh = new PDO($dbRemote);
             $stmt = $dbh->prepare('SELECT idRemote FROM remotes WHERE idRemote=?');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $stmt->execute(array($idRemotePost));
+            $stmt->execute([$idRemotePost]);
             $row = $stmt->fetch();
             $dbh = null;
             if (isset($row['idRemote'])) {
@@ -294,14 +293,14 @@ if (password_verify($adminPassPost, $row['pass'])) {
         if ($_POST['remote'] != null and isset($idRemote)) {
             $dbh = new PDO($dbRemote);
             $stmt = $dbh->prepare('UPDATE remotes SET remote=? WHERE idRemote=?');
-            $stmt->execute(array($remotePost, $idRemote));
+            $stmt->execute([$remotePost, $idRemote]);
             $dbh = null;
             //
             // Clear URI variable for display
             //
             $remotePost = null;
             //
-            $remotes = array();
+            $remotes = [];
             $dbh = new PDO($dbRemote);
             $stmt = $dbh->query('SELECT remote FROM remotes');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -340,7 +339,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
             $dbh = new PDO($dbRemote);
             $stmt = $dbh->prepare('SELECT idRemote FROM remotes WHERE remote=?');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $stmt->execute(array($remotePost));
+            $stmt->execute([$remotePost]);
             $row = $stmt->fetch();
             $dbh = null;
             if (isset($row['idRemote'])) {
@@ -348,7 +347,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
                 $dbh = new PDO($dbRemote);
                 $stmt = $dbh->prepare('DELETE FROM remotes WHERE idRemote=?');
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                $stmt->execute(array($idRemote));
+                $stmt->execute([$idRemote]);
                 $dbh = null;
                 //
                 // Clear URI variable for display
@@ -361,7 +360,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
             $message = 'No remote URI was input.';
         }
         //
-        $remotes = array();
+        $remotes = [];
         $dbh = new PDO($dbRemote);
         $stmt = $dbh->query('SELECT remote FROM remotes');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -382,7 +381,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
             $newPassword = password_hash($newAdminPassOnePost, PASSWORD_DEFAULT);
             $dbh = new PDO($dbEditors);
             $stmt = $dbh->prepare('UPDATE users SET pass=? WHERE user=?');
-            $stmt->execute(array($newPassword, 'admin'));
+            $stmt->execute([$newPassword, 'admin']);
             $dbh = null;
             $message = 'The admin password was changed.';
         }
@@ -392,7 +391,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
     //
     if (isset($_POST['testConnections']) and $_POST['testConnections'] == strval('Test remote connections')) {
         //
-        $remotes = array();
+        $remotes = [];
         $dbh = new PDO($dbRemote);
         $stmt = $dbh->query('SELECT remote FROM remotes');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -419,7 +418,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
     //
     if (isset($_POST['changeRemotePass']) and $_POST['changeRemotePass'] == strval('Change remote passwords')) {
         //
-        $remotes = array();
+        $remotes = [];
         $dbh = new PDO($dbRemote);
         $stmt = $dbh->query('SELECT remote FROM remotes');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -473,7 +472,7 @@ if (isset($editPost)) {
         $dbh = new PDO($dbSettings);
         $stmt = $dbh->prepare('SELECT name, description FROM names WHERE idName=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($idNamePost));
+        $stmt->execute([$idNamePost]);
         $row = $stmt->fetch();
         $dbh = null;
         extract($row);

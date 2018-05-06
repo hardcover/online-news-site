@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -18,7 +18,7 @@
 //
 // Variables
 //
-$remotes = array();
+$remotes = [];
 $dbh = new PDO($dbRemote);
 $stmt = $dbh->query('SELECT remote FROM remotes');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -29,12 +29,12 @@ $dbh = null;
 //
 // Delete answers for deleted survey questions
 //
-$surveysInEditPublishedArchive = array();
-$surveysInSurvey = array();
+$surveysInEditPublishedArchive = [];
+$surveysInSurvey = [];
 $dbh = new PDO($dbEdit);
 $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE survey=? ORDER BY idArticle');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array(1));
+$stmt->execute([1]);
 foreach ($stmt as $row) {
     $surveysInEditPublishedArchive[] = $row['idArticle'];
 }
@@ -42,7 +42,7 @@ $dbh = null;
 $dbh = new PDO($dbPublished);
 $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE survey=? ORDER BY idArticle');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array(1));
+$stmt->execute([1]);
 foreach ($stmt as $row) {
     $surveysInEditPublishedArchive[] = $row['idArticle'];
 }
@@ -50,7 +50,7 @@ $dbh = null;
 $dbh = new PDO($dbArchive);
 $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE survey=? ORDER BY idArticle');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array(1));
+$stmt->execute([1]);
 foreach ($stmt as $row) {
     $surveysInEditPublishedArchive[] = $row['idArticle'];
 }
@@ -67,14 +67,14 @@ if (!empty($extras)) {
     $dbh = new PDO($dbSurvey);
     $stmt = $dbh->prepare('DELETE FROM answers WHERE idArticle=?');
     foreach ($extras as $extra) {
-        $stmt->execute(array($extra));
+        $stmt->execute([$extra]);
     }
     $dbh = null;
 }
 //
 // Update answers on the remote sites
 //
-$answers = array();
+$answers = [];
 $dbh = new PDO($dbSurvey);
 $stmt = $dbh->query('SELECT * FROM answers ORDER BY idAnswer');
 $stmt->setFetchMode(PDO::FETCH_NUM);

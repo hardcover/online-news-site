@@ -1,6 +1,6 @@
 <?php
 /**
- * Cron daily to vacuum the subscriber databases
+ * Cron daily to vacuum the editor databases
  *
  * PHP version 7
  *
@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -22,25 +22,9 @@ date_default_timezone_set('America/Los_Angeles');
 $startTime = time();
 $today = date("Y-m-d");
 $prior = null;
-$databases = array(
-    'databases/advertising.sqlite',
-    'databases/archive.sqlite',
-    'databases/archive2.sqlite',
-    'databases/calendar.sqlite',
-    'databases/calendar.sqlite',
-    'databases/classifieds.sqlite',
-    'databases/classifiedsNew.sqlite',
-    'databases/edit.sqlite',
-    'databases/edit2.sqlite',
-    'databases/log.sqlite',
-    'databases/menu.sqlite',
-    'databases/published.sqlite',
-    'databases/published2.sqlite',
-    'databases/settings.sqlite',
-    'databases/subscribers.sqlite',
-    'databases/subscribersNew.sqlite',
-    'databases/survey.sqlite'
-);
+$databases = [
+    'databases/archive.sqlite'
+];
 //
 // Vacuum the database
 //

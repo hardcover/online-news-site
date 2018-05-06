@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -58,7 +58,7 @@ if ($bylinePost != null) {
     $dbh = new PDO($dbEditors);
     $stmt = $dbh->prepare('SELECT fullName, email FROM users WHERE fullName=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($bylinePost));
+    $stmt->execute([$bylinePost]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {
@@ -99,7 +99,7 @@ if (strpos($summaryPost, '<') === false and strlen($summaryPost) > 1) {
     $summaryPost = null;
 }
 //
-$remotes = array();
+$remotes = [];
 $dbh = new PDO($dbRemote);
 $stmt = $dbh->query('SELECT remote FROM remotes');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -108,22 +108,23 @@ foreach ($stmt as $row) {
 }
 $dbh = null;
 //
-// Move expired articles from published to the archive
+// When working with published artciles, move expired articles from published to the archive
 //
-$expired = null;
-$dbh = new PDO($dbPublished);
-$stmt = $dbh->query('SELECT idArticle FROM articles WHERE endDate < "' . $today . '"');
-$stmt->setFetchMode(PDO::FETCH_ASSOC);
-foreach ($stmt as $row) {
-    $expired[] = $row['idArticle'];
-}
-$dbh = null;
-$dbFrom = $dbPublished;
-if (is_array($expired)) {
-    foreach ($expired as $idArticle) {
-        include $includesPath . '/moveArticle.php';
+if ($dbFrom === $dbPublished) {
+    $expired = null;
+    $dbh = new PDO($dbPublished);
+    $stmt = $dbh->query('SELECT idArticle FROM articles WHERE endDate < "' . $today . '"');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    foreach ($stmt as $row) {
+        $expired[] = $row['idArticle'];
     }
-    $idArticle = inlinePost('idArticle');
+    $dbh = null;
+    if (is_array($expired)) {
+        foreach ($expired as $idArticle) {
+            include $includesPath . '/moveArticle.php';
+        }
+        $idArticle = inlinePost('idArticle');
+    }
 }
 //
 // Download the latest contributed articles
@@ -149,19 +150,19 @@ if (isset($_POST['addUpdate'])) {
         if (empty($_POST['existing'])) {
             $dbh = new PDO($dbArchive);
             $stmt = $dbh->prepare('INSERT INTO articles (headline) VALUES (?)');
-            $stmt->execute(array(null));
+            $stmt->execute([null]);
             $idArticle = $dbh->lastInsertId();
             $stmt = $dbh->prepare('UPDATE articles SET idArticle=? WHERE rowid=?');
-            $stmt->execute(array($idArticle, $idArticle));
+            $stmt->execute([$idArticle, $idArticle]);
             $dbh = null;
             $dbh = new PDO($database);
             $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE idArticle=?');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $stmt->execute(array($idArticle));
+            $stmt->execute([$idArticle]);
             $row = $stmt->fetch();
             if (empty($row)) {
                 $stmt = $dbh->prepare('INSERT INTO articles (idArticle) VALUES (?)');
-                $stmt->execute(array($idArticle));
+                $stmt->execute([$idArticle]);
             }
         } else {
             //
@@ -170,7 +171,7 @@ if (isset($_POST['addUpdate'])) {
             $dbh = new PDO($database);
             $stmt = $dbh->prepare('SELECT sortOrderArticle FROM articles WHERE idArticle=?');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $stmt->execute(array($idArticle));
+            $stmt->execute([$idArticle]);
             $row = $stmt->fetch();
             $dbh = null;
             if ($row
@@ -203,7 +204,7 @@ if (isset($_POST['addUpdate'])) {
                 $dbh = new PDO($database);
                 $stmt = $dbh->prepare('SELECT originalImageWidth FROM articles WHERE idArticle=?');
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                $stmt->execute(array($idArticle));
+                $stmt->execute([$idArticle]);
                 $row = $stmt->fetch();
                 $dbh = null;
                 if (empty($row['originalImageWidth'])) {
@@ -214,7 +215,7 @@ if (isset($_POST['addUpdate'])) {
                     //
                     $dbh = new PDO($database);
                     $stmt = $dbh->prepare('UPDATE articles SET photoName=?, originalImageWidth=?, originalImageHeight=? WHERE idArticle=?');
-                    $stmt->execute(array($_FILES['image']['name'], $widthOriginal, $heightOriginal, $idArticle));
+                    $stmt->execute([$_FILES['image']['name'], $widthOriginal, $heightOriginal, $idArticle]);
                     $dbh = null;
                     //
                     // Create and save the thumbnail image
@@ -233,7 +234,7 @@ if (isset($_POST['addUpdate'])) {
                     $widthThumbnail = round($widthThumbnail / 2);
                     $dbh = new PDO($database);
                     $stmt = $dbh->prepare('UPDATE articles SET thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=? WHERE idArticle=?');
-                    $stmt->execute(array($thumbnailImage, $widthThumbnail, $heightThumbnail, $idArticle));
+                    $stmt->execute([$thumbnailImage, $widthThumbnail, $heightThumbnail, $idArticle]);
                     $dbh = null;
                     //
                     // Create and save the HD image, photo credit and caption
@@ -248,7 +249,7 @@ if (isset($_POST['addUpdate'])) {
                     ob_end_clean();
                     $dbh = new PDO($database);
                     $stmt = $dbh->prepare('UPDATE articles SET photoCredit=?, photoCaption=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
-                    $stmt->execute(array($photoCreditPost, $photoCaptionPost, $hdImage, $widthHD, $heightHD, $idArticle));
+                    $stmt->execute([$photoCreditPost, $photoCaptionPost, $hdImage, $widthHD, $heightHD, $idArticle]);
                     $dbh = null;
                 } else {
                     //
@@ -266,7 +267,7 @@ if (isset($_POST['addUpdate'])) {
                     ob_end_clean();
                     $dbh = new PDO($database2);
                     $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoName, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?, ?)');
-                    $stmt->execute(array($idArticle, $hdImage, $_FILES['image']['name'], $photoCreditPost, $photoCaptionPost, time()));
+                    $stmt->execute([$idArticle, $hdImage, $_FILES['image']['name'], $photoCreditPost, $photoCaptionPost, time()]);
                     $dbh = null;
                     //
                     // For published articles, upload the current secondary image, photo credit and caption
@@ -298,7 +299,7 @@ if (isset($_POST['addUpdate'])) {
         //
         $dbh = new PDO($database);
         $stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, publicationTime=?, endDate=?, idSection=?, sortOrderArticle=?, byline=?, headline=?, standfirst=?, text=?, summary=? WHERE idArticle=?');
-        $stmt->execute(array($publicationDatePost, $publicationTimePost, $endDatePost, $idSectionPost, $sortOrderArticlePost, $bylinePost, $headlinePost, $standfirstPost, $textPost, $summaryPost, $idArticle));
+        $stmt->execute([$publicationDatePost, $publicationTimePost, $endDatePost, $idSectionPost, $sortOrderArticlePost, $bylinePost, $headlinePost, $standfirstPost, $textPost, $summaryPost, $idArticle]);
         $dbh = null;
         //
         // For published articles, add or update the remote site
@@ -317,7 +318,7 @@ if (isset($_POST['addUpdate'])) {
         // Update sitemaps and rss
         //
         if (empty($_POST['existing']) and $use == 'published') {
-            $request = array();
+            $request = [];
             $request['task'] = 'sitemap';
             $response = null;
             foreach ($remotes as $remote) {
@@ -333,11 +334,11 @@ if (isset($_POST['addUpdate'])) {
 if (isset($_POST['deletePhoto']) and isset($idArticle)) {
     $dbh = new PDO($database);
     $stmt = $dbh->prepare('UPDATE articles SET photoName=?, photoCredit=?, photoCaption=?, originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
-    $stmt->execute(array(null, null, null, null, null, null, null, null, null, null, null, $idArticle));
+    $stmt->execute([null, null, null, null, null, null, null, null, null, null, null, $idArticle]);
     $dbh = null;
     $dbh = new PDO($database2);
     $stmt = $dbh->prepare('DELETE FROM imageSecondary WHERE idArticle=?');
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $dbh = null;
     if ($use == 'published') {
         $request = null;
@@ -356,19 +357,19 @@ if (isset($_POST['deletePhoto']) and isset($idArticle)) {
 if (isset($_POST['delete']) and isset($idArticle)) {
     $dbh = new PDO($database);
     $stmt = $dbh->prepare('DELETE FROM articles WHERE idArticle=?');
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $dbh = null;
     $dbh = new PDO($database2);
     $stmt = $dbh->prepare('DELETE FROM imageSecondary WHERE idArticle=?');
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $dbh = null;
     $dbh = new PDO($dbSurvey);
     $stmt = $dbh->prepare('DELETE FROM answers WHERE idArticle=?');
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $dbh = null;
     $dbh = new PDO($dbArchive);
     $stmt = $dbh->prepare('DELETE FROM articles WHERE idArticle=?');
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $dbh = null;
     if ($use == 'published') {
         $request = null;
@@ -385,7 +386,7 @@ if (isset($_POST['delete']) and isset($idArticle)) {
     // Update sitemaps and rss
     //
     if ($use == 'published') {
-        $request = array();
+        $request = [];
         $request['task'] = 'sitemap';
         $response = null;
         foreach ($remotes as $remote) {
@@ -403,7 +404,7 @@ if (isset($_POST['edit'])) {
     $dbh = new PDO($database);
     $stmt = $dbh->prepare('SELECT publicationDate, endDate, keywords, idSection, sortOrderArticle, byline, headline, standfirst, text FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $row = $stmt->fetch();
     $dbh = null;
     extract($row);
@@ -440,7 +441,7 @@ if (isset($_POST['publish'])
     $dbh = new PDO($database);
     $stmt = $dbh->prepare('SELECT idSection, publicationDate, endDate FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {
@@ -473,7 +474,7 @@ if (isset($_POST['publish'])
         //
         // Update sitemaps and rss
         //
-        $request = array();
+        $request = [];
         $request['task'] = 'sitemap';
         $response = null;
         foreach ($remotes as $remote) {
@@ -483,20 +484,22 @@ if (isset($_POST['publish'])
     }
 }
 //
-// Move expired articles from published to the archive
+// When not working with published artciles, move expired articles from published to the archive
 //
-$expired = null;
-$dbh = new PDO($dbPublished);
-$stmt = $dbh->query('SELECT idArticle FROM articles WHERE endDate < "' . $today . '"');
-$stmt->setFetchMode(PDO::FETCH_ASSOC);
-foreach ($stmt as $row) {
-    $expired[] = $row['idArticle'];
-}
-$dbh = null;
-$dbFrom = $dbPublished;
-if (is_array($expired)) {
-    foreach ($expired as $idArticle) {
-        include $includesPath . '/moveArticle.php';
+if ($dbFrom !== $dbPublished) {
+    $expired = null;
+    $dbh = new PDO($dbPublished);
+    $stmt = $dbh->query('SELECT idArticle FROM articles WHERE endDate < "' . $today . '"');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    foreach ($stmt as $row) {
+        $expired[] = $row['idArticle'];
+    }
+    $dbh = null;
+    $dbFrom = $dbPublished;
+    if (is_array($expired)) {
+        foreach ($expired as $idArticle) {
+            include $includesPath . '/moveArticle.php';
+        }
     }
 }
 //
@@ -533,7 +536,7 @@ echoIfMessage($message);
 $dbh = new PDO($dbEditors);
 $stmt = $dbh->prepare('SELECT user, fullName FROM users WHERE userType=? ORDER BY fullName');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array(1));
+$stmt->execute([1]);
 foreach ($stmt as $row) {
     extract($row);
     if ($user != 'admin') {

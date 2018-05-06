@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -19,7 +19,6 @@ session_start();
 require 'z/system/configuration.php';
 require $includesPath . '/authorization.php';
 require $includesPath . '/common.php';
-require $includesPath . '/password.php';
 //
 // User-group authorization
 //
@@ -55,7 +54,7 @@ if (isset($_POST['adminPass']) and ($_POST['adminPass'] == null or $_POST['admin
 $dbh = new PDO($dbEditors);
 $stmt = $dbh->prepare('SELECT pass FROM users WHERE user=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($_SESSION['username']));
+$stmt->execute([$_SESSION['username']]);
 $row = $stmt->fetch();
 $dbh = null;
 if (password_verify($adminPassPost, $row['pass'])) {
@@ -70,7 +69,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
             $dbh = new PDO($dbEditors);
             $stmt = $dbh->prepare('SELECT user FROM users WHERE user=?');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $stmt->execute(array($userPost));
+            $stmt->execute([$userPost]);
             $row = $stmt->fetch();
             $dbh = null;
             if (isset($row['user'])) {
@@ -80,7 +79,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
                 $dbh = new PDO($dbEditors);
                 $stmt = $dbh->query('DELETE FROM users WHERE user IS NULL');
                 $stmt = $dbh->prepare('INSERT INTO users (user) VALUES (?)');
-                $stmt->execute(array(null));
+                $stmt->execute([null]);
                 $idUser = $dbh->lastInsertId();
                 $dbh = null;
             }
@@ -88,7 +87,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
             $dbh = new PDO($dbEditors);
             $stmt = $dbh->prepare('SELECT idUser FROM users WHERE idUser=?');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $stmt->execute(array($idUserPost));
+            $stmt->execute([$idUserPost]);
             $row = $stmt->fetch();
             $dbh = null;
             extract($row);
@@ -100,10 +99,10 @@ if (password_verify($adminPassPost, $row['pass'])) {
             $dbh = new PDO($dbEditors);
             if (is_null($hash)) {
                 $stmt = $dbh->prepare('UPDATE users SET user=?, fullName=?, userType=? WHERE idUser=?');
-                $stmt->execute(array($userPost, $fullNamePost, 2, $idUser));
+                $stmt->execute([$userPost, $fullNamePost, 2, $idUser]);
             } else {
                 $stmt = $dbh->prepare('UPDATE users SET user=?, pass=?, fullName=?, userType=? WHERE idUser=?');
-                $stmt->execute(array($userPost, $hash, $fullNamePost, 2, $idUser));
+                $stmt->execute([$userPost, $hash, $fullNamePost, 2, $idUser]);
             }
             $dbh = null;
         } else {
@@ -119,14 +118,14 @@ if (password_verify($adminPassPost, $row['pass'])) {
                 $dbh = new PDO($dbEditors);
                 $stmt = $dbh->prepare('SELECT user FROM users WHERE user=?');
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                $stmt->execute(array($userPost));
+                $stmt->execute([$userPost]);
                 $row = $stmt->fetch();
                 $dbh = null;
                 if (isset($row['user'])) {
                     $dbh = new PDO($dbEditors);
                     $stmt = $dbh->prepare('DELETE FROM users WHERE user=?');
                     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                    $stmt->execute(array($userPost));
+                    $stmt->execute([$userPost]);
                     $dbh = null;
                 } else {
                     $message = 'The user name was not found.';
@@ -146,7 +145,7 @@ if (isset($_POST['edit'])) {
     $dbh = new PDO($dbEditors);
     $stmt = $dbh->prepare('SELECT idUser, user, fullName FROM users WHERE idUser=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idUserPost));
+    $stmt->execute([$idUserPost]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {

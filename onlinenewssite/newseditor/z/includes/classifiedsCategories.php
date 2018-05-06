@@ -11,13 +11,13 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
  */
-$classifiedCategories = array(
-'Community' => array(
+$classifiedCategories = [
+'Community' => [
     'Activities',
     'Artists',
     'Childcare',
@@ -31,8 +31,8 @@ $classifiedCategories = array(
     'Pets',
     'Politics',
     'Rideshare',
-    'Volunteers'),
-'For sale' => array(
+    'Volunteers'],
+'For sale' => [
     'ATV, UTV & snow',
     'Antiques',
     'Appliances',
@@ -70,8 +70,8 @@ $classifiedCategories = array(
     'Tools',
     'Toys & games',
     'Video gaming',
-    'Wanted'),
-'Housing' => array(
+    'Wanted'],
+'Housing' => [
     'Apts & housing',
     'Housing swap',
     'Housing wanted',
@@ -80,8 +80,8 @@ $classifiedCategories = array(
     'Real estate for sale',
     'Rooms & shared',
     'Sublets & temporary',
-    'Vacation rentals'),
-'Jobs' => array(
+    'Vacation rentals'],
+'Jobs' => [
     'Accounting & finance',
     'Admin & office',
     'Architecture & engineering',
@@ -113,8 +113,8 @@ $classifiedCategories = array(
     'Transport',
     'Web & information design',
     'Writing & editing',
-    'Other'),
-'Services' => array(
+    'Other'],
+'Services' => [
     'Automotive',
     'Beauty',
     'Computer',
@@ -134,6 +134,6 @@ $classifiedCategories = array(
     'Small business ads',
     'Therapeutic',
     'Travel & vacation',
-    'Write & edit')
-);
+    'Write & edit']
+];
 ?>

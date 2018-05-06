@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -41,7 +41,7 @@ require $includesPath . '/createCrypt.php';
 //
 // Variables
 //
-$adSort = array();
+$adSort = [];
 $anchorPath = null;
 $database = $dbPublished;
 $datePost = $today;
@@ -97,7 +97,7 @@ if (isset($payNowPost)) {
 $dbh = new PDO($dbSettings);
 $stmt = $dbh->prepare('SELECT name, description FROM names WHERE idName=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array(1));
+$stmt->execute([1]);
 $row = $stmt->fetch();
 $dbh = null;
 //
@@ -126,7 +126,7 @@ if ($row) {
     $dbh = new PDO($dbClassifiedsNew);
     $stmt = $dbh->prepare('SELECT review FROM ads WHERE review >= ? AND payment != ?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array(time() + (15 * 60), 1));
+    $stmt->execute([time() + (15 * 60), 1]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {
@@ -141,7 +141,7 @@ if ($row) {
         if ($result == true) {
             $dbh = new PDO($dbClassifiedsNew);
             $stmt = $dbh->prepare('UPDATE ads SET payment=? WHERE review >= ?');
-            $stmt->execute(array(1, time() + (15 * 60)));
+            $stmt->execute([1, time() + (15 * 60)]);
             $dbh = null;
         }
     }
@@ -151,13 +151,13 @@ if ($row) {
 //
 $dbh = new PDO($dbSubscribersNew);
 $stmt = $dbh->prepare('DELETE FROM users WHERE time < ? AND verified IS NULL');
-$stmt->execute(array(time()));
+$stmt->execute([time()]);
 $stmt = $dbh->prepare('UPDATE users SET verify=? WHERE time < ? AND verified = ?');
-$stmt->execute(array(null, time(), 1));
+$stmt->execute([null, time(), 1]);
 $dbh = null;
 $dbh = new PDO($dbSubscribers);
 $stmt = $dbh->prepare('UPDATE users SET verify=? WHERE time < ? AND verified = ?');
-$stmt->execute(array(null, time(), 1));
+$stmt->execute([null, time(), 1]);
 $dbh = null;
 //
 // Activate a registration
@@ -166,13 +166,13 @@ if (isset($tGet) and $tGet == 'l' and isset($vGet)) {
     $dbh = new PDO($dbSubscribersNew);
     $stmt = $dbh->prepare('SELECT verify, ipAddress, payStatus FROM users WHERE verify=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($vGet));
+    $stmt->execute([$vGet]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row and $row['ipAddress'] == $_SERVER['REMOTE_ADDR']) {
         $dbh = new PDO($dbSubscribersNew);
         $stmt = $dbh->prepare('UPDATE users SET verify=?, verified=? WHERE verify=?');
-        $stmt->execute(array(null, 1, $vGet));
+        $stmt->execute([null, 1, $vGet]);
         $_SESSION['message'] = 'The email address is confirmed. Log in to submit classified ads, subscribe to the news, etc. Visit <a class="n" href="' . $uri . '?m=my-account">My account</a> after logging in to set your account preferences.';
         $dbh = null;
     }
@@ -221,7 +221,7 @@ if (isset($_SESSION['auth'])) {
     $dbh = new PDO($dbSubscribers);
     $stmt = $dbh->prepare('SELECT contributor FROM users WHERE idUser=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($_SESSION['userId']));
+    $stmt->execute([$_SESSION['userId']]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {
@@ -248,14 +248,14 @@ echo "    </h5>\n";
 $dbh = new PDO($dbAdvertising);
 $stmt = $dbh->prepare('SELECT maxAds FROM maxAd WHERE idMaxAds=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array(1));
+$stmt->execute([1]);
 $row = $stmt->fetch();
 if ($row) {
     $maxAds = $row['maxAds'];
 }
 $stmt = $dbh->prepare('SELECT idAd, sortOrderAd FROM advertisements WHERE (? >= startDateAd AND ? <= endDateAd) ORDER BY sortOrderAd');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($today, $today));
+$stmt->execute([$today, $today]);
 foreach ($stmt as $row) {
     extract($row);
     if (empty($sortOrderAd)) {
@@ -281,7 +281,7 @@ $dbh = new PDO($dbAdvertising);
 foreach ($adSort as $idAd) {
     $stmt = $dbh->prepare('SELECT link, linkAlt FROM advertisements WHERE idAd=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idAd));
+    $stmt->execute([$idAd]);
     $row = $stmt->fetch();
     if ($row) {
         extract($row);
@@ -321,7 +321,7 @@ if (empty($_GET)) {
 } elseif (isset($mGet)) {
     $dbh = new PDO($dbMenu);
     $stmt = $dbh->prepare('SELECT menuName, menuContent FROM menu WHERE menuPath=?');
-    $stmt->execute(array($mGet));
+    $stmt->execute([$mGet]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {

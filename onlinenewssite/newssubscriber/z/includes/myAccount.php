@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -48,7 +48,7 @@ if (isset($_POST['submit']) and isset($idUserPost)) {
         $dbh = new PDO($dbSubscribersNew);
     }
     $stmt = $dbh->prepare('UPDATE users SET email=?, classifiedOnly=?, deliver=?, deliver2=?, deliveryAddress=?, dCityRegionPostal=?, billingAddress=?, bCityRegionPostal=?, soa=? WHERE idUser=?');
-    $stmt->execute(array($emailPost, $classifiedOnlyPost, $deliverPost, $emailNewsPost, $deliveryAddressPost, $dCityRegionPostalPost, $billingAddressPost, $bCityRegionPostalPost, 1, $idUserPost));
+    $stmt->execute([$emailPost, $classifiedOnlyPost, $deliverPost, $emailNewsPost, $deliveryAddressPost, $dCityRegionPostalPost, $billingAddressPost, $bCityRegionPostalPost, 1, $idUserPost]);
     $dbh = null;
     $message = 'The preferences were sent.';
 }
@@ -62,7 +62,7 @@ if ($_SESSION['db'] === 's') {
 }
 $stmt = $dbh->prepare('SELECT email, payStatus, classifiedOnly, deliver, deliver2, deliveryAddress, dCityRegionPostal, billingAddress, bCityRegionPostal FROM users WHERE idUser=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($_SESSION['userId']));
+$stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {

@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -25,7 +25,7 @@ require $includesPath . '/common.php';
 $dbh = new PDO($dbEditors);
 $stmt = $dbh->prepare('SELECT userType FROM users WHERE idUser=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($_SESSION['userId']));
+$stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
 if (empty($row['userType']) or $row['userType'] != 5) {
@@ -49,7 +49,7 @@ $message = null;
 $dbh = new PDO($dbSettings);
 $stmt = $dbh->prepare('SELECT access FROM archiveAccess WHERE idAccess=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array(1));
+$stmt->execute([1]);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
@@ -63,7 +63,7 @@ if ($row) {
 $dbh = new PDO($dbSettings);
 $stmt = $dbh->prepare('SELECT access FROM calendarAccess WHERE idCalendarAccess=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array(1));
+$stmt->execute([1]);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
@@ -77,14 +77,14 @@ if ($row) {
 $dbh = new PDO($dbMenu);
 $stmt = $dbh->prepare('SELECT idMenu FROM menu WHERE menuName=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array('Classified ads'));
+$stmt->execute(['Classified ads']);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
     $classifiedsEdit = 1;
 }
 //
-$remotes = array();
+$remotes = [];
 $dbh = new PDO($dbRemote);
 $stmt = $dbh->query('SELECT remote FROM remotes');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -109,17 +109,17 @@ if (isset($_POST['updatePredefined'])) {
     $dbh = new PDO($dbSettings);
     $stmt = $dbh->query('DELETE FROM archiveAccess');
     $stmt = $dbh->prepare('INSERT INTO archiveAccess (access) VALUES (?)');
-    $stmt->execute(array($access));
+    $stmt->execute([$access]);
     $dbh = null;
     include $includesPath . '/syncSettings.php';
     $dbh = new PDO($dbMenu);
     $stmt = $dbh->prepare('DELETE FROM menu WHERE menuName = ?');
-    $stmt->execute(array('Archive search'));
+    $stmt->execute(['Archive search']);
     $dbh = null;
     if ($archivePost == strval('on')) {
         $dbh = new PDO($dbMenu);
         $stmt = $dbh->prepare('INSERT INTO menu (menuName, menuSortOrder, menuPath) VALUES (?, ?, ?)');
-        $stmt->execute(array('Archive search', 1, 'archive-search'));
+        $stmt->execute(['Archive search', 1, 'archive-search']);
         $dbh = null;
         $archiveEdit = 1;
     } else {
@@ -138,17 +138,17 @@ if (isset($_POST['updatePredefined'])) {
     $dbh = new PDO($dbSettings);
     $stmt = $dbh->query('DELETE FROM calendarAccess');
     $stmt = $dbh->prepare('INSERT INTO calendarAccess (access) VALUES (?)');
-    $stmt->execute(array($access));
+    $stmt->execute([$access]);
     $dbh = null;
     include $includesPath . '/syncSettings.php';
     $dbh = new PDO($dbMenu);
     $stmt = $dbh->prepare('DELETE FROM menu WHERE menuName = ?');
-    $stmt->execute(array('Calendar'));
+    $stmt->execute(['Calendar']);
     $dbh = null;
     if ($calendarPost == strval('on')) {
         $dbh = new PDO($dbMenu);
         $stmt = $dbh->prepare('INSERT INTO menu (menuName, menuSortOrder, menuPath) VALUES (?, ?, ?)');
-        $stmt->execute(array('Calendar', 1, 'calendar'));
+        $stmt->execute(['Calendar', 1, 'calendar']);
         $dbh = null;
         $calendarEdit = 1;
     } else {
@@ -159,12 +159,12 @@ if (isset($_POST['updatePredefined'])) {
     //
     $dbh = new PDO($dbMenu);
     $stmt = $dbh->prepare('DELETE FROM menu WHERE menuName = ?');
-    $stmt->execute(array('Classified ads'));
+    $stmt->execute(['Classified ads']);
     $dbh = null;
     if ($classifiedsPost == strval('on')) {
         $dbh = new PDO($dbMenu);
         $stmt = $dbh->prepare('INSERT INTO menu (menuName, menuSortOrder, menuPath) VALUES (?, ?, ?)');
-        $stmt->execute(array('Classified ads', 2, 'classified-ads'));
+        $stmt->execute(['Classified ads', 2, 'classified-ads']);
         $dbh = null;
         $classifiedsEdit = 1;
     } else {

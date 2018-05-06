@@ -11,7 +11,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -54,17 +54,17 @@ if ($row === false) {
     foreach ($classifiedCategories as $section => $subsections) {
         $i++;
         $stmt = $dbh->prepare('INSERT INTO sections (section, sortOrderSection) VALUES (?, ?)');
-        $stmt->execute(array($section, $i));
+        $stmt->execute([$section, $i]);
         $stmt = $dbh->prepare('SELECT idSection FROM sections WHERE section=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($section));
+        $stmt->execute([$section]);
         $row = $stmt->fetch();
         extract($row);
         $ii = null;
         foreach ($subsections as $subsection) {
             $ii++;
             $stmt = $dbh->prepare('INSERT INTO subsections (subsection, parentId, sortOrderSubsection) VALUES (?, ?, ?)');
-            $stmt->execute(array($subsection, $idSection, $ii));
+            $stmt->execute([$subsection, $idSection, $ii]);
         }
     }
     $dbh->commit();
@@ -106,7 +106,7 @@ $stmt = $dbh->query('SELECT idRegistration FROM registration');
 $row = $stmt->fetch();
 if ($row === false) {
     $stmt = $dbh->prepare('INSERT INTO registration (information) VALUES (?)');
-    $stmt->execute(array('A free registration is required to place classified ads and to submit other site forms. A paid registration might be required to access some site content. All registrations begin with an email and password. The email must be verified before the registration can be used to log in. Instructions to verify the email address will follow after the information below is sent.'));
+    $stmt->execute(['A free registration is required to place classified ads and to submit other site forms. A paid registration might be required to access some site content. All registrations begin with an email and password. The email must be verified before the registration can be used to log in. Instructions to verify the email address will follow after the information below is sent.']);
 }
 $dbh = null;
 //

@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -18,7 +18,7 @@
 //
 // Variables
 //
-$remotes = array();
+$remotes = [];
 $dbh = new PDO($dbRemote);
 $stmt = $dbh->query('SELECT remote FROM remotes');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -33,7 +33,7 @@ foreach ($remotes as $remote) {
     //
     // Delete remote requests for early removal
     //
-    $remoteClassifieds = array();
+    $remoteClassifieds = [];
     $request = null;
     $response = null;
     $request['task'] = 'classifiedsEarlyRemoval';
@@ -43,14 +43,14 @@ foreach ($remotes as $remote) {
         $dbh = new PDO($dbClassifieds);
         $stmt = $dbh->prepare('DELETE FROM ads WHERE idAd=?');
         foreach ($remoteClassifieds as $idAd) {
-            $stmt->execute(array($idAd));
+            $stmt->execute([$idAd]);
         }
         $dbh = null;
     }
     //
     // Determine the missing and extra classifieds
     //
-    $remoteClassifieds = array();
+    $remoteClassifieds = [];
     $request = null;
     $response = null;
     $request['task'] = 'classifiedsSync';
@@ -59,9 +59,9 @@ foreach ($remotes as $remote) {
         $remoteClassifieds = json_decode($response['remoteClassifieds'], true);
     }
     if ($remoteClassifieds == 'null' or $remoteClassifieds == null) {
-        $remoteClassifieds = array();
+        $remoteClassifieds = [];
     }
-    $classifieds = array();
+    $classifieds = [];
     $dbh = new PDO($dbClassifieds);
     $stmt = $dbh->query('SELECT idAd FROM ads WHERE review IS NOT NULL');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -78,7 +78,7 @@ foreach ($remotes as $remote) {
         $dbh = new PDO($dbClassifieds);
         $stmt = $dbh->prepare('SELECT email, title, description, categoryId, review, startDate, duration, photos FROM ads WHERE idAd=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($idAd));
+        $stmt->execute([$idAd]);
         $row = $stmt->fetch();
         $dbh = null;
         if ($row) {
@@ -112,7 +112,7 @@ foreach ($remotes as $remote) {
                         $dbh = new PDO($dbClassifieds);
                         $stmt = $dbh->prepare('SELECT photo' . $i . ' FROM ads WHERE idAd=?');
                         $stmt->setFetchMode(PDO::FETCH_NUM);
-                        $stmt->execute(array($idAd));
+                        $stmt->execute([$idAd]);
                         $row = $stmt->fetch();
                         $dbh = null;
                         $request['photo'] = $row['0'];

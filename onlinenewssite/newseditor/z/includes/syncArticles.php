@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -38,14 +38,14 @@ foreach ($remotes as $remote) {
                 extract($response);
                 $dbh = new PDO($dbArchive);
                 $stmt = $dbh->prepare('INSERT INTO articles (headline) VALUES (?)');
-                $stmt->execute(array(null));
+                $stmt->execute([null]);
                 $idArticle = $dbh->lastInsertId();
                 $stmt = $dbh->prepare('UPDATE articles SET idArticle=? WHERE rowid=?');
-                $stmt->execute(array($idArticle, $idArticle));
+                $stmt->execute([$idArticle, $idArticle]);
                 $dbh = null;
                 $dbh = new PDO($dbEdit);
                 $stmt = $dbh->prepare('INSERT INTO articles (idArticle, idSection, byline, headline, standfirst, text, summary, evolve, expand, extend, photoName, photoCredit, photoCaption) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-                $stmt->execute(array($idArticle, $idSection, $byline, $headline, $standfirst, $text, $summary, $evolve, $expand, $extend, $photoName, $photoCredit, $photoCaption));
+                $stmt->execute([$idArticle, $idSection, $byline, $headline, $standfirst, $text, $summary, $evolve, $expand, $extend, $photoName, $photoCredit, $photoCaption]);
                 $dbh = null;
                 if (isset($thumbnailImageWidth) and $thumbnailImageWidth != 'null') {
                     $request = null;
@@ -57,7 +57,7 @@ foreach ($remotes as $remote) {
                         extract($response);
                         $dbh = new PDO($dbEdit);
                         $stmt = $dbh->prepare('UPDATE articles SET thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
-                        $stmt->execute(array($thumbnailImage, $thumbnailImageWidth, $thumbnailImageHeight, $hdImageWidth, $hdImageHeight, $idArticle));
+                        $stmt->execute([$thumbnailImage, $thumbnailImageWidth, $thumbnailImageHeight, $hdImageWidth, $hdImageHeight, $idArticle]);
                         $dbh = null;
                         $request = null;
                         $response = null;
@@ -67,7 +67,7 @@ foreach ($remotes as $remote) {
                         if (isset($response['hdImage'])) {
                             $dbh = new PDO($dbEdit);
                             $stmt = $dbh->prepare('UPDATE articles SET hdImage=? WHERE idArticle=?');
-                            $stmt->execute(array($response['hdImage'], $idArticle));
+                            $stmt->execute([$response['hdImage'], $idArticle]);
                             $dbh = null;
                         }
                     }
@@ -88,7 +88,7 @@ foreach ($remotes as $remote) {
                         if (isset($response['hdImage'])) {
                             $dbh = new PDO($dbEdit2);
                             $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?)');
-                            $stmt->execute(array($idArticle, $response['hdImage'], $response['photoCredit'], $response['photoCaption'], time()));
+                            $stmt->execute([$idArticle, $response['hdImage'], $response['photoCredit'], $response['photoCaption'], time()]);
                             $dbh = null;
                         }
                     }
@@ -125,9 +125,9 @@ foreach ($remotes as $remote) {
     $response = soa($remote . 'z/', $request);
     $remoteArticles = json_decode($response['remoteArticles'], true);
     if ($remoteArticles == 'null' or $remoteArticles == null) {
-        $remoteArticles = array();
+        $remoteArticles = [];
     }
-    $articles = array();
+    $articles = [];
     $dbh = new PDO($database);
     if (is_null($archive)) {
         $stmt = $dbh->query('SELECT idArticle FROM articles');
@@ -163,7 +163,7 @@ foreach ($remotes as $remote) {
         $response = soa($remote . 'z/', $request);
         $remoteArticles = json_decode($response['remoteArticles'], true);
         if ($remoteArticles == 'null' or $remoteArticles == null) {
-            $remoteArticles = array();
+            $remoteArticles = [];
         }
         $dbh = new PDO($database);
         $stmt = $dbh->query('SELECT idArticle FROM articles');

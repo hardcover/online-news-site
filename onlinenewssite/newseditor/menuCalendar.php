@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -25,7 +25,7 @@ require $includesPath . '/common.php';
 $dbh = new PDO($dbEditors);
 $stmt = $dbh->prepare('SELECT userType FROM users WHERE idUser=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($_SESSION['userId']));
+$stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
 if (empty($row['userType']) or $row['userType'] != 5) {
@@ -57,7 +57,7 @@ $oneTimeEventPost = securePost('oneTimeEvent');
 $weeklyDayOfWeekEdit = null;
 $weeklyDayOfWeekPost = securePost('weeklyDayOfWeek');
 //
-$remotes = array();
+$remotes = [];
 $dbh = new PDO($dbRemote);
 $stmt = $dbh->query('SELECT remote FROM remotes');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -93,7 +93,7 @@ if ($first == $datePost) {
 $dbh = new PDO($dbCalendar);
 $stmt = $dbh->prepare('SELECT idOneTimeEvent, description FROM oneTimeEvent WHERE date=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($datePost));
+$stmt->execute([$datePost]);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
@@ -103,7 +103,7 @@ if ($row) {
 $dbh = new PDO($dbCalendar);
 $stmt = $dbh->prepare('SELECT idWeeklyDayOfWeek, description FROM weeklyDayOfWeek WHERE date=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($dayOfTheWeek));
+$stmt->execute([$dayOfTheWeek]);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
@@ -113,7 +113,7 @@ if ($row) {
 $dbh = new PDO($dbCalendar);
 $stmt = $dbh->prepare('SELECT idMonthlyDayOfWeek, description FROM monthlyDayOfWeek WHERE date=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($week . ' ' . $dayOfTheWeek));
+$stmt->execute([$week . ' ' . $dayOfTheWeek]);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
@@ -123,7 +123,7 @@ if ($row) {
 $dbh = new PDO($dbCalendar);
 $stmt = $dbh->prepare('SELECT idAnnual, description FROM annual WHERE date=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array(substr($datePost, -5)));
+$stmt->execute([substr($datePost, -5)]);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
@@ -133,7 +133,7 @@ if ($row) {
 $dbh = new PDO($dbCalendar);
 $stmt = $dbh->prepare('SELECT idAnnualDayOfWeek, description FROM annualDayOfWeek WHERE date=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($week . ' ' . $dayOfTheWeek . ' of ' . $month));
+$stmt->execute([$week . ' ' . $dayOfTheWeek . ' of ' . $month]);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
@@ -159,19 +159,19 @@ if (isset($_POST['update']) and isset($datePost)) {
         if (empty($oneTimeEventPost)) {
             $dbh = new PDO($dbCalendar);
             $stmt = $dbh->prepare('DELETE FROM oneTimeEvent WHERE idOneTimeEvent=?');
-            $stmt->execute(array($idOneTimeEventEdit));
+            $stmt->execute([$idOneTimeEventEdit]);
             $dbh = null;
         } else {
             $dbh = new PDO($dbCalendar);
             $stmt = $dbh->prepare('UPDATE oneTimeEvent SET description=? WHERE idOneTimeEvent=?');
-            $stmt->execute(array($oneTimeEventPost, $idOneTimeEventEdit));
+            $stmt->execute([$oneTimeEventPost, $idOneTimeEventEdit]);
             $dbh = null;
         }
     } else {
         if (isset($oneTimeEventPost)) {
             $dbh = new PDO($dbCalendar);
             $stmt = $dbh->prepare('INSERT INTO oneTimeEvent (date, description) VALUES (?, ?)');
-            $stmt->execute(array($datePost, $oneTimeEventPost));
+            $stmt->execute([$datePost, $oneTimeEventPost]);
             $dbh = null;
         }
     }
@@ -184,19 +184,19 @@ if (isset($_POST['update']) and isset($datePost)) {
         if (empty($weeklyDayOfWeekPost)) {
             $dbh = new PDO($dbCalendar);
             $stmt = $dbh->prepare('DELETE FROM weeklyDayOfWeek WHERE idWeeklyDayOfWeek=?');
-            $stmt->execute(array($idWeeklyDayOfWeekEdit));
+            $stmt->execute([$idWeeklyDayOfWeekEdit]);
             $dbh = null;
         } else {
             $dbh = new PDO($dbCalendar);
             $stmt = $dbh->prepare('UPDATE weeklyDayOfWeek SET description=? WHERE idWeeklyDayOfWeek=?');
-            $stmt->execute(array($weeklyDayOfWeekPost, $idWeeklyDayOfWeekEdit));
+            $stmt->execute([$weeklyDayOfWeekPost, $idWeeklyDayOfWeekEdit]);
             $dbh = null;
         }
     } else {
         if (isset($weeklyDayOfWeekPost)) {
             $dbh = new PDO($dbCalendar);
             $stmt = $dbh->prepare('INSERT INTO weeklyDayOfWeek (date, description) VALUES (?, ?)');
-            $stmt->execute(array($dateDescription, $weeklyDayOfWeekPost));
+            $stmt->execute([$dateDescription, $weeklyDayOfWeekPost]);
             $dbh = null;
         }
     }
@@ -209,19 +209,19 @@ if (isset($_POST['update']) and isset($datePost)) {
         if (empty($monthlyDayOfWeekPost)) {
             $dbh = new PDO($dbCalendar);
             $stmt = $dbh->prepare('DELETE FROM monthlyDayOfWeek WHERE idMonthlyDayOfWeek=?');
-            $stmt->execute(array($idMonthlyDayOfWeekEdit));
+            $stmt->execute([$idMonthlyDayOfWeekEdit]);
             $dbh = null;
         } else {
             $dbh = new PDO($dbCalendar);
             $stmt = $dbh->prepare('UPDATE monthlyDayOfWeek SET description=? WHERE idMonthlyDayOfWeek=?');
-            $stmt->execute(array($monthlyDayOfWeekPost, $idMonthlyDayOfWeekEdit));
+            $stmt->execute([$monthlyDayOfWeekPost, $idMonthlyDayOfWeekEdit]);
             $dbh = null;
         }
     } else {
         if (isset($monthlyDayOfWeekPost)) {
             $dbh = new PDO($dbCalendar);
             $stmt = $dbh->prepare('INSERT INTO monthlyDayOfWeek (date, description) VALUES (?, ?)');
-            $stmt->execute(array($dateDescription, $monthlyDayOfWeekPost));
+            $stmt->execute([$dateDescription, $monthlyDayOfWeekPost]);
             $dbh = null;
         }
     }
@@ -233,19 +233,19 @@ if (isset($_POST['update']) and isset($datePost)) {
         if (empty($annualEventPost)) {
             $dbh = new PDO($dbCalendar);
             $stmt = $dbh->prepare('DELETE FROM annual WHERE idAnnual=?');
-            $stmt->execute(array($idAnnualEdit));
+            $stmt->execute([$idAnnualEdit]);
             $dbh = null;
         } else {
             $dbh = new PDO($dbCalendar);
             $stmt = $dbh->prepare('UPDATE annual SET description=? WHERE idAnnual=?');
-            $stmt->execute(array($annualEventPost, $idAnnualEdit));
+            $stmt->execute([$annualEventPost, $idAnnualEdit]);
             $dbh = null;
         }
     } else {
         if (isset($annualEventPost)) {
             $dbh = new PDO($dbCalendar);
             $stmt = $dbh->prepare('INSERT INTO annual (date, description) VALUES (?, ?)');
-            $stmt->execute(array(substr($datePost, -5), $annualEventPost));
+            $stmt->execute([substr($datePost, -5), $annualEventPost]);
             $dbh = null;
         }
     }
@@ -258,19 +258,19 @@ if (isset($_POST['update']) and isset($datePost)) {
         if (empty($annualDayOfWeekPost)) {
             $dbh = new PDO($dbCalendar);
             $stmt = $dbh->prepare('DELETE FROM annualDayOfWeek WHERE idAnnualDayOfWeek=?');
-            $stmt->execute(array($idAnnualDayOfWeekEdit));
+            $stmt->execute([$idAnnualDayOfWeekEdit]);
             $dbh = null;
         } else {
             $dbh = new PDO($dbCalendar);
             $stmt = $dbh->prepare('UPDATE annualDayOfWeek SET description=? WHERE idAnnualDayOfWeek=?');
-            $stmt->execute(array($annualDayOfWeekPost, $idAnnualDayOfWeekEdit));
+            $stmt->execute([$annualDayOfWeekPost, $idAnnualDayOfWeekEdit]);
             $dbh = null;
         }
     } else {
         if (isset($annualDayOfWeekPost)) {
             $dbh = new PDO($dbCalendar);
             $stmt = $dbh->prepare('INSERT INTO annualDayOfWeek (date, description) VALUES (?, ?)');
-            $stmt->execute(array($dateDescription, $annualDayOfWeekPost));
+            $stmt->execute([$dateDescription, $annualDayOfWeekPost]);
             $dbh = null;
         }
     }
@@ -281,16 +281,16 @@ if (isset($_POST['update']) and isset($datePost)) {
     $dbh = new PDO($dbCalendar);
     $stmt = $dbh->query('DELETE FROM note');
     $stmt = $dbh->prepare('INSERT INTO note (description) VALUES (?)');
-    $stmt->execute(array($notePost));
+    $stmt->execute([$notePost]);
     $dbh = null;
     $noteEdit = $notePost;
     //
     // Sync the main database to the remote databases
     //
-    $annual = array();
-    $annualDayOfWeek = array();
-    $monthlyDayOfWeek = array();
-    $oneTimeEvent = array();
+    $annual = [];
+    $annualDayOfWeek = [];
+    $monthlyDayOfWeek = [];
+    $oneTimeEvent = [];
     $dbh = new PDO($dbCalendar);
     $stmt = $dbh->query('SELECT * FROM annual ORDER BY idAnnual');
     $stmt->setFetchMode(PDO::FETCH_NUM);
@@ -397,35 +397,35 @@ for ($i = 0; $i < 371; $i++) {
     $dbh = new PDO($dbCalendar);
     $stmt = $dbh->prepare('SELECT description FROM oneTimeEvent WHERE date=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($selectDate));
+    $stmt->execute([$selectDate]);
     $row = $stmt->fetch();
     if (isset($row['description'])) {
         $description.= $row['description'] . ' ';
     }
     $stmt = $dbh->prepare('SELECT description FROM weeklyDayOfWeek WHERE date=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($dayOfTheWeekSelect));
+    $stmt->execute([$dayOfTheWeekSelect]);
     $row = $stmt->fetch();
     if (isset($row['description'])) {
         $description.= $row['description'] . ' ';
     }
     $stmt = $dbh->prepare('SELECT description FROM monthlyDayOfWeek WHERE date=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($weekSelect . ' ' . $dayOfTheWeekSelect));
+    $stmt->execute([$weekSelect . ' ' . $dayOfTheWeekSelect]);
     $row = $stmt->fetch();
     if (isset($row['description'])) {
         $description.= $row['description'] . ' ';
     }
     $stmt = $dbh->prepare('SELECT description FROM annual WHERE date=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array(substr($selectDate, -5)));
+    $stmt->execute([substr($selectDate, -5)]);
     $row = $stmt->fetch();
     if (isset($row['description'])) {
         $description.= $row['description'] . ' ';
     }
     $stmt = $dbh->prepare('SELECT description FROM annualDayOfWeek WHERE date=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($weekSelect . ' ' . $dayOfTheWeekSelect . ' of ' . $monthSelect));
+    $stmt->execute([$weekSelect . ' ' . $dayOfTheWeekSelect . ' of ' . $monthSelect]);
     $row = $stmt->fetch();
     if (isset($row['description'])) {
         $description.= $row['description'] . ' ';

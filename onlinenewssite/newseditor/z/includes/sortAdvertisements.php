@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -22,14 +22,14 @@ $count = null;
 $dbh = new PDO($dbAdvertising);
 $stmt = $dbh->prepare('SELECT idAd, sortOrderAd FROM advertisements WHERE (? >= startDateAd AND ? <= endDateAd) ORDER BY sortOrderAd, sortPriority');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($today, $today));
+$stmt->execute([$today, $today]);
 foreach ($stmt as $row) {
     if ($row) {
         extract($row);
         if (isset($sortOrderAd)) {
             $count++;
             $stmt = $dbh->prepare('UPDATE advertisements SET sortOrderAd=? WHERE idAd=?');
-            $stmt->execute(array($count, $idAd));
+            $stmt->execute([$count, $idAd]);
         }
     }
 }
@@ -38,12 +38,12 @@ foreach ($stmt as $row) {
 //
 $stmt = $dbh->prepare('SELECT idAd FROM advertisements WHERE (startDateAd >= ? AND ? <= endDateAd)');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($today, $today));
+$stmt->execute([$today, $today]);
 foreach ($stmt as $row) {
     if ($row) {
         extract($row);
         $stmt = $dbh->prepare('UPDATE advertisements SET sortPriority=?');
-        $stmt->execute(array(2));
+        $stmt->execute([2]);
     }
 }
 $dbh = null;

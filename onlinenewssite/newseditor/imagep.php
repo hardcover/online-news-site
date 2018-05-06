@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -25,7 +25,7 @@ if (isset($_GET['i'])) {
         $dbh = new PDO($dbPublished);
         $stmt = $dbh->prepare('SELECT ' . $image . ' FROM articles WHERE idArticle=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($idArticle));
+        $stmt->execute([$idArticle]);
         $row = $stmt->fetch();
         $dbh = null;
         if ($row) {

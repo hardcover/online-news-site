@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -37,7 +37,7 @@ $dbSurvey = 'sqlite:' . $includesPath . '/databases/survey.sqlite';
 //
 // Set the default timezone based on the GMT offset in configuration.php
 //
-$timezone = array(
+$timezone = [
     -12     => 'Kwajalein',
     -11     => 'Pacific/Midway',
     -10     => 'Pacific/Honolulu',
@@ -71,7 +71,7 @@ $timezone = array(
      11     => 'Asia/Magadan',
      12     => 'Pacific/Fiji',
      13     => 'Pacific/Tongatapu'
-);
+];
 date_default_timezone_set($timezone[$gmtOffset]);
 $today = date("Y-m-d");
 /**

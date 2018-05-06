@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -87,19 +87,19 @@ if (isset($_POST['addUpdate'])) {
         if (empty($_POST['existing'])) {
             $dbh = new PDO($dbArchive);
             $stmt = $dbh->prepare('INSERT INTO articles (headline) VALUES (?)');
-            $stmt->execute(array(null));
+            $stmt->execute([null]);
             $idArticle = $dbh->lastInsertId();
             $stmt = $dbh->prepare('UPDATE articles SET idArticle=? WHERE rowid=?');
-            $stmt->execute(array($idArticle, $idArticle));
+            $stmt->execute([$idArticle, $idArticle]);
             $dbh = null;
             $dbh = new PDO($dbEdit);
             $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE idArticle=?');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $stmt->execute(array($idArticle));
+            $stmt->execute([$idArticle]);
             $row = $stmt->fetch();
             if (empty($row)) {
                 $stmt = $dbh->prepare('INSERT INTO articles (idArticle) VALUES (?)');
-                $stmt->execute(array($idArticle));
+                $stmt->execute([$idArticle]);
             }
         }
         //
@@ -125,7 +125,7 @@ if (isset($_POST['addUpdate'])) {
                 $dbh = new PDO($dbEdit);
                 $stmt = $dbh->prepare('SELECT originalImageWidth FROM articles WHERE idArticle=?');
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                $stmt->execute(array($idArticle));
+                $stmt->execute([$idArticle]);
                 $row = $stmt->fetch();
                 $dbh = null;
                 if (empty($row['originalImageWidth'])) {
@@ -136,7 +136,7 @@ if (isset($_POST['addUpdate'])) {
                     //
                     $dbh = new PDO($dbEdit);
                     $stmt = $dbh->prepare('UPDATE articles SET photoName=?, originalImageWidth=?, originalImageHeight=? WHERE idArticle=?');
-                    $stmt->execute(array($_FILES['image']['name'], $widthOriginal, $heightOriginal, $idArticle));
+                    $stmt->execute([$_FILES['image']['name'], $widthOriginal, $heightOriginal, $idArticle]);
                     $dbh = null;
                     //
                     // Create and save the thumbnail image
@@ -155,7 +155,7 @@ if (isset($_POST['addUpdate'])) {
                     $widthThumbnail = round($widthThumbnail / 2);
                     $dbh = new PDO($dbEdit);
                     $stmt = $dbh->prepare('UPDATE articles SET thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=? WHERE idArticle=?');
-                    $stmt->execute(array($thumbnailImage, $widthThumbnail, $heightThumbnail, $idArticle));
+                    $stmt->execute([$thumbnailImage, $widthThumbnail, $heightThumbnail, $idArticle]);
                     $dbh = null;
                     //
                     // Create and save the HD image, photo credit and caption
@@ -170,7 +170,7 @@ if (isset($_POST['addUpdate'])) {
                     ob_end_clean();
                     $dbh = new PDO($dbEdit);
                     $stmt = $dbh->prepare('UPDATE articles SET photoCredit=?, photoCaption=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
-                    $stmt->execute(array($photoCreditPost, $photoCaptionPost, $hdImage, $widthHD, $heightHD, $idArticle));
+                    $stmt->execute([$photoCreditPost, $photoCaptionPost, $hdImage, $widthHD, $heightHD, $idArticle]);
                     $dbh = null;
                 } else {
                     //
@@ -188,7 +188,7 @@ if (isset($_POST['addUpdate'])) {
                     ob_end_clean();
                     $dbh = new PDO($dbEdit2);
                     $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoName, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?, ?)');
-                    $stmt->execute(array($idArticle, $hdImage, $_FILES['image']['name'], $photoCreditPost, $photoCaptionPost, time()));
+                    $stmt->execute([$idArticle, $hdImage, $_FILES['image']['name'], $photoCreditPost, $photoCaptionPost, time()]);
                     $dbh = null;
                 }
             } else {
@@ -204,7 +204,7 @@ if (isset($_POST['addUpdate'])) {
         //
         $dbh = new PDO($dbEdit);
         $stmt = $dbh->prepare('UPDATE articles SET userId=?, publicationDate=?, endDate=?, idSection=?, sortOrderArticle=?, byline=?, headline=?, standfirst=?, text=?, summary=? WHERE idArticle=?');
-        $stmt->execute(array($_SESSION['userId'], $publicationDatePost, $endDatePost, $idSectionPost, $sortOrderArticlePost, $bylinePost, $headlinePost, $standfirstPost, $textPost, $summaryPost, $idArticle));
+        $stmt->execute([$_SESSION['userId'], $publicationDatePost, $endDatePost, $idSectionPost, $sortOrderArticlePost, $bylinePost, $headlinePost, $standfirstPost, $textPost, $summaryPost, $idArticle]);
         $dbh = null;
     }
 }
@@ -214,11 +214,11 @@ if (isset($_POST['addUpdate'])) {
 if (isset($_POST['deletePhoto']) and isset($idArticle)) {
     $dbh = new PDO($dbEdit);
     $stmt = $dbh->prepare('UPDATE articles SET photoName=?, photoCredit=?, photoCaption=?, originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
-    $stmt->execute(array(null, null, null, null, null, null, null, null, null, null, null, $idArticle));
+    $stmt->execute([null, null, null, null, null, null, null, null, null, null, null, $idArticle]);
     $dbh = null;
     $dbh = new PDO($dbEdit2);
     $stmt = $dbh->prepare('DELETE FROM imageSecondary WHERE idArticle=?');
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $dbh = null;
 }
 //
@@ -227,15 +227,15 @@ if (isset($_POST['deletePhoto']) and isset($idArticle)) {
 if (isset($_POST['delete']) and isset($idArticle)) {
     $dbh = new PDO($dbEdit);
     $stmt = $dbh->prepare('DELETE FROM articles WHERE idArticle=?');
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $dbh = null;
     $dbh = new PDO($dbEdit2);
     $stmt = $dbh->prepare('DELETE FROM imageSecondary WHERE idArticle=?');
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $dbh = null;
     $dbh = new PDO($dbArchive);
     $stmt = $dbh->prepare('DELETE FROM articles WHERE idArticle=?');
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $dbh = null;
 }
 //
@@ -245,7 +245,7 @@ if (isset($_POST['edit'])) {
     $dbh = new PDO($dbEdit);
     $stmt = $dbh->prepare('SELECT keywords, idSection, byline, headline, standfirst, text FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $row = $stmt->fetch();
     $dbh = null;
     extract($row);
@@ -333,14 +333,14 @@ foreach ($stmt as $row) {
     $dbh = new PDO($dbEdit);
     $stmt = $dbh->prepare('SELECT idSection FROM articles WHERE idSection=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idSection));
+    $stmt->execute([$idSection]);
     $row = $stmt->fetch();
     if ($row) {
         $count = null;
         $html.= "\n" . '  <h4>' . $section . "</h4>\n\n";
         $stmt = $dbh->prepare('SELECT idArticle, headline, summary, thumbnailImageWidth, thumbnailImageHeight FROM articles WHERE idSection = ? AND userId=? ORDER BY idArticle DESC');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($idSection, $_SESSION['userId']));
+        $stmt->execute([$idSection, $_SESSION['userId']]);
         foreach ($stmt as $row) {
             extract($row);
             if ($count != null) {

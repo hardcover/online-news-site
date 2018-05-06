@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -26,7 +26,7 @@ require $includesPath . '/parsedown-master/Parsedown.php';
 $dbh = new PDO($dbEditors);
 $stmt = $dbh->prepare('SELECT userType FROM users WHERE idUser=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($_SESSION['userId']));
+$stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
 if (empty($row['userType']) or $row['userType'] != 1) {
@@ -74,7 +74,7 @@ if ($publicationDatePost === $today) {
     $publicationTimePost = strtotime($publicationDatePost);
 }
 //
-$remotes = array();
+$remotes = [];
 $dbh = new PDO($dbRemote);
 $stmt = $dbh->query('SELECT remote FROM remotes');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -94,20 +94,20 @@ if (isset($_POST['update'])) {
     } else {
         $dbh = new PDO($dbArchive);
         $stmt = $dbh->prepare('INSERT INTO articles (headline) VALUES (?)');
-        $stmt->execute(array(null));
+        $stmt->execute([null]);
         $idArticle = $dbh->lastInsertId();
         $idArticleEdit = $dbh->lastInsertId();
         $stmt = $dbh->prepare('UPDATE articles SET idArticle=? WHERE rowid=?');
-        $stmt->execute(array($idArticle, $idArticle));
+        $stmt->execute([$idArticle, $idArticle]);
         $dbh = null;
         $dbh = new PDO($dbEdit);
         $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE idArticle=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($idArticle));
+        $stmt->execute([$idArticle]);
         $row = $stmt->fetch();
         if (empty($row)) {
             $stmt = $dbh->prepare('INSERT INTO articles (idArticle) VALUES (?)');
-            $stmt->execute(array($idArticle));
+            $stmt->execute([$idArticle]);
         }
         $dbh = null;
     }
@@ -117,23 +117,23 @@ if (isset($_POST['update'])) {
     $dbh = new PDO($dbEdit);
     $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idArticleEdit));
+    $stmt->execute([$idArticleEdit]);
     $row = $stmt->fetch();
     if ($row) {
         $stmt = $dbh->prepare('UPDATE articles SET headline=?, publicationDate=?, publicationTime=?, endDate=?, survey=?, idSection=? WHERE idArticle=?');
-        $stmt->execute(array($questionPost, $publicationDatePost, $publicationTimePost, $endDatePost, 1, $idSectionPost, $idArticleEdit));
+        $stmt->execute([$questionPost, $publicationDatePost, $publicationTimePost, $endDatePost, 1, $idSectionPost, $idArticleEdit]);
     }
     $dbh = null;
     $dbh = new PDO($dbPublished);
     $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idArticleEdit));
+    $stmt->execute([$idArticleEdit]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {
         $dbh = new PDO($dbPublished);
         $stmt = $dbh->prepare('UPDATE articles SET headline=?, publicationDate=?, publicationTime=?, endDate=?, survey=?, idSection=? WHERE idArticle=?');
-        $stmt->execute(array($questionPost, $publicationDatePost, $publicationTimePost, $endDatePost, 1, $idSectionPost, $idArticleEdit));
+        $stmt->execute([$questionPost, $publicationDatePost, $publicationTimePost, $endDatePost, 1, $idSectionPost, $idArticleEdit]);
         $dbh = null;
         //
         // For published surveys, update the survey title on the remote sites
@@ -147,49 +147,49 @@ if (isset($_POST['update'])) {
     $dbh = new PDO($dbSurvey);
     $stmt = $dbh->query('DELETE FROM answers WHERE answer IS NULL');
     $stmt = $dbh->prepare('DELETE FROM answers WHERE idArticle=?');
-    $stmt->execute(array($idArticlePost));
+    $stmt->execute([$idArticlePost]);
     $stmt = $dbh->prepare('INSERT INTO answers (idArticle, sortOrder, answer) VALUES (?, ?, ?)');
     if (isset($answer1Post)) {
-        $stmt->execute(array($idArticleEdit, 1, $answer1Post));
+        $stmt->execute([$idArticleEdit, 1, $answer1Post]);
         $answer1Edit = $answer1Post;
     }
     if (isset($answer2Post)) {
-        $stmt->execute(array($idArticleEdit, 2, $answer2Post));
+        $stmt->execute([$idArticleEdit, 2, $answer2Post]);
         $answer2Edit = $answer2Post;
     }
     if (isset($answer3Post)) {
-        $stmt->execute(array($idArticleEdit, 3, $answer3Post));
+        $stmt->execute([$idArticleEdit, 3, $answer3Post]);
         $answer3Edit = $answer3Post;
     }
     if (isset($answer4Post)) {
-        $stmt->execute(array($idArticleEdit, 4, $answer4Post));
+        $stmt->execute([$idArticleEdit, 4, $answer4Post]);
         $answer4Edit = $answer4Post;
     }
     if (isset($answer5Post)) {
-        $stmt->execute(array($idArticleEdit, 5, $answer5Post));
+        $stmt->execute([$idArticleEdit, 5, $answer5Post]);
         $answer5Edit = $answer5Post;
     }
     if (isset($answer6Post)) {
-        $stmt->execute(array($idArticleEdit, 6, $answer6Post));
+        $stmt->execute([$idArticleEdit, 6, $answer6Post]);
         $answer6Edit = $answer6Post;
     }
     if (isset($answer7Post)) {
-        $stmt->execute(array($idArticleEdit, 7, $answer7Post));
+        $stmt->execute([$idArticleEdit, 7, $answer7Post]);
         $answer7Edit = $answer7Post;
     }
     if (isset($answer8Post)) {
-        $stmt->execute(array($idArticleEdit, 8, $answer8Post));
+        $stmt->execute([$idArticleEdit, 8, $answer8Post]);
         $answer8Edit = $answer8Post;
     }
     $dbh = null;
     //
     // For published surveys, update the survey answers on the remote sites
     //
-    $answers = array();
+    $answers = [];
     $dbh = new PDO($dbPublished);
     $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idArticleEdit));
+    $stmt->execute([$idArticleEdit]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {
@@ -201,7 +201,7 @@ if (isset($_POST['update'])) {
         $dbh = new PDO($dbSurvey);
         $stmt = $dbh->prepare('SELECT * FROM answers WHERE idArticle=? ORDER BY idAnswer');
         $stmt->setFetchMode(PDO::FETCH_NUM);
-        $stmt->execute(array($idArticleEdit));
+        $stmt->execute([$idArticleEdit]);
         foreach ($stmt as $row) {
             $answers[] = json_encode($row);
         }
@@ -218,7 +218,7 @@ if (isset($_POST['update'])) {
 $dbh = new PDO($dbEdit);
 $stmt = $dbh->prepare('SELECT publicationDate, endDate, headline, idSection FROM articles WHERE idArticle=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($idArticleEdit));
+$stmt->execute([$idArticleEdit]);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
@@ -231,7 +231,7 @@ if ($row) {
 $dbh = new PDO($dbPublished);
 $stmt = $dbh->prepare('SELECT publicationDate, endDate, headline, idSection FROM articles WHERE idArticle=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($idArticleEdit));
+$stmt->execute([$idArticleEdit]);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
@@ -247,7 +247,7 @@ if (isset($_POST['edit']) and isset($_POST['idArticle'])) {
     $dbh = new PDO($dbEdit);
     $stmt = $dbh->prepare('SELECT idArticle, publicationDate, endDate, headline FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idArticlePost));
+    $stmt->execute([$idArticlePost]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {
@@ -258,7 +258,7 @@ if (isset($_POST['edit']) and isset($_POST['idArticle'])) {
         $dbh = new PDO($dbSurvey);
         $stmt = $dbh->prepare('SELECT sortOrder, answer FROM answers WHERE idArticle=? ORDER BY sortOrder');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($idArticlePost));
+        $stmt->execute([$idArticlePost]);
         $count = 1;
         foreach ($stmt as $row) {
             if ($row['sortOrder'] == 1) {
@@ -291,7 +291,7 @@ if (isset($_POST['edit']) and isset($_POST['idArticle'])) {
         $dbh = new PDO($dbPublished);
         $stmt = $dbh->prepare('SELECT idArticle, publicationDate, endDate, headline FROM articles WHERE idArticle=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($idArticlePost));
+        $stmt->execute([$idArticlePost]);
         $row = $stmt->fetch();
         $dbh = null;
         if ($row) {
@@ -302,7 +302,7 @@ if (isset($_POST['edit']) and isset($_POST['idArticle'])) {
             $dbh = new PDO($dbSurvey);
             $stmt = $dbh->prepare('SELECT sortOrder, answer FROM answers WHERE idArticle=? ORDER BY sortOrder');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $stmt->execute(array($idArticlePost));
+            $stmt->execute([$idArticlePost]);
             $count = 1;
             foreach ($stmt as $row) {
                 if ($row['sortOrder'] == 1) {
@@ -367,7 +367,7 @@ require $includesPath . '/header1.inc';
 $dbh = new PDO($dbEdit);
 $stmt = $dbh->prepare('SELECT idArticle, headline, publicationDate FROM articles WHERE survey=? ORDER BY headline');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array(1));
+$stmt->execute([1]);
 foreach ($stmt as $row) {
     extract($row);
     echo '  <form class="wait" action="' . $uri . 'survey.php" method="post">' . "\n";
@@ -385,7 +385,7 @@ $dbh = null;
 $dbh = new PDO($dbPublished);
 $stmt = $dbh->prepare('SELECT idArticle, headline, publicationDate FROM articles WHERE survey=? ORDER BY headline');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array(1));
+$stmt->execute([1]);
 foreach ($stmt as $row) {
     extract($row);
     echo '  <form class="wait" action="' . $uri . 'survey.php" method="post">' . "\n";

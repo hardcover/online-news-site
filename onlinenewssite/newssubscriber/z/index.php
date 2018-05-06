@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -28,7 +28,6 @@ if ($includesPath == 'z/includes') {
     $includesPath = '../' . $includesPath;
 }
 require $includesPath . '/common.php';
-require $includesPath . '/password.php';
 require $includesPath . '/createCrypt.php';
 require $includesPath . '/crypt.php';
 //
@@ -57,7 +56,7 @@ require $includesPath . '/createSubscriber2.php';
 //
 // Extract the post array, set variables
 //
-$response = array();
+$response = [];
 extract(array_map('base64_decode', array_map('secure', $_POST)));
 if (isset($archive) and $archive == 'archive') {
     //
@@ -80,7 +79,7 @@ if (isset($archive) and $archive == 'archive') {
 if ($task == 'adDelete') {
     $dbh = new PDO($dbAdvertising);
     $stmt = $dbh->prepare('DELETE FROM advertisements WHERE idAd=?');
-    $stmt->execute(array($idAd));
+    $stmt->execute([$idAd]);
     $dbh = null;
     $response['result'] = 'success';
 }
@@ -88,14 +87,14 @@ if ($task == 'adInsert') {
     $dbh = new PDO($dbAdvertising);
     $stmt = $dbh->prepare('SELECT idAd FROM advertisements WHERE idAd=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idAd));
+    $stmt->execute([$idAd]);
     $row = $stmt->fetch();
     if ($row) {
         $stmt = $dbh->prepare('DELETE from advertisements WHERE idAd=?');
-        $stmt->execute(array($idAd));
+        $stmt->execute([$idAd]);
     }
     $stmt = $dbh->prepare('INSERT INTO advertisements (idAd, startDateAd, endDateAd, sortOrderAd, link, linkAlt, image) VALUES (?, ?, ?, ?, ?, ?, ?)');
-    $stmt->execute(array($idAd, $startDateAd, $endDateAd, $sortOrderAd, $link, $linkAlt, $image));
+    $stmt->execute([$idAd, $startDateAd, $endDateAd, $sortOrderAd, $link, $linkAlt, $image]);
     $dbh = null;
     $response['result'] = 'success';
 }
@@ -105,7 +104,7 @@ if ($task == 'adOrder') {
     $stmt = $dbh->query('DELETE FROM maxAd');
     if (isset($maxAds)) {
         $stmt = $dbh->prepare('INSERT INTO maxAd (maxAds) VALUES (?)');
-        $stmt->execute(array($maxAds));
+        $stmt->execute([$maxAds]);
     }
     foreach ($sortOrder as $idAd => $key) {
         $stmt = $dbh->prepare('UPDATE advertisements SET sortOrderAd=? WHERE idAd=?');
@@ -115,7 +114,7 @@ if ($task == 'adOrder') {
     $response['result'] = 'success';
 }
 if ($task == 'adSync') {
-    $articles = array();
+    $articles = [];
     $dbh = new PDO($dbAdvertising);
     $stmt = $dbh->query('SELECT idAd FROM advertisements');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -132,11 +131,11 @@ if ($task == 'adSync') {
 if ($task == 'archiveDelete') {
     $dbh = new PDO($dbArchive);
     $stmt = $dbh->prepare('DELETE FROM articles WHERE rowid=?');
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $dbh = null;
     $dbh = new PDO($dbArchive2);
     $stmt = $dbh->prepare('DELETE FROM imageSecondary WHERE idArticle=?');
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $dbh = null;
     $response['result'] = 'success';
 }
@@ -144,12 +143,12 @@ if ($task == 'archiveSearch') {
     $dbh = new PDO($dbSettings);
     $stmt = $dbh->query('DELETE FROM archiveAccess');
     $stmt = $dbh->prepare('INSERT INTO archiveAccess (access) VALUES (?)');
-    $stmt->execute(array($access));
+    $stmt->execute([$access]);
     $dbh = null;
     $response['result'] = 'success';
 }
 if ($task == 'archiveSync') {
-    $articles = array();
+    $articles = [];
     $dbh = new PDO($dbArchive);
     $stmt = $dbh->query('SELECT idArticle FROM articles');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -161,11 +160,11 @@ if ($task == 'archiveSync') {
     $response['result'] = 'success';
 }
 if ($task == 'archiveSync2') {
-    $photos = array();
+    $photos = [];
     $dbh = new PDO($dbArchive2);
     $stmt = $dbh->prepare('SELECT count(*) FROM imageSecondary WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $row = $stmt->fetch();
     $dbh = null;
     $response['remotePhotos'] = $row['count(*)'];
@@ -177,22 +176,22 @@ if ($task == 'archiveSync2') {
 if ($task == 'publishedDeletePhoto') {
     $dbh = new PDO($dbPublished);
     $stmt = $dbh->prepare('UPDATE articles SET photoName=?, photoCredit=?, photoCaption=?, originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
-    $stmt->execute(array(null, null, null, null, null, null, null, null, null, null, null, $idArticle));
+    $stmt->execute([null, null, null, null, null, null, null, null, null, null, null, $idArticle]);
     $dbh = null;
     $dbh = new PDO($dbPublished2);
     $stmt = $dbh->prepare('DELETE FROM imageSecondary WHERE idArticle=?');
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $dbh = null;
     $response['result'] = 'success';
 }
 if ($task == 'publishedDelete') {
     $dbh = new PDO($dbPublished);
     $stmt = $dbh->prepare('DELETE FROM articles WHERE idArticle=?');
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $dbh = null;
     $dbh = new PDO($dbPublished2);
     $stmt = $dbh->prepare('DELETE FROM imageSecondary WHERE idArticle=?');
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $dbh = null;
     $response['result'] = 'success';
 }
@@ -207,7 +206,7 @@ if ($task == 'publishedOrder') {
     $response['result'] = 'success';
 }
 if ($task == 'publishedSync') {
-    $articles = array();
+    $articles = [];
     $dbh = new PDO($dbPublished);
     $stmt = $dbh->query('SELECT idArticle FROM articles');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -219,11 +218,11 @@ if ($task == 'publishedSync') {
     $response['result'] = 'success';
 }
 if ($task == 'publishedSync2') {
-    $photos = array();
+    $photos = [];
     $dbh = new PDO($dbPublished2);
     $stmt = $dbh->prepare('SELECT count(*) FROM imageSecondary WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $row = $stmt->fetch();
     $dbh = null;
     $response['remotePhotos'] = $row['count(*)'];
@@ -233,43 +232,43 @@ if ($task == 'updateInsert1') {
     $dbh = new PDO($db);
     $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $row = $stmt->fetch();
     if ($row) {
         $stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, publicationTime=?, endDate=?, survey=?, genre=?, keywords=?, idSection=?, sortOrderArticle=?, byline=?, headline=?, standfirst=?, text=?, summary=?, evolve=?, expand=?, extend=?, photoName=?, photoCredit=?, photoCaption=?, originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE ' . $column . '=?');
-        $stmt->execute(array(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $idArticle));
+        $stmt->execute([null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $idArticle]);
     } else {
         if ($column == 'idArticle') {
             $stmt = $dbh->prepare('INSERT INTO articles (idArticle) VALUES (?)');
-            $stmt->execute(array($idArticle));
+            $stmt->execute([$idArticle]);
         } else {
             $stmt = $dbh->prepare('INSERT INTO articles (rowid, idArticle) VALUES (?, ?)');
-            $stmt->execute(array($idArticle, $idArticle));
+            $stmt->execute([$idArticle, $idArticle]);
         }
     }
     $stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, publicationTime=?, endDate=?, survey=?, genre=?, keywords=?, idSection=?, sortOrderArticle=?, byline=?, headline=?, standfirst=?, text=?, summary=?, evolve=?, expand=?, extend=?, photoName=?, photoCredit=?, photoCaption=? WHERE ' . $column . '=?');
-    $stmt->execute(array($publicationDate, $publicationTime, $endDate, $survey, $genre, $keywords, $idSection, $sortOrderArticle, $byline, $headline, $standfirst, $text, $summary, $evolve, $expand, $extend, $photoName, $photoCredit, $photoCaption, $idArticle));
+    $stmt->execute([$publicationDate, $publicationTime, $endDate, $survey, $genre, $keywords, $idSection, $sortOrderArticle, $byline, $headline, $standfirst, $text, $summary, $evolve, $expand, $extend, $photoName, $photoCredit, $photoCaption, $idArticle]);
     $dbh = null;
     $response['result'] = 'success';
 }
 if ($task == 'updateInsert2') {
     $dbh = new PDO($db);
     $stmt = $dbh->prepare('UPDATE articles SET thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImageWidth=?, hdImageHeight=? WHERE ' . $column . '=?');
-    $stmt->execute(array($thumbnailImage, $thumbnailImageWidth, $thumbnailImageHeight, $hdImageWidth, $hdImageHeight, $idArticle));
+    $stmt->execute([$thumbnailImage, $thumbnailImageWidth, $thumbnailImageHeight, $hdImageWidth, $hdImageHeight, $idArticle]);
     $dbh = null;
     $response['result'] = 'success';
 }
 if ($task == 'updateInsert3') {
     $dbh = new PDO($db);
     $stmt = $dbh->prepare('UPDATE articles SET hdImage=? WHERE ' . $column . '=?');
-    $stmt->execute(array($hdImage, $idArticle));
+    $stmt->execute([$hdImage, $idArticle]);
     $dbh = null;
     $response['result'] = 'success';
 }
 if ($task == 'updateInsert4') {
     $dbh = new PDO($db2);
     $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoName, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?, ?)');
-    $stmt->execute(array($idArticle, $image, $photoName, $photoCredit, $photoCaption, time()));
+    $stmt->execute([$idArticle, $image, $photoName, $photoCredit, $photoCaption, time()]);
     $dbh = null;
     $response['result'] = 'success';
 }
@@ -278,7 +277,7 @@ if ($task == 'downloadContributionIDs') {
     $dbh = new PDO($dbEdit);
     $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE sortOrderArticle < ?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array(time())); // sortOrderArticle here stores the submit time
+    $stmt->execute([time()]); // sortOrderArticle here stores the submit time
     foreach ($stmt as $row) {
         $IDs[] = $row['idArticle'];
     }
@@ -292,7 +291,7 @@ if ($task == 'downloadContribution1') {
     $dbh = new PDO($dbEdit);
     $stmt = $dbh->prepare('SELECT idArticle, idSection, byline, headline, standfirst, text, summary, evolve, expand, extend, photoName, photoCredit, photoCaption, thumbnailImageWidth FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {
@@ -304,7 +303,7 @@ if ($task == 'downloadContribution2') {
     $dbh = new PDO($dbEdit);
     $stmt = $dbh->prepare('SELECT thumbnailImage, thumbnailImageWidth, thumbnailImageHeight, hdImageWidth, hdImageHeight FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {
@@ -316,7 +315,7 @@ if ($task == 'downloadContribution3') {
     $dbh = new PDO($dbEdit);
     $stmt = $dbh->prepare('SELECT hdImage FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {
@@ -325,11 +324,11 @@ if ($task == 'downloadContribution3') {
     $response['result'] = 'success';
 }
 if ($task == 'downloadContribution4a') {
-    $idPhotos = array();
+    $idPhotos = [];
     $dbh = new PDO($dbEdit2);
     $stmt = $dbh->prepare('SELECT idPhoto FROM imageSecondary WHERE idArticle=? ORDER BY time');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     foreach ($stmt as $row) {
         $idPhotos[] = $row['idPhoto'];
     }
@@ -338,11 +337,11 @@ if ($task == 'downloadContribution4a') {
     $response['result'] = 'success';
 }
 if ($task == 'downloadContribution4b') {
-    $idPhotos = array();
+    $idPhotos = [];
     $dbh = new PDO($dbEdit2);
     $stmt = $dbh->prepare('SELECT image, photoName, photoCredit, photoCaption FROM imageSecondary WHERE idPhoto=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idPhoto));
+    $stmt->execute([$idPhoto]);
     $row = $stmt->fetch();
     if ($row) {
         $response['hdImage'] = $row['image'];
@@ -355,11 +354,11 @@ if ($task == 'downloadContribution4b') {
 if ($task == 'downloadContributionDelete') {
     $dbh = new PDO($dbEdit);
     $stmt = $dbh->prepare('DELETE FROM articles WHERE idArticle=?');
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $dbh = null;
     $dbh = new PDO($dbEdit2);
     $stmt = $dbh->prepare('DELETE FROM imageSecondary WHERE idArticle=?');
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $dbh = null;
     $response['result'] = 'success';
 }
@@ -402,7 +401,7 @@ if ($task == 'calendarSync') {
     $stmt = $dbh->query('DELETE FROM note');
     if (isset($note)) {
         $stmt = $dbh->prepare('INSERT INTO note (description) VALUES (?)');
-        $stmt->execute(array($note));
+        $stmt->execute([$note]);
     }
     $dbh->commit();
     $dbh = null;
@@ -414,12 +413,12 @@ if ($task == 'calendarSync') {
 if ($task == 'classifiedsDelete') {
     $dbh = new PDO($dbClassifieds);
     $stmt = $dbh->prepare('DELETE FROM ads WHERE idAd=?');
-    $stmt->execute(array($idAd));
+    $stmt->execute([$idAd]);
     $dbh = null;
     $response['result'] = 'success';
 }
 if ($task == 'classifiedsEarlyRemoval') {
-    $classifieds = array();
+    $classifieds = [];
     $dbh = new PDO($dbClassifieds);
     $stmt = $dbh->query('SELECT idAd FROM ads WHERE duration IS NULL ORDER BY idAd');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -433,7 +432,7 @@ if ($task == 'classifiedsEarlyRemoval') {
 if ($task == 'classifiedsNewCleanUp') {
     $dbh = new PDO($dbClassifiedsNew);
     $stmt = $dbh->prepare('DELETE FROM ads WHERE idAd=?');
-    $stmt->execute(array($idAd));
+    $stmt->execute([$idAd]);
     $dbh = null;
     $response['result'] = 'success';
 }
@@ -441,16 +440,16 @@ if ($task == 'classifiedsNewDownload') {
     $dbh = new PDO($dbClassifiedsNew);
     $stmt = $dbh->prepare('SELECT email, title, description, categoryId FROM ads WHERE idAd=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idAd));
+    $stmt->execute([$idAd]);
     $row = $stmt->fetch();
     if ($row) {
         $response = $row;
     }
-    $photosOrdered = array(1, 2, 3, 4, 5, 6, 7);
+    $photosOrdered = [1, 2, 3, 4, 5, 6, 7];
     foreach ($photosOrdered as $photo) {
         $stmt = $dbh->prepare('SELECT photo' . $photo . ' FROM ads WHERE idAd=?');
         $stmt->setFetchMode(PDO::FETCH_NUM);
-        $stmt->execute(array($idAd));
+        $stmt->execute([$idAd]);
         $row = $stmt->fetch();
         if ($row['0'] == null) {
             $num[] = 0;
@@ -466,7 +465,7 @@ if ($task == 'classifiedsNewDownloadPhoto') {
     $dbh = new PDO($dbClassifiedsNew);
     $stmt = $dbh->prepare('SELECT photo' . $photo. ' FROM ads WHERE idAd=?');
     $stmt->setFetchMode(PDO::FETCH_NUM);
-    $stmt->execute(array($idAd));
+    $stmt->execute([$idAd]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {
@@ -475,7 +474,7 @@ if ($task == 'classifiedsNewDownloadPhoto') {
     $response['result'] = 'success';
 }
 if ($task == 'classifiedsSync') {
-    $classifieds = array();
+    $classifieds = [];
     $dbh = new PDO($dbClassifieds);
     $stmt = $dbh->query('SELECT idAd FROM ads');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -488,11 +487,11 @@ if ($task == 'classifiedsSync') {
 }
 if ($task == 'classifiedsSyncNew') {
     $fifteenMinutesAgo = time() - 900;
-    $classifieds = array();
+    $classifieds = [];
     $dbh = new PDO($dbClassifiedsNew);
     $stmt = $dbh->prepare('SELECT idAd FROM ads WHERE review < ?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($fifteenMinutesAgo));
+    $stmt->execute([$fifteenMinutesAgo]);
     foreach ($stmt as $row) {
         $classifieds[] = $row['idAd'];
     }
@@ -513,10 +512,10 @@ if ($task == 'classifiedsSyncSections') {
         extract($section);
         if ($key === 'idSection') {
             $stmt = $dbh->prepare('INSERT INTO sections (idSection, section, sortOrderSection) VALUES (?, ?, ?)');
-            $stmt->execute(array($idSection, $section, $sortOrderSection));
+            $stmt->execute([$idSection, $section, $sortOrderSection]);
         } else {
             $stmt = $dbh->prepare('INSERT INTO subsections (idSubsection, subsection, parentId, sortOrderSubsection) VALUES (?, ?, ?, ?)');
-            $stmt->execute(array($idSubsection, $subsection, $parentId, $sortOrderSubsection));
+            $stmt->execute([$idSubsection, $subsection, $parentId, $sortOrderSubsection]);
         }
     }
     $dbh->commit();
@@ -526,32 +525,32 @@ if ($task == 'classifiedsUpdateInsert1') {
     $dbh = new PDO($dbClassifieds);
     $stmt = $dbh->prepare('SELECT idAd FROM ads WHERE idAd=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idAd));
+    $stmt->execute([$idAd]);
     $row = $stmt->fetch();
     if ($row) {
         $stmt = $dbh->prepare('DELETE FROM ads WHERE idAd=?');
-        $stmt->execute(array($idAd));
+        $stmt->execute([$idAd]);
     }
     $stmt = $dbh->prepare('INSERT INTO ads (idAd, email, title, description, categoryId, review, startDate, duration, photos) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
-    $stmt->execute(array($idAd, $email, $title, $description, $categoryId, $review, $startDate, $duration, $photos));
+    $stmt->execute([$idAd, $email, $title, $description, $categoryId, $review, $startDate, $duration, $photos]);
     $dbh = null;
     $response['result'] = 'success';
 }
 if ($task == 'classifiedsUpdateInsert2') {
     $dbh = new PDO($dbClassifieds);
     $stmt = $dbh->prepare('UPDATE ads SET photo' . $photoNumber . '=? WHERE idAd=?');
-    $stmt->execute(array($photo, $idAd));
+    $stmt->execute([$photo, $idAd]);
     $dbh = null;
     $response['result'] = 'success';
 }
 if ($task == 'classifiedsUpload') {
     $dbh = new PDO($dbClassifieds);
     $stmt = $dbh->prepare('INSERT INTO users (idUser, email, pass, payStatus) VALUES (?, ?, ?, ?)');
-    $stmt->execute(array($idUser, $email, $pass, $payStatus));
+    $stmt->execute([$idUser, $email, $pass, $payStatus]);
     $dbh = null;
     $dbh = new PDO($dbClassifiedsNew);
     $stmt = $dbh->prepare('DELETE FROM users WHERE email=?');
-    $stmt->execute(array($email));
+    $stmt->execute([$email]);
     $dbh = null;
     $response['result'] = 'success';
 }
@@ -561,7 +560,7 @@ if ($task == 'classifiedsUpload') {
 if ($task == 'menuDelete') {
     $dbh = new PDO($dbMenu);
     $stmt = $dbh->prepare('DELETE FROM menu WHERE idMenu=?');
-    $stmt->execute(array($idMenu));
+    $stmt->execute([$idMenu]);
     $dbh = null;
     $response['result'] = 'success';
 }
@@ -569,14 +568,14 @@ if ($task == 'menuInsert') {
     $dbh = new PDO($dbMenu);
     $stmt = $dbh->prepare('SELECT idMenu FROM menu WHERE idMenu=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idMenu));
+    $stmt->execute([$idMenu]);
     $row = $stmt->fetch();
     if ($row) {
         $stmt = $dbh->prepare('DELETE FROM menu WHERE idMenu');
-        $stmt->execute(array($idMenu));
+        $stmt->execute([$idMenu]);
     }
     $stmt = $dbh->prepare('INSERT INTO menu (idMenu, menuName, menuSortOrder, menuPath, menuContent, menuAuthorization) VALUES (?, ?, ?, ?, ?, ?)');
-    $stmt->execute(array($idMenu, $menuName, $menuSortOrder, $menuPath, $menuContent, $menuAuthorization));
+    $stmt->execute([$idMenu, $menuName, $menuSortOrder, $menuPath, $menuContent, $menuAuthorization]);
     $dbh = null;
     $response['result'] = 'success';
 }
@@ -585,13 +584,13 @@ if ($task == 'menuOrder') {
     $dbh = new PDO($dbMenu);
     foreach ($sortOrder as $row) {
         $stmt = $dbh->prepare('UPDATE menu SET menuSortOrder=? WHERE idMenu=?');
-        $stmt->execute(array($row['1'], $row['0']));
+        $stmt->execute([$row['1'], $row['0']]);
     }
     $dbh = null;
     $response['result'] = 'success';
 }
 if ($task == 'menuSync') {
-    $menu = array();
+    $menu = [];
     $dbh = new PDO($dbMenu);
     $stmt = $dbh->query('SELECT idMenu FROM menu');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -687,7 +686,7 @@ if ($task == 'dbTest') {
     while (microtime(true) < $endTime) {
         $dbh = new PDO('sqlite:dbTest.sqlite');
         $stmt = $dbh->prepare('INSERT INTO count (time) VALUES (?)');
-        $stmt->execute(array(microtime(true)));
+        $stmt->execute([microtime(true)]);
         $dbh = null;
     }
     $elapsedTime = microtime(true) - $startTime;
@@ -714,7 +713,7 @@ if ($task == 'sitemap') {
     $dbh = new PDO($dbSettings);
     $stmt = $dbh->prepare('SELECT name, description FROM names WHERE idName=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array(1));
+    $stmt->execute([1]);
     $row = $stmt->fetch();
     $dbh = null;
     //
@@ -836,7 +835,7 @@ if ($task == 'sitemap') {
     $dbh = new PDO($dbSettings);
     $stmt = $dbh->prepare('SELECT name FROM names WHERE idName=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array(1));
+    $stmt->execute([1]);
     $row = $stmt->fetch();
     $dbh = null;
     extract($row);
@@ -858,12 +857,12 @@ if ($task == 'sitemap') {
         $dbh = new PDO($dbPublished);
         $stmt = $dbh->prepare('SELECT idSection FROM articles WHERE idSection=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($idSection));
+        $stmt->execute([$idSection]);
         $row = $stmt->fetch();
         if ($row) {
             $stmt = $dbh->prepare('SELECT idArticle, publicationTime, survey, keywords, headline, text FROM articles WHERE idSection = ? AND publicationDate <= "' . $today . '" AND publicationDate >= "' . $twoDaysAgo . '" ORDER BY sortOrderArticle');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $stmt->execute(array($idSection));
+            $stmt->execute([$idSection]);
             foreach ($stmt as $row) {
                 extract($row);
                 if ($survey !== strval(1) and !empty($text) and strpos($text, '<') === false) {
@@ -922,14 +921,14 @@ if ($task == 'sitemap') {
 if ($task == 'subscriberDelete') {
     $dbh = new PDO($dbSubscribers);
     $stmt = $dbh->prepare('DELETE FROM users WHERE idUser=?');
-    $stmt->execute(array($idUser));
+    $stmt->execute([$idUser]);
     $dbh = null;
     $response['result'] = 'success';
 }
 if ($task == 'subscribersNewCleanUp') {
     $dbh = new PDO($dbSubscribersNew);
     $stmt = $dbh->prepare('DELETE FROM users WHERE soa=?');
-    $stmt->execute(array(1));
+    $stmt->execute([1]);
     $dbh = null;
     $response['result'] = 'success';
 }
@@ -937,7 +936,7 @@ if ($task == 'subscribersDownload') {
     $dbh = new PDO($dbSubscribers);
     $stmt = $dbh->prepare('SELECT email, payerEmail, payerFirstName, payerLastName, ipAddress, verify, verified, time, pass, payStatus, paid, paymentDate, note, contributor, classifiedOnly, deliver, deliver2, deliveryAddress, dCityRegionPostal, billingAddress, bCityRegionPostal, soa, evolve, expand, extend FROM users WHERE idUser = ?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idUser));
+    $stmt->execute([$idUser]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {
@@ -949,18 +948,18 @@ if ($task == 'subscribersNewDownload') {
     $dbh = new PDO($dbSubscribersNew);
     $stmt = $dbh->prepare('SELECT idUser FROM users WHERE verified = ?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array(1));
+    $stmt->execute([1]);
     $row = $stmt->fetch();
-    $dbRows = array();
+    $dbRows = [];
     if ($row) {
         $stmt = $dbh->prepare('UPDATE users SET soa=?');
-        $stmt->execute(array(1));
+        $stmt->execute([1]);
         $stmt = $dbh->prepare('SELECT email, payerEmail, payerFirstName, payerLastName, ipAddress, verify, verified, time, pass, payStatus, paid, paymentDate, note, contributor, classifiedOnly, deliver, deliver2, deliveryAddress, dCityRegionPostal, billingAddress, bCityRegionPostal, soa, evolve, expand, extend FROM users WHERE soa=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array(1));
+        $stmt->execute([1]);
         foreach ($stmt as $row) {
             extract($row);
-            $dbRows[] = array(
+            $dbRows[] = [
                 'email' => $email,
                 'payerEmail' => $payerEmail,
                 'payerFirstName' => $payerFirstName,
@@ -986,7 +985,7 @@ if ($task == 'subscribersNewDownload') {
                 'evolve' => $evolve,
                 'expand' => $expand,
                 'extend' => $extend
-            );
+            ];
         }
     }
     $dbh = null;
@@ -994,21 +993,21 @@ if ($task == 'subscribersNewDownload') {
     $response['result'] = 'success';
 }
 if ($task == 'subscribersSoaUnflag') {
-    $subscribers = array();
+    $subscribers = [];
     $dbh = new PDO($dbSubscribers);
     $stmt = $dbh->query('SELECT idUser FROM users WHERE idUser=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idUser));
+    $stmt->execute([$idUser]);
     $row = $stmt->fetch();
     if ($row) {
         $stmt = $dbh->prepare('UPDATE users SET soa=? WHERE idUser=?');
-        $stmt->execute(array(null, $idUser));
+        $stmt->execute([null, $idUser]);
     }
     $dbh = null;
     $response['result'] = 'success';
 }
 if ($task == 'subscribersSync') {
-    $subscribers = array();
+    $subscribers = [];
     $dbh = new PDO($dbSubscribers);
     $stmt = $dbh->query('SELECT idUser FROM users');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -1020,7 +1019,7 @@ if ($task == 'subscribersSync') {
     $response['result'] = 'success';
 }
 if ($task == 'subscribersSyncSoaFlagged') {
-    $subscribers = array();
+    $subscribers = [];
     $dbh = new PDO($dbSubscribers);
     $stmt = $dbh->query('SELECT idUser FROM users WHERE soa IS NOT NULL');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -1035,11 +1034,11 @@ if ($task == 'subscribersUpdate') {
     $dbh = new PDO($dbSubscribers);
     $stmt = $dbh->prepare('SELECT idUser FROM users WHERE idUser=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idUser));
+    $stmt->execute([$idUser]);
     $row = $stmt->fetch();
     if ($row) {
         $stmt = $dbh->prepare('UPDATE users SET email=?, payerEmail=?, payerFirstName=?, payerLastName=?, ipAddress=?, verify=?, verified=?, time=?, pass=?, payStatus=?, paid=?, paymentDate=?, note=?, contributor=?, classifiedOnly=?, deliver=?, deliver2=?, deliveryAddress=?, dCityRegionPostal=?, billingAddress=?, bCityRegionPostal=?, soa=?, evolve=?, expand=?, extend=? WHERE idUser=?');
-        $stmt->execute(array($email, $payerEmail, $payerFirstName, $payerLastName, $ipAddress, $verify, $verified, $time, $pass, $payStatus, $paid, $paymentDate, $note, $contributor, $classifiedOnly, $deliver, $deliver2, $deliveryAddress, $dCityRegionPostal, $billingAddress, $bCityRegionPostal, $soa, $evolve, $expand, $extend, $idUser));
+        $stmt->execute([$email, $payerEmail, $payerFirstName, $payerLastName, $ipAddress, $verify, $verified, $time, $pass, $payStatus, $paid, $paymentDate, $note, $contributor, $classifiedOnly, $deliver, $deliver2, $deliveryAddress, $dCityRegionPostal, $billingAddress, $bCityRegionPostal, $soa, $evolve, $expand, $extend, $idUser]);
     }
     $dbh = null;
     $response['result'] = 'success';
@@ -1047,11 +1046,11 @@ if ($task == 'subscribersUpdate') {
 if ($task == 'subscribersUpload') {
     $dbh = new PDO($dbSubscribers);
     $stmt = $dbh->prepare('INSERT INTO users (idUser, email, payerEmail, payerFirstName, payerLastName, ipAddress, verify, verified, time, pass, payStatus, paid, paymentDate, note, contributor, classifiedOnly, deliver, deliver2, deliveryAddress, dCityRegionPostal, billingAddress, bCityRegionPostal, soa, evolve, expand, extend) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-    $stmt->execute(array($idUser, $email, $payerEmail, $payerFirstName, $payerLastName, $ipAddress, $verify, $verified, $time, $pass, $payStatus, $paid, $paymentDate, $note, $contributor, $classifiedOnly, $deliver, $deliver2, $deliveryAddress, $dCityRegionPostal, $billingAddress, $bCityRegionPostal, $soa, $evolve, $expand, $extend));
+    $stmt->execute([$idUser, $email, $payerEmail, $payerFirstName, $payerLastName, $ipAddress, $verify, $verified, $time, $pass, $payStatus, $paid, $paymentDate, $note, $contributor, $classifiedOnly, $deliver, $deliver2, $deliveryAddress, $dCityRegionPostal, $billingAddress, $bCityRegionPostal, $soa, $evolve, $expand, $extend]);
     $dbh = null;
     $dbh = new PDO($dbSubscribersNew);
     $stmt = $dbh->prepare('DELETE FROM users WHERE email=?');
-    $stmt->execute(array($email));
+    $stmt->execute([$email]);
     $dbh = null;
     $response['result'] = 'success';
 }
@@ -1076,7 +1075,7 @@ if ($task == 'surveyUpdate') {
     $answers = json_decode($answers, true);
     $dbh = new PDO($dbSurvey);
     $stmt = $dbh->prepare('DELETE FROM answers WHERE idArticle=?');
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $dbh->beginTransaction();
     foreach ($answers as $answer) {
         $answer = json_decode($answer, true);
@@ -1088,11 +1087,11 @@ if ($task == 'surveyUpdate') {
     $response['result'] = 'success';
 }
 if ($task == 'surveyVotesDownload') {
-    $votes = array();
+    $votes = [];
     $dbh = new PDO($dbSurvey);
     $stmt = $dbh->prepare('SELECT * FROM tally WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_NUM);
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     foreach ($stmt as $row) {
         $votes[] = json_encode($row);
     }

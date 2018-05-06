@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -19,14 +19,13 @@ session_start();
 require 'z/system/configuration.php';
 require $includesPath . '/authorization.php';
 require $includesPath . '/common.php';
-require $includesPath . '/password.php';
 //
 // User-group authorization
 //
 $dbh = new PDO($dbEditors);
 $stmt = $dbh->prepare('SELECT userType FROM users WHERE idUser=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($_SESSION['userId']));
+$stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
 if (empty($row['userType']) or $row['userType'] != 2) {
@@ -70,7 +69,7 @@ if ($passPost != null) {
     $hash = null;
 }
 //
-$remotes = array();
+$remotes = [];
 $dbh = new PDO($dbRemote);
 $stmt = $dbh->query('SELECT remote FROM remotes');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -89,7 +88,7 @@ if (isset($_POST['addUpdate'])) {
         $dbh = new PDO($dbSubscribers);
         $stmt = $dbh->prepare('SELECT email FROM users WHERE email=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array(muddle($emailPost)));
+        $stmt->execute([muddle($emailPost)]);
         $row = $stmt->fetch();
         $dbh = null;
         if (isset($row['email'])) {
@@ -99,7 +98,7 @@ if (isset($_POST['addUpdate'])) {
             $dbh = new PDO($dbSubscribers);
             $stmt = $dbh->query('DELETE FROM users WHERE email IS NULL');
             $stmt = $dbh->prepare('INSERT INTO users (email) VALUES (?)');
-            $stmt->execute(array(null));
+            $stmt->execute([null]);
             $idUser = $dbh->lastInsertId();
             $dbh = null;
         }
@@ -107,7 +106,7 @@ if (isset($_POST['addUpdate'])) {
         $dbh = new PDO($dbSubscribers);
         $stmt = $dbh->prepare('SELECT idUser FROM users WHERE idUser=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($idUserPost));
+        $stmt->execute([$idUserPost]);
         $row = $stmt->fetch();
         $dbh = null;
         extract($row);
@@ -119,10 +118,10 @@ if (isset($_POST['addUpdate'])) {
         $dbh = new PDO($dbSubscribers);
         if ($passPost == null or $passPost == '') {
             $stmt = $dbh->prepare('UPDATE users SET email=?, payStatus=?, note=?, contributor=?, classifiedOnly=?, deliver=?, deliveryAddress=?, dCityRegionPostal=?, billingAddress=?, bCityRegionPostal=?, soa=? WHERE idUser=?');
-            $stmt->execute(array(muddle($emailPost), $payStatusPost, $notePost, $contributorPost, $classifiedOnlyPost, $deliverPost, $deliveryAddressPost, $dCityRegionPostalPost, $billingAddressPost, $bCityRegionPostalPost, 1, $idUser));
+            $stmt->execute([muddle($emailPost), $payStatusPost, $notePost, $contributorPost, $classifiedOnlyPost, $deliverPost, $deliveryAddressPost, $dCityRegionPostalPost, $billingAddressPost, $bCityRegionPostalPost, 1, $idUser]);
         } else {
             $stmt = $dbh->prepare('UPDATE users SET email=?, pass=?, payStatus=?, note=?, contributor=?, classifiedOnly=?, deliver=?, deliveryAddress=?, dCityRegionPostal=?, billingAddress=?, bCityRegionPostal=?, soa=? WHERE idUser=?');
-            $stmt->execute(array(muddle($emailPost), $hash, $payStatusPost, $notePost, $contributorPost, $classifiedOnlyPost, $deliverPost, $deliveryAddressPost, $dCityRegionPostalPost, $billingAddressPost, $bCityRegionPostalPost, 1, $idUser));
+            $stmt->execute([muddle($emailPost), $hash, $payStatusPost, $notePost, $contributorPost, $classifiedOnlyPost, $deliverPost, $deliveryAddressPost, $dCityRegionPostalPost, $billingAddressPost, $bCityRegionPostalPost, 1, $idUser]);
         }
         $dbh = null;
         //
@@ -141,14 +140,14 @@ if (isset($_POST['delete'])) {
         $dbh = new PDO($dbSubscribers);
         $stmt = $dbh->prepare('SELECT idUser FROM users WHERE email=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array(muddle($emailPost)));
+        $stmt->execute([muddle($emailPost)]);
         $row = $stmt->fetch();
         $dbh = null;
         if (isset($row['idUser'])) {
             extract($row);
             $dbh = new PDO($dbSubscribers);
             $stmt = $dbh->prepare('DELETE FROM users WHERE idUser=?');
-            $stmt->execute(array($idUser));
+            $stmt->execute([$idUser]);
             $dbh = null;
             //
             // Update remote sites
@@ -174,7 +173,7 @@ if (isset($_POST['edit'])) {
     $dbh = new PDO($dbSubscribers);
     $stmt = $dbh->prepare('SELECT idUser, email, payStatus, note, contributor, classifiedOnly, deliver, deliveryAddress, dCityRegionPostal, billingAddress, bCityRegionPostal FROM users WHERE idUser=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idUserPost));
+    $stmt->execute([$idUserPost]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {
@@ -335,7 +334,7 @@ if (isset($_POST['edit'])) {
     $dbh = new PDO($dbSubscribers);
     $stmt = $dbh->prepare('SELECT payerEmail, payerFirstName, payerLastName, paid, paymentDate FROM users WHERE idUser=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idUserPost));
+    $stmt->execute([$idUserPost]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row and !empty($row['payerEmail'])) {

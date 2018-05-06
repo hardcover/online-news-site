@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -19,7 +19,6 @@ session_start();
 require 'z/system/configuration.php';
 require $includesPath . '/authorization.php';
 require $includesPath . '/common.php';
-require $includesPath . '/password.php';
 //
 // User-group authorization
 //
@@ -43,7 +42,7 @@ $sortOrderSectionEdit = null;
 $sortOrderSectionPost = inlinePost('sortOrderSection');
 $subsectionFlagPost = inlinePost('subsectionFlag');
 //
-$remotes = array();
+$remotes = [];
 $dbh = new PDO($dbRemote);
 $stmt = $dbh->query('SELECT remote FROM remotes');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -60,7 +59,7 @@ if (isset($_POST['adminPass']) and ($_POST['adminPass'] == null or $_POST['admin
 $dbh = new PDO($dbEditors);
 $stmt = $dbh->prepare('SELECT pass FROM users WHERE user=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($_SESSION['username']));
+$stmt->execute([$_SESSION['username']]);
 $row = $stmt->fetch();
 $dbh = null;
 if (password_verify($adminPassPost, $row['pass'])) {
@@ -79,7 +78,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
                 $dbh = new PDO($dbClassifieds);
                 $stmt = $dbh->prepare('SELECT section FROM sections WHERE section=?');
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                $stmt->execute(array($sectionPost));
+                $stmt->execute([$sectionPost]);
                 $row = $stmt->fetch();
                 $dbh = null;
                 if ($row) {
@@ -95,7 +94,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
                     $dbh = new PDO($dbClassifieds);
                     $stmt = $dbh->query('DELETE FROM sections WHERE section IS NULL');
                     $stmt = $dbh->prepare('INSERT INTO sections (section) VALUES (?)');
-                    $stmt->execute(array(null));
+                    $stmt->execute([null]);
                     $idSection = $dbh->lastInsertId();
                     $dbh = null;
                 }
@@ -106,7 +105,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
                 $dbh = new PDO($dbClassifieds);
                 $stmt = $dbh->prepare('SELECT subsection FROM subsections WHERE subsection=?');
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                $stmt->execute(array($sectionPost));
+                $stmt->execute([$sectionPost]);
                 $row = $stmt->fetch();
                 $dbh = null;
                 if ($row) {
@@ -122,7 +121,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
                     $dbh = new PDO($dbClassifieds);
                     $stmt = $dbh->query('DELETE FROM subsections WHERE subsection IS NULL');
                     $stmt = $dbh->prepare('INSERT INTO subsections (subsection) VALUES (?)');
-                    $stmt->execute(array(null));
+                    $stmt->execute([null]);
                     $idSection = $dbh->lastInsertId();
                     $dbh = null;
                 }
@@ -138,7 +137,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
                 $dbh = new PDO($dbClassifieds);
                 $stmt = $dbh->prepare('SELECT idSection FROM sections WHERE idSection=?');
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                $stmt->execute(array($idSectionPost));
+                $stmt->execute([$idSectionPost]);
                 $row = $stmt->fetch();
                 $dbh = null;
                 extract($row);
@@ -149,7 +148,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
                 $dbh = new PDO($dbClassifieds);
                 $stmt = $dbh->prepare('SELECT idSubsection FROM subsections WHERE idSubsection=?');
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                $stmt->execute(array($idSectionPost));
+                $stmt->execute([$idSectionPost]);
                 $row = $stmt->fetch();
                 $dbh = null;
                 $idSection = $row['idSubsection'];
@@ -167,7 +166,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
                 $dbh = new PDO($dbClassifieds);
                 $stmt = $dbh->prepare('SELECT sortOrderSection FROM sections WHERE idSection=?');
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                $stmt->execute(array($idSection));
+                $stmt->execute([$idSection]);
                 $row = $stmt->fetch();
                 if ($row
                     and !empty($row['sortOrderSection'])
@@ -176,7 +175,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
                     $sortOrderSectionPost++;
                 }
                 $stmt = $dbh->prepare('UPDATE sections SET section=?, sortOrderSection=?, sortPriority=? WHERE idSection=?');
-                $stmt->execute(array($sectionPost, $sortOrderSectionPost, 1, $idSection));
+                $stmt->execute([$sectionPost, $sortOrderSectionPost, 1, $idSection]);
                 $dbh = null;
             } else {
                 //
@@ -185,13 +184,13 @@ if (password_verify($adminPassPost, $row['pass'])) {
                 $dbh = new PDO($dbClassifieds);
                 $stmt = $dbh->prepare('SELECT sortOrderSubsection FROM subsections WHERE idSubsection=?');
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                $stmt->execute(array($idSection));
+                $stmt->execute([$idSection]);
                 $row = $stmt->fetch();
                 if ($row and !empty($row['sortOrderSubsection']) and $sortOrderSectionPost > $row['sortOrderSubsection']) {
                     $sortOrderSectionPost++;
                 }
                 $stmt = $dbh->prepare('UPDATE subsections SET subsection=?, parentId=?, sortOrderSubsection=?, sortPrioritySubSection=? WHERE idSubsection=?');
-                $stmt->execute(array($sectionPost, $parentSectionPost, $sortOrderSectionPost, 1, $idSection));
+                $stmt->execute([$sectionPost, $parentSectionPost, $sortOrderSectionPost, 1, $idSection]);
                 $dbh = null;
             }
             sortSections();
@@ -212,14 +211,14 @@ if (password_verify($adminPassPost, $row['pass'])) {
                 $dbh = new PDO($dbClassifieds);
                 $stmt = $dbh->prepare('SELECT idSection FROM sections WHERE section=?');
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                $stmt->execute(array($sectionPost));
+                $stmt->execute([$sectionPost]);
                 $row = $stmt->fetch();
                 $dbh = null;
                 if ($row) {
                     extract($row);
                     $dbh = new PDO($dbClassifieds);
                     $stmt = $dbh->prepare('DELETE FROM sections WHERE idSection=?');
-                    $stmt->execute(array($idSection));
+                    $stmt->execute([$idSection]);
                     $dbh = null;
                 } else {
                     $message = 'The section name was not found.';
@@ -231,14 +230,14 @@ if (password_verify($adminPassPost, $row['pass'])) {
                 $dbh = new PDO($dbClassifieds);
                 $stmt = $dbh->prepare('SELECT idSubsection FROM subsections WHERE subsection=?');
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                $stmt->execute(array($sectionPost));
+                $stmt->execute([$sectionPost]);
                 $row = $stmt->fetch();
                 $dbh = null;
                 if ($row) {
                     extract($row);
                     $dbh = new PDO($dbClassifieds);
                     $stmt = $dbh->prepare('DELETE FROM subsections WHERE idSubsection=?');
-                    $stmt->execute(array($idSubsection));
+                    $stmt->execute([$idSubsection]);
                     $dbh = null;
                 } else {
                     $message = 'The section name was not found.';
@@ -261,7 +260,7 @@ if (isset($_POST['edit'])) {
         $dbh = new PDO($dbClassifieds);
         $stmt = $dbh->prepare('SELECT idSubsection, subsection, parentId, sortOrderSubsection FROM subsections WHERE idSubsection=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($idSectionPost));
+        $stmt->execute([$idSectionPost]);
         $row = $stmt->fetch();
         $dbh = null;
         if ($row) {
@@ -275,7 +274,7 @@ if (isset($_POST['edit'])) {
         $dbh = new PDO($dbClassifieds);
         $stmt = $dbh->prepare('SELECT idSection, section, sortOrderSection FROM sections WHERE idSection=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($idSectionPost));
+        $stmt->execute([$idSectionPost]);
         $row = $stmt->fetch();
         $dbh = null;
         if ($row) {
@@ -295,17 +294,17 @@ if (isset($_POST['edit'])) {
 function syncRemotes()
 {
     global $dbClassifieds, $remotes;
-    $sections = array();
+    $sections = [];
     $dbh = new PDO($dbClassifieds);
     $stmt = $dbh->query('SELECT idSection, section, sortOrderSection FROM sections ORDER BY idSection');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     foreach ($stmt as $row) {
         $rowSections = $row;
         $sections[].= json_encode($row);
-        $subsections = array();
+        $subsections = [];
         $stmt = $dbh->prepare('SELECT idSubsection, subsection, parentId, sortOrderSubsection FROM subsections WHERE parentId=? ORDER BY idSubsection');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($row['idSection']));
+        $stmt->execute([$row['idSection']]);
         foreach ($stmt as $row) {
             $sections[].= json_encode($row);
         }
@@ -340,7 +339,7 @@ function sortSections()
             extract($row);
             $count++;
             $stmt = $dbh->prepare('UPDATE sections SET sortOrderSection=?, sortPriority=? WHERE idSection=?');
-            $stmt->execute(array($count, 2, $idSection));
+            $stmt->execute([$count, 2, $idSection]);
         }
     }
     $dbh = null;
@@ -352,13 +351,13 @@ function sortSections()
         $dbh = new PDO($dbClassifieds);
         $stmt = $dbh->prepare('SELECT idSubsection FROM subsections WHERE parentId=? ORDER BY sortOrderSubsection, sortPrioritySubSection');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($parentSectionPost));
+        $stmt->execute([$parentSectionPost]);
         foreach ($stmt as $row) {
             if ($row) {
                 extract($row);
                 $count++;
                 $stmt = $dbh->prepare('UPDATE subsections SET sortOrderSubsection=?, sortPrioritySubSection=? WHERE idSubsection=?');
-                $stmt->execute(array($count, 2, $idSubsection));
+                $stmt->execute([$count, 2, $idSubsection]);
             }
         }
         $dbh = null;
@@ -396,7 +395,7 @@ foreach ($stmt as $row) {
     echo "  </form>\n\n";
     $stmt = $dbh->prepare('SELECT idSubsection, subsection, sortOrderSubsection FROM subsections WHERE parentId=? ORDER BY sortOrderSubsection');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($row['idSection']));
+    $stmt->execute([$row['idSection']]);
     foreach ($stmt as $row) {
         echo '  <form class="wait" action="' . $uri . 'classifiedSections.php" method="post">' . "\n";
         echo '    <p><span class="p">&nbsp;&nbsp;&nbsp;&nbsp;' . $row['subsection'] . ', sort order: ' . $row['sortOrderSubsection'] . "<br />\n";

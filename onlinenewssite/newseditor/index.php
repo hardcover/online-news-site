@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -61,11 +61,10 @@ if (isset($_SESSION['auth'])) {
 // Requires
 //
 require $includesPath . '/common.php';
-require $includesPath . '/password.php';
 //
 // Variables
 //
-$installedVersion = '2018 03 17';
+$installedVersion = '2018 05 06';
 $message = null;
 $passPost = inlinePost('pass');
 $userPost = inlinePost('user');
@@ -86,10 +85,10 @@ if (isset($userPost, $passPost)) {
     $dbh = new PDO($dbLog);
     $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "login" ("idUser" INTEGER PRIMARY KEY, "user", "legibleTime", ipAddress, "time" INTEGER)');
     $stmt = $dbh->prepare('INSERT INTO login (user, legibleTime, ipAddress, time) VALUES (?, ?, ?, ?)');
-    $stmt->execute(array($userPost, $legibleTime, $_SERVER['REMOTE_ADDR'], $now));
+    $stmt->execute([$userPost, $legibleTime, $_SERVER['REMOTE_ADDR'], $now]);
     $stmt = $dbh->prepare('SELECT count(*) FROM login WHERE user=? AND time > ?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($userPost, $lastHour));
+    $stmt->execute([$userPost, $lastHour]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row['count(*)'] > 5) {
@@ -103,7 +102,7 @@ if (isset($_POST['login'], $userPost, $passPost)) {
     $dbh = new PDO($dbEditors);
     $stmt = $dbh->prepare('SELECT idUser, user, pass, fullName, userType FROM users WHERE user=? LIMIT 1');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($userPost));
+    $stmt->execute([$userPost]);
     $row = $stmt->fetch();
     $dbh = null;
     if (password_verify($passPost, $row['pass'])) {
@@ -112,13 +111,13 @@ if (isset($_POST['login'], $userPost, $passPost)) {
                 $newHash = password_hash($passPost, PASSWORD_DEFAULT);
                 $dbh = new PDO($dbEditors);
                 $stmt = $dbh->prepare('UPDATE users SET pass=? WHERE idUser=?');
-                $stmt->execute(array($newHash, $row['idUser']));
+                $stmt->execute([$newHash, $row['idUser']]);
                 $dbh = null;
             }
         }
         $dbh = new PDO($dbLog);
         $stmt = $dbh->prepare('UPDATE login SET time=? WHERE user=?');
-        $stmt->execute(array(null, $userPost));
+        $stmt->execute([null, $userPost]);
         $dbh = null;
         $_SESSION['auth'] = hash('sha256', $_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']) . hash('sha512', $row['user'] . $row['idUser']);
         $_SESSION['userID'] = hash('sha512', $row['user'] . $row['idUser']);
@@ -167,7 +166,7 @@ $dbh = null;
 $request['phpversion'] = phpversion();
 $request['version'] = $installedVersion;
 $request = http_build_query(array_map('base64_encode', $request));
-stream_context_set_default(array('http' => array('method' => 'POST', 'header' => 'Content-Type: application/x-www-form-urlencoded', 'content' => $request)));
+stream_context_set_default(['http' => ['method' => 'POST', 'header' => 'Content-Type: application/x-www-form-urlencoded', 'content' => $request]]);
 $fp = @fopen('https://online-news-site.com/v/', 'rb', false);
 $response = @stream_get_contents($fp);
 if ($fp and isset($response)) {

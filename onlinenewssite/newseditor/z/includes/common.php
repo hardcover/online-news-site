@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -39,7 +39,7 @@ $dbSurvey = 'sqlite:' . $includesPath . '/databases/survey.sqlite';
 //
 // Set the default timezone based on the GMT offset in configuration.php
 //
-$timezone = array(
+$timezone = [
     -12     => 'Kwajalein',
     -11     => 'Pacific/Midway',
     -10     => 'Pacific/Honolulu',
@@ -73,7 +73,7 @@ $timezone = array(
      11     => 'Asia/Magadan',
      12     => 'Pacific/Fiji',
      13     => 'Pacific/Tongatapu'
-);
+];
 date_default_timezone_set($timezone[$gmtOffset]);
 $today = date("Y-m-d");
 /**
@@ -271,15 +271,15 @@ function soa($uri, $request)
     $request['gig'] = date($gig);
     $request = http_build_query(array_map('base64_encode', $request));
     stream_context_set_default(
-        array(
-            'ssl' => array(
+        [
+            'ssl' => [
                 'allow_self_signed' => true,
                 'verify_peer' => false,
-                'verify_peer_name' => false),
-            'http' => array(
+                'verify_peer_name' => false],
+            'http' => [
                 'method' => 'POST',
                 'header' => 'Content-Type: application/x-www-form-urlencoded',
-                'content' => $request))
+                'content' => $request]]
     );
     $fp = @fopen($uri, 'rb', false);
     //
@@ -294,7 +294,7 @@ function soa($uri, $request)
         $redFlag.= "The URI contained no information.\n";
     }
     if (strpos($response, 'Fatal error:') !== false or strpos($response, 'Notice:') !== false or strpos($response, 'Warning:') !== false) {
-        $redFlag.= strip_tags(str_replace(array('[',']'), array('<','>'), $response)) . "\n";
+        $redFlag.= strip_tags(str_replace(['[',']'], ['<','>'], $response)) . "\n";
     }
     if ($redFlag != null) {
         $prior = file_exists('error_log') ? file_get_contents('error_log') : null;

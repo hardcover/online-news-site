@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -25,7 +25,7 @@ require $includesPath . '/common.php';
 $dbh = new PDO($dbEditors);
 $stmt = $dbh->prepare('SELECT userType FROM users WHERE idUser=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($_SESSION['userId']));
+$stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
 if (empty($row['userType']) or $row['userType'] != 3) {
@@ -48,7 +48,7 @@ if (isset($_POST['setMaximum']) and isset($maxAdsPost)) {
     $dbh = new PDO($dbAdvertising);
     $stmt = $dbh->query('DELETE FROM maxAd');
     $stmt = $dbh->prepare('INSERT INTO maxAd (maxAds) VALUES (?)');
-    $stmt->execute(array($maxAdsPost));
+    $stmt->execute([$maxAdsPost]);
     $dbh = null;
 }
 //
@@ -57,7 +57,7 @@ if (isset($_POST['setMaximum']) and isset($maxAdsPost)) {
 $dbh = new PDO($dbAdvertising);
 $stmt = $dbh->prepare('SELECT maxAds FROM maxAd WHERE idMaxAds=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array(1));
+$stmt->execute([1]);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {

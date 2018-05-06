@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -18,7 +18,7 @@
 //
 // Variables
 //
-$remotes = array();
+$remotes = [];
 $dbh = new PDO($dbRemote);
 $stmt = $dbh->query('SELECT remote FROM remotes');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -48,11 +48,11 @@ foreach ($remotes as $remote) {
             foreach ($dbRows as $value) {
                 $stmt = $dbh->prepare('SELECT email FROM users WHERE email=?');
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                $stmt->execute(array($value['email']));
+                $stmt->execute([$value['email']]);
                 $row = $stmt->fetch();
                 if ($row === false) {
                     $stmt = $dbh->prepare('INSERT INTO users (email, payerEmail, payerFirstName, payerLastName, ipAddress, verify, verified, time, pass, payStatus, paid, paymentDate, note, contributor, classifiedOnly, deliver, deliver2, deliveryAddress, dCityRegionPostal, billingAddress, bCityRegionPostal, soa, evolve, expand, extend) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-                    $stmt->execute(array($value['email'], $value['payerEmail'], $value['payerFirstName'], $value['payerLastName'], $value['ipAddress'], $value['verify'], $value['verified'], $value['time'], $value['pass'], $value['payStatus'], $value['paid'], $value['paymentDate'], $value['note'], $value['contributor'], $value['classifiedOnly'], $value['deliver'], $value['deliver2'], $value['deliveryAddress'], $value['dCityRegionPostal'], $value['billingAddress'], $value['bCityRegionPostal'], $value['soa'], $value['evolve'], $value['expand'], $value['extend']));
+                    $stmt->execute([$value['email'], $value['payerEmail'], $value['payerFirstName'], $value['payerLastName'], $value['ipAddress'], $value['verify'], $value['verified'], $value['time'], $value['pass'], $value['payStatus'], $value['paid'], $value['paymentDate'], $value['note'], $value['contributor'], $value['classifiedOnly'], $value['deliver'], $value['deliver2'], $value['deliveryAddress'], $value['dCityRegionPostal'], $value['billingAddress'], $value['bCityRegionPostal'], $value['soa'], $value['evolve'], $value['expand'], $value['extend']]);
                 }
             }
             $dbh->commit();
@@ -69,7 +69,7 @@ foreach ($remotes as $remote) {
     if (isset($response) and $response['result'] == 'success' and isset($response['remoteSubscribers'])) {
         $remoteSubscribers = json_decode($response['remoteSubscribers'], true);
         if ($remoteSubscribers == 'null' or $remoteSubscribers == null) {
-            $remoteSubscribers = array();
+            $remoteSubscribers = [];
         }
         foreach ($remoteSubscribers as $idUser) {
             $request = null;
@@ -81,7 +81,7 @@ foreach ($remotes as $remote) {
                 extract($response);
                 $dbh = new PDO($dbSubscribers);
                 $stmt = $dbh->prepare('UPDATE users SET email=?, payerEmail=?, payerFirstName=?, payerLastName=?, ipAddress=?, verify=?, verified=?, time=?, pass=?, payStatus=?, paid=?, paymentDate=?, note=?, contributor=?, classifiedOnly=?, deliver=?, deliver2=?, deliveryAddress=?, dCityRegionPostal=?, billingAddress=?, bCityRegionPostal=?, soa=?, evolve=?, expand=?, extend=? WHERE idUser=?');
-                $stmt->execute(array($email, $payerEmail, $payerFirstName, $payerLastName, $ipAddress, $verify, $verified, $time, $pass, $payStatus, $paid, $paymentDate, $note, $contributor, $classifiedOnly, $deliver, $deliver2, $deliveryAddress, $dCityRegionPostal, $billingAddress, $bCityRegionPostal, $soa, $evolve, $expand, $extend, $idUser));
+                $stmt->execute([$email, $payerEmail, $payerFirstName, $payerLastName, $ipAddress, $verify, $verified, $time, $pass, $payStatus, $paid, $paymentDate, $note, $contributor, $classifiedOnly, $deliver, $deliver2, $deliveryAddress, $dCityRegionPostal, $billingAddress, $bCityRegionPostal, $soa, $evolve, $expand, $extend, $idUser]);
                 $dbh = null;
             }
             $request = null;
@@ -97,7 +97,7 @@ foreach ($remotes as $remote) {
     $dbh = new PDO($dbSubscribers);
     $stmt = $dbh->prepare('SELECT idUser, email, ipAddress, verified, pass, payStatus, note, contributor, classifiedOnly, deliver, deliveryAddress, dCityRegionPostal, billingAddress, bCityRegionPostal, evolve, expand, extend FROM users WHERE soa = ?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array(1));
+    $stmt->execute([1]);
     foreach ($stmt as $row) {
         extract($row);
         $request = null;
@@ -123,7 +123,7 @@ foreach ($remotes as $remote) {
         $response = soa($remote . 'z/', $request);
         if ($response['result'] == 'success') {
             $stmt = $dbh->prepare('UPDATE users SET soa=? WHERE idUser=?');
-            $stmt->execute(array(null, $idUser));
+            $stmt->execute([null, $idUser]);
         }
     }
     $dbh = null;
@@ -136,9 +136,9 @@ foreach ($remotes as $remote) {
     $response = soa($remote . 'z/', $request);
     $remoteSubscribers = json_decode($response['remoteSubscribers'], true);
     if ($remoteSubscribers == 'null' or $remoteSubscribers == null) {
-        $remoteSubscribers = array();
+        $remoteSubscribers = [];
     }
-    $subscribers = array();
+    $subscribers = [];
     $dbh = new PDO($dbSubscribers);
     $stmt = $dbh->query('SELECT idUser FROM users');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -159,7 +159,7 @@ foreach ($remotes as $remote) {
             $dbh = new PDO($dbSubscribers);
             $stmt = $dbh->prepare('SELECT idUser, email, payerEmail, payerFirstName, payerLastName, ipAddress, verify, verified, time, pass, payStatus, paid, paymentDate, note, contributor, classifiedOnly, deliver, deliver2, deliveryAddress, dCityRegionPostal, billingAddress, bCityRegionPostal, soa, evolve, expand, extend FROM users WHERE idUser=?');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $stmt->execute(array($idUser));
+            $stmt->execute([$idUser]);
             foreach ($stmt as $row) {
                 $request['idUser'] = $row['idUser'];
                 $request['email'] = $row['email'];
@@ -202,7 +202,7 @@ foreach ($remotes as $remote) {
         $response = soa($remote . 'z/', $request);
         $remoteSubscribers = json_decode($response['remoteSubscribers'], true);
         if ($remoteSubscribers == 'null' or $remoteSubscribers == null) {
-            $remoteSubscribers = array();
+            $remoteSubscribers = [];
         }
         $dbh = new PDO($dbSubscribers);
         $stmt = $dbh->query('SELECT idUser FROM users');

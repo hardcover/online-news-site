@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -25,7 +25,7 @@ require $includesPath . '/common.php';
 $dbh = new PDO($dbEditors);
 $stmt = $dbh->prepare('SELECT userType FROM users WHERE idUser=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($_SESSION['userId']));
+$stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
 if (empty($row['userType']) or $row['userType'] != 5) {
@@ -52,7 +52,7 @@ $menuSortOrderEdit = null;
 $menuSortOrderPost = inlinePost('menuSortOrder');
 $message = null;
 //
-$remotes = array();
+$remotes = [];
 $dbh = new PDO($dbRemote);
 $stmt = $dbh->query('SELECT remote FROM remotes');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -71,7 +71,7 @@ if (isset($_POST['addUpdate'])) {
         $dbh = new PDO($dbMenu);
         $stmt = $dbh->prepare('SELECT menuName FROM menu WHERE menuName=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($menuNamePost));
+        $stmt->execute([$menuNamePost]);
         $row = $stmt->fetch();
         $dbh = null;
         if ($row) {
@@ -82,7 +82,7 @@ if (isset($_POST['addUpdate'])) {
             $dbh = new PDO($dbMenu);
             $stmt = $dbh->query('DELETE FROM menu WHERE menuName IS NULL');
             $stmt = $dbh->prepare('INSERT INTO menu (menuName) VALUES (?)');
-            $stmt->execute(array(null));
+            $stmt->execute([null]);
             $idMenu = $dbh->lastInsertId();
             $dbh = null;
         }
@@ -90,7 +90,7 @@ if (isset($_POST['addUpdate'])) {
         $dbh = new PDO($dbMenu);
         $stmt = $dbh->prepare('SELECT idMenu FROM menu WHERE idMenu=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($idMenuPost));
+        $stmt->execute([$idMenuPost]);
         $row = $stmt->fetch();
         $dbh = null;
         extract($row);
@@ -105,7 +105,7 @@ if (isset($_POST['addUpdate'])) {
         $dbh = new PDO($dbMenu);
         $stmt = $dbh->prepare('SELECT menuSortOrder FROM menu WHERE idMenu=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($idMenu));
+        $stmt->execute([$idMenu]);
         $row = $stmt->fetch();
         $dbh = null;
         if ($row
@@ -120,7 +120,7 @@ if (isset($_POST['addUpdate'])) {
         $menuPath = str_replace("'", '', $menuPath);
         $dbh = new PDO($dbMenu);
         $stmt = $dbh->prepare('UPDATE menu SET menuName=?, menuSortOrder=?, sortPriority=?, menuPath=?, menuContent=? WHERE idMenu=?');
-        $stmt->execute(array($menuNamePost, $menuSortOrderPost, 1, $menuPath, $menuContentPost, $idMenu));
+        $stmt->execute([$menuNamePost, $menuSortOrderPost, 1, $menuPath, $menuContentPost, $idMenu]);
         $dbh = null;
         //
         // Update remote sites
@@ -154,13 +154,13 @@ if (isset($_POST['delete'])) {
         $dbh = new PDO($dbMenu);
         $stmt = $dbh->prepare('SELECT menuName FROM menu WHERE menuName=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($menuNamePost));
+        $stmt->execute([$menuNamePost]);
         $dbh = null;
         $row = $stmt->fetch();
         if ($row) {
             $dbh = new PDO($dbMenu);
             $stmt = $dbh->prepare('DELETE FROM menu WHERE menuName=?');
-            $stmt->execute(array($menuNamePost));
+            $stmt->execute([$menuNamePost]);
             $dbh = null;
             //
             // Update remote sites
@@ -191,10 +191,10 @@ if (isset($_POST['addUpdate']) or isset($_POST['delete'])) {
         extract($row);
         $count++;
         $stmt = $dbh->prepare('UPDATE menu SET menuSortOrder=? WHERE idMenu=?');
-        $stmt->execute(array($count, $idMenu));
+        $stmt->execute([$count, $idMenu]);
     }
     $stmt = $dbh->prepare('UPDATE menu SET sortPriority=?');
-    $stmt->execute(array(2));
+    $stmt->execute([2]);
     $dbh = null;
     //
     // Update the remote databases
@@ -224,7 +224,7 @@ if (isset($_POST['edit'])) {
     $dbh = new PDO($dbMenu);
     $stmt = $dbh->prepare('SELECT idMenu, menuName, menuSortOrder, menuContent FROM menu WHERE idMenu=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idMenuPost));
+    $stmt->execute([$idMenuPost]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {

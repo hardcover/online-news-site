@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -21,7 +21,7 @@
 $dbh = new PDO($database);
 $stmt = $dbh->prepare('SELECT publicationDate, publicationTime, endDate, survey, genre, keywords, idSection, sortOrderArticle, byline, headline, standfirst, text, summary, evolve, expand, extend, photoName, photoCredit, photoCaption FROM articles WHERE idArticle=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($idArticle));
+$stmt->execute([$idArticle]);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
@@ -59,7 +59,7 @@ if ($row) {
     $dbh = new PDO($database);
     $stmt = $dbh->prepare('SELECT thumbnailImageWidth FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($row['thumbnailImageWidth'] != '') {
@@ -70,7 +70,7 @@ if ($row) {
         $dbh = new PDO($database);
         $stmt = $dbh->prepare('SELECT thumbnailImage, thumbnailImageWidth, thumbnailImageHeight, hdImageWidth, hdImageHeight FROM articles WHERE idArticle=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($idArticle));
+        $stmt->execute([$idArticle]);
         $row = $stmt->fetch();
         $dbh = null;
         if ($response['result'] == 'success') {
@@ -95,7 +95,7 @@ if ($row) {
         $dbh = new PDO($database);
         $stmt = $dbh->prepare('SELECT hdImage FROM articles WHERE idArticle=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($idArticle));
+        $stmt->execute([$idArticle]);
         $row = $stmt->fetch();
         $dbh = null;
         if ($response['result'] == 'success') {
@@ -124,7 +124,7 @@ if ($row) {
     $dbh = new PDO($database2);
     $stmt = $dbh->prepare('SELECT count(*) FROM imageSecondary WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $row = $stmt->fetch();
     $dbh = null;
     $imagesMain = $row['count(*)'];
@@ -134,7 +134,7 @@ if ($row) {
             $dbh = new PDO($database2);
             $stmt = $dbh->prepare('SELECT image, photoName, photoCredit, photoCaption, time FROM imageSecondary WHERE idArticle=? ORDER BY time');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $stmt->execute(array($idArticle));
+            $stmt->execute([$idArticle]);
             foreach ($stmt as $row) {
                 $request = null;
                 $response = null;

@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -51,7 +51,7 @@ if (isset($_GET['a'])) {
         $dbh = new PDO($database);
         $stmt = $dbh->prepare('SELECT idSection FROM articles WHERE idSection=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($idSection));
+        $stmt->execute([$idSection]);
         $row = $stmt->fetch();
         if ($row) {
             $count = null;
@@ -62,7 +62,7 @@ if (isset($_GET['a'])) {
                 $stmt = $dbh->prepare('SELECT idArticle, survey, publicationDate, headline, summary, thumbnailImageWidth, thumbnailImageHeight FROM articles WHERE idSection = ? ORDER BY sortOrderArticle');
             }
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $stmt->execute(array($idSection));
+            $stmt->execute([$idSection]);
             foreach ($stmt as $row) {
                 extract($row);
                 if ($count != null) {

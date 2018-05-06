@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -18,7 +18,7 @@
 //
 // Variables
 //
-$remotes = array();
+$remotes = [];
 $dbh = new PDO($dbRemote);
 $stmt = $dbh->query('SELECT remote FROM remotes');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -33,7 +33,7 @@ foreach ($remotes as $remote) {
     $dbh = new PDO($dbClassifieds);
     $stmt = $dbh->prepare('SELECT email, review, photos FROM ads WHERE idAd=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idAdPost));
+    $stmt->execute([$idAdPost]);
     $row = $stmt->fetch();
     $dbh = null;
     $photos = json_decode($row['photos'], true);
@@ -66,7 +66,7 @@ foreach ($remotes as $remote) {
                 $dbh = new PDO($dbClassifieds);
                 $stmt = $dbh->prepare('SELECT photo' . $i . ' FROM ads WHERE idAd=?');
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                $stmt->execute(array($idAdPost));
+                $stmt->execute([$idAdPost]);
                 $row = $stmt->fetch();
                 $dbh = null;
                 $request['photo'] = $row['photo' . $i];

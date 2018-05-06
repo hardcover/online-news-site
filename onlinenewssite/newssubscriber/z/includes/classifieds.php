@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -26,18 +26,18 @@ if (isset($_GET['s'])) {
     $dbh = new PDO($dbClassifieds);
     $stmt = $dbh->prepare('SELECT subsection, parentID FROM subsections WHERE idSubsection=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idSubsection));
+    $stmt->execute([$idSubsection]);
     $row = $stmt->fetch();
     extract($row);
     $stmt = $dbh->prepare('SELECT section FROM sections WHERE idSection=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($parentId));
+    $stmt->execute([$parentId]);
     $row = $stmt->fetch();
     extract($row);
     echo '    <h3>' . $section . ', ' . $subsection . "</h3>\n\n";
     $stmt = $dbh->prepare('SELECT idAd, title FROM ads WHERE categoryId=? ORDER BY title');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idSubsection));
+    $stmt->execute([$idSubsection]);
     foreach ($stmt as $row) {
         extract($row);
         echo '    <p><a href="' . $uri . '?m=classified-ads&amp;c=' . $idAd . '">' . $title . "</a></p>\n\n";
@@ -55,7 +55,7 @@ if (isset($_GET['s'])) {
     if ($row['count(*)'] < 99) {
         $dbh = new PDO($dbClassifieds);
         $stmt = $dbh->prepare('DELETE FROM ads WHERE review < ?');
-        $stmt->execute(array($today));
+        $stmt->execute([$today]);
         $categoryIdPrior = null;
         $stmt = $dbh->query('SELECT idAd, title, categoryId FROM ads ORDER BY categoryId, title');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -64,12 +64,12 @@ if (isset($_GET['s'])) {
             if ($categoryId != $categoryIdPrior) {
                 $stmt = $dbh->prepare('SELECT parentId, subsection FROM subsections WHERE idSubsection=?');
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                $stmt->execute(array($categoryId));
+                $stmt->execute([$categoryId]);
                 $row = $stmt->fetch();
                 extract($row);
                 $stmt = $dbh->prepare('SELECT section FROM sections WHERE idSection=?');
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                $stmt->execute(array($parentId));
+                $stmt->execute([$parentId]);
                 $row = $stmt->fetch();
                 extract($row);
                 echo '    <h3>' . $section . ', ' . $subsection . "</h3>\n\n";
@@ -90,12 +90,12 @@ if (isset($_GET['s'])) {
             echo '    <p><br />' . "\n    " . html($section) . "</p>\n\n";
             $stmt = $dbh->prepare('SELECT idSubsection, subsection FROM subsections WHERE parentId=? ORDER BY sortPrioritySubSection');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $stmt->execute(array($idSection));
+            $stmt->execute([$idSection]);
             foreach ($stmt as $row) {
                 extract($row);
                 $stmt = $dbh->prepare('SELECT count(*) FROM ads WHERE categoryId=?');
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                $stmt->execute(array($idSubsection));
+                $stmt->execute([$idSubsection]);
                 $row = $stmt->fetch();
                 if ($row['count(*)'] > 0) {
                     $count = ' (' . $row['count(*)'] . ')';
@@ -117,19 +117,19 @@ if (isset($_GET['s'])) {
     $dbh = new PDO($dbClassifieds);
     $stmt = $dbh->prepare('SELECT email, title, description, categoryId, review, startDate, duration, photos FROM ads WHERE idAd=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idAd));
+    $stmt->execute([$idAd]);
     $row = $stmt->fetch();
     if ($row) {
         extract($row);
         $photos = json_decode($photos, true);
         $stmt = $dbh->prepare('SELECT parentId, subsection FROM subsections WHERE idSubsection=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($categoryId));
+        $stmt->execute([$categoryId]);
         $row = $stmt->fetch();
         extract($row);
         $stmt = $dbh->prepare('SELECT section FROM sections WHERE idSection=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($parentId));
+        $stmt->execute([$parentId]);
         $row = $stmt->fetch();
         extract($row);
         echo '    <h5>' . $section . ', <a href="' . $uri . '?m=classified-ads&amp;s=' . $categoryId . '">'. html($subsection) . "</a></h5>\n\n";

@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -51,7 +51,7 @@ if ($dbFrom == $dbEdit) {
 $dbh = new PDO($dbFrom);
 $stmt = $dbh->prepare('SELECT publicationDate, publicationTime, endDate, survey, genre, keywords, idSection, sortOrderArticle, byline, headline, standfirst, text, summary, evolve, expand, extend, photoName, photoCredit, photoCaption FROM articles WHERE idArticle=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($idArticle));
+$stmt->execute([$idArticle]);
 $row = $stmt->fetch();
 $dbh = null;
 extract($row);
@@ -62,18 +62,18 @@ if ($dbFrom == $dbPublished) {
     $dbh = new PDO($dbTo);
     $stmt = $dbh->prepare('SELECT rowid FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $row = $stmt->fetch();
     $dbh = null;
     if (empty($row)) {
         $dbh = new PDO($dbTo);
         $stmt = $dbh->prepare('INSERT INTO articles (rowid, idArticle) VALUES (?, ?)');
-        $stmt->execute(array($idArticle, $idArticle));
+        $stmt->execute([$idArticle, $idArticle]);
         $dbh = null;
     } else {
         $dbh = new PDO($dbTo);
         $stmt = $dbh->prepare('UPDATE articles SET idArticle=? WHERE rowid=?');
-        $stmt->execute(array($idArticle, $idArticle));
+        $stmt->execute([$idArticle, $idArticle]);
         $dbh = null;
     }
     //
@@ -107,19 +107,19 @@ if ($dbFrom == $dbPublished) {
     $dbh = new PDO($dbTo);
     $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $row = $stmt->fetch();
     $dbh = null;
     if (empty($row)) {
         $dbh = new PDO($dbTo);
         $stmt = $dbh->prepare('INSERT INTO articles (idArticle) VALUES (?)');
-        $stmt->execute(array($idArticle));
+        $stmt->execute([$idArticle]);
         $dbh = null;
     }
 }
 $dbh = new PDO($dbTo);
 $stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, publicationTime=?, endDate=?, survey=?, genre=?, keywords=?, idSection=?, byline=?, headline=?, standfirst=?, text=?, summary=?, evolve=?, expand=?, extend=?, photoName=?, photoCredit=?, photoCaption=? WHERE idArticle=?');
-$stmt->execute(array($publicationDate, $publicationTime, $endDate, $survey, $genre, $keywords, $idSection, $byline, $headline, $standfirst, $text, $summary, $evolve, $expand, $extend, $photoName, $photoCredit, $photoCaption, $idArticle));
+$stmt->execute([$publicationDate, $publicationTime, $endDate, $survey, $genre, $keywords, $idSection, $byline, $headline, $standfirst, $text, $summary, $evolve, $expand, $extend, $photoName, $photoCredit, $photoCaption, $idArticle]);
 $dbh = null;
 if ($dbFrom != $dbArchive) {
     $request = null;
@@ -159,7 +159,7 @@ if ($dbFrom != $dbArchive) {
 $dbh = new PDO($dbFrom);
 $stmt = $dbh->prepare('SELECT thumbnailImageWidth FROM articles WHERE idArticle=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($idArticle));
+$stmt->execute([$idArticle]);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row['thumbnailImageWidth'] != null) {
@@ -170,12 +170,12 @@ if ($row['thumbnailImageWidth'] != null) {
     $dbh = new PDO($dbFrom);
     $stmt = $dbh->prepare('SELECT originalImageWidth, originalImageHeight, thumbnailImage, thumbnailImageWidth, thumbnailImageHeight, hdImageWidth, hdImageHeight FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $row = $stmt->fetch();
     $dbh = null;
     $dbh = new PDO($dbTo);
     $stmt = $dbh->prepare('UPDATE articles SET originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
-    $stmt->execute(array($row['originalImageWidth'], $row['originalImageHeight'], $row['thumbnailImage'], $row['thumbnailImageWidth'], $row['thumbnailImageHeight'], $row['hdImageWidth'], $row['hdImageHeight'], $idArticle));
+    $stmt->execute([$row['originalImageWidth'], $row['originalImageHeight'], $row['thumbnailImage'], $row['thumbnailImageWidth'], $row['thumbnailImageHeight'], $row['hdImageWidth'], $row['hdImageHeight'], $idArticle]);
     $dbh = null;
     if ($dbFrom != $dbArchive) {
         $request = null;
@@ -199,12 +199,12 @@ if ($row['thumbnailImageWidth'] != null) {
     $dbh = new PDO($dbFrom);
     $stmt = $dbh->prepare('SELECT hdImage FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $row = $stmt->fetch();
     $dbh = null;
     $dbh = new PDO($dbTo);
     $stmt = $dbh->prepare('UPDATE articles SET hdImage=? WHERE idArticle=?');
-    $stmt->execute(array($row['hdImage'], $idArticle));
+    $stmt->execute([$row['hdImage'], $idArticle]);
     $dbh = null;
     if ($dbFrom != $dbArchive) {
         if ($response['result'] == 'success') {
@@ -225,11 +225,11 @@ if ($row['thumbnailImageWidth'] != null) {
     $dbhF = new PDO($dbFrom2);
     $stmt = $dbhF->prepare('SELECT image, photoName, photoCredit, photoCaption, time FROM imageSecondary WHERE idArticle=? ORDER BY time');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     foreach ($stmt as $row) {
         $dbh = new PDO($dbTo2);
         $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoName, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?, ?)');
-        $stmt->execute(array($idArticle, $row['image'], $row['photoName'], $row['photoCredit'], $row['photoCaption'], $row['time']));
+        $stmt->execute([$idArticle, $row['image'], $row['photoName'], $row['photoCredit'], $row['photoCaption'], $row['time']]);
         $dbh = null;
         if ($dbFrom != $dbArchive) {
             $request = null;
@@ -254,28 +254,28 @@ if ($row['thumbnailImageWidth'] != null) {
 $dbh = new PDO($dbFrom);
 $stmt = $dbh->prepare('SELECT publicationDate, publicationTime, endDate, survey, genre, keywords, idSection, byline, headline, text FROM articles WHERE idArticle=?');
 $stmt->setFetchMode(PDO::FETCH_NUM);
-$stmt->execute(array($idArticle));
+$stmt->execute([$idArticle]);
 $row = $stmt->fetch();
 $dbh = null;
 $from = $row;
 $dbh = new PDO($dbTo);
 $stmt = $dbh->prepare('SELECT publicationDate, publicationTime, endDate, survey, genre, keywords, idSection, byline, headline, text FROM articles WHERE idArticle=?');
 $stmt->setFetchMode(PDO::FETCH_NUM);
-$stmt->execute(array($idArticle));
+$stmt->execute([$idArticle]);
 $row = $stmt->fetch();
 $dbh = null;
 if ($from == $row) {
     $dbh = new PDO($dbFrom2);
     $stmt = $dbh->prepare('SELECT count(*) FROM imageSecondary WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_NUM);
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $row = $stmt->fetch();
     $dbh = null;
     $from = $row;
     $dbh = new PDO($dbTo2);
     $stmt = $dbh->prepare('SELECT count(*) FROM imageSecondary WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_NUM);
-    $stmt->execute(array($idArticle));
+    $stmt->execute([$idArticle]);
     $row = $stmt->fetch();
     $dbh = null;
     if ($from == $row) {
@@ -284,11 +284,11 @@ if ($from == $row) {
         //
         $dbh = new PDO($dbFrom);
         $stmt = $dbh->prepare('DELETE FROM articles WHERE idArticle=?');
-        $stmt->execute(array($idArticle));
+        $stmt->execute([$idArticle]);
         $dbh = null;
         $dbh = new PDO($dbFrom2);
         $stmt = $dbh->prepare('DELETE FROM imageSecondary WHERE idArticle=?');
-        $stmt->execute(array($idArticle));
+        $stmt->execute([$idArticle]);
         $dbh = null;
         //
         // Delete the From article on the remote sites

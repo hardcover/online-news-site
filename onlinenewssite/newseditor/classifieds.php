@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 03 17
+ * @version:  2018 05 06
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -25,7 +25,7 @@ require $includesPath . '/common.php';
 $dbh = new PDO($dbEditors);
 $stmt = $dbh->prepare('SELECT userType FROM users WHERE idUser=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute(array($_SESSION['userId']));
+$stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
 if (empty($row['userType']) or $row['userType'] != 4) {
@@ -47,7 +47,7 @@ $startDateEdit = null;
 $startDatePost = inlinePost('startDate');
 $titleEdit = null;
 $titlePost = inlinePost('title');
-$photosOrdered = array(1, 2, 3, 4, 5, 6, 7);
+$photosOrdered = [1, 2, 3, 4, 5, 6, 7];
 $photosReverse = array_reverse($photosOrdered);
 $photoAvailable = null;
 //
@@ -59,7 +59,7 @@ if (isset($_POST['publish'])) {
         $review = date("Y-m-d", $startTime + ($durationPost * 7 * 86400));
         $dbh = new PDO($dbClassifieds);
         $stmt = $dbh->prepare('UPDATE ads SET title=?, description=?, categoryId=?, review=?, startDate=?, duration=? WHERE idAd=?');
-        $stmt->execute(array($titlePost, $descriptionPost, $categoryIdPost, $review, $startDatePost, 1, $idAdPost));
+        $stmt->execute([$titlePost, $descriptionPost, $categoryIdPost, $review, $startDatePost, 1, $idAdPost]);
         $dbh = null;
         include $includesPath . '/addUpdateClassified.php';
     } else {
@@ -74,13 +74,13 @@ if (isset($_POST['delete'])) {
         $dbh = new PDO($dbClassifieds);
         $stmt = $dbh->prepare('SELECT idAd FROM ads WHERE idAd=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute(array($idAdPost));
+        $stmt->execute([$idAdPost]);
         $row = $stmt->fetch();
         $dbh = null;
         if ($row) {
             $dbh = new PDO($dbClassifieds);
             $stmt = $dbh->prepare('DELETE FROM ads WHERE idAd=?');
-            $stmt->execute(array($idAdPost));
+            $stmt->execute([$idAdPost]);
             $dbh = null;
         } else {
             $message = 'The selected ad was not found.';
@@ -167,7 +167,7 @@ foreach ($stmt as $row) {
             echo '      <option value="">' . html($section) . "</option>\n";
             $stmt = $dbh->prepare('SELECT idSubsection, subsection FROM subsections WHERE parentId=? ORDER BY sortPrioritySubSection');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $stmt->execute(array($idSection));
+            $stmt->execute([$idSection]);
             foreach ($stmt as $row) {
                 extract($row);
                 if ($idSubsection == $categoryIdEdit) {
