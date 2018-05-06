@@ -6,5 +6,5 @@ For news publishers, Online News Site provides a single news website for visitor
 
 For maximum portability, Online News Site runs from Linux and Windows web hosts. The required configuration is common at hosting companies, especially cPanel/CentOS hosts:
 
-* PHP version 5.3.7 or newer with four extensions, gd2, mbstring, openssl and pdo_sqlite
+* PHP version 5.5 or newer with four extensions, gd2, mbstring, openssl and pdo_sqlite
 * Web server write privileges to the includes directory, which can be located outside the public HTML folders
