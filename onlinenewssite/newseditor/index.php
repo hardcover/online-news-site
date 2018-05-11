@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 05 06
+ * @version:  2018 05 11
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -64,7 +64,7 @@ require $includesPath . '/common.php';
 //
 // Variables
 //
-$installedVersion = '2018 05 06';
+$installedVersion = '2018 05 11';
 $message = null;
 $passPost = inlinePost('pass');
 $userPost = inlinePost('user');
@@ -106,14 +106,12 @@ if (isset($_POST['login'], $userPost, $passPost)) {
     $row = $stmt->fetch();
     $dbh = null;
     if (password_verify($passPost, $row['pass'])) {
-        if ($phpVersion >= '5.4' or ($phpVersionMain === '5.3' and $phpVersionSub > 6)) {
-            if (password_needs_rehash($row['pass'], PASSWORD_DEFAULT)) {
-                $newHash = password_hash($passPost, PASSWORD_DEFAULT);
-                $dbh = new PDO($dbEditors);
-                $stmt = $dbh->prepare('UPDATE users SET pass=? WHERE idUser=?');
-                $stmt->execute([$newHash, $row['idUser']]);
-                $dbh = null;
-            }
+        if (password_needs_rehash($row['pass'], PASSWORD_DEFAULT)) {
+            $newHash = password_hash($passPost, PASSWORD_DEFAULT);
+            $dbh = new PDO($dbEditors);
+            $stmt = $dbh->prepare('UPDATE users SET pass=? WHERE idUser=?');
+            $stmt->execute([$newHash, $row['idUser']]);
+            $dbh = null;
         }
         $dbh = new PDO($dbLog);
         $stmt = $dbh->prepare('UPDATE login SET time=? WHERE user=?');

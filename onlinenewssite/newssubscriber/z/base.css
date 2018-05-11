@@ -110,6 +110,11 @@ h6, div.r, span.al, span.fr, span.h, span.p, img.fr, input.fr, #searchForm {
     float: right;
 }
 
+h6.fn {
+    float: none;
+    margin-top: -2.3em;
+}
+
 p, li, div.n, div.t, span.fr {
     line-height: 1.5em;
 }
@@ -280,7 +285,7 @@ img {
 }
 
 img.lead {
-    float: both;
+    float: left;
     clear: none;
     margin: .4em 1em 1em 0;
 }
@@ -313,6 +318,16 @@ img.logo {
 
 img.s {
     width: 61.8%;
+}
+
+img.t, iframe, video {
+    width: 38.2%;
+    float: left;
+    margin-right: 1em;
+}
+
+img.mb {
+    margin-bottom: 1em;
 }
 
 img.w, iframe, video {

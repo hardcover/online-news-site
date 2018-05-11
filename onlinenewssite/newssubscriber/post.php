@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 05 06
+ * @version:  2018 05 11
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -207,7 +207,7 @@ if ((isset($_POST['login'])
             //
             // Update the stored password when needed and possible
             //
-            if ($database === 's' and ($phpVersion >= '5.4' or ($phpVersionMain === '5.3' and $phpVersionSub > 6))) {
+            if ($database === 's') {
                 if (password_needs_rehash($passPost, PASSWORD_DEFAULT)) {
                     $newHash = password_hash($passPost, PASSWORD_DEFAULT);
                     $dbh = new PDO($dbSubscribers);

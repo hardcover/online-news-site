@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 05 06
+ * @version:  2018 05 11
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -86,10 +86,18 @@ if ($row['idArticle']) {
         $html.= '  <h3>' . html($standfirst) . "</h3>\n\n";
     }
     if (isset($hdImage)) {
-        $html.= '  <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="w b" alt=""></p>' . "\n\n";
+        if ($photoName === 'third') {
+            $html.= '  <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="t b" alt=""></p>' . "\n\n";
+        } else {
+            $html.= '  <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="w b" alt=""></p>' . "\n\n";
+        }
     }
     if ($photoCaption != '' and $photoCredit != '') {
-        $html.= '  <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
+        if ($photoName === 'third') {
+            $html.= '  <h6 class="fn">' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
+        } else {
+            $html.= '  <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
+        }
     } elseif (isset($photoCaption)) {
         $html.= '  <h6>' . html($photoCaption) . "</h6>\n\n";
     } elseif (isset($photoCredit)) {

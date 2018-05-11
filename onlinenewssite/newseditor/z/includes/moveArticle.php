@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 05 06
+ * @version:  2018 05 11
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -140,10 +140,10 @@ if ($dbFrom != $dbArchive) {
     $request['standfirst'] = $standfirst;
     $request['text'] = $text;
     $request['summary'] = $summary;
-    $request['evolve'] = $photoCredit;
-    $request['expand'] = $photoCredit;
-    $request['extend'] = $photoCredit;
-    $request['photoName'] = $photoCredit;
+    $request['evolve'] = $evolve;
+    $request['expand'] = $expand;
+    $request['extend'] = $extend;
+    $request['photoName'] = $photoName;
     $request['photoCredit'] = $photoCredit;
     $request['photoCaption'] = $photoCaption;
     foreach ($remotes as $remote) {

@@ -88,6 +88,11 @@ h6, span.al, span.fr, span.h, span.p, img.fr, img.frm, #searchForm {
     float: right;
 }
 
+h6.fn {
+    float: none;
+    margin-top: -2.3em;
+}
+
 h5, p, table, pre {
     margin-bottom: 1em;
 }
@@ -263,6 +268,12 @@ img.frm {
 
 img.logo {
     width: 61.8%;
+}
+
+img.t, iframe, video {
+    width: 38.2%;
+    float: left;
+    margin-right: 1em;
 }
 
 img.w, iframe, video {
