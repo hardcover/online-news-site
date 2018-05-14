@@ -1,6 +1,6 @@
 <?php
 /**
- * The editing form, used by both edit and published
+ * The editing form used by subscribers with article-contribution privileges
  *
  * PHP version 7
  *
@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 05 11
+ * @version:  2018 05 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -48,6 +48,15 @@ $standfirstEdit = null;
 $standfirstPost = securePost('standfirst');
 $textEdit = null;
 $textPost = securePost('text');
+$widthPost = inlinePost('width');
+//
+if ($widthPost === 'third') {
+    $widthEditFull = null;
+    $widthEditThird = ' checked';
+} else {
+    $widthEditFull = ' checked';
+    $widthEditThird = null;
+}
 //
 $dbEdit = $dbEdit;
 $dbEdit2 = $dbEdit2;
@@ -136,7 +145,7 @@ if (isset($_POST['addUpdate'])) {
                     //
                     $dbh = new PDO($dbEdit);
                     $stmt = $dbh->prepare('UPDATE articles SET photoName=?, originalImageWidth=?, originalImageHeight=? WHERE idArticle=?');
-                    $stmt->execute([$_FILES['image']['name'], $widthOriginal, $heightOriginal, $idArticle]);
+                    $stmt->execute([$widthPost, $widthOriginal, $heightOriginal, $idArticle]);
                     $dbh = null;
                     //
                     // Create and save the thumbnail image
@@ -188,7 +197,7 @@ if (isset($_POST['addUpdate'])) {
                     ob_end_clean();
                     $dbh = new PDO($dbEdit2);
                     $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoName, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?, ?)');
-                    $stmt->execute([$idArticle, $hdImage, $_FILES['image']['name'], $photoCreditPost, $photoCaptionPost, time()]);
+                    $stmt->execute([$idArticle, $hdImage, $widthPost, $photoCreditPost, $photoCaptionPost, time()]);
                     $dbh = null;
                 }
             } else {
@@ -314,6 +323,8 @@ if ($use == 'published') {
     <p><label for="image">Photo upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br />
     <input id="image" name="image" type="file" class="w" accept="image/jpeg" /></p>
 
+    <p><label for="full"><input type="radio" name="width" id="full" value=""<?php echo $widthEditFull; ?>> Full width</label> <label for="third"><input type="radio" name="width" id="third" value="third"<?php echo $widthEditThird; ?>> One-third width</label></p>
+
     <p><label for="photoCaption">Photo caption</label><br />
     <input id="photoCaption" name="photoCaption" type="text" class="w" autocomplete="on" /></p>
 
@@ -323,7 +334,7 @@ if ($use == 'published') {
     <p><input type="submit" class="button" value="Add / update" name="addUpdate" /> <input type="submit" class="button" value="Delete photos" name="deletePhoto" /><input type="hidden" name="existing"<?php echoIfValue($edit); ?> /></p>
   </form>
 
-  <p>When there are photos, upload the primary photo first. Then edit the article to upload secondary photos one at a time. To correct an error in a caption or in the order of the photos, delete the photos and begin again.</p>
+  <p>When there are photos, upload the primary photo first. Then edit the article to upload additional photos one at a time. To correct any photo error — width, caption, credit, order — delete the photos and begin again.</p>
 <?php
 $dbhSection = new PDO($dbSettings);
 $stmt = $dbhSection->query('SELECT idSection, section FROM sections ORDER BY sortOrderSection');

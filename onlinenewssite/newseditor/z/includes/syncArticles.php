@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 05 11
+ * @version:  2018 05 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -87,8 +87,8 @@ foreach ($remotes as $remote) {
                         $response = soa($remote . 'z/', $request);
                         if (isset($response['hdImage'])) {
                             $dbh = new PDO($dbEdit2);
-                            $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?)');
-                            $stmt->execute([$idArticle, $response['hdImage'], $response['photoCredit'], $response['photoCaption'], time()]);
+                            $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoName, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?, ?)');
+                            $stmt->execute([$idArticle, $response['hdImage'], $response['photoName'], $response['photoCredit'], $response['photoCaption'], time()]);
                             $dbh = null;
                         }
                     }

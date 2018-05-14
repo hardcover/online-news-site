@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 05 11
+ * @version:  2018 05 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -129,9 +129,17 @@ if ($row['idArticle']) {
             $html.= '  <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
         }
     } elseif (isset($photoCaption)) {
-        $html.= '  <h6>' . html($photoCaption) . "</h6>\n\n";
+        if ($photoName === 'third') {
+            $html.= '  <h6 class="fn">' . html($photoCaption) . "</h6>\n\n";
+        } else {
+            $html.= '  <h6>' . html($photoCaption) . "</h6>\n\n";
+        }
     } elseif (isset($photoCredit)) {
-        $html.= '  <h6 class="r">' . $photoCredit . "</h6>\n\n";
+        if ($photoName === 'third') {
+            $html.= '  <h6 class="fn">' . $photoCredit . "</h6>\n\n";
+        } else {
+            $html.= '  <h6 class="r">' . $photoCredit . "</h6>\n\n";
+        }
     }
     if (!empty($byline) or !empty($bylineDateTime)) {
         $html.= '  <h5>';
@@ -257,18 +265,34 @@ if ($row['idArticle']) {
         // Display an article
         //
         $dbh = new PDO($database2);
-        $stmt = $dbh->prepare('SELECT idPhoto, photoCredit, photoCaption FROM imageSecondary WHERE idArticle=? ORDER BY time');
+        $stmt = $dbh->prepare('SELECT idPhoto, photoName, photoCredit, photoCaption FROM imageSecondary WHERE idArticle=? ORDER BY time');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute([$idArticle]);
         foreach ($stmt as $row) {
             extract($row);
-            $html.= '  <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="w b" alt=""></p>' . "\n\n";
+            if ($photoName === 'third') {
+                $html.= '  <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="t b" alt=""></p>' . "\n\n";
+            } else {
+                $html.= '  <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="w b" alt=""></p>' . "\n\n";
+            }
             if ($photoCaption != '' and $photoCredit != '') {
-                $html.= '  <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
+                if ($photoName === 'third') {
+                    $html.= '  <h6 class="fn">' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
+                } else {
+                    $html.= '  <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
+                }
             } elseif (isset($photoCaption)) {
-                $html.= '  <h6>' . html($photoCaption) . "</h6>\n\n";
+                if ($photoName === 'third') {
+                    $html.= '  <h6 class="fn">' . html($photoCaption) . "</h6>\n\n";
+                } else {
+                    $html.= '  <h6>' . html($photoCaption) . "</h6>\n\n";
+                }
             } elseif (isset($photoCredit)) {
-                $html.= '  <h6 class="r">' . $photoCredit . "</h6>\n\n";
+                if ($photoName === 'third') {
+                    $html.= '  <h6 class="fn">' . $photoCredit . "</h6>\n\n";
+                } else {
+                    $html.= '  <h6 class="r">' . $photoCredit . "</h6>\n\n";
+                }
             }
         }
         $dbh = null;
