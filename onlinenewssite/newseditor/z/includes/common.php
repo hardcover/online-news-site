@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 05 13
+ * @version:  2018 09 28
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -21,6 +21,7 @@
 $dbAdvertising = 'sqlite:' . $includesPath . '/databases/advertising.sqlite';
 $dbArchive = 'sqlite:' . $includesPath . '/databases/archive.sqlite';
 $dbArchive2 = 'sqlite:' . $includesPath . '/databases/archive2.sqlite';
+$dbArticleId = 'sqlite:' . $includesPath . '/databases/articleId.sqlite';
 $dbCalendar = 'sqlite:' . $includesPath . '/databases/calendar.sqlite';
 $dbClassifieds = 'sqlite:' . $includesPath . '/databases/classifieds.sqlite';
 $dbClassifiedsNew = 'sqlite:' . $includesPath . '/databases/classifiedsNew.sqlite';
@@ -29,6 +30,7 @@ $dbEdit2 = 'sqlite:' . $includesPath . '/databases/edit2.sqlite';
 $dbEditors = 'sqlite:' . $includesPath . '/databases/editors.sqlite';
 $dbLog = 'sqlite:' . $includesPath . '/databases/log.sqlite';
 $dbMenu = 'sqlite:' . $includesPath . '/databases/menu.sqlite';
+$dbPhotoId = 'sqlite:' . $includesPath . '/databases/photoId.sqlite';
 $dbPublished = 'sqlite:' . $includesPath . '/databases/published.sqlite';
 $dbPublished2 = 'sqlite:' . $includesPath . '/databases/published2.sqlite';
 $dbRemote = 'sqlite:' . $includesPath . '/databases/remote.sqlite';

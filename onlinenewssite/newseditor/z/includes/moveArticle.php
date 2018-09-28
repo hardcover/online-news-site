@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 05 13
+ * @version:  2018 09 28
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -34,12 +34,16 @@ if ($dbFrom == $dbEdit) {
     $dbFrom2 = $dbPublished2;
     $dbTo = $dbArchive;
     $dbTo2 = $dbArchive2;
-} elseif ($dbFrom == $dbArchive) {
+} elseif (strpos($dbFrom, 'archive') !== false) {
     //
     // Move from archive to edit
     //
     $archive = null;
-    $dbFrom2 = $dbArchive2;
+    if (strpos($dbFrom, 'archive-') !== false) {
+        $dbFrom2 = str_replace('archive-', 'archive2-', $dbFrom);
+    } else {
+        $dbFrom2 = $dbArchive2;
+    }
     $dbTo = $dbEdit;
     $dbTo2 = $dbEdit2;
 } else {

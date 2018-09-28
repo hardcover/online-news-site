@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 05 13
+ * @version:  2018 09 28
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -24,7 +24,6 @@ $today = date("Y-m-d");
 $prior = null;
 $databases = [
     'databases/advertising.sqlite',
-    'databases/calendar.sqlite',
     'databases/calendar.sqlite',
     'databases/classifieds.sqlite',
     'databases/classifiedsNew.sqlite',
@@ -53,6 +52,16 @@ foreach ($databases as $database) {
     $row = $stmt->fetch();
     $integrity_check = isset($row['integrity_check']) ? $row['integrity_check'] : 0;
     $dbh = null;
+    if ($integrity_check !== 'ok') {
+        if (file_exists('error_log')) {
+            $priorLog = file_get_contents('error_log');
+        } else {
+            $priorLog = null;
+        }
+        $errorMessage = 'newssubscriber ' . $database . "\n";
+        $errorMessage.= $integrity_check . "\n\n";
+        file_put_contents('error_log', $errorMessage . $priorLog);
+    }
     $dbh = new PDO('sqlite::memory:');
     $stmt = $dbh->query('CREATE TABLE "a" ("b")');
     $dbh = null;
@@ -67,7 +76,6 @@ foreach ($databases as $database) {
     $stmt = $dbh->query('CREATE TABLE "a" ("b")');
     $dbh = null;
     $dbh = new PDO('sqlite:' . $database);
-    $stmt = $dbh->query('PRAGMA page_size = 4096');
     $stmt = $dbh->query('VACUUM');
     $dbh = null;
     $dbh = new PDO('sqlite::memory:');
@@ -92,6 +100,7 @@ foreach ($databases as $database) {
 //
 // Write run stats to the cron-vacuum.log, limit the size of cron-vacuum.log
 //
+$prior = null;
 if (file_exists('cron-vacuum.log')) {
     $i = null;
     $priorLog = file('cron-vacuum.log');

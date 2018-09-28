@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 05 13
+ * @version:  2018 09 28
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -92,7 +92,7 @@ if (isset($_POST['update'])) {
     if (isset($idArticlePost)) {
         $idArticleEdit = $idArticlePost;
     } else {
-        $dbh = new PDO($dbArchive);
+        $dbh = new PDO($dbArticleId);
         $stmt = $dbh->prepare('INSERT INTO articles (headline) VALUES (?)');
         $stmt->execute([null]);
         $idArticle = $dbh->lastInsertId();

@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 05 13
+ * @version:  2018 09 28
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -18,6 +18,10 @@
 if (!file_exists($includesPath . '/databases')) {
     mkdir($includesPath . '/databases', 0755);
 }
+//
+$dbh = new PDO($dbArticleId);
+$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "articles" ("idArticle", "headline")');
+$dbh = null;
 //
 $dbh = new PDO($dbEditors);
 $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "users" ("idUser" INTEGER PRIMARY KEY, "user", "pass", "fullName", "email", "userType" INTEGER)');
@@ -29,6 +33,10 @@ if ($row['count(*)'] < 1) {
     $stmt = $dbh->prepare('INSERT INTO users (user, pass, fullName) VALUES (?, ?, ?)');
     $stmt->execute(['admin', $adminPass, 'Administrator']);
 }
+$dbh = null;
+//
+$dbh = new PDO($dbPhotoId);
+$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "photos" ("idPhoto", "idArticle")');
 $dbh = null;
 //
 $dbh = new PDO($dbRemote);

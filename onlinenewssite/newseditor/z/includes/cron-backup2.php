@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 05 13
+ * @version:  2018 09 28
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -28,9 +28,7 @@ date_default_timezone_set('America/Los_Angeles');
 $startTime = time();
 $today = date("Y-m-d");
 $prior = null;
-$databases = [
-    'databases/archive.sqlite'
-];
+$database = 'databases/archive.sqlite';
 //
 // Create the back up directory for today
 //
@@ -41,79 +39,121 @@ if (!file_exists($pathToBackupDirectory . 'backup/' . $today)) {
     mkdir($pathToBackupDirectory . 'backup/' . $today, 0755);
 }
 //
+// Copy the numbered archive databases to the back up directory
+//
+$dbNumber = 1;
+while ($dbNumber !== -1) {
+    $filePath = str_replace('archive', 'archive-' . $dbNumber, $database);
+    $filePath2 = str_replace('archive', 'archive2-' . $dbNumber, $database);
+    if (file_exists($filePath)) {
+        $filename = strrchr($filePath, '/');
+        copy($filePath, $pathToBackupDirectory . 'backup/' . $today . '/' . $filename);
+        $filename = str_replace('archive', 'archive2', $filename);
+        copy($filePath2, $pathToBackupDirectory . 'backup/' . $today . '/' . $filename);
+        $dbNumber++;
+    } else {
+        $dbNumber = -1;
+    }
+}
+//
 // Create the back up databases
 //
-foreach ($databases as $database) {
-    //
-    // Parse the database file name
-    //
-    $filename = strrchr($database, '/');
-    //
-    // Create a copy of the live database in memory and release the live database
-    //
-    $dbh = new PDO('sqlite:' . $database);
-    $dbh->beginTransaction();
-    $dbhMemory = new PDO('sqlite::memory:');
-    $stmt = $dbh->prepare('SELECT name, sql FROM sqlite_master WHERE type=? ORDER BY name');
-    $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(['table']);
+if (file_exists('cron-backup.log')) {
+    $prior = file_get_contents('cron-backup.log');
+}
+$startSize = number_format(@filesize($database) / 1024);
+//
+// Parse the database file name
+//
+$filename = strrchr($database, '/');
+//
+// Create a copy of the live database in memory and release the live database
+//
+$dbh = new PDO('sqlite:' . $database);
+$dbh->beginTransaction();
+$dbhMemory = new PDO('sqlite::memory:');
+$stmt = $dbh->prepare('SELECT name, sql FROM sqlite_master WHERE type=? ORDER BY name');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+$stmt->execute(['table']);
+foreach ($stmt as $row) {
+    extract($row);
+    $stmt = $dbhMemory->query($sql);
+    $dbhMemory->beginTransaction();
+    $stmt = $dbh->query('SELECT * FROM ' . $name);
+    $stmt->setFetchMode(PDO::FETCH_NUM);
     foreach ($stmt as $row) {
-        extract($row);
-        $stmt = $dbhMemory->query($sql);
-        $dbhMemory->beginTransaction();
-        $stmt = $dbh->query('SELECT * FROM ' . $name);
-        $stmt->setFetchMode(PDO::FETCH_NUM);
-        foreach ($stmt as $row) {
-            $values = '?';
-            for ($i = 1; $i < count($row); $i++) {
-                $values.= ', ?';
-            }
-            $stmt = $dbhMemory->prepare('INSERT INTO ' . $name . ' VALUES (' . $values . ')');
-            $stmt->execute($row);
+        $values = '?';
+        for ($i = 1; $i < count($row); $i++) {
+            $values.= ', ?';
         }
-        $dbhMemory->commit();
+        $stmt = $dbhMemory->prepare('INSERT INTO ' . $name . ' VALUES (' . $values . ')');
+        $stmt->execute($row);
+    }
+    $dbhMemory->commit();
+}
+$dbh->commit();
+$dbh = null;
+//
+// Write the back up databases to disk
+//
+$dbh = new PDO('sqlite:' . $pathToBackupDirectory . 'backup/' . $today . '/' . $filename);
+$stmt = $dbh->query('PRAGMA page_size = 4096');
+$stmt = $dbhMemory->prepare('SELECT name, sql FROM sqlite_master WHERE type=? ORDER BY name');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+$stmt->execute(['table']);
+foreach ($stmt as $row) {
+    extract($row);
+    $stmt = $dbh->query($sql);
+    $dbh->beginTransaction();
+    $stmt = $dbhMemory->query('SELECT * FROM ' . $name);
+    $stmt->setFetchMode(PDO::FETCH_NUM);
+    foreach ($stmt as $row) {
+        $values = '?';
+        for ($i = 1; $i < count($row); $i++) {
+            $values.= ', ?';
+        }
+        $stmt = $dbh->prepare('INSERT INTO ' . $name . ' VALUES (' . $values . ')');
+        $stmt->execute($row);
     }
     $dbh->commit();
-    $dbh = null;
     //
-    // Write the back up databases to disk
+    // Check integrity and size of the back up
     //
-    $dbh = new PDO('sqlite:' . $pathToBackupDirectory . 'backup/' . $today . '/' . $filename);
-    $stmt = $dbh->query('PRAGMA page_size = 4096');
-    $stmt = $dbhMemory->prepare('SELECT name, sql FROM sqlite_master WHERE type=? ORDER BY name');
+    $stmt = $dbh->query('PRAGMA integrity_check');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute(['table']);
-    foreach ($stmt as $row) {
-        extract($row);
-        $stmt = $dbh->query($sql);
-        $dbh->beginTransaction();
-        $stmt = $dbhMemory->query('SELECT * FROM ' . $name);
-        $stmt->setFetchMode(PDO::FETCH_NUM);
-        foreach ($stmt as $row) {
-            $values = '?';
-            for ($i = 1; $i < count($row); $i++) {
-                $values.= ', ?';
-            }
-            $stmt = $dbh->prepare('INSERT INTO ' . $name . ' VALUES (' . $values . ')');
-            $stmt->execute($row);
+    $row = $stmt->fetch();
+    $integrity_check = isset($row['integrity_check']) ? $row['integrity_check'] : 0;
+    if ($integrity_check !== 'ok') {
+        if (file_exists('error_log')) {
+            $priorLog = file_get_contents('error_log');
+        } else {
+            $priorLog = null;
         }
-        $dbh->commit();
+        $errorMessage = 'back up ' . $database . "\n";
+        $errorMessage.= $integrity_check . "\n\n";
+        file_put_contents('error_log', $errorMessage . $priorLog);
     }
-    //
-    // Release the database handles
-    //
-    $dbh = null;
-    $dbh = new PDO('sqlite::memory:');
-    $stmt = $dbh->query('CREATE TABLE "a" ("b")');
-    $dbh = null;
-    $dbhMemory = null;
-    $dbhMemory = new PDO('sqlite::memory:');
-    $stmt = $dbhMemory->query('CREATE TABLE "a" ("b")');
-    $dbhMemory = null;
+    $endSize = number_format(filesize($pathToBackupDirectory . 'backup/' . $today . '/' . $filename) / 1024);
+    $body = ltrim($filename, '/') . "\n";
+    $body.= 'Integrity: ' . $integrity_check . "\n";
+    $body.= $startSize . ' KB original, ' . $endSize . ' KB back up' . "\n\n";
+    file_put_contents('cron-backup.log', $body . $prior);
 }
+//
+// Release the database handles
+//
+$dbh = null;
+$dbh = new PDO('sqlite::memory:');
+$stmt = $dbh->query('CREATE TABLE "a" ("b")');
+$dbh = null;
+$dbhMemory = null;
+$dbhMemory = new PDO('sqlite::memory:');
+$stmt = $dbhMemory->query('CREATE TABLE "a" ("b")');
+$dbhMemory = null;
 //
 // Write run stats to the cron-backup.log, limit the size of the log
 //
+$prior = null;
 if (file_exists('cron-backup.log')) {
     $i = null;
     $priorLog = file('cron-backup.log');

@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 05 13
+ * @version:  2018 09 28
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -157,7 +157,7 @@ if (isset($_POST['addUpdate'])) {
         // Determine insert or update
         //
         if (empty($_POST['existing'])) {
-            $dbh = new PDO($dbArchive);
+            $dbh = new PDO($dbArticleId);
             $stmt = $dbh->prepare('INSERT INTO articles (headline) VALUES (?)');
             $stmt->execute([null]);
             $idArticle = $dbh->lastInsertId();
@@ -274,9 +274,16 @@ if (isset($_POST['addUpdate'])) {
                     imagedestroy($hd);
                     $hdImage = ob_get_contents();
                     ob_end_clean();
+                    $dbh = new PDO($dbPhotoId);
+                    $stmt = $dbh->prepare('INSERT INTO photos (idArticle) VALUES (?)');
+                    $stmt->execute([$idArticle]);
+                    $idPhoto = $dbh->lastInsertId();
+                    $stmt = $dbh->prepare('UPDATE photos SET idPhoto=? WHERE rowid=?');
+                    $stmt->execute([$idPhoto, $idPhoto]);
+                    $dbh = null;
                     $dbh = new PDO($database2);
-                    $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoName, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?, ?)');
-                    $stmt->execute([$idArticle, $hdImage, $widthPost, $photoCreditPost, $photoCaptionPost, time()]);
+                    $stmt = $dbh->prepare('INSERT INTO imageSecondary (idPhoto, idArticle, image, photoName, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?, ?, ?)');
+                    $stmt->execute([$idPhoto, $idArticle, $hdImage, $widthPost, $photoCreditPost, $photoCaptionPost, time()]);
                     $dbh = null;
                     //
                     // For published articles, upload the current secondary image, photo credit and caption

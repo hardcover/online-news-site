@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 05 13
+ * @version:  2018 09 28
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -125,39 +125,58 @@ if (isset($_GET['a'])) {
     if (isset($bylinePost) or isset($headlinePost) or isset($startDatePost) or isset($textPost)) {
         $html = null;
         $stopTime = 19 + time();
-        $dbh = new PDO($dbArchive);
-        $stmt = $dbh->prepare($sql1);
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute($sql2);
-        foreach ($stmt as $row) {
-            extract($row);
-            if (time() > $stopTime) {
-                echoIfMessage('The query is taking too long. Please refine the search criteria to narrow the search results.');
-                break;
+        $dbNumber = 0;
+        while ($dbNumber !== -1) {
+            $db = str_replace('archive', 'archive-' . $dbNumber, $dbArchive);
+            if ($dbNumber === 0
+                or file_exists(str_replace('sqlite:', '', $db))
+            ) {
+                if ($dbNumber === 0) {
+                    $database = $dbArchive;
+                } else {
+                    $database = $db;
+                }
+                $dbNumber++;
+            } else {
+                $dbNumber = -1;
+                $dbh = null;
             }
-            $html.= "  <hr />\n\n";
-            if (isset($headline)) {
-                $html.= '  <h2><a class="n" href="' . $uri . $use . '&amp;a=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
-            }
-            $bylineDateTime = isset($publicationDate) ? date("l, F j, Y", strtotime($publicationDate)) : null;
-            if (isset($bylineDateTime)) {
-                $html.= '  <p>' . html($bylineDateTime);
-            }
-            if (isset($byline) and isset($bylineDateTime)) {
-                $html.= ', ';
-            }
-            if (isset($byline)) {
-                $html.= 'by ' . html($byline);
-            }
-            if (isset($byline) or isset($bylineDateTime)) {
-                $html.= "</p>\n\n";
-            }
-            if (isset($summary)) {
-                $summary = str_replace('*', '', $summary);
-                $html.= '  <p class="s">' . html($summary) . "</p>\n";
+            if ($database != null) {
+                $dbh = new PDO($database);
+                $stmt = $dbh->prepare($sql1);
+                $stmt->setFetchMode(PDO::FETCH_ASSOC);
+                $stmt->execute($sql2);
+                foreach ($stmt as $row) {
+                    extract($row);
+                    if (time() > $stopTime) {
+                        echoIfMessage('The query is taking too long. Please refine the search criteria to narrow the search results.');
+                        break;
+                    }
+                    $html.= "  <hr />\n\n";
+                    if (isset($headline)) {
+                        $html.= '  <h2><a class="n" href="' . $uri . $use . '&amp;a=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
+                    }
+                    $bylineDateTime = isset($publicationDate) ? date("l, F j, Y", strtotime($publicationDate)) : null;
+                    if (isset($bylineDateTime)) {
+                        $html.= '  <p>' . html($bylineDateTime);
+                    }
+                    if (isset($byline) and isset($bylineDateTime)) {
+                        $html.= ', ';
+                    }
+                    if (isset($byline)) {
+                        $html.= 'by ' . html($byline);
+                    }
+                    if (isset($byline) or isset($bylineDateTime)) {
+                        $html.= "</p>\n\n";
+                    }
+                    if (isset($summary)) {
+                        $summary = str_replace('*', '', $summary);
+                        $html.= '  <p class="s">' . html($summary) . "</p>\n";
+                    }
+                }
+                $dbh = null;
             }
         }
-        $dbh = null;
     }
 }
 echo $html;

@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 05 13
+ * @version:  2018 09 28
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -44,6 +44,10 @@ if (!file_exists($pathToBackupDirectory . 'backup/' . $today)) {
 // Create the back up databases
 //
 foreach ($databases as $database) {
+    if (file_exists('cron-backup.log')) {
+        $prior = file_get_contents('cron-backup.log');
+    }
+    $startSize = number_format(@filesize($database) / 1024);
     //
     // Parse the database file name
     //
@@ -98,6 +102,28 @@ foreach ($databases as $database) {
             $stmt->execute($row);
         }
         $dbh->commit();
+        //
+        // Check integrity and size of the back up
+        //
+        $stmt = $dbh->query('PRAGMA integrity_check');
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch();
+        $integrity_check = isset($row['integrity_check']) ? $row['integrity_check'] : 0;
+        if ($integrity_check !== 'ok') {
+            if (file_exists('error_log')) {
+                $priorLog = file_get_contents('error_log');
+            } else {
+                $priorLog = null;
+            }
+            $errorMessage = 'back up ' . $database . "\n";
+            $errorMessage.= $integrity_check . "\n\n";
+            file_put_contents('error_log', $errorMessage . $priorLog);
+        }
+        $endSize = number_format(filesize($pathToBackupDirectory . 'backup/' . $today . '/' . $filename) / 1024);
+        $body = ltrim($filename, '/') . "\n";
+        $body.= 'Integrity: ' . $integrity_check . "\n";
+        $body.= $startSize . ' KB original, ' . $endSize . ' KB back up' . "\n\n";
+        file_put_contents('cron-backup.log', $body . $prior);
     }
     //
     // Release the database handles
@@ -114,6 +140,7 @@ foreach ($databases as $database) {
 //
 // Write run stats to the cron-backup.log, limit the size of the log
 //
+$prior = null;
 if (file_exists('cron-backup.log')) {
     $i = null;
     $priorLog = file('cron-backup.log');

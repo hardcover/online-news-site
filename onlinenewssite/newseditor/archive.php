@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 05 13
+ * @version:  2018 09 28
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -18,6 +18,7 @@
 session_start();
 require 'z/system/configuration.php';
 require $includesPath . '/authorization.php';
+$uri = $uriScheme . '://' . $_SERVER["HTTP_HOST"] . rtrim(dirname($_SERVER['PHP_SELF']), "/\\") . '/';
 require $includesPath . '/common.php';
 require $includesPath . '/parsedown-master/Parsedown.php';
 //
@@ -88,14 +89,46 @@ $sql1.= ' ORDER BY publicationDate DESC';
 // Button: Delete
 //
 if (isset($_POST['delete'])) {
-    $dbh = new PDO($dbArchive);
-    $stmt = $dbh->prepare('DELETE FROM articles WHERE idArticle=?');
-    $stmt->execute([$idArticle]);
-    $dbh = null;
-    $dbh = new PDO($dbArchive2);
-    $stmt = $dbh->prepare('DELETE FROM imageSecondary WHERE idArticle=?');
-    $stmt->execute([$idArticle]);
-    $dbh = null;
+    $dbNumber = 0;
+    while ($dbNumber !== -1) {
+        $db = str_replace('archive', 'archive-' . $dbNumber, $dbArchive);
+        if ($dbNumber === 0
+            or file_exists(str_replace('sqlite:', '', $db))
+        ) {
+            if ($dbNumber === 0) {
+                $database = $dbArchive;
+            } else {
+                $database = $db;
+            }
+            $dbNumber++;
+        } else {
+            $dbNumber = -1;
+            $dbh = null;
+        }
+        if ($database != null) {
+            $dbh = new PDO($database);
+            $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE idArticle=?');
+            $stmt->setFetchMode(PDO::FETCH_ASSOC);
+            $stmt->execute([$idArticle]);
+            $row = $stmt->fetch();
+            if ($row) {
+                $stmt = $dbh->prepare('DELETE FROM articles WHERE idArticle=?');
+                $stmt->execute([$idArticle]);
+                $dbh = null;
+                $db = str_replace('archive2', 'archive2-' . $dbNumber, $dbArchive2);
+                if ($dbNumber === 0) {
+                    $database = $dbArchive2;
+                } else {
+                    $database = $db;
+                }
+                $dbh = new PDO($database);
+                $stmt = $dbh->prepare('DELETE FROM imageSecondary WHERE idArticle=?');
+                $stmt->execute([$idArticle]);
+                $dbh = null;
+                $dbNumber = -1;
+            }
+        }
+    }
     $request = null;
     $response = null;
     $request['task'] = 'archiveDelete';
@@ -109,20 +142,48 @@ if (isset($_POST['delete'])) {
 // Button: Return to edit
 //
 if (isset($_POST['edit'])) {
-    $dbFrom = $dbArchive;
-    include $includesPath . '/moveArticle.php';
-    include $includesPath . '/syncArticles.php';
-    $request = null;
-    $response = null;
-    $request['task'] = 'archiveDelete';
-    $request['idArticle'] = $idArticle;
-    foreach ($remotes as $remote) {
-        $response = soa($remote . 'z/', $request);
-    }
-    foreach ($remotes as $remote) {
-        $request = null;
-        $response = null;
-        $request['task'] = 'sitemap';
+    $dbNumber = 0;
+    while ($dbNumber !== -1) {
+        $db = str_replace('archive', 'archive-' . $dbNumber, $dbArchive);
+        if ($dbNumber === 0
+            or file_exists(str_replace('sqlite:', '', $db))
+        ) {
+            if ($dbNumber === 0) {
+                $database = $dbArchive;
+            } else {
+                $database = $db;
+            }
+            $dbNumber++;
+        } else {
+            $dbNumber = -1;
+            $dbh = null;
+        }
+        if ($database != null) {
+            $dbh = new PDO($database);
+            $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE idArticle=?');
+            $stmt->setFetchMode(PDO::FETCH_ASSOC);
+            $stmt->execute([$idArticle]);
+            $row = $stmt->fetch();
+            $dbh = null;
+            if ($row) {
+                $dbNumber = -1;
+                $dbFrom = $database;
+                include $includesPath . '/moveArticle.php';
+                include $includesPath . '/syncArticles.php';
+                $request = null;
+                $response = null;
+                $request['task'] = 'archiveDelete';
+                $request['idArticle'] = $idArticle;
+                foreach ($remotes as $remote) {
+                    $response = soa($remote . 'z/', $request);
+                }
+                foreach ($remotes as $remote) {
+                    $request = null;
+                    $response = null;
+                    $request['task'] = 'sitemap';
+                }
+            }
+        }
     }
 }
 //
@@ -180,44 +241,62 @@ if (isset($_GET['a'])) {
     if (isset($bylinePost) or isset($headlinePost) or isset($startDatePost) or isset($textPost)) {
         $html = null;
         $stopTime = 19 + time();
-        $dbh = new PDO($dbArchive);
-        $stmt = $dbh->prepare($sql1);
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute($sql2);
-        foreach ($stmt as $row) {
-            extract($row);
-            if (time() > $stopTime) {
-                echoIfMessage('The query is taking too long. Please refine the search criteria to narrow the search results.');
-                break;
+        $dbNumber = 0;
+        while ($dbNumber !== -1) {
+            $db = str_replace('archive', 'archive-' . $dbNumber, $dbArchive);
+            if ($dbNumber === 0
+                or file_exists(str_replace('sqlite:', '', $db))
+            ) {
+                if ($dbNumber === 0) {
+                    $dbh = new PDO($dbArchive);
+                } else {
+                    $dbh = new PDO($db);
+                }
+                $dbNumber++;
+            } else {
+                $dbNumber = -1;
+                $dbh = null;
             }
-            $html.= "  <hr />\n\n";
-            if (isset($headline)) {
-                $html.= '  <h2><a class="n" href="' . $uri . $use . '.php?a=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
-            }
-            $bylineDateTime = isset($publicationDate) ? date("l, F j, Y", strtotime($publicationDate)) : null;
-            if (isset($bylineDateTime)) {
-                $html.= '  <p>' . html($bylineDateTime);
-            }
-            if (isset($byline) and isset($bylineDateTime)) {
-                $html.= ', ';
-            }
-            if (isset($byline)) {
-                $html.= 'by ' . html($byline);
-            }
-            if (isset($byline) or isset($bylineDateTime)) {
-                $html.= "</p>\n\n";
-            }
-            if (isset($summary)) {
-                $summary = str_replace('*', '', $summary);
-                $html.= '  <p class="s">' . html($summary) . "</p>\n";
-            }
-            if (isset($editorView) and $editorView == 1) {
-                $html.= "\n" . '  <form action="' . $uri . 'archive.php" method="post" class="wait">' . "\n";
-                $html.= '    <p> <input type="hidden" name="idArticle" value="' . $idArticle . '"><input type="submit" class="button" value="Delete" name="delete" /> <input type="submit" class="button" value="Return to edit" name="edit" /></p>' . "\n";
-                $html.= "  </form>\n";
+            if ($dbh != null) {
+                $stmt = $dbh->prepare($sql1);
+                $stmt->setFetchMode(PDO::FETCH_ASSOC);
+                $stmt->execute($sql2);
+                foreach ($stmt as $row) {
+                    extract($row);
+                    if (time() > $stopTime) {
+                        echoIfMessage('The query is taking too long. Please refine the search criteria to narrow the search results.');
+                        break;
+                    }
+                    $html.= "  <hr />\n\n";
+                    if (isset($headline)) {
+                        $html.= '  <h2><a class="n" href="' . $uri . $use . '.php?a=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
+                    }
+                    $bylineDateTime = isset($publicationDate) ? date("l, F j, Y", strtotime($publicationDate)) : null;
+                    if (isset($bylineDateTime)) {
+                        $html.= '  <p>' . html($bylineDateTime);
+                    }
+                    if (isset($byline) and isset($bylineDateTime)) {
+                        $html.= ', ';
+                    }
+                    if (isset($byline)) {
+                        $html.= 'by ' . html($byline);
+                    }
+                    if (isset($byline) or isset($bylineDateTime)) {
+                        $html.= "</p>\n\n";
+                    }
+                    if (isset($summary)) {
+                        $summary = str_replace('*', '', $summary);
+                        $html.= '  <p class="s">' . html($summary) . "</p>\n";
+                    }
+                    if (isset($editorView) and $editorView == 1) {
+                        $html.= "\n" . '  <form action="' . $uri . 'archive.php" method="post" class="wait">' . "\n";
+                        $html.= '    <p> <input type="hidden" name="idArticle" value="' . $idArticle . '"><input type="submit" class="button" value="Delete" name="delete" /> <input type="submit" class="button" value="Return to edit" name="edit" /></p>' . "\n";
+                        $html.= "  </form>\n";
+                    }
+                }
+                $dbh = null;
             }
         }
-        $dbh = null;
     }
 }
 echo $html;

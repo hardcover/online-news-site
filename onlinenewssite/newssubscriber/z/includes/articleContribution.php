@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 05 13
+ * @version:  2018 09 28
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -94,22 +94,13 @@ if (isset($_POST['addUpdate'])) {
         // Determine insert or update
         //
         if (empty($_POST['existing'])) {
-            $dbh = new PDO($dbArchive);
+            $dbh = new PDO($dbEdit);
             $stmt = $dbh->prepare('INSERT INTO articles (headline) VALUES (?)');
             $stmt->execute([null]);
             $idArticle = $dbh->lastInsertId();
             $stmt = $dbh->prepare('UPDATE articles SET idArticle=? WHERE rowid=?');
             $stmt->execute([$idArticle, $idArticle]);
             $dbh = null;
-            $dbh = new PDO($dbEdit);
-            $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE idArticle=?');
-            $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $stmt->execute([$idArticle]);
-            $row = $stmt->fetch();
-            if (empty($row)) {
-                $stmt = $dbh->prepare('INSERT INTO articles (idArticle) VALUES (?)');
-                $stmt->execute([$idArticle]);
-            }
         }
         //
         // Store the image, if any
@@ -240,10 +231,6 @@ if (isset($_POST['delete']) and isset($idArticle)) {
     $dbh = null;
     $dbh = new PDO($dbEdit2);
     $stmt = $dbh->prepare('DELETE FROM imageSecondary WHERE idArticle=?');
-    $stmt->execute([$idArticle]);
-    $dbh = null;
-    $dbh = new PDO($dbArchive);
-    $stmt = $dbh->prepare('DELETE FROM articles WHERE idArticle=?');
     $stmt->execute([$idArticle]);
     $dbh = null;
 }

@@ -17,7 +17,7 @@ class Parsedown
 {
     # ~
 
-    const version = '1.8.0-beta-4';
+    const version = '1.8.0-beta-5';
 
     # ~
 
@@ -391,6 +391,11 @@ class Parsedown
         }
     }
 
+    protected function blockCodeComplete($Block)
+    {
+        return $Block;
+    }
+
     #
     # Comment
 
@@ -508,6 +513,11 @@ class Parsedown
         return $Block;
     }
 
+    protected function blockFencedCodeComplete($Block)
+    {
+        return $Block;
+    }
+
     #
     # Header
 
@@ -531,7 +541,7 @@ class Parsedown
 
         $Block = array(
             'element' => array(
-                'name' => 'h' . min(6, $level),
+                'name' => 'h' . $level,
                 'handler' => array(
                     'function' => 'lineElements',
                     'argument' => $text,
