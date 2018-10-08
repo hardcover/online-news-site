@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 09 28
+ * @version:  2018 10 08
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -64,7 +64,7 @@ require $includesPath . '/common.php';
 //
 // Variables
 //
-$installedVersion = '2018 09 28';
+$installedVersion = '2018 10 08';
 $message = null;
 $passPost = inlinePost('pass');
 $userPost = inlinePost('user');

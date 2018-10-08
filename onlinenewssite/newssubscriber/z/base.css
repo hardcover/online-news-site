@@ -286,21 +286,16 @@ img {
 
 img.lead {
     float: left;
-    clear: none;
     margin: .4em 1em 1em 0;
 }
 
 img.lead2, img.lead3, img.lead4 {
     float: left;
-    clear: none;
     margin: .4em 1em 1em 0;
 }
 
-img.lead {
-    width: 61.8%;
-}
-
 img.lead2 {
+    clear: none;
     width: 38.2%;
 }
 

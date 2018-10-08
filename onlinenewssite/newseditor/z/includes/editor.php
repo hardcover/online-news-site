@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 09 28
+ * @version:  2018 10 08
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -276,7 +276,7 @@ if (isset($_POST['addUpdate'])) {
                     ob_end_clean();
                     $dbh = new PDO($dbPhotoId);
                     $stmt = $dbh->prepare('INSERT INTO photos (idArticle) VALUES (?)');
-                    $stmt->execute([$idArticle]);
+                    $stmt->execute([null]);
                     $idPhoto = $dbh->lastInsertId();
                     $stmt = $dbh->prepare('UPDATE photos SET idPhoto=? WHERE rowid=?');
                     $stmt->execute([$idPhoto, $idPhoto]);
