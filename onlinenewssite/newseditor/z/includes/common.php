@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 10 08
+ * @version:  2018 11 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -93,7 +93,7 @@ function secure($str)
     $str = preg_replace('{^\xEF\xBB\xBF|\x1A}', '', $str); // UTF-8 BOM
     $str = str_replace("\r\n", "\n", $str);                // Windows line ends
     $str = str_replace("\r", "\n", $str);                  // Old Mac line ends
-    $str = str_replace("\t", '    ', $str);                // Tabs
+    $str = str_replace("\t", '', $str);                    // Tabs
     return trim($str);                                     // Extra space & lines
 }
 /**

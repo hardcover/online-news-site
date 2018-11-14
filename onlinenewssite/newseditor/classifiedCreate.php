@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 10 08
+ * @version:  2018 11 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -112,6 +112,7 @@ if (isset($_POST['addUpdate'])) {
                     $widthHD = 2370;
                     $heightHD = round($widthHD / $aspectRatio);
                     $hd = imagecreatetruecolor($widthHD, $heightHD);
+                    imageinterlace($hd, true);
                     $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
                     imagecopyresampled($hd, $srcImage, 0, 0, 0, 0, $widthHD, $heightHD, ImageSX($srcImage), ImageSY($srcImage));
                     ob_start();

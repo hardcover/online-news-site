@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 10 08
+ * @version:  2018 11 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -64,7 +64,6 @@ require $includesPath . '/common.php';
 //
 // Variables
 //
-$installedVersion = '2018 10 08';
 $message = null;
 $passPost = inlinePost('pass');
 $userPost = inlinePost('user');
@@ -162,31 +161,11 @@ foreach ($stmt as $row) {
 }
 $dbh = null;
 $request['phpversion'] = phpversion();
-$request['version'] = $installedVersion;
+$request['version'] = '2018 11 13';
 $request = http_build_query(array_map('base64_encode', $request));
 stream_context_set_default(['http' => ['method' => 'POST', 'header' => 'Content-Type: application/x-www-form-urlencoded', 'content' => $request]]);
 $fp = @fopen('https://online-news-site.com/v/', 'rb', false);
 $response = @stream_get_contents($fp);
-if ($fp and isset($response)) {
-    $response = json_decode($response, true);
-    if (is_array($response) and sizeof($response) == 1 and isset($response['version'])) {
-        $response = array_map('base64_decode', $response);
-        $response = secure($response['version']);
-    } else {
-        $response = null;
-    }
-} else {
-    $response = null;
-}
-if (empty($response)) {
-    $versionMessage = null;
-} else {
-    if ($installedVersion == $response) {
-        $versionMessage = null;
-    } else {
-        $versionMessage = '<a href="https://online-news-site.com/download.php" target="_blank">A new version of Online News Site is available</a>.';
-    }
-}
 //
 // HTML
 //
@@ -211,6 +190,6 @@ require $includesPath . '/header1.inc';
 
     <p><input type="submit" name="login" class="button" value="Log in" /></p>
   </form>
-<?php echo "\n  <p>Version " . $installedVersion . '. ' . $versionMessage . "</p>\n"; ?>
+<?php echo "\n  <p>Version 2018 11 13.</p>\n"; ?>
 </body>
 </html>

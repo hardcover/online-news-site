@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 10 08
+ * @version:  2018 11 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -60,29 +60,38 @@ if (isset($bylinePost)) {
     $sql2[] = $bylinePost;
 }
 if (isset($bylinePost, $headlinePost)) {
-    $sql1.= ' AND ';
+    $sql1.= ' INTERSECT SELECT idArticle, publicationDate, byline, headline, summary FROM articles WHERE';
 }
 if (isset($headlinePost)) {
-    $sql1.= 'headline MATCH ?';
+    $sql1.= ' headline MATCH ?';
     $sql2[] = $headlinePost;
 }
 if (isset($bylinePost, $textPost) or isset($headlinePost, $textPost)) {
-    $sql1.= ' AND ';
+    $sql1.= ' INTERSECT SELECT idArticle, publicationDate, byline, headline, summary FROM articles WHERE';
 }
 if (isset($textPost)) {
-    $sql1.= 'text MATCH ?';
+    $sql1.= ' text MATCH ?';
     $sql2[] = $textPost;
 }
-if (!isset($endDatePost)) {
+if (isset($bylinePost, $startDatePost)
+    or isset($headlinePost, $startDatePost)
+    or isset($textPost, $startDatePost)
+    or isset($bylinePost, $endDatePost)
+    or isset($headlinePost, $endDatePost)
+    or isset($textPost, $endDatePost)
+) {
+    $sql1.= ' INTERSECT SELECT idArticle, publicationDate, byline, headline, summary FROM articles WHERE';
+}
+if (empty($startDatePost) and isset($endDatePost)) {
+    $startDatePost = '1970-01-01';
+}
+if (empty($endDatePost)) {
     $endDatePost = date("Y-m-d");
 }
-if (isset($bylinePost, $startDatePost) or isset($headlinePost, $startDatePost) or isset($headlinePost, $startDatePost)) {
-    $sql1.= ' AND ';
-}
 if (isset($startDatePost, $endDatePost)) {
-    $sql1.= '? <= publicationDate <= ?';
-    $sql2[] = '%' . $startDatePost . '%';
-    $sql2[] = '%' . $endDatePost . '%';
+    $sql1.= ' ? <= publicationDate AND publicationDate <= ?';
+    $sql2[] = $startDatePost;
+    $sql2[] = $endDatePost;
 }
 $sql1.= ' ORDER BY publicationDate DESC';
 //
@@ -272,19 +281,19 @@ if (isset($_GET['a'])) {
                         $html.= '  <h2><a class="n" href="' . $uri . $use . '.php?a=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
                     }
                     $bylineDateTime = isset($publicationDate) ? date("l, F j, Y", strtotime($publicationDate)) : null;
-                    if (isset($bylineDateTime)) {
+                    if (!empty($bylineDateTime)) {
                         $html.= '  <p>' . html($bylineDateTime);
                     }
-                    if (isset($byline) and isset($bylineDateTime)) {
+                    if (!empty($byline) and isset($bylineDateTime)) {
                         $html.= ', ';
                     }
-                    if (isset($byline)) {
+                    if (!empty($byline)) {
                         $html.= 'by ' . html($byline);
                     }
-                    if (isset($byline) or isset($bylineDateTime)) {
+                    if (!empty($byline) or isset($bylineDateTime)) {
                         $html.= "</p>\n\n";
                     }
-                    if (isset($summary)) {
+                    if (!empty($summary)) {
                         $summary = str_replace('*', '', $summary);
                         $html.= '  <p class="s">' . html($summary) . "</p>\n";
                     }
