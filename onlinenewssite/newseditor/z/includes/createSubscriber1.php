@@ -11,7 +11,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 11 13
+ * @version:  2018 11 29
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -81,7 +81,7 @@ $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "articles" ("idArticle" INTEGER,
 $dbh = null;
 //
 $dbh = new PDO($dbEdit2);
-$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "imageSecondary" ("idPhoto" INTEGER PRIMARY KEY, "idArticle" INTEGER, "image", "photoName", "photoCredit", "photoCaption", "time" INTEGER)');
+$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "imageSecondary" ("idPhoto" INTEGER UNIQUE, "idArticle" INTEGER, "image", "photoName", "photoCredit", "photoCaption", "time" INTEGER)');
 $dbh = null;
 //
 $dbh = new PDO($dbMenu);

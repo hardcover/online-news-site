@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 11 13
+ * @version:  2018 11 29
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -291,6 +291,7 @@ if (isset($_POST['update']) and isset($datePost)) {
     $annualDayOfWeek = [];
     $monthlyDayOfWeek = [];
     $oneTimeEvent = [];
+    $weeklyDayOfWeek = [];
     $dbh = new PDO($dbCalendar);
     $stmt = $dbh->query('SELECT * FROM annual ORDER BY idAnnual');
     $stmt->setFetchMode(PDO::FETCH_NUM);

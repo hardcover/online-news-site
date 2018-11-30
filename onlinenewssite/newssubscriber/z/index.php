@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 11 13
+ * @version:  2018 11 29
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -299,8 +299,8 @@ if ($task == 'updateInsert3') {
 }
 if ($task == 'updateInsert4') {
     $dbh = new PDO($db2);
-    $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoName, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?, ?)');
-    $stmt->execute([$idArticle, $image, $photoName, $photoCredit, $photoCaption, time()]);
+    $stmt = $dbh->prepare('INSERT INTO imageSecondary (idPhoto, idArticle, image, photoName, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?, ?, ?)');
+    $stmt->execute([$idPhoto, $idArticle, $image, $photoName, $photoCredit, $photoCaption, time()]);
     $dbh = null;
     $response['result'] = 'success';
 }

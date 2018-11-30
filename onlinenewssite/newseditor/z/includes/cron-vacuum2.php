@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 11 13
+ * @version:  2018 11 29
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -81,7 +81,7 @@ if ($row['count(rowid)'] > 100) {
                 $stmt->execute([$article]);
             }
             $dbhNew = new PDO(str_replace('archive2', 'archive2-' . $dbNumber, 'sqlite:' . $database2));
-            $stmt = $dbhNew->query('CREATE TABLE IF NOT EXISTS "imageSecondary" ("idPhoto" INTEGER PRIMARY KEY, "idArticle" INTEGER, "image", "photoName", "photoCredit", "photoCaption", "time" INTEGER)');
+            $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "imageSecondary" ("idPhoto" INTEGER UNIQUE, "idArticle" INTEGER, "image", "photoName", "photoCredit", "photoCaption", "time" INTEGER)');
             $stmt = $dbhNew->query('CREATE INDEX IF NOT EXISTS "main"."imageSecondaryIndex" ON "imageSecondary" ("idPhoto" ASC);');
             $dbhArchive2 = new PDO('sqlite:' . $database2);
             foreach ($articles as $article) {

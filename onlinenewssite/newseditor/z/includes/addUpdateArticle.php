@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 11 13
+ * @version:  2018 11 29
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -132,7 +132,7 @@ if ($row) {
         $response = soa($remote . 'z/', $request);
         if ($imagesMain != $response['remotePhotos']) {
             $dbh = new PDO($database2);
-            $stmt = $dbh->prepare('SELECT image, photoName, photoCredit, photoCaption, time FROM imageSecondary WHERE idArticle=? ORDER BY time');
+            $stmt = $dbh->prepare('SELECT idPhoto, image, photoName, photoCredit, photoCaption, time FROM imageSecondary WHERE idArticle=? ORDER BY time');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
             $stmt->execute([$idArticle]);
             foreach ($stmt as $row) {
@@ -140,6 +140,7 @@ if ($row) {
                 $response = null;
                 $request['task'] = 'updateInsert4';
                 $request['archive'] = $archive;
+                $request['idPhoto'] = $row['idPhoto'];
                 $request['idArticle'] = $idArticle;
                 $request['image'] = $row['image'];
                 $request['photoName'] = $row['photoName'];
