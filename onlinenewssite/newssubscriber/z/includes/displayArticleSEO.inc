@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 11 29
+ * @version:  2018 12 18
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -81,24 +81,25 @@ if ($row) {
 //
 // HTML
 //
+$html = '      <p><span class="al"><a href="' . $uri . '?m=archive-search" class="n">Archive search</a></span></p>' . "\n\n";
 $bylineDateTime = isset($publicationDate) ? date("l, F j, Y", strtotime($publicationDate)) : null;
-$html = '  <p><b>' . $section . "</b></p>\n\n";
-$html.= '  <h1>' . html($headline) . "</h1>\n\n";
+$html.= '      <p><b>' . $section . "</b></p>\n\n";
+$html.= '      <h1>' . html($headline) . "</h1>\n\n";
 if (isset($standfirst)) {
-    $html.= '  <h3>' . html($standfirst) . "</h3>\n\n";
+    $html.= '      <h3>' . html($standfirst) . "</h3>\n\n";
 }
 if (isset($hdImage)) {
-    $html.= '  <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="w b" alt=""></p>' . "\n\n";
+    $html.= '      <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="w b" alt=""></p>' . "\n\n";
 }
 if ($photoCaption != '' and $photoCredit != '') {
-    $html.= '  <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
+    $html.= '      <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
 } elseif (isset($photoCaption)) {
-    $html.= '  <h6>' . html($photoCaption) . "</h6>\n\n";
+    $html.= '      <h6>' . html($photoCaption) . "</h6>\n\n";
 } elseif (isset($photoCredit)) {
-    $html.= '  <h6 class="r">' . $photoCredit . "</h6>\n\n";
+    $html.= '      <h6 class="r">' . $photoCredit . "</h6>\n\n";
 }
 if (!empty($byline) or !empty($bylineDateTime)) {
-    $html.= '  <h5>';
+    $html.= '      <h5>';
 }
 if (!empty($byline)) {
     $html.= 'By ' . $byline;
@@ -112,7 +113,9 @@ if (!empty($bylineDateTime)) {
 if (!empty($byline) or !empty($bylineDateTime)) {
     $html.= "</h5>\n\n";
 }
-$html.= Parsedown::instance()->parse($text);
+$temp = Parsedown::instance()->parse($text);
+$temp = str_replace("\n", "\n\n      ", $temp);
+$html.= '      ' . $temp . "\n";
 $dbNumber2 = 0;
 while ($dbNumber2 !== -1) {
     $db = str_replace('archive2', 'archive2-' . $dbNumber2, $dbArchive2);
@@ -137,17 +140,18 @@ while ($dbNumber2 !== -1) {
         foreach ($stmt as $row) {
             extract($row);
             $dbNumber2 = -1;
-            $html.= '  <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="w b" alt=""></p>' . "\n\n";
+            $html.= '      <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="w b" alt=""></p>' . "\n\n";
             if ($photoCaption != '' and $photoCredit != '') {
-                $html.= '  <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
+                $html.= '      <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
             } elseif (isset($photoCaption)) {
-                $html.= '  <h6>' . html($photoCaption) . "</h6>\n\n";
+                $html.= '      <h6>' . html($photoCaption) . "</h6>\n\n";
             } elseif (isset($photoCredit)) {
-                $html.= '  <h6 class="r">' . $photoCredit . "</h6>\n\n";
+                $html.= '      <h6 class="r">' . $photoCredit . "</h6>\n\n";
             }
         }
         $dbh = null;
     }
 }
+$html.= "\n" . '      <p><span class="al"><a href="' . $uri . '?m=archive-search" class="n">Archive search</a></span></p>' . "\n";
 echo $html;
 ?>

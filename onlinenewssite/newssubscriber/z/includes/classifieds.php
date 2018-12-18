@@ -10,14 +10,14 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 11 29
+ * @version:  2018 12 18
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
  */
-echo '    <h1><a href="' . $uri . '?m=classified-ads">Classified ads</a></h1>' . "\n\n";
-echo '    <p><a href="' . $uri . '?m=place-classified">Place a classified ad</a>.</p>' . "\n\n";
-echo "    <hr />\n\n";
+echo '      <h1><a href="' . $uri . '?m=classified-ads">Classified ads</a></h1>' . "\n\n";
+echo '      <p><a href="' . $uri . '?m=place-classified">Place a classified ad</a>.</p>' . "\n\n";
+echo "      <hr />\n\n";
 if (isset($_GET['s'])) {
     //
     // List the ads for the selected subsection
@@ -34,13 +34,13 @@ if (isset($_GET['s'])) {
     $stmt->execute([$parentId]);
     $row = $stmt->fetch();
     extract($row);
-    echo '    <h3>' . $section . ', ' . $subsection . "</h3>\n\n";
+    echo '      <h3>' . $section . ', ' . $subsection . "</h3>\n\n";
     $stmt = $dbh->prepare('SELECT idAd, title FROM ads WHERE categoryId=? ORDER BY title');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute([$idSubsection]);
     foreach ($stmt as $row) {
         extract($row);
-        echo '    <p><a href="' . $uri . '?m=classified-ads&amp;c=' . $idAd . '">' . $title . "</a></p>\n\n";
+        echo '      <p><a href="' . $uri . '?m=classified-ads&amp;c=' . $idAd . '">' . $title . "</a></p>\n\n";
     }
     $dbh = null;
 } elseif (!isset($_GET['c'])) {
@@ -72,10 +72,10 @@ if (isset($_GET['s'])) {
                 $stmt->execute([$parentId]);
                 $row = $stmt->fetch();
                 extract($row);
-                echo '    <h3>' . $section . ', ' . $subsection . "</h3>\n\n";
+                echo '      <h3>' . $section . ', ' . $subsection . "</h3>\n\n";
                 $categoryIdPrior = $categoryId;
             }
-            echo '    <p><a href="' . $uri . '?m=classified-ads&amp;c=' . $idAd . '">' . $title . "</a></p>\n\n";
+            echo '      <p><a href="' . $uri . '?m=classified-ads&amp;c=' . $idAd . '">' . $title . "</a></p>\n\n";
         }
         $dbh = null;
     } else {
@@ -87,7 +87,7 @@ if (isset($_GET['s'])) {
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         foreach ($stmt as $row) {
             extract($row);
-            echo '    <p><br />' . "\n    " . html($section) . "</p>\n\n";
+            echo '      <p><br />' . "\n    " . html($section) . "</p>\n\n";
             $stmt = $dbh->prepare('SELECT idSubsection, subsection FROM subsections WHERE parentId=? ORDER BY sortPrioritySubSection');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
             $stmt->execute([$idSection]);
@@ -103,7 +103,7 @@ if (isset($_GET['s'])) {
                     $count = null;
                 }
                 $dbRowCount = $row['count(*)'];
-                echo '    <blockquote><a href="' . $uri . '?m=classified-ads&amp;s=' . $idSubsection . '">'. html($subsection) . $count . "</a></blockquote>\n";
+                echo '      <blockquote><a href="' . $uri . '?m=classified-ads&amp;s=' . $idSubsection . '">'. html($subsection) . $count . "</a></blockquote>\n";
             }
             echo "\n";
         }
@@ -132,14 +132,14 @@ if (isset($_GET['s'])) {
         $stmt->execute([$parentId]);
         $row = $stmt->fetch();
         extract($row);
-        echo '    <h5>' . $section . ', <a href="' . $uri . '?m=classified-ads&amp;s=' . $categoryId . '">'. html($subsection) . "</a></h5>\n\n";
-        echo '    <h2>' . $title . "</h2>\n\n";
-        echo "    <p><br />\n    " . $description . "</p>\n\n";
+        echo '      <h5>' . $section . ', <a href="' . $uri . '?m=classified-ads&amp;s=' . $categoryId . '">'. html($subsection) . "</a></h5>\n\n";
+        echo '      <h2>' . $title . "</h2>\n\n";
+        echo "      <p><br />\n    " . $description . "</p>\n\n";
         $i = null;
         foreach ($photos as $photo) {
             $i++;
             if ($photo == 1) {
-                echo '    <p><img class="w b" src="imagec.php?i=' . muddle($idAd) . $i . '" alt="" /></p>' . "\n";
+                echo '      <p><img class="w b" src="imagec.php?i=' . muddle($idAd) . $i . '" alt="" /></p>' . "\n";
             }
         }
     }

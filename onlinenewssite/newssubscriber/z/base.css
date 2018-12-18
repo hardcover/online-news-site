@@ -45,11 +45,11 @@ caption, th {
 }
 
 body, h1, h2, h3, h4, h5, h6, div, span, form, input, select, textarea, .button, caption, th, p.e {
-    font-family: "Segoe UI Regular", "San Francisco", "Lucida Grande", Verdana, Arial, Helvetica, clean, sans-serif;
+    font-family: "Lucida Grande", Verdana, Arial, sans-serif;
 }
 
 p, blockquote, li, span.p {
-    font-family: Georgia, "Times New Roman", serif;
+    font-family: Cheltenham, Georgia, Times, "Times New Roman", serif;
 }
 
 pre, code {

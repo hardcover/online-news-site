@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 11 29
+ * @version:  2018 12 18
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -43,17 +43,17 @@ if (isset($_SESSION['message'])) {
 //
 echoIfMessage($message);
 ?>
-    <h1>Reset Password</h1>
+      <h1>Reset Password</h1>
 
-    <p>Complete the form below to receive an email to reset the password.</p>
+      <p>Complete the form below to receive an email to reset the password.</p>
 
-    <form action="<?php echo $uri; ?>post.php" method="post">
-      <p><label for="email">Email</label><br />
-      <input id="email" name="email" class="w" type="email" required /></p>
+      <form action="<?php echo $uri; ?>post.php" method="post">
+        <p><label for="email">Email</label><br />
+        <input id="email" name="email" class="w" type="email" required /></p>
 
-      <p><label>
-        <input name="forgot" type="checkbox" value="1" required /> Send me an email with a link to reset my password
-      </label></p>
+        <p><label>
+          <input name="forgot" type="checkbox" value="1" required /> Send me an email with a link to reset my password
+        </label></p>
 
-      <p><input type="submit" class="button" name="forgotPassword" value="Forgot password" /></p>
-    </form>
+        <p><input type="submit" class="button" name="forgotPassword" value="Forgot password" /></p>
+      </form>

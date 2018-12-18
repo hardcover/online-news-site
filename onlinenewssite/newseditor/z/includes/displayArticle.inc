@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 11 29
+ * @version:  2018 12 18
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -130,7 +130,9 @@ if (strpos($database, 'archive') === false) {
         if (!empty($byline) or !empty($bylineDateTime)) {
             $html.= "</h5>\n\n";
         }
-        $html.= Parsedown::instance()->parse($text);
+        $temp = Parsedown::instance()->parse($text);
+        $temp = str_replace("\n", "\n\n  ", $temp);
+        $html.= '  ' . $temp . "\n";
         if ($survey == 1) {
             //
             // Tally the vote, display the survey results
@@ -322,7 +324,9 @@ if (strpos($database, 'archive') === false) {
                 if (!empty($byline) or !empty($bylineDateTime)) {
                     $html.= "</h5>\n\n";
                 }
-                $html.= Parsedown::instance()->parse($text);
+                $temp = Parsedown::instance()->parse($text);
+                $temp = str_replace("\n", "\n\n  ", $temp);
+                $html.= '  ' . $temp . "\n";
                 if ($survey == 1) {
                     //
                     // Tally the vote, display the survey results

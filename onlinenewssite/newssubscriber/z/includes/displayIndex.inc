@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 11 29
+ * @version:  2018 12 18
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -43,7 +43,7 @@ if (isset($_GET['a'])) {
             if ($sortOrderSection == 1 and is_null($editorView)) {
                 // Do nothing
             } else {
-                $html.= "\n" . '    <h4>' . $section . "</h4>\n\n";
+                $html.= "\n" . '      <h4>' . $section . "</h4>\n\n";
             }
             //
             // Pull all articles in editing, by date range in published
@@ -58,15 +58,15 @@ if (isset($_GET['a'])) {
             foreach ($stmt as $row) {
                 extract($row);
                 if ($count != null) {
-                    $html.= "    <hr />\n\n";
+                    $html.= "      <hr />\n\n";
                 }
                 $count++;
-                $html.= '    <h2><a class="n" href="' . $use . '.php?a=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
+                $html.= '      <h2><a class="n" href="' . $use . '.php?a=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
                 if (!empty($standfirst)) {
-                    $html.= '    <h5>' . html($standfirst) . "</h5>\n\n";
+                    $html.= '      <h5>' . html($standfirst) . "</h5>\n\n";
                 }
                 if ($thumbnailImageWidth != null) {
-                    $html.= '    <p><a href="' . $use . '.php?a=' . $idArticle . '">';
+                    $html.= '      <p><a href="' . $use . '.php?a=' . $idArticle . '">';
                     if ($photoName === 'third') {
                         $html.= '<img class="t b mb" src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" alt="">';
                     } else {
@@ -75,7 +75,7 @@ if (isset($_GET['a'])) {
                     $html.= '</a>' . html($summary) . "</p>\n";
                 } else {
                     if ($summary != '') {
-                        $html.= '    <p>' . "\n" . html($summary) . "</p>\n";
+                        $html.= '      <p>' . html($summary) . "</p>\n";
                     }
                 }
             }

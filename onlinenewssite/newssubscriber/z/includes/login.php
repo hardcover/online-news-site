@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 11 29
+ * @version:  2018 12 18
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -49,17 +49,17 @@ $dbh = null;
 // HTML
 //
 echoIfMessage($message);
-echo "    <h1>Log in / Register</h1>\n\n";
-echo '    <p>' . $information . "</p>\n\n";
+echo "      <h1>Log in / Register</h1>\n\n";
+echo '      <p>' . $information . "</p>\n\n";
 ?>
-    <form action="<?php echo $uri; ?>post.php" method="post">
-      <p><label for="email">Email</label><br />
-      <input id="email" name="email" type="email" class="w" required /></p>
+      <form action="<?php echo $uri; ?>post.php" method="post">
+        <p><label for="email">Email</label><br />
+        <input id="email" name="email" type="email" class="w" required /></p>
 
-      <p><label for="pass">Password</label><br />
-      <input id="pass" name="pass" type="password" class="w" required /></p>
+        <p><label for="pass">Password</label><br />
+        <input id="pass" name="pass" type="password" class="w" required /></p>
 
-      <p><input type="submit" name="login" value="Log in" class="button" /> <input type="submit" name="register" value="Register" class="button" /></p>
-    </form>
+        <p><input type="submit" name="login" value="Log in" class="button" /> <input type="submit" name="register" value="Register" class="button" /></p>
+      </form>
 
-    <p><a href="<?php echo $uri; ?>?t=c">Forgot password?</a></p>
+      <p><a href="<?php echo $uri; ?>?t=c">Forgot password?</a></p>

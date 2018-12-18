@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 11 29
+ * @version:  2018 12 18
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -299,7 +299,7 @@ if (isset($_GET['a'])) {
                     }
                     if (isset($editorView) and $editorView == 1) {
                         $html.= "\n" . '  <form action="' . $uri . 'archive.php" method="post" class="wait">' . "\n";
-                        $html.= '    <p> <input type="hidden" name="idArticle" value="' . $idArticle . '"><input type="submit" class="button" value="Delete" name="delete" /> <input type="submit" class="button" value="Return to edit" name="edit" /></p>' . "\n";
+                        $html.= '    <p><input type="hidden" name="idArticle" value="' . $idArticle . '"><input type="submit" class="button" value="Delete" name="delete" /> <input type="submit" class="button" value="Return to edit" name="edit" /></p>' . "\n";
                         $html.= "  </form>\n";
                     }
                 }

@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 11 29
+ * @version:  2018 12 18
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -173,7 +173,7 @@ if (isset($tGet) and $tGet == 'l' and isset($vGet)) {
         $dbh = new PDO($dbSubscribersNew);
         $stmt = $dbh->prepare('UPDATE users SET verify=?, verified=? WHERE verify=?');
         $stmt->execute([null, 1, $vGet]);
-        $_SESSION['message'] = 'The email address is confirmed. Log in to submit classified ads, subscribe to the news, etc. Visit <a class="n" href="' . $uri . '?m=my-account">My account</a> after logging in to set your account preferences.';
+        $_SESSION['message'] = 'The email address is confirmed. Visit <a class="n" href="' . $uri . '?m=my-account">My account</a> after logging in to set your account preferences.';
         $dbh = null;
     }
 }
@@ -204,9 +204,10 @@ echo '    <div class="logo">
 //
 // Right column, menu
 //
-echo '  <div class="r">' . "\n";
-echo '    <h5>' . $description . "</h5>\n\n";
-echo '    <h5>';
+echo '  <div class="p">' . "\n";
+echo '    <div class="r">' . "\n";
+echo '      <h5>' . $description . "</h5>\n\n";
+echo '      <h5>' . "\n";
 if (file_exists($includesPath . '/custom/programs/home.php')) {
     include $includesPath . '/custom/programs/home.php';
 }
@@ -226,7 +227,7 @@ if (isset($_SESSION['auth'])) {
     $dbh = null;
     if ($row) {
         if ($row['contributor'] == 1) {
-            echo '    <a class="n" href="' . $uri . '?m=article-contribution">Article contribution</a><br />' . "\n";
+            echo '      <a class="n" href="' . $uri . '?m=article-contribution">Article contribution</a><br />' . "\n";
         }
     }
 }
@@ -238,10 +239,10 @@ $stmt = $dbh->query('SELECT menuName, menuPath, menuAuthorization FROM menu ORDE
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
     extract($row);
-    echo '    <a class="n" href="' . $uri . '?m=' . $menuPath . '">' . $menuName . '</a><br />' . "\n";
+    echo '      <a class="n" href="' . $uri . '?m=' . $menuPath . '">' . $menuName . '</a><br />' . "\n";
 }
 $dbh = null;
-echo "    </h5>\n";
+echo "      </h5>\n\n";
 //
 // Right column, ads
 //
@@ -286,20 +287,20 @@ foreach ($adSort as $idAd) {
     if ($row) {
         extract($row);
         if ($link != null and $link != '') {
-            $linkHtml1 = '<a href="' . html($link) . '" target="_blank" rel="nofollow">';
+            $linkHtml1 = '<a href="' . $link . '" target="_blank" rel="nofollow">';
             $linkHtml2 = '</a>';
         } else {
             $linkHtml1 = $linkHtml2 = null;
         }
-        echo '    ' . $linkHtml1 . '<img class="w b" src="imaged.php?i=' . muddle($idAd) . '" alt="' . $linkAlt . '" />' . $linkHtml2 . '<br />' . "\n";
+        echo '      ' . $linkHtml1 . '<img class="w b" src="imaged.php?i=' . muddle($idAd) . '" alt="' . $linkAlt . '" />' . $linkHtml2 . '<br />' . "\n";
     }
 }
 $dbh = null;
-echo '  </div>' . "\n\n";
+echo '    </div>' . "\n\n";
 //
 // Left column
 //
-echo '  <div class="l">' . "\n";
+echo '    <div class="l">' . "\n";
 if (empty($_GET)) {
     include $includesPath . '/displayIndex.inc';
 } elseif (isset($aGet) and isset($mGet)) {
@@ -338,9 +339,9 @@ if (empty($_GET)) {
             // Standard menu content
             //
             $content = Parsedown::instance()->parse($menuContent);
-            $content = str_replace("\n", "\n    ", $content);
-            echo '    <h1>' . $menuName . "</h1>\n";
-            echo '    ' . $content . "\n";
+            $content = str_replace("\n", "\n      ", $content);
+            echo '      <h1>' . $menuName . "</h1>\n";
+            echo '      ' . $content . "\n";
         }
     }
 } elseif (isset($tGet) and $tGet == 'c') {
@@ -369,6 +370,7 @@ if (empty($_GET)) {
 if (file_exists($includesPath . '/custom/programs/footer.php')) {
     include $includesPath . '/custom/programs/footer.php';
 }
+echo "    </div>\n";
 echo "  </div>\n";
 ?>
 </body>

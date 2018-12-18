@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 11 29
+ * @version:  2018 12 18
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -48,16 +48,16 @@ if (isset($_GET['v'])) {
 //
 echoIfMessage($message);
 ?>
-    <h1>Reset Password</h1>
+      <h1>Reset Password</h1>
 
-    <p>Complete the form below to set a new password.</p>
+      <p>Complete the form below to set a new password.</p>
 
-    <form action="<?php echo $uri; ?>post.php" method="post">
-      <p><label for="passOne">New password</label><br />
-      <input id="passOne" name="passOne" type="password" class="w" required /></p>
+      <form action="<?php echo $uri; ?>post.php" method="post">
+        <p><label for="passOne">New password</label><br />
+        <input id="passOne" name="passOne" type="password" class="w" required /></p>
 
-      <p><label for="passTwo">Confirm new password</label><br />
-      <input id="passTwo" name="passTwo" type="password" class="w" required /></p>
+        <p><label for="passTwo">Confirm new password</label><br />
+        <input id="passTwo" name="passTwo" type="password" class="w" required /></p>
 
-      <p><input type="submit" class="button" name="resetPassword" value="Set new password" /><input type="hidden" name="verify"<?php echoIfValue($vGet); ?> /></p>
-    </form>
+        <p><input type="submit" class="button" name="resetPassword" value="Set new password" /><input type="hidden" name="verify"<?php echoIfValue($vGet); ?> /></p>
+      </form>

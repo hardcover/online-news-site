@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 11 29
+ * @version:  2018 12 18
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -19,6 +19,7 @@ session_start();
 require 'z/system/configuration.php';
 require $includesPath . '/authorization.php';
 require $includesPath . '/common.php';
+require $includesPath . '/parsedown-master/Parsedown.php';
 //
 // Variables
 //
