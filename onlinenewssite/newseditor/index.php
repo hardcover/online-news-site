@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 12 18
+ * @version:  2018 12 21
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -161,7 +161,7 @@ foreach ($stmt as $row) {
 }
 $dbh = null;
 $request['phpversion'] = phpversion();
-$request['version'] = '2018 12 18';
+$request['version'] = '2018 12 21';
 $request = http_build_query(array_map('base64_encode', $request));
 stream_context_set_default(['http' => ['method' => 'POST', 'header' => 'Content-Type: application/x-www-form-urlencoded', 'content' => $request]]);
 $fp = @fopen('https://online-news-site.com/v/', 'rb', false);
@@ -190,6 +190,8 @@ require $includesPath . '/header1.inc';
 
     <p><input type="submit" name="login" class="button" value="Log in" /></p>
   </form>
-<?php echo "\n  <p>Version 2018 12 18.</p>\n"; ?>
+<?php echo "\n  <p>Version 2018 12 21.</p>\n"; ?>
+
+  <p>By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.</p>
 </body>
 </html>

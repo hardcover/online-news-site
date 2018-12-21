@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 12 18
+ * @version:  2018 12 21
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -128,7 +128,7 @@ if ((isset($_POST['login'])
             $body.= $uri . '?t=l&v=' . $verify . "\r\n";
             $subject = 'Confirm email address at ' . $name . "\r\n";
             mail($emailPost . "\r\n", $subject, $body, $headers);
-            $message = 'Check your email for a message from us. Visit the link in the email to confirm the email address and continue registration.';
+            $message = 'Check your email for a message from us. Visit the link in the email to confirm the email address and continue registration.<br /><br />The website does not use cookies except for logged-in users. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.';
         } else {
             //
             // Set message for failed log in attempt when the email is not found
@@ -249,7 +249,7 @@ if ((isset($_POST['login'])
                 //
                 // Set message for when a registration is begun again within the fifteen minute time for email confirmation
                 //
-                $message = 'Check your email for a message from us. Visit the link in the email to confirm the email address and continue registration.';
+                $message = 'Check your email for a message from us. Visit the link in the email to confirm the email address and continue registration.<br /><br />The website does not use cookies except for logged-in users. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.';
             } else {
                 //
                 // Set message for when the email is found but the password is incorrect in a log in
