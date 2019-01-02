@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2018 12 21
+ * @version:  2019 01 02
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -123,10 +123,10 @@ require $includesPath . '/header1.inc';
 <?php
 $rowcount = null;
 $dbh = new PDO($dbClassifieds);
-$stmt = $dbh->query('SELECT count(*) FROM ads WHERE review IS NULL');
+$stmt = $dbh->query('SELECT count(idAd) FROM ads WHERE review IS NULL');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $row = $stmt->fetch();
-$dbRowCount = $row['count(*)'];
+$dbRowCount = $row['count(idAd)'];
 echo '  <p>' . number_format($dbRowCount) . " ad(s) pending.</p>\n  <hr />\n\n";
 $i = null;
 $stmt = $dbh->query('SELECT idAd, email, title, description, categoryId, startDate, duration, photos FROM ads WHERE review IS NULL ORDER BY email');
