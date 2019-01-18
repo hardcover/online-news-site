@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 01 02
+ * @version:  2019 01 18
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -36,7 +36,8 @@ $editPost = inlinePost('edit');
 $idNamePost = inlinePost('idName');
 $idRemotePost = inlinePost('idRemote');
 $idSectionPost = inlinePost('idSection');
-$informationPost = inlinePost('information');
+$infoFormsPost = securePost('infoForms');
+$informationPost = securePost('information');
 $newAdminPassOnePost = inlinePost('newAdminPassOne');
 $newAdminPassTwoPost = inlinePost('newAdminPassTwo');
 $newsDescriptionPost = inlinePost('newsDescription');
@@ -223,6 +224,28 @@ if (password_verify($adminPassPost, $row['pass'])) {
             // Clear registration information for display
             //
             $informationPost = null;
+        }
+    }
+    //
+    // Button: Add / update contact form information
+    //
+    if (isset($_POST['addUpdateContactForm'])) {
+        if (is_null($infoFormsPost)) {
+            $message = 'Contact form information is required.';
+        } else {
+            $dbh = new PDO($dbSettings);
+            $stmt = $dbh->query('DELETE FROM forms');
+            $stmt = $dbh->prepare('INSERT INTO forms (infoForms) VALUES (?)');
+            $stmt->execute([$infoFormsPost]);
+            $dbh = null;
+            //
+            // Update the remote databases
+            //
+            include $includesPath . '/syncSettings.php';
+            //
+            // Clear contact form information for display
+            //
+            $infoFormsPost = null;
         }
     }
     //
@@ -542,7 +565,20 @@ echo '    <p><span class="p">' . $row['information'] . "<br />\n";
 echo '    <input type="hidden" name="idRegistration" value="' . $row['idRegistration'] . '" /><input type="hidden" name="information" value="' . $row['information'] . '" /><input type="submit" value="Edit" name="edit" class="button" /></span></p>' . "\n";
 echo "  </form>\n\n";
 ?>
-  <h1><span class="h">Email alert for classifieds</span></h1>
+  <h1><span class="h">Contact form information</span></h1>
+
+<?php
+$dbh = new PDO($dbSettings);
+$stmt = $dbh->query('SELECT idForm, infoForms FROM forms');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+$row = $stmt->fetch();
+$dbh = null;
+echo '  <form action="' . $uri . 'settings.php" method="post">' . "\n";
+echo '    <p><span class="p">' . $row['infoForms'] . "<br />\n";
+echo '    <input type="hidden" name="idForm" value="' . $row['idForm'] . '" /><input type="hidden" name="infoForms" value="' . $row['infoForms'] . '" /><input type="submit" value="Edit" name="edit" class="button" /></span></p>' . "\n";
+echo "  </form>\n\n";
+?>
+  <h1><span class="h">Email address for contact forms and alerts</span></h1>
 
 <?php
 $dbh = new PDO($dbSettings);
@@ -609,7 +645,14 @@ $dbh = null;
 
     <p class="b"><input type="submit" value="Add / update" name="addUpdateRegistration" class="button" /></p>
 
-    <h1>Email alert for classifieds</h1>
+    <h1>Contact form information</h1>
+
+    <p><label for="infoForms">Information</label><br />
+    <span class="hl"><textarea id="infoForms" name="infoForms" class="h"><?php echoIfText($infoFormsPost); ?></textarea></span></p>
+
+    <p class="b"><input type="submit" value="Add / update" name="addUpdateContactForm" class="button" /></p>
+
+    <h1>Email address for contact forms and alerts</h1>
 
     <p>Enter an email address to receive alerts when a classified ad requires review.</p>
 

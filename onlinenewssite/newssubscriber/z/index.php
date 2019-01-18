@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 01 02
+ * @version:  2019 01 18
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -640,7 +640,10 @@ if ($task == 'settingsUpdate') {
     $alertClassified = isset($alertClassified) ? json_decode($alertClassified, true) : null;
     $archiveAccess = isset($archiveAccess) ? json_decode($archiveAccess, true) : null;
     $calendarAccess = isset($calendarAccess) ? json_decode($calendarAccess, true) : null;
+    $classifiedAccess = isset($classifiedAccess) ? json_decode($classifiedAccess, true) : null;
+    $contactAccess = isset($contactAccess) ? json_decode($contactAccess, true) : null;
     $information = isset($information) ? json_decode($information, true) : null;
+    $infoForms = isset($infoForms) ? json_decode($infoForms, true) : null;
     $name = isset($name) ? json_decode($name, true) : null;
     $sortOrder = isset($sortOrder) ? json_decode($sortOrder, true) : null;
     //
@@ -669,6 +672,22 @@ if ($task == 'settingsUpdate') {
     $dbh = null;
     //
     $dbh = new PDO($dbSettings);
+    $stmt = $dbh->query('DELETE from classifiedAccess');
+    if (is_array($classifiedAccess)) {
+        $stmt = $dbh->prepare('INSERT INTO classifiedAccess (idClassifiedAccess, access) VALUES (?, ?)');
+        $stmt->execute($classifiedAccess);
+    }
+    $dbh = null;
+    //
+    $dbh = new PDO($dbSettings);
+    $stmt = $dbh->query('DELETE from contactAccess');
+    if (is_array($contactAccess)) {
+        $stmt = $dbh->prepare('INSERT INTO contactAccess (idContactAccess, access) VALUES (?, ?)');
+        $stmt->execute($contactAccess);
+    }
+    $dbh = null;
+    //
+    $dbh = new PDO($dbSettings);
     $stmt = $dbh->query('DELETE from names');
     if (is_array($name)) {
         $stmt = $dbh->prepare('INSERT INTO names (idName, name, description) VALUES (?, ?, ?)');
@@ -681,6 +700,14 @@ if ($task == 'settingsUpdate') {
     if (is_array($information)) {
         $stmt = $dbh->prepare('INSERT INTO registration (idRegistration, information) VALUES (?, ?)');
         $stmt->execute($information);
+    }
+    $dbh = null;
+    //
+    $dbh = new PDO($dbSettings);
+    $stmt = $dbh->query('DELETE from forms');
+    if (is_array($infoForms)) {
+        $stmt = $dbh->prepare('INSERT INTO forms (idForm, infoForms) VALUES (?, ?)');
+        $stmt->execute($infoForms);
     }
     $dbh = null;
     //

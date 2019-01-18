@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 01 02
+ * @version:  2019 01 18
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -50,6 +50,26 @@ if ($row) {
     $request['calendarAccess'] = json_encode($row);
 }
 //
+// Update classified access
+//
+$dbh = new PDO($dbSettings);
+$stmt = $dbh->query('SELECT idClassifiedAccess, access FROM classifiedAccess');
+$stmt->setFetchMode(PDO::FETCH_NUM);
+$row = $stmt->fetch();
+if ($row) {
+    $request['classifiedAccess'] = json_encode($row);
+}
+//
+// Update contact form access
+//
+$dbh = new PDO($dbSettings);
+$stmt = $dbh->query('SELECT idContactAccess, access FROM contactAccess');
+$stmt->setFetchMode(PDO::FETCH_NUM);
+$row = $stmt->fetch();
+if ($row) {
+    $request['contactAccess'] = json_encode($row);
+}
+//
 // Update email alert for classifieds
 //
 $dbh = new PDO($dbSettings);
@@ -76,6 +96,15 @@ $stmt->setFetchMode(PDO::FETCH_NUM);
 $row = $stmt->fetch();
 if ($row) {
     $request['information'] = json_encode($row);
+}
+//
+// Update contact form information
+//
+$stmt = $dbh->query('SELECT idForm, infoForms FROM forms');
+$stmt->setFetchMode(PDO::FETCH_NUM);
+$row = $stmt->fetch();
+if ($row) {
+    $request['infoForms'] = json_encode($row);
 }
 //
 // Update newpaper sections

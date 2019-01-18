@@ -1,6 +1,6 @@
 <?php
 /**
- * For authorized article contributions
+ * Predefined menu item: Calendar
  *
  * PHP version 7
  *
@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 01 02
+ * @version:  2019 01 18
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/

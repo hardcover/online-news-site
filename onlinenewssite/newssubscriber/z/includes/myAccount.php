@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 01 02
+ * @version:  2019 01 18
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -55,43 +55,45 @@ if (isset($_POST['submit']) and isset($idUserPost)) {
 //
 // Set form variables for edit
 //
-if ($_SESSION['db'] === 's') {
-    $dbh = new PDO($dbSubscribers);
-} elseif ($_SESSION['db'] === 'n') {
-    $dbh = new PDO($dbSubscribersNew);
-}
-$stmt = $dbh->prepare('SELECT email, payStatus, classifiedOnly, deliver, deliver2, deliveryAddress, dCityRegionPostal, billingAddress, bCityRegionPostal FROM users WHERE idUser=?');
-$stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute([$_SESSION['userId']]);
-$row = $stmt->fetch();
-$dbh = null;
-if ($row) {
-    extract($row);
-    $idUserEdit = $_SESSION['userId'];
-    $emailEdit = ' value="' . html(plain($email)) . '"';
-    $deliveryAddressEdit = ' value="' . html($deliveryAddress) . '"';
-    $dCityRegionPostalEdit = ' value="' . html($dCityRegionPostal) . '"';
-    $billingAddressEdit = ' value="' . html($billingAddress) . '"';
-    $bCityRegionPostalEdit = ' value="' . html($bCityRegionPostal) . '"';
-    if ($classifiedOnly == 1) {
-        $classifiedOnlyEdit = ' checked';
+if (!empty($_SESSION['db'])) {
+    if ($_SESSION['db'] === 's') {
+        $dbh = new PDO($dbSubscribers);
+    } elseif ($_SESSION['db'] === 'n') {
+        $dbh = new PDO($dbSubscribersNew);
     }
-    if ($deliver == 1) {
-        $deliverEdit = ' checked';
-    }
-    if ($deliver2 == 1) {
-        $emailNewsEdit = ' checked';
-    }
-    if (empty($payStatus)) {
-        $payStatusEdit = 'The account is not paid.';
-    } else {
-        $paidThrough = date("F j, Y", $payStatus);
-        $payStatusEdit = 'The account is paid through ' . $paidThrough . '.';
-    }
-    if (($emailNewsEdit === ' checked' or $deliverEdit === ' checked') and $payStatusEdit === 'The account is not paid.') {
-        $payNow = "      <p><label>\n";
-        $payNow.= '        <input type="checkbox" name="payNow" value="1" /> Pay now' . "\n";
-        $payNow.= "      </label></p>\n\n";
+    $stmt = $dbh->prepare('SELECT email, payStatus, classifiedOnly, deliver, deliver2, deliveryAddress, dCityRegionPostal, billingAddress, bCityRegionPostal FROM users WHERE idUser=?');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $stmt->execute([$_SESSION['userId']]);
+    $row = $stmt->fetch();
+    $dbh = null;
+    if ($row) {
+        extract($row);
+        $idUserEdit = $_SESSION['userId'];
+        $emailEdit = ' value="' . html(plain($email)) . '"';
+        $deliveryAddressEdit = ' value="' . html($deliveryAddress) . '"';
+        $dCityRegionPostalEdit = ' value="' . html($dCityRegionPostal) . '"';
+        $billingAddressEdit = ' value="' . html($billingAddress) . '"';
+        $bCityRegionPostalEdit = ' value="' . html($bCityRegionPostal) . '"';
+        if ($classifiedOnly == 1) {
+            $classifiedOnlyEdit = ' checked';
+        }
+        if ($deliver == 1) {
+            $deliverEdit = ' checked';
+        }
+        if ($deliver2 == 1) {
+            $emailNewsEdit = ' checked';
+        }
+        if (empty($payStatus)) {
+            $payStatusEdit = 'The account is not paid.';
+        } else {
+            $paidThrough = date("F j, Y", $payStatus);
+            $payStatusEdit = 'The account is paid through ' . $paidThrough . '.';
+        }
+        if (($emailNewsEdit === ' checked' or $deliverEdit === ' checked') and $payStatusEdit === 'The account is not paid.') {
+            $payNow = "      <p><label>\n";
+            $payNow.= '        <input type="checkbox" name="payNow" value="1" /> Pay now' . "\n";
+            $payNow.= "      </label></p>\n\n";
+        }
     }
 }
 //

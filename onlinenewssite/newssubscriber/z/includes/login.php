@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 01 02
+ * @version:  2019 01 18
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -39,18 +39,23 @@ if (isset($_SESSION['message'])) {
     $message = null;
 }
 $information = null;
-$dbh = new PDO($dbSettings);
-$stmt = $dbh->query('SELECT information FROM registration');
-$stmt->setFetchMode(PDO::FETCH_ASSOC);
-$row = $stmt->fetch();
-extract($row);
-$dbh = null;
 //
 // HTML
 //
 echoIfMessage($message);
 echo "      <h1>Log in / Register</h1>\n\n";
-echo '      <p>' . $information . "</p>\n\n";
+$dbh = new PDO($dbSettings);
+$stmt = $dbh->query('SELECT information FROM registration');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+$row = $stmt->fetch();
+$dbh = null;
+if ($row) {
+    $temp = Parsedown::instance()->parse($row['information']);
+    $temp = str_replace("\n", "\n\n      ", $temp);
+    $information = '      ' . $temp . "\n\n";
+    $temp = null;
+    echo $information;
+}
 ?>
       <form action="<?php echo $uri; ?>post.php" method="post">
         <p><label for="email">Email</label><br />
