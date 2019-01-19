@@ -76,6 +76,8 @@ if (isset($_POST['type']) and empty($formPost)) {
 // Birth announcement
 //
 if (isset($formPost) and $formPost === 'birth') {
+    $emailEdit = null;
+    $emailPost = inlinePost('email');
     $babyNameEdit = null;
     $babyNamePost = inlinePost('babyName');
     $birthdayEdit = null;
@@ -136,7 +138,12 @@ if (isset($formPost) and $formPost === 'birth') {
     // Send the information or reset the form
     //
     if (isset($_POST['submit']) and is_null($message)) {
-        $body = 'Full name of baby' . "\n";
+        $body = null;
+        if (!empty($emailPost)) {
+            $body.= 'Email' . "\n";
+            $body.= $emailPost . "\n\n";
+        }
+        $body.= 'Full name of baby' . "\n";
         $body.= $babyNamePost . "\n\n";
         $body.= 'Gender' . "\n";
         if ($genderPost === 'male') {
@@ -164,6 +171,7 @@ if (isset($formPost) and $formPost === 'birth') {
         mail($emailTo, $subject, $body, $headers);
         $message = 'The information was sent.';
     } else {
+        $emailEdit = $emailPost;
         $babyNameEdit = $babyNamePost;
         $birthdayEdit = $birthdayPost;
         $childrenEdit = $childrenPost;
@@ -187,6 +195,9 @@ if (isset($formPost) and $formPost === 'birth') {
     $html = '        <h3>Birth announcement</h3>
 
         <input type="hidden" name="form" value="' . $formPost . '" />
+
+        <p><label for="title">Email (optional)<br />
+        <input type="email" id="email" name="email" class="w"' . returnIfValue($emailEdit) . ' /></label></p>
 
         <p><label for="babyName">Full name of baby<br />
         <input type="text" id="babyName" name="babyName" class="w"' . returnIfValue($babyNameEdit) . ' required /></label></p>
@@ -224,6 +235,8 @@ if (isset($formPost) and $formPost === 'birth') {
 // Engagement announcement
 //
 if (isset($formPost) and $formPost === 'engagement') {
+    $emailEdit = null;
+    $emailPost = inlinePost('email');
     $dateEdit = null;
     $datePost = inlinePost('date');
     $mansEmployerEdit = null;
@@ -307,7 +320,12 @@ if (isset($formPost) and $formPost === 'engagement') {
     // Send the information or reset the form
     //
     if (isset($_POST['submit']) and is_null($message)) {
-        $body = 'Date of wedding' . "\n";
+        $body = null;
+        if (!empty($emailPost)) {
+            $body.= 'Email' . "\n";
+            $body.= $emailPost . "\n\n";
+        }
+        $body.= 'Date of wedding' . "\n";
         $body.= $datePost . "\n\n";
         $body.= 'Place of wedding' . "\n";
         $body.= $weddingPlacePost . "\n\n";
@@ -341,6 +359,7 @@ if (isset($formPost) and $formPost === 'engagement') {
         mail($emailTo, $subject, $body, $headers);
         $message = 'The information was sent.';
     } else {
+        $emailEdit = $emailPost;
         $dateEdit = $datePost;
         $mansEmployerEdit = $mansEmployerPost;
         $mansNameEdit = $mansNamePost;
@@ -363,6 +382,9 @@ if (isset($formPost) and $formPost === 'engagement') {
     $html = '        <h3>Engagement announcement</h3>
 
         <input type="hidden" name="form" value="' . $formPost . '" />
+
+        <p><label for="title">Email (optional)<br />
+        <input type="email" id="email" name="email" class="w"' . returnIfValue($emailEdit) . ' /></label></p>
 
         <p><label for="date">Date of wedding<br />
         <input type="date" id="date" name="date" class="w"' . returnIfValue($dateEdit) . ' required /></label></p>
@@ -415,6 +437,8 @@ if (isset($formPost) and $formPost === 'engagement') {
 // Obituary announcement
 //
 if (isset($formPost) and $formPost === 'obituary') {
+    $emailEdit = null;
+    $emailPost = inlinePost('email');
     $ageEdit = null;
     $agePost = inlinePost('age');
     $arrangementsByEdit = null;
@@ -597,7 +621,12 @@ if (isset($formPost) and $formPost === 'obituary') {
     // Send the information or reset the form
     //
     if (isset($_POST['submit']) and is_null($message)) {
-        $body = 'Name' . "\n";
+        $body = null;
+        if (!empty($emailPost)) {
+            $body.= 'Email' . "\n";
+            $body.= $emailPost . "\n\n";
+        }
+        $body.= 'Name' . "\n";
         $body.= $namePost . "\n\n";
         $body.= 'Sex' . "\n";
         $body.= $genderPost . "\n\n";
@@ -663,6 +692,7 @@ if (isset($formPost) and $formPost === 'obituary') {
         mail($emailTo, $subject, $body, $headers);
         $message = 'The information was sent.';
     } else {
+        $emailEdit = $emailPost;
         $nameEdit = $namePost;
         $genderEdit = $genderPost;
         $ageEdit = $agePost;
@@ -703,6 +733,9 @@ if (isset($formPost) and $formPost === 'obituary') {
         <p>We do not charge for obituaries that run in the news columns. However, we reserve the right to treat obituaries as news and publish them written in newspaper style. Occasionally that is not acceptable to someone seeking to place an obituary, who insists it must be published word-for-word as submitted. The person then has the option of buying an advertisement that includes the text of the obituary. The ad will be placed within proximity of other obituaries in the newspaper.<input type="hidden" name="form" value="' . $formPost . '" /></p>
 
         <p><input type="hidden" name="form" value="' . $formPost . '" />
+
+        <p><label for="title">Email (optional)<br />
+        <input type="email" id="email" name="email" class="w"' . returnIfValue($emailEdit) . ' /></label></p>
 
         <p><label for="name">Name<br />
         <input type="text" id="name" name="name" class="w"' . returnIfValue($nameEdit) . ' required /></label></p>
@@ -806,6 +839,8 @@ if (isset($formPost) and $formPost === 'obituary') {
 // Wedding announcement
 //
 if (isset($formPost) and $formPost === 'wedding') {
+    $emailEdit = null;
+    $emailPost = inlinePost('email');
     $maidenNameEdit = null;
     $maidenNamePost = inlinePost('maidenName');
     $brideParentsEdit = null;
@@ -936,7 +971,12 @@ if (isset($formPost) and $formPost === 'wedding') {
     // Send the information or reset the form
     //
     if (isset($_POST['submit']) and is_null($message)) {
-        $body = 'Maiden name of the bride and her residence' . "\n";
+        $body = null;
+        if (!empty($emailPost)) {
+            $body.= 'Email' . "\n";
+            $body.= $emailPost . "\n\n";
+        }
+        $body.= 'Maiden name of the bride and her residence' . "\n";
         $body.= $maidenNamePost . "\n\n";
         $body.= 'Bride\'s parents and residence' . "\n";
         $body.= $brideParentsPost . "\n\n";
@@ -986,6 +1026,7 @@ if (isset($formPost) and $formPost === 'wedding') {
         mail($emailTo, $subject, $body, $headers);
         $message = 'The information was sent.';
     } else {
+        $emailEdit = $emailPost;
         $maidenNameEdit = $maidenNamePost;
         $brideParentsEdit = $brideParentsPost;
         $bridegroomNameEdit = $bridegroomNamePost;
@@ -1034,6 +1075,9 @@ if (isset($formPost) and $formPost === 'wedding') {
     $html = '        <h3>Wedding announcement</h3>
 
         <p><input type="hidden" name="form" value="' . $formPost . '" />
+
+        <p><label for="title">Email (optional)<br />
+        <input type="email" id="email" name="email" class="w"' . returnIfValue($emailEdit) . ' /></label></p>
 
         <p>If a photo is to go with the announcement, then email the photo to: office@illinois-valley-news.com.</p>
 
@@ -1117,6 +1161,8 @@ if (isset($formPost) and $formPost === 'wedding') {
 // Calendar event
 //
 if (isset($formPost) and $formPost === 'calendar') {
+    $emailEdit = null;
+    $emailPost = inlinePost('email');
     $nameEdit = null;
     $namePost = inlinePost('name');
     $addressEdit = null;
@@ -1150,7 +1196,12 @@ if (isset($formPost) and $formPost === 'calendar') {
     // Send the information or reset the form
     //
     if (isset($_POST['submit']) and is_null($message)) {
-        $body = 'Name' . "\n";
+        $body = null;
+        if (!empty($emailPost)) {
+            $body.= 'Email' . "\n";
+            $body.= $emailPost . "\n\n";
+        }
+        $body.= 'Name' . "\n";
         $body.= $namePost . "\n\n";
         $body.= 'Address' . "\n";
         $body.= $addressPost . "\n\n";
@@ -1164,6 +1215,7 @@ if (isset($formPost) and $formPost === 'calendar') {
         mail($emailTo, $subject, $body, $headers);
         $message = 'The information was sent.';
     } else {
+        $emailEdit = $emailPost;
         $nameEdit = $namePost;
         $addressEdit = $addressPost;
         $telephoneEdit = $telephonePost;
@@ -1176,6 +1228,9 @@ if (isset($formPost) and $formPost === 'calendar') {
     $html = '        <h3>Calendar event</h3>
 
         <p><input type="hidden" name="form" value="' . $formPost . '" />
+
+        <p><label for="title">Email (optional)<br />
+        <input type="email" id="email" name="email" class="w"' . returnIfValue($emailEdit) . ' /></label></p>
 
         <p><label for="name">Name<br />
         <input type="text" id="name" name="name" class="w"' . returnIfValue($nameEdit) . ' required /></label></p>
@@ -1198,6 +1253,8 @@ if (isset($formPost) and $formPost === 'calendar') {
 // Letter to the editor
 //
 if (isset($formPost) and $formPost === 'letter') {
+    $emailEdit = null;
+    $emailPost = inlinePost('email');
     $nameEdit = null;
     $namePost = inlinePost('name');
     $addressEdit = null;
@@ -1231,7 +1288,12 @@ if (isset($formPost) and $formPost === 'letter') {
     // Send the information or reset the form
     //
     if (isset($_POST['submit']) and is_null($message)) {
-        $body = 'Name' . "\n";
+        $body = null;
+        if (!empty($emailPost)) {
+            $body.= 'Email' . "\n";
+            $body.= $emailPost . "\n\n";
+        }
+        $body.= 'Name' . "\n";
         $body.= $namePost . "\n\n";
         $body.= 'Address' . "\n";
         $body.= $addressPost . "\n\n";
@@ -1245,6 +1307,7 @@ if (isset($formPost) and $formPost === 'letter') {
         mail($emailTo, $subject, $body, $headers);
         $message = 'The information was sent.';
     } else {
+        $emailEdit = $emailPost;
         $nameEdit = $namePost;
         $addressEdit = $addressPost;
         $telephoneEdit = $telephonePost;
@@ -1257,6 +1320,9 @@ if (isset($formPost) and $formPost === 'letter') {
     $html = '        <h3>Letter to the editor</h3>
 
         <p><input type="hidden" name="form" value="' . $formPost . '" />
+
+        <p><label for="title">Email (optional)<br />
+        <input type="email" id="email" name="email" class="w"' . returnIfValue($emailEdit) . ' /></label></p>
 
         <p><label for="name">Name<br />
         <input type="text" id="name" name="name" class="w"' . returnIfValue($nameEdit) . ' required /></label></p>
@@ -1279,6 +1345,8 @@ if (isset($formPost) and $formPost === 'letter') {
 // Letter to the editor
 //
 if (isset($formPost) and $formPost === 'other') {
+    $emailEdit = null;
+    $emailPost = inlinePost('email');
     $nameEdit = null;
     $namePost = inlinePost('name');
     $addressEdit = null;
@@ -1312,7 +1380,12 @@ if (isset($formPost) and $formPost === 'other') {
     // Send the information or reset the form
     //
     if (isset($_POST['submit']) and is_null($message)) {
-        $body = 'Name' . "\n";
+        $body = null;
+        if (!empty($emailPost)) {
+            $body.= 'Email' . "\n";
+            $body.= $emailPost . "\n\n";
+        }
+        $body.= 'Name' . "\n";
         $body.= $namePost . "\n\n";
         $body.= 'Address' . "\n";
         $body.= $addressPost . "\n\n";
@@ -1326,6 +1399,7 @@ if (isset($formPost) and $formPost === 'other') {
         mail($emailTo, $subject, $body, $headers);
         $message = 'The information was sent.';
     } else {
+        $emailEdit = $emailPost;
         $nameEdit = $namePost;
         $addressEdit = $addressPost;
         $telephoneEdit = $telephonePost;
@@ -1338,6 +1412,9 @@ if (isset($formPost) and $formPost === 'other') {
     $html = '        <h3>Other</h3>
 
         <p><input type="hidden" name="form" value="' . $formPost . '" />
+
+        <p><label for="title">Email (optional)<br />
+        <input type="email" id="email" name="email" class="w"' . returnIfValue($emailEdit) . ' /></label></p>
 
         <p><label for="name">Name<br />
         <input type="text" id="name" name="name" class="w"' . returnIfValue($nameEdit) . ' required /></label></p>
