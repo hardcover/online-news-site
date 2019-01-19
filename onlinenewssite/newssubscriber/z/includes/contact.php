@@ -48,7 +48,7 @@ if ($row) {
     $temp = null;
 }
 if (file_exists($includesPath . '/custom/programs/location.php')) {
-    include 'z/includes/custom/programs/location.php';
+    include $includesPath . '/custom/programs/location.php';
 }
 //
 // Form select
@@ -1239,7 +1239,7 @@ if (isset($formPost) and $formPost === 'letter') {
         $body.= $telephonePost . "\n\n";
         $body.= 'Title' . "\n";
         $body.= $titlePost . "\n\n";
-        $body.= 'Content' . "\n";
+        $body.= 'Content for publication' . "\n";
         $body.= $contentPost . "\n\n";
         $body.= $location;
         mail($emailTo, $subject, $body, $headers);

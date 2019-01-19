@@ -84,6 +84,8 @@ $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
     $classifiedsEdit = 1;
+} else {
+    $classifiedsEdit = null;
 }
 //
 // Contact forms edit variable
@@ -95,7 +97,9 @@ $stmt->execute(['Contact us']);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
-    $classifiedsEdit = 1;
+    $contactEdit = 1;
+} else {
+    $contactEdit = null;
 }
 //
 $remotes = [];
