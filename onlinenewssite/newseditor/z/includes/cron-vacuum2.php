@@ -81,7 +81,7 @@ if ($row['count(rowid)'] > 100) {
                 $stmt = $dbh->prepare('DELETE FROM articles WHERE idArticle=?');
                 $stmt->execute([$article]);
             }
-            $dbhNew = new PDO('archive2', 'archive2-' . $dbNumber, 'sqlite:' . $database2);
+            $dbhNew = new PDO(str_replace('archive2', 'archive2-' . $dbNumber, 'sqlite:' . $database2));
             $stmt = $dbhNew->query('CREATE TABLE IF NOT EXISTS "imageSecondary" ("idPhoto" INTEGER UNIQUE, "idArticle" INTEGER, "image", "photoName", "photoCredit", "photoCaption", "time" INTEGER)');
             $stmt = $dbhNew->query('CREATE INDEX IF NOT EXISTS "main"."imageSecondaryIndex" ON "imageSecondary" ("idPhoto" ASC);');
             $dbhArchive2 = new PDO('sqlite:' . $database2);
