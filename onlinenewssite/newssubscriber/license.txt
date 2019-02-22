@@ -1,4 +1,4 @@
-Copyright (c) 2013-2018 Hardcover LLC
+Copyright (c) 2013-2019 Hardcover LLC
 https://hardcoverwebdesign.com/
 
 Permission is hereby granted, free of charge, to any person obtaining a copy

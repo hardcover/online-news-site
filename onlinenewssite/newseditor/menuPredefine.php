@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 01 18
+ * @version:  2019 02 22
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -55,9 +55,7 @@ $stmt->execute([1]);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
-    $archiveEdit = $row['access'];
-} else {
-    $archiveEdit = null;
+    $archiveEdit = 1;
 }
 //
 // Calendar edit variable
@@ -69,9 +67,7 @@ $stmt->execute([1]);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
-    $calendarEdit = $row['access'];
-} else {
-    $calendarEdit = null;
+    $calendarEdit = 1;
 }
 //
 // Classified ads edit variable
@@ -84,8 +80,6 @@ $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
     $classifiedsEdit = 1;
-} else {
-    $classifiedsEdit = null;
 }
 //
 // Contact forms edit variable
@@ -98,8 +92,6 @@ $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
     $contactEdit = 1;
-} else {
-    $contactEdit = null;
 }
 //
 $remotes = [];

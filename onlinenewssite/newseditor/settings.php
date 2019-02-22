@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 01 18
+ * @version:  2019 02 22
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -640,14 +640,14 @@ $dbh = null;
 
     <h1>Registration information</h1>
 
-    <p><label for="information">Information</label><br />
+    <p><label for="information">Information (<a href="markdown.html" target="_blank">markdown syntax</a>)</label><br />
     <span class="hl"><textarea id="information" name="information" class="h"><?php echoIfText($informationPost); ?></textarea></span></p>
 
     <p class="b"><input type="submit" value="Add / update" name="addUpdateRegistration" class="button" /></p>
 
     <h1>Contact form information</h1>
 
-    <p><label for="infoForms">Information</label><br />
+    <p><label for="infoForms">Information (<a href="markdown.html" target="_blank">markdown syntax</a>)</label><br />
     <span class="hl"><textarea id="infoForms" name="infoForms" class="h"><?php echoIfText($infoFormsPost); ?></textarea></span></p>
 
     <p class="b"><input type="submit" value="Add / update" name="addUpdateContactForm" class="button" /></p>

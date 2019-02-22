@@ -11,7 +11,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 01 18
+ * @version:  2019 02 22
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -172,7 +172,7 @@ if (file_exists('cron-vacuum.log')) {
     $i = null;
     $priorLog = file('cron-vacuum.log');
     foreach ($priorLog as $value) {
-        if ($i < 1000) {
+        if ($i < 500) {
             $prior.= $value;
             $i++;
         }
