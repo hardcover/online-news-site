@@ -10,7 +10,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 11 15
+ * @version:  2019 12 7
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -69,6 +69,14 @@ foreach ($stmt as $row) {
 }
 $dbh = null;
 //
+// Delete ads not run in more than 400 days
+//
+$daysAgo = date("Y-m-d", time() - 86400 * 400);
+$dbh = new PDO($dbAdvertising);
+$stmt = $dbh->prepare('DELETE FROM advertisements WHERE endDateAd < ?');
+$stmt->execute([$daysAgo]);
+$dbh = null;
+//
 // Button: Add / update
 //
 if (isset($_POST['addUpdate'])) {
@@ -103,53 +111,36 @@ if (isset($_POST['addUpdate'])) {
         if ($sortOrderAdPost > $row['sortOrderAd']) {
             $sortOrderAdPost++;
         }
+        if (empty($linkAltPost)) {
+            $linkAltPost = $organizationPost;
+        }
         $stmt = $dbh->prepare('UPDATE advertisements SET startDateAd=?, endDateAd=?, sortOrderAd=?, sortPriority=?, organization=?, payStatus=?, link=?, linkAlt=?, enteredBy=?, note=? WHERE idAd=?');
         $stmt->execute([$startDateAdPost, $endDateAdPost, $sortOrderAdPost, 1, $organizationPost, $payStatusPost, $linkPost, $linkAltPost, $_SESSION['username'], $notePost, $idAd]);
         $dbh = null;
         //
-        // Create and save the image
+        // Resize and store the image
         //
         if ($_FILES['image']['size'] > 0 and $_FILES['image']['error'] == 0) {
             $sizes = getimagesize($_FILES['image']['tmp_name']);
             if ($sizes['mime'] == 'image/jpeg') {
-                //
-                // Save the original image and calculate the aspect ratio
-                //
                 $widthOriginal = $sizes['0'];
                 $heightOriginal = $sizes['1'];
                 $aspectRatio = $widthOriginal / $heightOriginal;
+                $width = 770;
+                $height = round($width / $aspectRatio);
+                $hd = imagecreatetruecolor($width, $height);
+                imageinterlace($hd, true);
+                $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
+                imagecopyresampled($hd, $srcImage, 0, 0, 0, 0, $width, $height, ImageSX($srcImage), ImageSY($srcImage));
+                ob_start();
+                imagejpeg($hd, null, 100);
+                imagedestroy($hd);
+                $image = ob_get_contents();
+                ob_end_clean();
                 $dbh = new PDO($dbAdvertising);
-                $stmt = $dbh->prepare('UPDATE advertisements SET originalImage=?, originalImageWidth=?, originalImageHeight=? WHERE idAd=?');
-                $stmt->execute([file_get_contents($_FILES['image']['tmp_name']), $widthOriginal, $heightOriginal, $idAd]);
+                $stmt = $dbh->prepare('UPDATE advertisements SET image=?, imageWidth=?, imageHeight=? WHERE idAd=?');
+                $stmt->execute([$image, $width, $height, $idAd]);
                 $dbh = null;
-                if ($widthOriginal == 770) {
-                    //
-                    // If the original width is 770, then use the original image without resizing
-                    //
-                    $dbh = new PDO($dbAdvertising);
-                    $stmt = $dbh->prepare('UPDATE advertisements SET image=?, imageWidth=?, imageHeight=? WHERE idAd=?');
-                    $stmt->execute([file_get_contents($_FILES['image']['tmp_name']), $widthOriginal, $heightOriginal, $idAd]);
-                    $dbh = null;
-                } else {
-                    //
-                    // Else resize the image for use
-                    //
-                    $width = 770;
-                    $height = round($width / $aspectRatio);
-                    $hd = imagecreatetruecolor($width, $height);
-                    imageinterlace($hd, true);
-                    $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
-                    imagecopyresampled($hd, $srcImage, 0, 0, 0, 0, $width, $height, ImageSX($srcImage), ImageSY($srcImage));
-                    ob_start();
-                    imagejpeg($hd, null, 100);
-                    imagedestroy($hd);
-                    $image = ob_get_contents();
-                    ob_end_clean();
-                    $dbh = new PDO($dbAdvertising);
-                    $stmt = $dbh->prepare('UPDATE advertisements SET image=?, imageWidth=?, imageHeight=? WHERE idAd=?');
-                    $stmt->execute([$image, $width, $height, $idAd]);
-                    $dbh = null;
-                }
             } else {
                 $message = 'The uploaded file was not in the JPG format.';
             }

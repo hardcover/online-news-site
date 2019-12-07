@@ -1,6 +1,6 @@
 <?php
 /**
- * Create the subscriber databases on the first run
+ * Create the databases on the first run
  * Identical in newseditor and newssubscriber
  *
  * PHP version 7
@@ -11,7 +11,7 @@
  * @copyright 2018 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 11 15
+ * @version:  2019 12 7
  * @link      https://hardcoverwebdesign.com/
  * @link      https://online-news-site.com/
  * @link      https://github.com/hardcover/
@@ -22,7 +22,7 @@ if (!file_exists($includesPath . '/databases')) {
 //
 $dbh = new PDO($dbAdvertising);
 $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "maxAd" ("idMaxAds" INTEGER PRIMARY KEY, "maxAds" INTEGER)');
-$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "advertisements" ("idAd" INTEGER PRIMARY KEY, "startDateAd", "endDateAd", "sortOrderAd" INTEGER, "sortPriority" INTEGER NOT NULL DEFAULT (2), "organization", "payStatus" INTEGER, "link", "linkAlt", "enteredBy", "note", "originalImage", "originalImageWidth" INTEGER, "originalImageHeight" INTEGER, "image", "imageWidth" INTEGER, "imageHeight" INTEGER)');
+$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "advertisements" ("idAd" INTEGER PRIMARY KEY, "startDateAd", "endDateAd", "sortOrderAd" INTEGER, "sortPriority" INTEGER NOT NULL DEFAULT (2), "organization", "payStatus" INTEGER, "link", "linkAlt", "enteredBy", "note", "image", "imageWidth" INTEGER, "imageHeight" INTEGER)');
 $dbh = null;
 //
 $dbh = new PDO($dbArchive);
