@@ -2,17 +2,17 @@
 /**
  * Pending classified ad maintenance
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 session_start();
@@ -28,7 +28,7 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
-if (empty($row['userType']) or $row['userType'] != 4) {
+if (empty($row['userType']) or $row['userType'] !== '4') {
     include 'logout.php';
     exit;
 }
@@ -54,7 +54,7 @@ $photoAvailable = null;
 // Button: Publish
 //
 if (isset($_POST['publish'])) {
-    if ($idAdPost != null) {
+    if (isset($idAdPost)) {
         $startTime = strtotime($startDatePost);
         $review = date("Y-m-d", $startTime + ($durationPost * 7 * 86400));
         $dbh = new PDO($dbClassifieds);
@@ -70,7 +70,7 @@ if (isset($_POST['publish'])) {
 // Button: Delete
 //
 if (isset($_POST['delete'])) {
-    if ($idAdPost != null) {
+    if (isset($idAdPost)) {
         $dbh = new PDO($dbClassifieds);
         $stmt = $dbh->prepare('SELECT idAd FROM ads WHERE idAd=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -133,11 +133,11 @@ $stmt = $dbh->query('SELECT idAd, email, title, description, categoryId, startDa
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
     $i++;
-    if ($i == 1) {
+    if ($i === intval(1)) {
         extract($row);
         $rowcount++;
         $categoryIdEdit = $categoryId;
-        $durationEdit = 1;
+        $durationEdit = '1';
         $email = plain($email);
         $photos = json_decode($photos, true);
         $startDateEdit = $startDate;
@@ -170,7 +170,7 @@ foreach ($stmt as $row) {
             $stmt->execute([$idSection]);
             foreach ($stmt as $row) {
                 extract($row);
-                if ($idSubsection == $categoryIdEdit) {
+                if ($idSubsection === $categoryIdEdit) {
                     $selected = ' selected';
                 } else {
                     $selected = null;
@@ -190,7 +190,7 @@ foreach ($stmt as $row) {
         $i = null;
         foreach ($photos as $photo) {
             $i++;
-            if ($photo == 1) {
+            if ($photo === 1) {
                 echo '    <p><img class="w b" src="imagec.php?i=' . muddle($idAd) . $i . '" alt="" /></p>' . "\n";
             }
         }

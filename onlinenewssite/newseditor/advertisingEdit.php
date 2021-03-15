@@ -2,17 +2,17 @@
 /**
  * Maintenance of ads not currently published
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 session_start();
@@ -28,7 +28,7 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
-if (empty($row['userType']) or $row['userType'] != 3) {
+if (empty($row['userType']) or $row['userType'] !== '3') {
     include 'logout.php';
     exit;
 }
@@ -75,7 +75,7 @@ if (isset($_POST['addUpdate'])) {
     //
     // Determine insert or update, check for unique id
     //
-    if ($_POST['existing'] == null) {
+    if (is_null($_POST['existing'])) {
         $dbh = new PDO($dbAdvertising);
         $stmt = $dbh->query('DELETE FROM advertisements WHERE organization IS NULL');
         $stmt = $dbh->prepare('INSERT INTO advertisements (organization) VALUES (?)');
@@ -94,7 +94,7 @@ if (isset($_POST['addUpdate'])) {
     //
     // Apply update
     //
-    if ($idAd != null) {
+    if ($idAd !== null) {
         $dbh = new PDO($dbAdvertising);
         $stmt = $dbh->prepare('SELECT idAd, sortOrderAd FROM advertisements WHERE idAd=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -112,9 +112,9 @@ if (isset($_POST['addUpdate'])) {
         //
         // Resize and store the image
         //
-        if ($_FILES['image']['size'] > 0 and $_FILES['image']['error'] == 0) {
+        if ($_FILES['image']['size'] > 0 and strval($_FILES['image']['error']) === '0') {
             $sizes = getimagesize($_FILES['image']['tmp_name']);
-            if ($sizes['mime'] == 'image/jpeg') {
+            if ($sizes['mime'] === 'image/jpeg') {
                 $widthOriginal = $sizes['0'];
                 $heightOriginal = $sizes['1'];
                 $aspectRatio = $widthOriginal / $heightOriginal;
@@ -212,7 +212,7 @@ if (isset($_POST['edit'])) {
         $idAdEdit = $idAdPost;
         $linkAltEdit = $linkAlt;
         $linkEdit = $link;
-        $notPaidEdit = (isset($payStatus) and $payStatus == 0) ? 1 : null;
+        $notPaidEdit = (isset($payStatus) and $payStatus === '0') ? 1 : null;
         $noteEdit = $note;
         $organizationEdit = $organization;
         $paidEdit = $payStatus;
@@ -256,7 +256,7 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([$today, $today]);
 foreach ($stmt as $row) {
     extract($row);
-    if ($imageWidth == 0) {
+    if (empty($imageWidth) or $imageWidth === '0') {
         $imageWidth = 1;
     }
     $width = (200 / $imageWidth) * $imageWidth;
@@ -264,10 +264,10 @@ foreach ($stmt as $row) {
     echo '  <form class="wait" action="' . $uri . 'advertisingEdit.php" method="post">' . "\n";
     echo '    <p><span class="p"><img class="b" src="imaged.php?i=' . muddle($idAd) . '" alt="" width="' . $width . '" height="' . $height . '" /><br />' . "\n";
     echo '    ' . $organization . ', by ' . $enteredBy . "<br />\n";
-    if ($link != null and $link != '') {
+    if ($link !== null and $link !== '') {
         echo '    <a href="' . html($link) . '" target="_blank">' . $linkAlt . "</a><br />\n";
     }
-    if ($note != null and $note != '') {
+    if ($note !== null and $note !== '') {
         echo '    ' . $note . "<br />\n";
     }
     echo '    <input name="idAd" type="hidden" value="' . $idAd . '" /><input type="submit" value="Edit" name="edit" class="button" /></span></p>' . "\n";
@@ -305,7 +305,7 @@ $dbh = null;
     <p><label for="link">Link from ad (optional)</label><br />
     <input id="link" name="link" type="text" class="h" <?php echoIfValue($linkEdit); ?> /></p>
 
-    <p><label for="linkAlt">Alternate text for ad image (optional)</label><br />
+    <p><label for="linkAlt">Alternate text for ad image  (if different from the organization name above)</label><br />
     <input id="linkAlt" name="linkAlt" type="text" class="h" <?php echoIfValue($linkAltEdit); ?> /></p>
 
     <p><label for="note">Note</label><br />

@@ -2,17 +2,17 @@
 /**
  * Downloads the latest remote classifieds
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 //
@@ -38,9 +38,9 @@ foreach ($remotes as $remote) {
     $response = null;
     $request['task'] = 'classifiedsSyncNew';
     $response = soa($remote . 'z/', $request);
-    if ($response['result'] == 'success') {
+    if ($response['result'] === 'success') {
         $classifieds = json_decode($response['remoteClassifieds'], true);
-        if ($classifieds == 'null' or $classifieds == null) {
+        if ($classifieds === 'null' or $classifieds === null) {
             $classifieds = [];
         }
     }
@@ -53,7 +53,7 @@ foreach ($remotes as $remote) {
         $request['task'] = 'classifiedsNewDownload';
         $request['idAd'] = $classified;
         $response = soa($remote . 'z/', $request);
-        if ($response['result'] == 'success' and isset($response['email'])) {
+        if ($response['result'] === 'success' and isset($response['email'])) {
             extract($response);
             $dbh = new PDO($dbClassifieds);
             $stmt = $dbh->prepare('INSERT INTO ads (email, title, description, categoryId, photos) VALUES (?, ?, ?, ?, ?)');
@@ -71,10 +71,10 @@ foreach ($remotes as $remote) {
             $i = null;
             foreach ($photos as $photo) {
                 $i++;
-                if ($photo == 1) {
+                if ($photo === 1) {
                     $request['photo'] = $i;
                     $response = soa($remote . 'z/', $request);
-                    if ($response['result'] == 'success' and isset($response['photo'])) {
+                    if ($response['result'] === 'success' and isset($response['photo'])) {
                         $dbh = new PDO($dbClassifieds);
                         $stmt = $dbh->prepare('UPDATE ads SET photo' . $i . '=? WHERE idAd=?');
                         $stmt->execute([$response['photo'], $idAdMain]);
@@ -99,7 +99,7 @@ foreach ($remotes as $remote) {
         $request['task'] = 'classifiedsSync';
         $response = soa($remote . 'z/', $request);
         $remoteClassifieds = json_decode($response['remoteClassifieds'], true);
-        if ($remoteClassifieds == 'null' or $remoteClassifieds == null) {
+        if ($remoteClassifieds === 'null' or $remoteClassifieds === null) {
             $remoteClassifieds = [];
         }
         $classifieds = [];
@@ -121,7 +121,7 @@ foreach ($remotes as $remote) {
             $request['task'] = 'classifiedsSync';
             $response = soa($remote . 'z/', $request);
             $remoteClassifieds = json_decode($response['remoteClassifieds'], true);
-            if ($remoteClassifieds == 'null' or $remoteClassifieds == null) {
+            if ($remoteClassifieds === 'null' or $remoteClassifieds === null) {
                 $remoteClassifieds = [];
             }
             $dbh = new PDO($dbClassifieds);

@@ -2,17 +2,17 @@
 /**
  * User maintenance for the editing users
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 session_start();
@@ -22,7 +22,7 @@ require $includesPath . '/common.php';
 //
 // User-group authorization
 //
-if ($_SESSION['username'] != 'admin') {
+if ($_SESSION['username'] !== 'admin') {
     include 'logout.php';
     exit;
 }
@@ -41,7 +41,7 @@ $message = null;
 $passPost = inlinePost('pass');
 $userEdit = null;
 $userPost = inlinePost('user');
-if ($passPost != null) {
+if (!is_null($passPost)) {
     $hash = password_hash($passPost, PASSWORD_DEFAULT);
 } else {
     $hash = null;
@@ -49,9 +49,6 @@ if ($passPost != null) {
 //
 // Test admin password authentication
 //
-if (isset($_POST['adminPass']) and ($_POST['adminPass'] == null or $_POST['adminPass'] == '')) {
-    $message = 'The admin password is required for all user maintenance.';
-}
 $dbh = new PDO($dbEditors);
 $stmt = $dbh->prepare('SELECT pass FROM users WHERE user=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -66,7 +63,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
         //
         // Determine insert or update, check for unique user name
         //
-        if ($_POST['existing'] == null) {
+        if (empty($_POST['existing'])) {
             $dbh = new PDO($dbEditors);
             $stmt = $dbh->prepare('SELECT user FROM users WHERE user=?');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -95,7 +92,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
         //
         // Apply update
         //
-        if ($_POST['user'] != null) {
+        if (isset($_POST['user']) and isset($idUser)) {
             $dbh = new PDO($dbEditors);
             if (is_null($hash)) {
                 $stmt = $dbh->prepare('UPDATE users SET user=?, fullName=?, email=?, userType=? WHERE idUser=?');
@@ -115,8 +112,8 @@ if (password_verify($adminPassPost, $row['pass'])) {
     // Button: Delete
     //
     if (isset($_POST['delete'])) {
-        if ($userPost != "admin") {
-            if ($_POST['user'] != null) {
+        if ($userPost !== 'admin') {
+            if (isset($_POST['user'])) {
                 $dbh = new PDO($dbEditors);
                 $stmt = $dbh->prepare('SELECT user FROM users WHERE user=?');
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -137,7 +134,11 @@ if (password_verify($adminPassPost, $row['pass'])) {
         }
     }
 } elseif (isset($_POST['addUpdate']) or isset($_POST['delete'])) {
-    $message = 'The admin password is invalid.';
+    if (empty($_POST['adminPass'])) {
+        $message = 'The admin password is required for all user maintenance.';
+    } else {
+        $message = 'The admin password is invalid.';
+    }
 }
 //
 // Button: Edit
@@ -193,7 +194,7 @@ foreach ($stmt as $row) {
     if (!empty($email)) {
         $fullName = '<a href="mailto:' . $email . '">' . $fullName . '</a>';
     }
-    if ($user != "admin") {
+    if ($user !== 'admin') {
         $rowcount++;
         echo '  <form class="wait" action="' . $uri . 'usersEditors.php" method="post">' . "\n";
         echo '    <p><span class="p">' . $fullName . " - Full name<br />\n";

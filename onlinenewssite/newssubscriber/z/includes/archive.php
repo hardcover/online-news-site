@@ -2,21 +2,21 @@
 /**
  * Predefined menu item: Archive search
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 @session_start();
-if ($freeOrPaid != 'free') {
+if ($freeOrPaid !== 'free') {
     include $includesPath . '/authorization.php';
 } else {
     $uri = $uriScheme . '://' . $_SERVER["HTTP_HOST"] . rtrim(dirname($_SERVER['PHP_SELF']), "/\\") . '/';
@@ -113,6 +113,9 @@ if (isset($_GET['a'])) {
     // Index view displays a list of all articles with a summary of each article
     //
 } else {
+    //
+    // Search fields and results view
+    //
     echo '
       <p>Search by any of the following criteria. Enter complete words or the beginning of words followed by an asterisk, for example, either <i>the</i> or <i>th*</i>.</p>
 
@@ -148,9 +151,9 @@ if (isset($_GET['a'])) {
                 $dbNumber++;
             } else {
                 $dbNumber = -1;
-                $dbh = null;
+                $database = null;
             }
-            if ($database != null) {
+            if (!empty($database)) {
                 $dbh = new PDO($database);
                 $stmt = $dbh->prepare($sql1);
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);

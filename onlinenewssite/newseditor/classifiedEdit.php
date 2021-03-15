@@ -2,17 +2,17 @@
 /**
  * For management to place classified ads
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 session_start();
@@ -28,7 +28,7 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
-if (empty($row['userType']) or $row['userType'] != 4) {
+if (empty($row['userType']) or $row['userType'] !== '4') {
     include 'logout.php';
     exit;
 }
@@ -98,9 +98,9 @@ if (isset($_POST['update']) and isset($idAdPost)) {
         //
         // Store the image, if any
         //
-        if ($_FILES['image']['size'] > 0 and $_FILES['image']['error'] == 0) {
+        if ($_FILES['image']['size'] > 0 and $_FILES['image']['error'] === 0) {
             $sizes = getimagesize($_FILES['image']['tmp_name']);
-            if ($sizes['mime'] == 'image/jpeg') {
+            if ($sizes['mime'] === 'image/jpeg') {
                 //
                 // Check for available images
                 //
@@ -111,7 +111,7 @@ if (isset($_POST['update']) and isset($idAdPost)) {
                     $stmt->execute([$idAdPost]);
                     $row = $stmt->fetch();
                     $dbh = null;
-                    if ($row['0'] == '') {
+                    if (empty($row['0'])) {
                         $photoAvailable = $photo;
                     }
                 }
@@ -163,9 +163,9 @@ if (isset($_POST['update']) and isset($idAdPost)) {
             $row = $stmt->fetch();
             $dbh = null;
             if (isset($row['0'])) {
-                $num[] = 1;
+                $num[] = '1';
             } else {
-                $num[] = 0;
+                $num[] = '0';
             }
         }
         $photosPublished = json_encode($num);
@@ -299,7 +299,7 @@ foreach ($stmt as $row) {
     $stmt->execute([$idSection]);
     foreach ($stmt as $row) {
         extract($row);
-        if ($idSubsection == $categoryIdEdit) {
+        if ($idSubsection === $categoryIdEdit) {
             $selected = ' selected';
         } else {
             $selected = null;
@@ -338,7 +338,7 @@ if (isset($idAdEdit)) {
         $stmt->execute([$idAdEdit]);
         $row = $stmt->fetch();
         $dbh = null;
-        if ($row['0'] != '') {
+        if (!empty($row['0'])) {
             echo '    <p><img class="w b" src="imagec.php?i=' . muddle($idAdEdit) . $photo . '" alt="" /></p>' . "\n\n";
         }
     }

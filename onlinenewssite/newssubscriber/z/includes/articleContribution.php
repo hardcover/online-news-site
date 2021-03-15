@@ -2,17 +2,17 @@
 /**
  * The editing form used by subscribers with article-contribution privileges
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 //
@@ -105,12 +105,12 @@ if (isset($_POST['addUpdate'])) {
         //
         // Store the image, if any
         //
-        if ($_FILES['image']['size'] > 0 and $_FILES['image']['error'] == 0) {
+        if ($_FILES['image']['size'] > 0 and $_FILES['image']['error'] === 0) {
             //
             // Verify JPG file
             //
             $sizes = getimagesize($_FILES['image']['tmp_name']);
-            if ($sizes['mime'] == 'image/jpeg') {
+            if ($sizes['mime'] === 'image/jpeg') {
                 //
                 // Variables
                 //
@@ -190,16 +190,19 @@ if (isset($_POST['addUpdate'])) {
                     $hdImage = ob_get_contents();
                     ob_end_clean();
                     $dbh = new PDO($dbEdit2);
-                    $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoName, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?, ?)');
-                    $stmt->execute([$idArticle, $hdImage, $widthPost, $photoCreditPost, $photoCaptionPost, time()]);
+                    $stmt = $dbh->prepare('INSERT INTO imageSecondary (idPhoto) VALUES (?)');
+                    $stmt->execute([null]);
+                    $idPhoto = $dbh->lastInsertId();
+                    $stmt = $dbh->prepare('UPDATE imageSecondary SET idPhoto=?, idArticle=?, image=?, photoName=?, photoCredit=?, photoCaption=?, time=? WHERE  rowid=?');
+                    $stmt->execute([$idPhoto, $idArticle, $hdImage, $widthPost, $photoCreditPost, $photoCaptionPost, time(), $idPhoto]);
                     $dbh = null;
                 }
             } else {
                 $message = 'The uploaded file was not in the JPG format.';
             }
-        } elseif (isset($_FILES['image']['error']) and $_FILES['image']['error'] == 1) {
+        } elseif (isset($_FILES['image']['error']) and $_FILES['image']['error'] === 1) {
             $message = 'The uploaded image exceeds the upload_max_filesize directive in php.ini.';
-        } elseif (isset($_FILES['image']['error']) and ($_FILES['image']['error'] != 4 and $_FILES['image']['error'] != 1)) {
+        } elseif (isset($_FILES['image']['error']) and ($_FILES['image']['error'] !== 4 and $_FILES['image']['error'] !== 1)) {
             $message = 'There was an unknown error with the uploaded image.';
         }
         //
@@ -259,31 +262,32 @@ if (isset($_POST['edit'])) {
 //
 // HTML
 //
-echo "  <h1>Article contribution</h1>\n";
+echo "      <h1>Article contribution</h1>\n";
 echoIfMessage($message);
 ?>
-  <p>Fifteen minutes from the last edit, the article becomes available to be sent to the editor after which it will no longer be available to edit here.</p>
 
-  <form class="wait" method="post" action="<?php echo $uri; ?>?m=article-contribution" enctype="multipart/form-data">
-    <p><label for="byline">Byline</label><br />
-    <input id="byline" name="byline" type="text" class="w" <?php echoIfValue($bylineEdit); ?> /><input type="hidden" name="idArticle" value="<?php echo $idArticleEdit; ?>"></p>
+      <p>Fifteen minutes from the last edit, the article becomes available to be sent to the editor after which it will no longer be available to edit here.</p>
 
-    <p><label for="idSection">Section</label><br />
-    <select id="idSection" name="idSection">
+      <form class="wait" method="post" action="<?php echo $uri; ?>?m=article-contribution" enctype="multipart/form-data">
+        <p><label for="byline">Byline</label><br />
+        <input id="byline" name="byline" type="text" class="w" <?php echoIfValue($bylineEdit); ?> /><input type="hidden" name="idArticle" value="<?php echo $idArticleEdit; ?>"></p>
+
+        <p><label for="idSection">Section</label><br />
+        <select id="idSection" name="idSection">
 <?php
 $dbh = new PDO($dbSettings);
 $stmt = $dbh->query('SELECT idSection, section FROM sections ORDER BY sortOrderSection');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
-    $selected = $idSectionEdit == $row['idSection'] ? ' selected="selected"' : null;
-    echo '      <option value="' . $row['idSection'] . '"' . $selected . '>' . $row['section'] . "</option>\n";
+    $selected = $idSectionEdit === $row['idSection'] ? ' selected="selected"' : null;
+    echo '        <option value="' . $row['idSection'] . '"' . $selected . '>' . $row['section'] . "</option>\n";
 }
 $dbh = null;
 ?>
-    </select></p>
+        </select></p>
 
 <?php
-if ($use == 'published') {
+if ($use === 'published') {
     echo '    <p><span class="rp">Sort order within section<br />' . "\n";
     echo '    <select name="sortOrderArticle">' . "\n";
     $count = 1;
@@ -292,7 +296,7 @@ if ($use == 'published') {
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     foreach ($stmt as $row) {
         extract($row);
-        $selected = ($sortOrderArticle == $count and $sortOrderArticle == $sortOrderArticleEdit) ? ' selected="selected"' : null;
+        $selected = ($sortOrderArticle === $count and $sortOrderArticle === $sortOrderArticleEdit) ? ' selected="selected"' : null;
         echo '      <option value="' . $count . '"' . $selected . '>' . $count . '</option>' . "\n";
         $count++;
     }
@@ -301,69 +305,169 @@ if ($use == 'published') {
     echo "    </select></span></p>\n\n";
 }
 ?>
-    <p><label for="headline">Headline</label><br />
-    <input id="headline" name="headline" type="text" class="w" <?php echoIfValue($headlineEdit); ?> /></p>
+        <p><label for="headline">Headline</label><br />
+        <input id="headline" name="headline" type="text" class="w" <?php echoIfValue($headlineEdit); ?> /></p>
 
-    <p><label for="standfirst">Standfirst</label><br />
-    <input id="standfirst" name="standfirst" type="text" class="w"<?php echoIfValue($standfirstEdit); ?> /></p>
+        <p><label for="standfirst">Standfirst</label><br />
+        <input id="standfirst" name="standfirst" type="text" class="w"<?php echoIfValue($standfirstEdit); ?> /></p>
 
-    <p><label for="text">Article text is entered in either HTML or the <a href="http://daringfireball.net/projects/markdown/syntax/" target="_blank">markdown syntax</a>. Enter iframe and video tags inside paragraph tags, for example, &lt;p&gt;&lt;iframe&gt;&lt;/iframe&gt;&lt;/p&gt;.</label><br />
-    <textarea id="text" name="text" rows="9" class="w"><?php echoIfText($textEdit); ?></textarea></p>
+        <p><label for="text">Article text is entered in either HTML or the <a href="http://daringfireball.net/projects/markdown/syntax/" target="_blank">markdown syntax</a>. Enter iframe and video tags inside paragraph tags, for example, &lt;p&gt;&lt;iframe&gt;&lt;/iframe&gt;&lt;/p&gt;.</label><br />
+        <textarea id="text" name="text" rows="9" class="w"><?php echoIfText($textEdit); ?></textarea></p>
 
-    <p><label for="image">Photo upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br />
-    <input id="image" name="image" type="file" class="w" accept="image/jpeg" /></p>
+        <p><label for="image">Photo upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br />
+        <input id="image" name="image" type="file" class="w" accept="image/jpeg" /></p>
 
-    <p><label for="full"><input type="radio" name="width" id="full" value=""<?php echo $widthEditFull; ?>> Full width</label> <label for="third"><input type="radio" name="width" id="third" value="third"<?php echo $widthEditThird; ?>> One-third width</label></p>
+        <p><label for="full"><input type="radio" name="width" id="full" value=""<?php echo $widthEditFull; ?>> Full width</label> <label for="third"><input type="radio" name="width" id="third" value="third"<?php echo $widthEditThird; ?>> One-third width</label></p>
 
-    <p><label for="photoCaption">Photo caption</label><br />
-    <input id="photoCaption" name="photoCaption" type="text" class="w" autocomplete="on" /></p>
+        <p><label for="photoCaption">Photo caption</label><br />
+        <input id="photoCaption" name="photoCaption" type="text" class="w" autocomplete="on" /></p>
 
-    <p><label for="photoCredit">Photo credit</label><br />
-    <input id="photoCredit" name="photoCredit" type="text" class="w" /></p>
+        <p><label for="photoCredit">Photo credit</label><br />
+        <input id="photoCredit" name="photoCredit" type="text" class="w" /></p>
 
-    <p><input type="submit" class="button" value="Add / update" name="addUpdate" /> <input type="submit" class="button" value="Delete photos" name="deletePhoto" /><input type="hidden" name="existing"<?php echoIfValue($edit); ?> /></p>
-  </form>
+        <p><input type="submit" class="button" value="Add / update" name="addUpdate" /> <input type="submit" class="button" value="Delete photos" name="deletePhoto" /><input type="hidden" name="existing"<?php echoIfValue($edit); ?> /></p>
+      </form>
 
-  <p>When there are photos, upload the primary photo first. Then edit the article to upload additional photos one at a time. To correct any photo error — width, caption, credit, order — delete the photos and begin again.</p>
+      <p>When there are photos, upload the primary photo first. Then edit the article to upload additional photos one at a time. To correct any photo error — width, caption, credit, order — delete the photos and begin again.</p>
+
 <?php
-$dbhSection = new PDO($dbSettings);
-$stmt = $dbhSection->query('SELECT idSection, section FROM sections ORDER BY sortOrderSection');
-$stmt->setFetchMode(PDO::FETCH_ASSOC);
-foreach ($stmt as $row) {
-    extract($row);
+if (isset($_GET['t'])) {
+    //
+    // Display article
+    //
     $dbh = new PDO($dbEdit);
-    $stmt = $dbh->prepare('SELECT idSection FROM articles WHERE idSection=?');
+    $stmt = $dbh->prepare('SELECT idArticle, survey, idSection, byline, headline, standfirst, text, photoName, photoCredit, photoCaption, hdImage FROM articles WHERE idArticle = ?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute([$idSection]);
+    $stmt->execute([$tGet]);
     $row = $stmt->fetch();
     if ($row) {
-        $count = null;
-        $html.= "\n" . '  <h4>' . $section . "</h4>\n\n";
-        $stmt = $dbh->prepare('SELECT idArticle, headline, summary, thumbnailImageWidth, thumbnailImageHeight FROM articles WHERE idSection = ? AND userId=? ORDER BY idArticle DESC');
+        extract($row);
+        $html.= '      <h1>' . html($headline) . "</h1>\n\n";
+        if (isset($standfirst)) {
+            $html.= '      <h3>' . html($standfirst) . "</h3>\n\n";
+        }
+        if (isset($hdImage)) {
+            if ($photoName === 'third') {
+                $html.= '      <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="t b" alt=""></p>' . "\n\n";
+            } else {
+                $html.= '      <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="w b" alt=""></p>' . "\n\n";
+            }
+        }
+        if (!empty($photoCaption) and !empty($photoCredit)) {
+            if ($photoName === 'third') {
+                $html.= '      <h6 class="fn">' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
+            } else {
+                $html.= '      <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
+            }
+        } elseif (isset($photoCaption)) {
+            if ($photoName === 'third') {
+                $html.= '      <h6 class="fn">' . html($photoCaption) . "</h6>\n\n";
+            } else {
+                $html.= '      <h6>' . html($photoCaption) . "</h6>\n\n";
+            }
+        } elseif (isset($photoCredit)) {
+            if ($photoName === 'third') {
+                $html.= '      <h6 class="fn">' . $photoCredit . "</h6>\n\n";
+            } else {
+                $html.= '      <h6 class="r">' . $photoCredit . "</h6>\n\n";
+            }
+        }
+        if (!empty($byline) or !empty($bylineDateTime)) {
+            $html.= '      <h5>';
+        }
+        if (!empty($byline)) {
+            $html.= 'By ' . $byline;
+        }
+        if (!empty($byline) and !empty($bylineDateTime)) {
+            $html.= ', ';
+        }
+        if (!empty($bylineDateTime)) {
+            $html.= html($bylineDateTime);
+        }
+        if (!empty($byline) or !empty($bylineDateTime)) {
+            $html.= "</h5>\n\n";
+        }
+        $temp = Parsedown::instance()->parse($text);
+        $temp = str_replace("\n", "\n\n  ", $temp);
+        $html.= '      ' . $temp . "\n\n";
+        $dbhEdit2 = new PDO($dbEdit2);
+        $stmt = $dbhEdit2->prepare('SELECT idPhoto, photoName, photoCredit, photoCaption FROM imageSecondary WHERE idArticle=? ORDER BY time');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute([$idSection, $_SESSION['userId']]);
+        $stmt->execute([$idArticle]);
         foreach ($stmt as $row) {
             extract($row);
-            if ($count != null) {
-                $html.= "  <hr />\n\n";
+            if ($photoName === 'third') {
+                $html.= '      <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="t b" alt=""></p>' . "\n\n";
+            } else {
+                $html.= '      <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="w b" alt=""></p>' . "\n\n";
             }
-            $count++;
-            $html.= '  <h2>' . html($headline) . "</h2>\n\n";
-            if ($summary != '') {
-                $html.= '  <p class="s"><a href="' . $use . '.php?a=' . $idArticle . '">';
-                if ($thumbnailImageWidth != null) {
-                    $html.= '<img class="fr b" src="' . $imagePath . '?i=' . muddle($idArticle) . 't" width="' . $thumbnailImageWidth . '" height="' . $thumbnailImageHeight . '" alt="">';
+            if (!empty($photoCaption) and !empty($photoCredit)) {
+                if ($photoName === 'third') {
+                    $html.= '  <h6 class="fn">' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
+                } else {
+                    $html.= '      <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
                 }
-                $summary = str_replace('*', '', $summary);
-                $html.= '</a>' . html($summary) . "</p>\n";
+            } elseif (isset($photoCaption)) {
+                if ($photoName === 'third') {
+                    $html.= '  <h6 class="fn">' . html($photoCaption) . "</h6>\n\n";
+                } else {
+                    $html.= '      <h6>' . html($photoCaption) . "</h6>\n\n";
+                }
+            } elseif (isset($photoCredit)) {
+                if ($photoName === 'third') {
+                    $html.= '      <h6 class="fn">' . $photoCredit . "</h6>\n\n";
+                } else {
+                    $html.= '      <h6 class="r">' . $photoCredit . "</h6>\n\n";
+                }
             }
-            $html.= "\n" . '  <form class="wait" action="' . $uri . '?m=article-contribution" method="post">' . "\n";
-            $html.= '    <p> <input type="hidden" name="idArticle" value="' . $idArticle . '"><input type="submit" class="button" value="Delete" name="delete" /> <input type="submit" class="button" value="Edit" name="edit" /></p>' . "\n";
-            $html.= "  </form>\n";
         }
+        $dbhEdit2 = null;
     }
     $dbh = null;
+    $html.= '      <p><span class="al"><a class="n" href="' . $uri . '?m=article-contribution">Index</a></span></p>' . "\n";
+} else {
+    //
+    // Display article list
+    //
+    $dbhSection = new PDO($dbSettings);
+    $stmt = $dbhSection->query('SELECT idSection, section FROM sections ORDER BY sortOrderSection');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    foreach ($stmt as $row) {
+        extract($row);
+        $dbh = new PDO($dbEdit);
+        $stmt = $dbh->prepare('SELECT idSection FROM articles WHERE idSection=?');
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute([$idSection]);
+        $row = $stmt->fetch();
+        if ($row) {
+            $count = null;
+            $html.= "\n" . '      <h4>' . $section . "</h4>\n\n";
+            $stmt = $dbh->prepare('SELECT idArticle, headline, summary, thumbnailImageWidth, thumbnailImageHeight FROM articles WHERE idSection = ? AND userId=? ORDER BY idArticle DESC');
+            $stmt->setFetchMode(PDO::FETCH_ASSOC);
+            $stmt->execute([$idSection, $_SESSION['userId']]);
+            foreach ($stmt as $row) {
+                extract($row);
+                if (isset($count)) {
+                    $html.= "  <hr />\n\n";
+                }
+                $count++;
+                $html.= '      <h2><a class="n" href="' . $uri . '?m=article-contribution&t=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
+                if (!empty($summary)) {
+                    $html.= '      <p class="s"><a href="' . $uri . '?m=article-contribution&t=' . $idArticle . '">';
+                    if (!empty($thumbnailImageWidth)) {
+                        $html.= '<img class="fr b" src="' . $imagePath . '?i=' . muddle($idArticle) . 't" width="' . $thumbnailImageWidth . '" height="' . $thumbnailImageHeight . '" alt="">';
+                    }
+                    $summary = str_replace('*', '', $summary);
+                    $html.= '</a>' . html($summary) . "</p>\n";
+                }
+                $html.= "\n" . '      <form class="wait" action="' . $uri . '?m=article-contribution" method="post">' . "\n";
+                $html.= '        <p> <input type="hidden" name="idArticle" value="' . $idArticle . '"><input type="submit" class="button" value="Delete" name="delete" /> <input type="submit" class="button" value="Edit" name="edit" /></p>' . "\n";
+                $html.= "      </form>\n";
+            }
+        }
+        $dbh = null;
+    }
+    $dbhSection = null;
 }
-$dbhSection = null;
 echo $html;
 ?>

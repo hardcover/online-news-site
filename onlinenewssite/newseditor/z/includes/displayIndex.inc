@@ -2,29 +2,29 @@
 /**
  * Summary of articles in edit
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 //
 // Variables
 //
 $html = null;
-if ($use == 'edit') {
+if ($use === 'edit') {
     $database = $dbEdit;
     $database2 = $dbEdit2;
     $imagePath = 'imagee.php';
     $imagePath2 = 'imagee2.php';
-} elseif ($use == 'published') {
+} elseif ($use === 'published') {
     $database = $dbPublished;
     $database2 = $dbPublished2;
     $imagePath = 'imagep.php';
@@ -65,14 +65,14 @@ if (isset($_GET['a'])) {
             $stmt->execute([$idSection]);
             foreach ($stmt as $row) {
                 extract($row);
-                if ($count != null) {
+                if (isset($count)) {
                     $html.= "  <hr />\n\n";
                 }
                 $count++;
                 $html.= '  <h2><a class="n" href="' . $use . '.php?a=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
-                if ($summary != '') {
+                if (!empty($summary)) {
                     $html.= '  <p class="s"><a href="' . $use . '.php?a=' . $idArticle . '">';
-                    if ($thumbnailImageWidth != null) {
+                    if (!empty($thumbnailImageWidth)) {
                         $html.= '<img class="fr b" src="' . $imagePath . '?i=' . muddle($idArticle) . 't" width="' . $thumbnailImageWidth . '" height="' . $thumbnailImageHeight . '" alt="">';
                     }
                     $summary = str_replace('*', '', $summary);
@@ -82,9 +82,9 @@ if (isset($_GET['a'])) {
                 // Modify for different uses, no include for subscribers
                 //
                 if (isset($editorView)) {
-                    if ($use == 'edit') {
+                    if ($use === 'edit') {
                         include $includesPath . '/displayEdit.php';
-                    } elseif ($use == 'published') {
+                    } elseif ($use === 'published') {
                         include $includesPath . '/displayPublished.php';
                     }
                 }

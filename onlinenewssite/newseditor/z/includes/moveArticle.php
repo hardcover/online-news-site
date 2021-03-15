@@ -2,23 +2,23 @@
 /**
  * Moves an article from the specified from database to the specified to database
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 //
 // Variables
 //
-if ($dbFrom == $dbEdit) {
+if ($dbFrom === $dbEdit) {
     //
     // Move from edit to published
     //
@@ -26,7 +26,7 @@ if ($dbFrom == $dbEdit) {
     $dbFrom2 = $dbEdit2;
     $dbTo = $dbPublished;
     $dbTo2 = $dbPublished2;
-} elseif ($dbFrom == $dbPublished) {
+} elseif ($dbFrom === $dbPublished) {
     //
     // Move from published to archive
     //
@@ -60,7 +60,7 @@ $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
     extract($row);
-    if ($dbFrom == $dbPublished) {
+    if ($dbFrom === $dbPublished) {
         //
         // Retain a match between rowid and idArticle in the local archive database
         //
@@ -126,7 +126,7 @@ if ($row) {
     $stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, publicationTime=?, endDate=?, survey=?, genre=?, keywords=?, idSection=?, byline=?, headline=?, standfirst=?, text=?, summary=?, evolve=?, expand=?, extend=?, photoName=?, photoCredit=?, photoCaption=? WHERE idArticle=?');
     $stmt->execute([$publicationDate, $publicationTime, $endDate, $survey, $genre, $keywords, $idSection, $byline, $headline, $standfirst, $text, $summary, $evolve, $expand, $extend, $photoName, $photoCredit, $photoCaption, $idArticle]);
     $dbh = null;
-    if ($dbFrom != $dbArchive) {
+    if ($dbFrom !== $dbArchive) {
         $request = null;
         $response = null;
         $request['task'] = 'updateInsert1';
@@ -154,7 +154,7 @@ if ($row) {
         foreach ($remotes as $remote) {
             $response = soa($remote . 'z/', $request);
         }
-        if ($survey == 1) {
+        if ($survey === '1') {
             include $includesPath . '/syncSurveyAnswers.php';
         }
     }
@@ -167,7 +167,7 @@ if ($row) {
     $stmt->execute([$idArticle]);
     $row = $stmt->fetch();
     $dbh = null;
-    if ($row['thumbnailImageWidth'] != null) {
+    if (!empty($row['thumbnailImageWidth'])) {
         //
         // Move the thumbnail and other small items
         //
@@ -182,7 +182,7 @@ if ($row) {
         $stmt = $dbh->prepare('UPDATE articles SET originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
         $stmt->execute([$row['originalImageWidth'], $row['originalImageHeight'], $row['thumbnailImage'], $row['thumbnailImageWidth'], $row['thumbnailImageHeight'], $row['hdImageWidth'], $row['hdImageHeight'], $idArticle]);
         $dbh = null;
-        if ($dbFrom != $dbArchive) {
+        if ($dbFrom !== $dbArchive) {
             $request = null;
             $response = null;
             $request['task'] = 'updateInsert2';
@@ -211,8 +211,8 @@ if ($row) {
         $stmt = $dbh->prepare('UPDATE articles SET hdImage=? WHERE idArticle=?');
         $stmt->execute([$row['hdImage'], $idArticle]);
         $dbh = null;
-        if ($dbFrom != $dbArchive) {
-            if ($response['result'] == 'success') {
+        if ($dbFrom !== $dbArchive) {
+            if ($response['result'] === 'success') {
                 $request = null;
                 $response = null;
                 $request['task'] = 'updateInsert3';
@@ -236,7 +236,7 @@ if ($row) {
             $stmt = $dbh->prepare('INSERT INTO imageSecondary (idPhoto, idArticle, image, photoName, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?, ?, ?)');
             $stmt->execute([$row['idPhoto'], $idArticle, $row['image'], $row['photoName'], $row['photoCredit'], $row['photoCaption'], $row['time']]);
             $dbh = null;
-            if ($dbFrom != $dbArchive) {
+            if ($dbFrom !== $dbArchive) {
                 $request = null;
                 $response = null;
                 $request['task'] = 'updateInsert4';
@@ -270,7 +270,7 @@ if ($row) {
     $stmt->execute([$idArticle]);
     $row = $stmt->fetch();
     $dbh = null;
-    if ($from == $row) {
+    if ($from === $row) {
         $dbh = new PDO($dbFrom2);
         $stmt = $dbh->prepare('SELECT count(*) FROM imageSecondary WHERE idArticle=?');
         $stmt->setFetchMode(PDO::FETCH_NUM);
@@ -284,7 +284,7 @@ if ($row) {
         $stmt->execute([$idArticle]);
         $row = $stmt->fetch();
         $dbh = null;
-        if ($from == $row) {
+        if ($from === $row) {
             //
             // Delete the From article on the main system
             //
@@ -301,7 +301,7 @@ if ($row) {
             //
             $request = null;
             $response = null;
-            if ($dbFrom == $dbPublished) {
+            if ($dbFrom === $dbPublished) {
                 $request['task'] = 'publishedDelete';
                 $request['archive'] = $archive;
                 $request['idArticle'] = $idArticle;
@@ -309,7 +309,7 @@ if ($row) {
                     $response = soa($remote . 'z/', $request);
                 }
             }
-            if ($dbFrom == $dbArchive) {
+            if (strpos($dbFrom, 'archive') !== false) {
                 $request['task'] = 'archiveDelete';
                 $request['archive'] = $archive;
                 $request['idArticle'] = $idArticle;

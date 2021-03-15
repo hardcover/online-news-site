@@ -177,6 +177,7 @@ strong {
 hr {
     border-top: 1px solid #aaa;
     border-bottom: 0;
+    margin-right: .2em;
     height: 0px;
 }
 
@@ -202,7 +203,7 @@ input.h, select.h, textarea.h, span.hl {
     width: 38%;
 }
 
-input.w, select.w, textarea.w, img.l {
+input.w, select.w, textarea.w {
     width: 96.5%;
 }
 
@@ -287,6 +288,7 @@ img {
 img.lead {
     float: left;
     margin: .4em 1em 1em 0;
+    width: 99.33%;
 }
 
 img.lead2, img.lead3, img.lead4 {

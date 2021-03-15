@@ -2,17 +2,17 @@
 /**
  * Remote site menu maintenance
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 session_start();
@@ -28,7 +28,7 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
-if (empty($row['userType']) or $row['userType'] != 5) {
+if (empty($row['userType']) or $row['userType'] !== '5') {
     include 'logout.php';
     exit;
 }
@@ -55,7 +55,7 @@ $stmt->execute([1]);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
-    $archiveEdit = 1;
+    $archiveEdit = '1';
 }
 //
 // Calendar edit variable
@@ -67,7 +67,7 @@ $stmt->execute([1]);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
-    $calendarEdit = 1;
+    $calendarEdit = '1';
 }
 //
 // Classified ads edit variable
@@ -79,7 +79,7 @@ $stmt->execute(['Classified ads']);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
-    $classifiedsEdit = 1;
+    $classifiedsEdit = '1';
 }
 //
 // Contact forms edit variable
@@ -91,7 +91,7 @@ $stmt->execute(['Contact us']);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
-    $contactEdit = 1;
+    $contactEdit = '1';
 }
 //
 $remotes = [];
@@ -109,9 +109,9 @@ if (isset($_POST['updatePredefined'])) {
     //
     // Enable archive access
     //
-    if ($archivePost === 'on') {
-        $access = 1;
-        $archiveEdit = 1;
+    if (!empty($archivePost)) {
+        $access = '1';
+        $archiveEdit = '1';
     } else {
         $access = null;
         $archiveEdit = null;
@@ -126,21 +126,21 @@ if (isset($_POST['updatePredefined'])) {
     $stmt = $dbh->prepare('DELETE FROM menu WHERE menuName = ? AND menuContent IS NULL');
     $stmt->execute(['Archive search']);
     $dbh = null;
-    if ($archivePost === 'on') {
+    if (!empty($archivePost)) {
         $dbh = new PDO($dbMenu);
         $stmt = $dbh->prepare('INSERT INTO menu (menuName, menuSortOrder, menuPath, menuContent) VALUES (?, ?, ?, ?)');
         $stmt->execute(['Archive search', 1, 'archive-search', null]);
         $dbh = null;
-        $archiveEdit = 1;
+        $archiveEdit = '1';
     } else {
         $archiveEdit = null;
     }
     //
     // Enable calendar access
     //
-    if ($calendarPost === 'on') {
-        $access = 1;
-        $calendarEdit = 1;
+    if (!empty($calendarPost)) {
+        $access = '1';
+        $calendarEdit = '1';
     } else {
         $access = null;
         $calendarEdit = null;
@@ -155,21 +155,21 @@ if (isset($_POST['updatePredefined'])) {
     $stmt = $dbh->prepare('DELETE FROM menu WHERE menuName = ? AND menuContent IS NULL');
     $stmt->execute(['Calendar']);
     $dbh = null;
-    if ($calendarPost === 'on') {
+    if (!empty($calendarPost)) {
         $dbh = new PDO($dbMenu);
         $stmt = $dbh->prepare('INSERT INTO menu (menuName, menuSortOrder, menuPath, menuContent) VALUES (?, ?, ?, ?)');
         $stmt->execute(['Calendar', 2, 'calendar', null]);
         $dbh = null;
-        $calendarEdit = 1;
+        $calendarEdit = '1';
     } else {
         $calendarEdit = null;
     }
     //
     // Enable classifieds
     //
-    if ($classifiedsPost === 'on') {
-        $access = 1;
-        $classifiedsEdit = 1;
+    if (!empty($classifiedsPost)) {
+        $access = '1';
+        $classifiedsEdit = '1';
     } else {
         $access = null;
         $classifiedsEdit = null;
@@ -184,21 +184,21 @@ if (isset($_POST['updatePredefined'])) {
     $stmt = $dbh->prepare('DELETE FROM menu WHERE menuName = ? AND menuContent IS NULL');
     $stmt->execute(['Classified ads']);
     $dbh = null;
-    if ($classifiedsPost === 'on') {
+    if (!empty($classifiedsPost)) {
         $dbh = new PDO($dbMenu);
         $stmt = $dbh->prepare('INSERT INTO menu (menuName, menuSortOrder, menuPath, menuContent) VALUES (?, ?, ?, ?)');
         $stmt->execute(['Classified ads', 3, 'classified-ads', null]);
         $dbh = null;
-        $classifiedsEdit = 1;
+        $classifiedsEdit = '1';
     } else {
         $classifiedsEdit = null;
     }
     //
     // Enable contact form
     //
-    if ($contactPost === 'on') {
-        $access = 1;
-        $contactEdit = 1;
+    if (!empty($contactPost)) {
+        $access = '1';
+        $contactEdit = '1';
     } else {
         $access = null;
         $contactEdit = null;
@@ -212,12 +212,12 @@ if (isset($_POST['updatePredefined'])) {
     $stmt = $dbh->prepare('DELETE FROM menu WHERE menuName = ? AND menuContent IS NULL');
     $stmt->execute(['Contact us']);
     $dbh = null;
-    if ($contactPost === 'on') {
+    if (!empty($contactPost)) {
         $dbh = new PDO($dbMenu);
         $stmt = $dbh->prepare('INSERT INTO menu (menuName, menuSortOrder, menuPath, menuContent) VALUES (?, ?, ?, ?)');
         $stmt->execute(['Contact us', 4, 'contact-us', null]);
         $dbh = null;
-        $contactEdit = 1;
+        $contactEdit = '1';
     } else {
         $contactEdit = null;
     }

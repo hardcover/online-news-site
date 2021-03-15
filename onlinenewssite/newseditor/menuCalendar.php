@@ -2,17 +2,17 @@
 /**
  * Calendar maintenance
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 session_start();
@@ -28,7 +28,7 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
-if (empty($row['userType']) or $row['userType'] != 5) {
+if (empty($row['userType']) or $row['userType'] !== '5') {
     include 'logout.php';
     exit;
 }
@@ -76,13 +76,13 @@ $first = date("Y-m-d", strtotime('first ' . $dayOfTheWeek . ' of ' . $month . ' 
 $second = date("Y-m-d", strtotime('second ' . $dayOfTheWeek . ' of ' . $month . ' ' . $year));
 $third = date("Y-m-d", strtotime('third ' . $dayOfTheWeek . ' of ' . $month . ' ' . $year));
 $fourth = date("Y-m-d", strtotime('fourth ' . $dayOfTheWeek . ' of ' . $month . ' ' . $year));
-if ($first == $datePost) {
+if ($first === $datePost) {
     $week = 'first';
-} elseif ($second == $datePost) {
+} elseif ($second === $datePost) {
     $week = 'second';
-} elseif ($third == $datePost) {
+} elseif ($third === $datePost) {
     $week = 'third';
-} elseif ($fourth == $datePost) {
+} elseif ($fourth === $datePost) {
     $week = 'fourth';
 } else {
     $week = null;
@@ -384,13 +384,13 @@ for ($i = 0; $i < 371; $i++) {
     $secondSelect = date("Y-m-d", strtotime('second ' . $dayOfTheWeekSelect . ' of ' . $monthSelect . ' ' . $yearSelect));
     $thirdSelect = date("Y-m-d", strtotime('third ' . $dayOfTheWeekSelect . ' of ' . $monthSelect . ' ' . $yearSelect));
     $fourthSelect = date("Y-m-d", strtotime('fourth ' . $dayOfTheWeekSelect . ' of ' . $monthSelect . ' ' . $yearSelect));
-    if ($firstSelect == $selectDate) {
+    if ($firstSelect === $selectDate) {
         $weekSelect = 'first';
-    } elseif ($secondSelect == $selectDate) {
+    } elseif ($secondSelect === $selectDate) {
         $weekSelect = 'second';
-    } elseif ($thirdSelect == $selectDate) {
+    } elseif ($thirdSelect === $selectDate) {
         $weekSelect = 'third';
-    } elseif ($fourthSelect == $selectDate) {
+    } elseif ($fourthSelect === $selectDate) {
         $weekSelect = 'fourth';
     } else {
         $weekSelect = null;

@@ -2,17 +2,17 @@
 /**
  * Diplay a single article
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 //
@@ -80,7 +80,7 @@ if (strpos($database, 'archive') === false) {
         // HTML
         //
         $bylineDateTime = isset($publicationDate) ? date("l, F j, Y", strtotime($publicationDate)) : null;
-        if ($database != $dbArchive) {
+        if ($database !== $dbArchive) {
             $html.= '  <p><span class="al">' . $previous . '<a class="n" href="' . $use . '.php">Index</a> | ' . $next . $pipe;
             $html.= $links . '<a class="n" href="' . $uri . 'logout.php">Log out</a></span><br /></p>' . "\n\n";
             $html.= '  <p><b>' . $section . "</b></p>\n\n";
@@ -96,7 +96,7 @@ if (strpos($database, 'archive') === false) {
                 $html.= '  <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="w b" alt=""></p>' . "\n\n";
             }
         }
-        if ($photoCaption != '' and $photoCredit != '') {
+        if (!empty($photoCaption) and !empty($photoCredit)) {
             if ($photoName === 'third') {
                 $html.= '  <h6 class="fn">' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
             } else {
@@ -133,7 +133,7 @@ if (strpos($database, 'archive') === false) {
         $temp = Parsedown::instance()->parse($text);
         $temp = str_replace("\n", "\n\n  ", $temp);
         $html.= '  ' . $temp . "\n";
-        if ($survey == 1) {
+        if ($survey === '1') {
             //
             // Tally the vote, display the survey results
             //
@@ -143,7 +143,7 @@ if (strpos($database, 'archive') === false) {
             $stmt->execute([$aGet]);
             $row = $stmt->fetch();
             $total = $row['count(idArticle)'];
-            if ($total == 0) {
+            if ($total === '0') {
                 $total = 1;
             }
             $stmt = $dbh->prepare('SELECT idAnswer, answer FROM answers WHERE idArticle=? ORDER BY sortOrder');
@@ -172,7 +172,7 @@ if (strpos($database, 'archive') === false) {
                 } else {
                     $html.= '  <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="w b" alt=""></p>' . "\n\n";
                 }
-                if ($photoCaption != '' and $photoCredit != '') {
+                if (!empty($photoCaption) and !empty($photoCredit)) {
                     if ($photoName === 'third') {
                         $html.= '  <h6 class="fn">' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
                     } else {
@@ -218,7 +218,7 @@ if (strpos($database, 'archive') === false) {
             $dbNumber = -1;
             $dbh = null;
         }
-        if ($database != null) {
+        if (!empty($database)) {
             $dbh = new PDO($database);
             $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE idArticle=?');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -290,7 +290,7 @@ if (strpos($database, 'archive') === false) {
                         $html.= '  <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="w b" alt=""></p>' . "\n\n";
                     }
                 }
-                if ($photoCaption != '' and $photoCredit != '') {
+                if (!empty($photoCaption) and !empty($photoCredit)) {
                     if ($photoName === 'third') {
                         $html.= '  <h6 class="fn">' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
                     } else {
@@ -327,7 +327,7 @@ if (strpos($database, 'archive') === false) {
                 $temp = Parsedown::instance()->parse($text);
                 $temp = str_replace("\n", "\n\n  ", $temp);
                 $html.= '  ' . $temp . "\n";
-                if ($survey == 1) {
+                if ($survey === '1') {
                     //
                     // Tally the vote, display the survey results
                     //
@@ -337,7 +337,7 @@ if (strpos($database, 'archive') === false) {
                     $stmt->execute([$aGet]);
                     $row = $stmt->fetch();
                     $total = $row['count(idArticle)'];
-                    if ($total == 0) {
+                    if ($total === '0') {
                         $total = 1;
                     }
                     $stmt = $dbh->prepare('SELECT idAnswer, answer FROM answers WHERE idArticle=? ORDER BY sortOrder');
@@ -372,7 +372,7 @@ if (strpos($database, 'archive') === false) {
                                 $dbNumber2 = -1;
                                 $dbh = null;
                             }
-                            if ($database != null) {
+                            if (!empty($database)) {
                                 $dbh = new PDO($database);
                                 $stmt = $dbh->prepare('SELECT idPhoto, photoName, photoCredit, photoCaption FROM imageSecondary WHERE idArticle=? ORDER BY time');
                                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -387,7 +387,7 @@ if (strpos($database, 'archive') === false) {
                                         } else {
                                             $html.= '  <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="w b" alt=""></p>' . "\n\n";
                                         }
-                                        if ($photoCaption != '' and $photoCredit != '') {
+                                        if (!empty($photoCaption) and !empty($photoCredit)) {
                                             if ($photoName === 'third') {
                                                 $html.= '  <h6 class="fn">' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
                                             } else {
@@ -423,7 +423,7 @@ if (strpos($database, 'archive') === false) {
                             } else {
                                 $html.= '  <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="w b" alt=""></p>' . "\n\n";
                             }
-                            if ($photoCaption != '' and $photoCredit != '') {
+                            if (!empty($photoCaption) and !empty($photoCredit)) {
                                 if ($photoName === 'third') {
                                     $html.= '  <h6 class="fn">' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
                                 } else {

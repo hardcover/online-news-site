@@ -2,17 +2,17 @@
 /**
  * Classified ad section maintenance
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 session_start();
@@ -22,7 +22,7 @@ require $includesPath . '/common.php';
 //
 // User-group authorization
 //
-if ($_SESSION['username'] != 'admin') {
+if ($_SESSION['username'] !== 'admin') {
     include 'logout.php';
     exit;
 }
@@ -53,9 +53,6 @@ $dbh = null;
 //
 // Test user password
 //
-if (isset($_POST['adminPass']) and ($_POST['adminPass'] == null or $_POST['adminPass'] == '')) {
-    $message = 'Your password is required for all subscriber maintenance.';
-}
 $dbh = new PDO($dbEditors);
 $stmt = $dbh->prepare('SELECT pass FROM users WHERE user=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -70,8 +67,8 @@ if (password_verify($adminPassPost, $row['pass'])) {
         //
         // Determine insert or update, check for unique email address
         //
-        if ($_POST['existing'] == null) {
-            if ($parentSectionPost == 0) {
+        if (empty($_POST['existing'])) {
+            if ($parentSectionPost === '0') {
                 //
                 // Parent sections
                 //
@@ -130,7 +127,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
             //
             // Or verify idSection
             //
-            if ($parentSectionPost == 0) {
+            if ($parentSectionPost === '0') {
                 //
                 // Parent sections
                 //
@@ -158,8 +155,8 @@ if (password_verify($adminPassPost, $row['pass'])) {
         //
         // Apply update
         //
-        if ($sectionPost != null) {
-            if ($parentSectionPost == 0) {
+        if (isset($sectionPost)) {
+            if ($parentSectionPost === '0') {
                 //
                 // Parent sections
                 //
@@ -203,8 +200,8 @@ if (password_verify($adminPassPost, $row['pass'])) {
     // Button: Delete
     //
     if (isset($_POST['delete'])) {
-        if ($sectionPost != null) {
-            if ($parentSectionPost == 0) {
+        if (isset($sectionPost)) {
+            if ($parentSectionPost === '0') {
                 //
                 // Parent sections
                 //
@@ -250,13 +247,17 @@ if (password_verify($adminPassPost, $row['pass'])) {
         }
     }
 } elseif (isset($_POST['addUpdate']) or isset($_POST['delete'])) {
-    $message = 'The password is invalid.';
+    if (empty($_POST['adminPass'])) {
+        $message = 'The admin password is required for all user maintenance.';
+    } else {
+        $message = 'The admin password is invalid.';
+    }
 }
 //
 // Button, edit
 //
 if (isset($_POST['edit'])) {
-    if (isset($subsectionFlagPost) and $subsectionFlagPost == 1) {
+    if (isset($subsectionFlagPost) and $subsectionFlagPost === '1') {
         $dbh = new PDO($dbClassifieds);
         $stmt = $dbh->prepare('SELECT idSubsection, subsection, parentId, sortOrderSubsection FROM subsections WHERE idSubsection=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -346,7 +347,7 @@ function sortSections()
     //
     // Sort the subsections
     //
-    if (isset($parentSectionPost) and $parentSectionPost != 0) {
+    if (isset($parentSectionPost) and $parentSectionPost !== '0') {
         $count = null;
         $dbh = new PDO($dbClassifieds);
         $stmt = $dbh->prepare('SELECT idSubsection FROM subsections WHERE parentId=? ORDER BY sortOrderSubsection, sortPrioritySubSection');
@@ -425,7 +426,7 @@ $dbh = new PDO($dbClassifieds);
 $stmt = $dbh->query('SELECT idSection, section, sortOrderSection FROM sections ORDER BY sortOrderSection');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
-    if ($row['idSection'] == $parentIdEdit) {
+    if ($row['idSection'] === $parentIdEdit) {
         $selected = ' selected';
     } else {
         $selected = null;

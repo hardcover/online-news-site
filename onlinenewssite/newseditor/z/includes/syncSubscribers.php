@@ -2,17 +2,17 @@
 /**
  * Synchronizes the remote and local databases
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 //
@@ -37,11 +37,11 @@ foreach ($remotes as $remote) {
     $response = null;
     $request['task'] = 'subscribersNewDownload';
     $response = soa($remote . 'z/', $request);
-    if ($response['result'] == 'success') {
+    if ($response['result'] === 'success') {
         //
         // Merge new subscribers to the main subscriber database
         //
-        if ($response['dbRows'] != 'null') {
+        if (!empty($response['dbRows'])) {
             $dbRows = json_decode($response['dbRows'], true);
             $dbh = new PDO($dbSubscribers);
             $dbh->beginTransaction();
@@ -66,9 +66,9 @@ foreach ($remotes as $remote) {
     $response = null;
     $request['task'] = 'subscribersSyncSoaFlagged';
     $response = soa($remote . 'z/', $request);
-    if (isset($response) and $response['result'] == 'success' and isset($response['remoteSubscribers'])) {
+    if (isset($response) and $response['result'] === 'success' and isset($response['remoteSubscribers'])) {
         $remoteSubscribers = json_decode($response['remoteSubscribers'], true);
-        if ($remoteSubscribers == 'null' or $remoteSubscribers == null) {
+        if ($remoteSubscribers === 'null' or $remoteSubscribers === null) {
             $remoteSubscribers = [];
         }
         foreach ($remoteSubscribers as $idUser) {
@@ -95,7 +95,7 @@ foreach ($remotes as $remote) {
     // Update changed subscriber records from the main database to the remotes
     //
     $dbh = new PDO($dbSubscribers);
-    $stmt = $dbh->prepare('SELECT idUser, email, ipAddress, verified, pass, payStatus, note, contributor, classifiedOnly, deliver, deliveryAddress, dCityRegionPostal, billingAddress, bCityRegionPostal, evolve, expand, extend FROM users WHERE soa = ?');
+    $stmt = $dbh->prepare('SELECT idUser, email, payerEmail, payerFirstName, payerLastName, ipAddress, verify, verified, time, pass, payStatus, paid, paymentDate, note, contributor, classifiedOnly, deliver, deliver2, deliveryAddress, dCityRegionPostal, billingAddress, bCityRegionPostal, evolve, expand, extend FROM users WHERE soa = ?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute([1]);
     foreach ($stmt as $row) {
@@ -105,14 +105,22 @@ foreach ($remotes as $remote) {
         $request['task'] = 'subscribersUpdate';
         $request['idUser'] = $idUser;
         $request['email'] = $email;
+        $request['payerEmail'] = $payerEmail;
+        $request['payerFirstName'] = $payerFirstName;
+        $request['payerLastName'] = $payerLastName;
         $request['ipAddress'] = $ipAddress;
+        $request['verify'] = $verify;
         $request['verified'] = $verified;
+        $request['time'] = $time;
         $request['pass'] = $pass;
         $request['payStatus'] = $payStatus;
+        $request['paid'] = $paid;
+        $request['paymentDate'] = $paymentDate;
         $request['note'] = $note;
         $request['contributor'] = $contributor;
         $request['classifiedOnly'] = $classifiedOnly;
         $request['deliver'] = $deliver;
+        $request['deliver2'] = $deliver2;
         $request['deliveryAddress'] = $deliveryAddress;
         $request['dCityRegionPostal'] = $dCityRegionPostal;
         $request['billingAddress'] = $billingAddress;
@@ -121,7 +129,7 @@ foreach ($remotes as $remote) {
         $request['expand'] = $expand;
         $request['extend'] = $extend;
         $response = soa($remote . 'z/', $request);
-        if ($response['result'] == 'success') {
+        if ($response['result'] === 'success') {
             $stmt = $dbh->prepare('UPDATE users SET soa=? WHERE idUser=?');
             $stmt->execute([null, $idUser]);
         }
@@ -135,7 +143,7 @@ foreach ($remotes as $remote) {
     $request['task'] = 'subscribersSync';
     $response = soa($remote . 'z/', $request);
     $remoteSubscribers = json_decode($response['remoteSubscribers'], true);
-    if ($remoteSubscribers == 'null' or $remoteSubscribers == null) {
+    if ($remoteSubscribers === 'null' or $remoteSubscribers === null) {
         $remoteSubscribers = [];
     }
     $subscribers = [];
@@ -201,7 +209,7 @@ foreach ($remotes as $remote) {
         $request['task'] = 'subscribersSync';
         $response = soa($remote . 'z/', $request);
         $remoteSubscribers = json_decode($response['remoteSubscribers'], true);
-        if ($remoteSubscribers == 'null' or $remoteSubscribers == null) {
+        if ($remoteSubscribers === 'null' or $remoteSubscribers === null) {
             $remoteSubscribers = [];
         }
         $dbh = new PDO($dbSubscribers);

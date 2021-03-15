@@ -2,17 +2,17 @@
 /**
  * Create and edit surveys
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 session_start();
@@ -29,7 +29,7 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
-if (empty($row['userType']) or $row['userType'] != 1) {
+if (empty($row['userType']) or $row['userType'] !== '1') {
     include 'logout.php';
     exit;
 }
@@ -261,28 +261,28 @@ if (isset($_POST['edit']) and isset($_POST['idArticle'])) {
         $stmt->execute([$idArticlePost]);
         $count = 1;
         foreach ($stmt as $row) {
-            if ($row['sortOrder'] == 1) {
+            if ($row['sortOrder'] === '1') {
                 $answer1Edit = $row['answer'];
             }
-            if ($row['sortOrder'] == 2) {
+            if ($row['sortOrder'] === '2') {
                 $answer2Edit = $row['answer'];
             }
-            if ($row['sortOrder'] == 3) {
+            if ($row['sortOrder'] === '3') {
                 $answer3Edit = $row['answer'];
             }
-            if ($row['sortOrder'] == 4) {
+            if ($row['sortOrder'] === '4') {
                 $answer4Edit = $row['answer'];
             }
-            if ($row['sortOrder'] == 5) {
+            if ($row['sortOrder'] === '5') {
                 $answer5Edit = $row['answer'];
             }
-            if ($row['sortOrder'] == 6) {
+            if ($row['sortOrder'] === '6') {
                 $answer6Edit = $row['answer'];
             }
-            if ($row['sortOrder'] == 7) {
+            if ($row['sortOrder'] === '7') {
                 $answer7Edit = $row['answer'];
             }
-            if ($row['sortOrder'] == 8) {
+            if ($row['sortOrder'] === '8') {
                 $answer8Edit = $row['answer'];
             }
         }
@@ -305,28 +305,28 @@ if (isset($_POST['edit']) and isset($_POST['idArticle'])) {
             $stmt->execute([$idArticlePost]);
             $count = 1;
             foreach ($stmt as $row) {
-                if ($row['sortOrder'] == 1) {
+                if ($row['sortOrder'] === '1') {
                     $answer1Edit = $row['answer'];
                 }
-                if ($row['sortOrder'] == 2) {
+                if ($row['sortOrder'] === '2') {
                     $answer2Edit = $row['answer'];
                 }
-                if ($row['sortOrder'] == 3) {
+                if ($row['sortOrder'] === '3') {
                     $answer3Edit = $row['answer'];
                 }
-                if ($row['sortOrder'] == 4) {
+                if ($row['sortOrder'] === '4') {
                     $answer4Edit = $row['answer'];
                 }
-                if ($row['sortOrder'] == 5) {
+                if ($row['sortOrder'] === '5') {
                     $answer5Edit = $row['answer'];
                 }
-                if ($row['sortOrder'] == 6) {
+                if ($row['sortOrder'] === '6') {
                     $answer6Edit = $row['answer'];
                 }
-                if ($row['sortOrder'] == 7) {
+                if ($row['sortOrder'] === '7') {
                     $answer7Edit = $row['answer'];
                 }
-                if ($row['sortOrder'] == 8) {
+                if ($row['sortOrder'] === '8') {
                     $answer8Edit = $row['answer'];
                 }
             }
@@ -414,7 +414,7 @@ $dbh = new PDO($dbSettings);
 $stmt = $dbh->query('SELECT idSection, section FROM sections ORDER BY sortOrderSection');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
-    $selected = $idSectionEdit == $row['idSection'] ? ' selected="selected"' : null;
+    $selected = $idSectionEdit === $row['idSection'] ? ' selected="selected"' : null;
     echo '      <option value="' . $row['idSection'] . '"' . $selected . '>' . $row['section'] . "</option>\n";
 }
 $dbh = null;

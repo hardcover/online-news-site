@@ -2,17 +2,17 @@
 /**
  * For the editing server to update the publishing servers
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 //
@@ -22,7 +22,7 @@ if (!file_exists('system/configuration.php')) {
     copy('system/configuration.inc', 'system/configuration.php');
 }
 require 'system/configuration.php';
-if ($includesPath == 'z/includes') {
+if ($includesPath === 'z/includes') {
     $includesPath = ltrim($includesPath, 'z/');
 } else {
     $includesPath = '../' . $includesPath;
@@ -41,11 +41,7 @@ if (!isset($_POST['gig'])
     or (!password_verify(base64_decode($_POST['onus']), $hash))
 ) {
     header_remove();
-    if (substr(phpversion(), 0, 3) < '5.4') {
-        header(' ', true, 404);
-    } else {
-        http_response_code(404);
-    }
+    http_response_code(404);
     exit;
 }
 //
@@ -58,7 +54,7 @@ require $includesPath . '/createSubscriber2.php';
 //
 $response = [];
 extract(array_map('base64_decode', array_map('secure', $_POST)));
-if (isset($archive) and $archive == 'archive') {
+if (isset($archive) and $archive === 'archive') {
     //
     // When the archive database is the destination
     //
@@ -76,14 +72,14 @@ if (isset($archive) and $archive == 'archive') {
 //
 // Advertisements
 //
-if ($task == 'adDelete') {
+if ($task === 'adDelete') {
     $dbh = new PDO($dbAdvertising);
     $stmt = $dbh->prepare('DELETE FROM advertisements WHERE idAd=?');
     $stmt->execute([$idAd]);
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'adInsert') {
+if ($task === 'adInsert') {
     $dbh = new PDO($dbAdvertising);
     $stmt = $dbh->prepare('SELECT idAd FROM advertisements WHERE idAd=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -98,7 +94,14 @@ if ($task == 'adInsert') {
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'adOrder') {
+if ($task === 'adMax') {
+    $dbh = new PDO($dbAdvertising);
+    $stmt = $dbh->query('DELETE FROM maxAd');
+    $stmt = $dbh->prepare('INSERT INTO maxAd (maxAds) VALUES (?)');
+    $stmt->execute([$maxAds]);
+    $dbh = null;
+}
+if ($task === 'adOrder') {
     $sortOrder = json_decode($sortOrder, true);
     $dbh = new PDO($dbAdvertising);
     $stmt = $dbh->query('DELETE FROM maxAd');
@@ -113,7 +116,7 @@ if ($task == 'adOrder') {
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'adSync') {
+if ($task === 'adSync') {
     $articles = [];
     $dbh = new PDO($dbAdvertising);
     $stmt = $dbh->query('SELECT idAd FROM advertisements');
@@ -128,50 +131,48 @@ if ($task == 'adSync') {
 //
 // Archives
 //
-if ($task == 'archiveDelete') {
+if ($task === 'archiveDelete') {
     $dbNumber = 0;
-    while ($dbNumber !== -1) {
+    $status = 'searching';
+    while ($status === 'searching') {
         $db = str_replace('archive', 'archive-' . $dbNumber, $dbArchive);
-        if ($dbNumber === 0
-            or file_exists(str_replace('sqlite:', '', $db))
-        ) {
+        if ($dbNumber === 0) {
+            $database = $dbArchive;
+        } else {
+            $database = $db;
+        }
+        $dbh = new PDO($database);
+        $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE idArticle=?');
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute([$idArticle]);
+        $row = $stmt->fetch();
+        $dbh = null;
+        if ($row) {
+            $dbh = new PDO($database);
+            $stmt = $dbh->prepare('DELETE FROM articles WHERE idArticle=?');
+            $stmt->execute([$idArticle]);
+            $dbh = null;
+            $db = str_replace('archive2', 'archive2-' . $dbNumber, $dbArchive2);
             if ($dbNumber === 0) {
-                $database = $dbArchive;
+                $database = $dbArchive2;
             } else {
                 $database = $db;
             }
-            $dbNumber++;
-        } else {
-            $dbNumber = -1;
-            $dbh = null;
-        }
-        if ($database != null) {
             $dbh = new PDO($database);
-            $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE idArticle=?');
-            $stmt->setFetchMode(PDO::FETCH_ASSOC);
+            $stmt = $dbh->prepare('DELETE FROM imageSecondary WHERE idArticle=?');
             $stmt->execute([$idArticle]);
-            $row = $stmt->fetch();
-            if ($row) {
-                $stmt = $dbh->prepare('DELETE FROM articles WHERE idArticle=?');
-                $stmt->execute([$idArticle]);
-                $dbh = null;
-                $db = str_replace('archive2', 'archive2-' . $dbNumber, $dbArchive2);
-                if ($dbNumber === 0) {
-                    $database = $dbArchive2;
-                } else {
-                    $database = $db;
-                }
-                $dbh = new PDO($database);
-                $stmt = $dbh->prepare('DELETE FROM imageSecondary WHERE idArticle=?');
-                $stmt->execute([$idArticle]);
-                $dbh = null;
-                $dbNumber = -1;
-            }
+            $dbh = null;
+            $status = 'found';
+        }
+        $dbNumber++;
+        $dbNew = str_replace('archive', 'archive-' . $dbNumber, $dbArchive);
+        if (!file_exists(str_replace('sqlite:', '', $dbNew))) {
+            $status = 'did not find';
         }
     }
     $response['result'] = 'success';
 }
-if ($task == 'archiveSearch') {
+if ($task === 'archiveSearch') {
     $dbh = new PDO($dbSettings);
     $stmt = $dbh->query('DELETE FROM archiveAccess');
     $stmt = $dbh->prepare('INSERT INTO archiveAccess (access) VALUES (?)');
@@ -179,7 +180,7 @@ if ($task == 'archiveSearch') {
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'archiveSync') {
+if ($task === 'archiveSync') {
     $articles = [];
     $dbh = new PDO($dbArchive);
     $stmt = $dbh->query('SELECT idArticle FROM articles');
@@ -191,7 +192,7 @@ if ($task == 'archiveSync') {
     $response['remoteArticles'] = json_encode($articles);
     $response['result'] = 'success';
 }
-if ($task == 'archiveSync2') {
+if ($task === 'archiveSync2') {
     $photos = [];
     $dbh = new PDO($dbArchive2);
     $stmt = $dbh->prepare('SELECT count(*) FROM imageSecondary WHERE idArticle=?');
@@ -205,7 +206,7 @@ if ($task == 'archiveSync2') {
 //
 // Articles
 //
-if ($task == 'publishedDeletePhoto') {
+if ($task === 'publishedDeletePhoto') {
     $dbh = new PDO($dbPublished);
     $stmt = $dbh->prepare('UPDATE articles SET photoName=?, photoCredit=?, photoCaption=?, originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
     $stmt->execute([null, null, null, null, null, null, null, null, null, null, null, $idArticle]);
@@ -216,7 +217,7 @@ if ($task == 'publishedDeletePhoto') {
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'publishedDelete') {
+if ($task === 'publishedDelete') {
     $dbh = new PDO($dbPublished);
     $stmt = $dbh->prepare('DELETE FROM articles WHERE idArticle=?');
     $stmt->execute([$idArticle]);
@@ -227,7 +228,7 @@ if ($task == 'publishedDelete') {
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'publishedOrder') {
+if ($task === 'publishedOrder') {
     $sortOrder = json_decode($sortOrder, true);
     $dbh = new PDO($dbPublished);
     foreach ($sortOrder as $idArticle => $key) {
@@ -237,7 +238,7 @@ if ($task == 'publishedOrder') {
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'publishedSync') {
+if ($task === 'publishedSync') {
     $articles = [];
     $dbh = new PDO($dbPublished);
     $stmt = $dbh->query('SELECT idArticle FROM articles');
@@ -249,7 +250,7 @@ if ($task == 'publishedSync') {
     $response['remoteArticles'] = json_encode($articles);
     $response['result'] = 'success';
 }
-if ($task == 'publishedSync2') {
+if ($task === 'publishedSync2') {
     $photos = [];
     $dbh = new PDO($dbPublished2);
     $stmt = $dbh->prepare('SELECT count(*) FROM imageSecondary WHERE idArticle=?');
@@ -260,7 +261,7 @@ if ($task == 'publishedSync2') {
     $response['remotePhotos'] = $row['count(*)'];
     $response['result'] = 'success';
 }
-if ($task == 'updateInsert1') {
+if ($task === 'updateInsert1') {
     $dbh = new PDO($db);
     $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -270,7 +271,7 @@ if ($task == 'updateInsert1') {
         $stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, publicationTime=?, endDate=?, survey=?, genre=?, keywords=?, idSection=?, sortOrderArticle=?, byline=?, headline=?, standfirst=?, text=?, summary=?, evolve=?, expand=?, extend=?, photoName=?, photoCredit=?, photoCaption=?, originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE ' . $column . '=?');
         $stmt->execute([null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, $idArticle]);
     } else {
-        if ($column == 'idArticle') {
+        if ($column === 'idArticle') {
             $stmt = $dbh->prepare('INSERT INTO articles (idArticle) VALUES (?)');
             $stmt->execute([$idArticle]);
         } else {
@@ -283,28 +284,28 @@ if ($task == 'updateInsert1') {
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'updateInsert2') {
+if ($task === 'updateInsert2') {
     $dbh = new PDO($db);
     $stmt = $dbh->prepare('UPDATE articles SET thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImageWidth=?, hdImageHeight=? WHERE ' . $column . '=?');
     $stmt->execute([$thumbnailImage, $thumbnailImageWidth, $thumbnailImageHeight, $hdImageWidth, $hdImageHeight, $idArticle]);
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'updateInsert3') {
+if ($task === 'updateInsert3') {
     $dbh = new PDO($db);
     $stmt = $dbh->prepare('UPDATE articles SET hdImage=? WHERE ' . $column . '=?');
     $stmt->execute([$hdImage, $idArticle]);
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'updateInsert4') {
+if ($task === 'updateInsert4') {
     $dbh = new PDO($db2);
     $stmt = $dbh->prepare('INSERT INTO imageSecondary (idPhoto, idArticle, image, photoName, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?, ?, ?)');
     $stmt->execute([$idPhoto, $idArticle, $image, $photoName, $photoCredit, $photoCaption, time()]);
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'downloadContributionIDs') {
+if ($task === 'downloadContributionIDs') {
     $IDs = null;
     $dbh = new PDO($dbEdit);
     $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE sortOrderArticle < ?');
@@ -314,12 +315,12 @@ if ($task == 'downloadContributionIDs') {
         $IDs[] = $row['idArticle'];
     }
     $dbh = null;
-    if ($IDs != null) {
+    if (!empty($IDs)) {
         $response['IDs'] = json_encode($IDs);
     }
     $response['result'] = 'success';
 }
-if ($task == 'downloadContribution1') {
+if ($task === 'downloadContribution1') {
     $dbh = new PDO($dbEdit);
     $stmt = $dbh->prepare('SELECT idArticle, idSection, byline, headline, standfirst, text, summary, evolve, expand, extend, photoName, photoCredit, photoCaption, thumbnailImageWidth FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -331,7 +332,7 @@ if ($task == 'downloadContribution1') {
     }
     $response['result'] = 'success';
 }
-if ($task == 'downloadContribution2') {
+if ($task === 'downloadContribution2') {
     $dbh = new PDO($dbEdit);
     $stmt = $dbh->prepare('SELECT thumbnailImage, thumbnailImageWidth, thumbnailImageHeight, hdImageWidth, hdImageHeight FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -343,7 +344,7 @@ if ($task == 'downloadContribution2') {
     }
     $response['result'] = 'success';
 }
-if ($task == 'downloadContribution3') {
+if ($task === 'downloadContribution3') {
     $dbh = new PDO($dbEdit);
     $stmt = $dbh->prepare('SELECT hdImage FROM articles WHERE idArticle=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -355,7 +356,7 @@ if ($task == 'downloadContribution3') {
     }
     $response['result'] = 'success';
 }
-if ($task == 'downloadContribution4a') {
+if ($task === 'downloadContribution4a') {
     $idPhotos = [];
     $dbh = new PDO($dbEdit2);
     $stmt = $dbh->prepare('SELECT idPhoto FROM imageSecondary WHERE idArticle=? ORDER BY time');
@@ -368,7 +369,7 @@ if ($task == 'downloadContribution4a') {
     $response['idPhotos'] = json_encode($idPhotos);
     $response['result'] = 'success';
 }
-if ($task == 'downloadContribution4b') {
+if ($task === 'downloadContribution4b') {
     $idPhotos = [];
     $dbh = new PDO($dbEdit2);
     $stmt = $dbh->prepare('SELECT image, photoName, photoCredit, photoCaption FROM imageSecondary WHERE idPhoto=?');
@@ -383,7 +384,7 @@ if ($task == 'downloadContribution4b') {
     }
     $response['result'] = 'success';
 }
-if ($task == 'downloadContributionDelete') {
+if ($task === 'downloadContributionDelete') {
     $dbh = new PDO($dbEdit);
     $stmt = $dbh->prepare('DELETE FROM articles WHERE idArticle=?');
     $stmt->execute([$idArticle]);
@@ -397,7 +398,7 @@ if ($task == 'downloadContributionDelete') {
 //
 // Calendar
 //
-if ($task == 'calendarSync') {
+if ($task === 'calendarSync') {
     $annual = json_decode($annual, true);
     $annualDayOfWeek = json_decode($annualDayOfWeek, true);
     $monthlyDayOfWeek = json_decode($monthlyDayOfWeek, true);
@@ -442,14 +443,14 @@ if ($task == 'calendarSync') {
 //
 // Classifieds
 //
-if ($task == 'classifiedsDelete') {
+if ($task === 'classifiedsDelete') {
     $dbh = new PDO($dbClassifieds);
     $stmt = $dbh->prepare('DELETE FROM ads WHERE idAd=?');
     $stmt->execute([$idAd]);
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'classifiedsEarlyRemoval') {
+if ($task === 'classifiedsEarlyRemoval') {
     $classifieds = [];
     $dbh = new PDO($dbClassifieds);
     $stmt = $dbh->query('SELECT idAd FROM ads WHERE duration IS NULL ORDER BY idAd');
@@ -461,14 +462,14 @@ if ($task == 'classifiedsEarlyRemoval') {
     $response['remoteClassifieds'] = json_encode($classifieds);
     $response['result'] = 'success';
 }
-if ($task == 'classifiedsNewCleanUp') {
+if ($task === 'classifiedsNewCleanUp') {
     $dbh = new PDO($dbClassifiedsNew);
     $stmt = $dbh->prepare('DELETE FROM ads WHERE idAd=?');
     $stmt->execute([$idAd]);
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'classifiedsNewDownload') {
+if ($task === 'classifiedsNewDownload') {
     $dbh = new PDO($dbClassifiedsNew);
     $stmt = $dbh->prepare('SELECT email, title, description, categoryId FROM ads WHERE idAd=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -483,7 +484,7 @@ if ($task == 'classifiedsNewDownload') {
         $stmt->setFetchMode(PDO::FETCH_NUM);
         $stmt->execute([$idAd]);
         $row = $stmt->fetch();
-        if ($row['0'] == null) {
+        if (empty($row['0'])) {
             $num[] = 0;
         } else {
             $num[] = 1;
@@ -493,7 +494,7 @@ if ($task == 'classifiedsNewDownload') {
     $response['photos'] = json_encode($num);
     $response['result'] = 'success';
 }
-if ($task == 'classifiedsNewDownloadPhoto') {
+if ($task === 'classifiedsNewDownloadPhoto') {
     $dbh = new PDO($dbClassifiedsNew);
     $stmt = $dbh->prepare('SELECT photo' . $photo. ' FROM ads WHERE idAd=?');
     $stmt->setFetchMode(PDO::FETCH_NUM);
@@ -505,7 +506,7 @@ if ($task == 'classifiedsNewDownloadPhoto') {
     }
     $response['result'] = 'success';
 }
-if ($task == 'classifiedsSync') {
+if ($task === 'classifiedsSync') {
     $classifieds = [];
     $dbh = new PDO($dbClassifieds);
     $stmt = $dbh->query('SELECT idAd FROM ads');
@@ -517,7 +518,7 @@ if ($task == 'classifiedsSync') {
     $response['remoteClassifieds'] = json_encode($classifieds);
     $response['result'] = 'success';
 }
-if ($task == 'classifiedsSyncNew') {
+if ($task === 'classifiedsSyncNew') {
     $fifteenMinutesAgo = time() - 900;
     $classifieds = [];
     $dbh = new PDO($dbClassifiedsNew);
@@ -531,7 +532,7 @@ if ($task == 'classifiedsSyncNew') {
     $response['remoteClassifieds'] = json_encode($classifieds);
     $response['result'] = 'success';
 }
-if ($task == 'classifiedsSyncSections') {
+if ($task === 'classifiedsSyncSections') {
     $sections = json_decode($sections, true);
     $dbh = new PDO($dbClassifieds);
     $dbh->beginTransaction();
@@ -553,7 +554,7 @@ if ($task == 'classifiedsSyncSections') {
     $dbh->commit();
     $dbh = null;
 }
-if ($task == 'classifiedsUpdateInsert1') {
+if ($task === 'classifiedsUpdateInsert1') {
     $dbh = new PDO($dbClassifieds);
     $stmt = $dbh->prepare('SELECT idAd FROM ads WHERE idAd=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -568,14 +569,14 @@ if ($task == 'classifiedsUpdateInsert1') {
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'classifiedsUpdateInsert2') {
+if ($task === 'classifiedsUpdateInsert2') {
     $dbh = new PDO($dbClassifieds);
     $stmt = $dbh->prepare('UPDATE ads SET photo' . $photoNumber . '=? WHERE idAd=?');
     $stmt->execute([$photo, $idAd]);
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'classifiedsUpload') {
+if ($task === 'classifiedsUpload') {
     $dbh = new PDO($dbClassifieds);
     $stmt = $dbh->prepare('INSERT INTO users (idUser, email, pass, payStatus) VALUES (?, ?, ?, ?)');
     $stmt->execute([$idUser, $email, $pass, $payStatus]);
@@ -589,14 +590,14 @@ if ($task == 'classifiedsUpload') {
 //
 // Menu
 //
-if ($task == 'menuDelete') {
+if ($task === 'menuDelete') {
     $dbh = new PDO($dbMenu);
     $stmt = $dbh->prepare('DELETE FROM menu WHERE idMenu=?');
     $stmt->execute([$idMenu]);
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'menuInsert') {
+if ($task === 'menuInsert') {
     $dbh = new PDO($dbMenu);
     $stmt = $dbh->prepare('SELECT idMenu FROM menu WHERE idMenu=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -611,7 +612,7 @@ if ($task == 'menuInsert') {
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'menuOrder') {
+if ($task === 'menuOrder') {
     $sortOrder = json_decode($sortOrder, true);
     $dbh = new PDO($dbMenu);
     foreach ($sortOrder as $row) {
@@ -621,7 +622,7 @@ if ($task == 'menuOrder') {
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'menuSync') {
+if ($task === 'menuSync') {
     $menu = [];
     $dbh = new PDO($dbMenu);
     $stmt = $dbh->query('SELECT idMenu FROM menu');
@@ -636,7 +637,7 @@ if ($task == 'menuSync') {
 //
 // Settings
 //
-if ($task == 'settingsUpdate') {
+if ($task === 'settingsUpdate') {
     $alertClassified = isset($alertClassified) ? json_decode($alertClassified, true) : null;
     $archiveAccess = isset($archiveAccess) ? json_decode($archiveAccess, true) : null;
     $calendarAccess = isset($calendarAccess) ? json_decode($calendarAccess, true) : null;
@@ -724,7 +725,7 @@ if ($task == 'settingsUpdate') {
     }
     $dbh = null;
 }
-if ($task == 'setCrypt') {
+if ($task === 'setCrypt') {
     $hash = password_hash($hash, PASSWORD_DEFAULT);
     $content = "<?php\n";
     $content.= '$hash = \'' . $hash . '\';' . "\n";
@@ -733,7 +734,7 @@ if ($task == 'setCrypt') {
     file_put_contents($includesPath . '/crypt.php', $content);
     $response['result'] = 'success';
 }
-if ($task == 'dbTest') {
+if ($task === 'dbTest') {
     if (file_exists('dbTest.sqlite')) {
         unlink('dbTest.sqlite');
     }
@@ -764,7 +765,7 @@ if ($task == 'dbTest') {
 //
 // sitemap.xml, sitemap-news.xml, rss.xml
 //
-if ($task == 'sitemap') {
+if ($task === 'sitemap') {
     //
     // sitemap.xml
     //
@@ -977,21 +978,21 @@ if ($task == 'sitemap') {
 //
 // Subscribers
 //
-if ($task == 'subscriberDelete') {
+if ($task === 'subscriberDelete') {
     $dbh = new PDO($dbSubscribers);
     $stmt = $dbh->prepare('DELETE FROM users WHERE idUser=?');
     $stmt->execute([$idUser]);
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'subscribersNewCleanUp') {
+if ($task === 'subscribersNewCleanUp') {
     $dbh = new PDO($dbSubscribersNew);
     $stmt = $dbh->prepare('DELETE FROM users WHERE soa=?');
     $stmt->execute([1]);
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'subscribersDownload') {
+if ($task === 'subscribersDownload') {
     $dbh = new PDO($dbSubscribers);
     $stmt = $dbh->prepare('SELECT email, payerEmail, payerFirstName, payerLastName, ipAddress, verify, verified, time, pass, payStatus, paid, paymentDate, note, contributor, classifiedOnly, deliver, deliver2, deliveryAddress, dCityRegionPostal, billingAddress, bCityRegionPostal, soa, evolve, expand, extend FROM users WHERE idUser = ?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -1003,7 +1004,7 @@ if ($task == 'subscribersDownload') {
     }
     $response['result'] = 'success';
 }
-if ($task == 'subscribersNewDownload') {
+if ($task === 'subscribersNewDownload') {
     $dbh = new PDO($dbSubscribersNew);
     $stmt = $dbh->prepare('SELECT idUser FROM users WHERE verified = ?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -1051,7 +1052,7 @@ if ($task == 'subscribersNewDownload') {
     $response['dbRows'] = json_encode($dbRows);
     $response['result'] = 'success';
 }
-if ($task == 'subscribersSoaUnflag') {
+if ($task === 'subscribersSoaUnflag') {
     $subscribers = [];
     $dbh = new PDO($dbSubscribers);
     $stmt = $dbh->query('SELECT idUser FROM users WHERE idUser=?');
@@ -1065,7 +1066,7 @@ if ($task == 'subscribersSoaUnflag') {
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'subscribersSync') {
+if ($task === 'subscribersSync') {
     $subscribers = [];
     $dbh = new PDO($dbSubscribers);
     $stmt = $dbh->query('SELECT idUser FROM users');
@@ -1077,7 +1078,7 @@ if ($task == 'subscribersSync') {
     $response['remoteSubscribers'] = json_encode($subscribers);
     $response['result'] = 'success';
 }
-if ($task == 'subscribersSyncSoaFlagged') {
+if ($task === 'subscribersSyncSoaFlagged') {
     $subscribers = [];
     $dbh = new PDO($dbSubscribers);
     $stmt = $dbh->query('SELECT idUser FROM users WHERE soa IS NOT NULL');
@@ -1089,20 +1090,20 @@ if ($task == 'subscribersSyncSoaFlagged') {
     $response['remoteSubscribers'] = json_encode($subscribers);
     $response['result'] = 'success';
 }
-if ($task == 'subscribersUpdate') {
+if ($task === 'subscribersUpdate') {
     $dbh = new PDO($dbSubscribers);
     $stmt = $dbh->prepare('SELECT idUser FROM users WHERE idUser=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute([$idUser]);
     $row = $stmt->fetch();
     if ($row) {
-        $stmt = $dbh->prepare('UPDATE users SET email=?, payerEmail=?, payerFirstName=?, payerLastName=?, ipAddress=?, verify=?, verified=?, time=?, pass=?, payStatus=?, paid=?, paymentDate=?, note=?, contributor=?, classifiedOnly=?, deliver=?, deliver2=?, deliveryAddress=?, dCityRegionPostal=?, billingAddress=?, bCityRegionPostal=?, soa=?, evolve=?, expand=?, extend=? WHERE idUser=?');
-        $stmt->execute([$email, $payerEmail, $payerFirstName, $payerLastName, $ipAddress, $verify, $verified, $time, $pass, $payStatus, $paid, $paymentDate, $note, $contributor, $classifiedOnly, $deliver, $deliver2, $deliveryAddress, $dCityRegionPostal, $billingAddress, $bCityRegionPostal, $soa, $evolve, $expand, $extend, $idUser]);
+        $stmt = $dbh->prepare('UPDATE users SET email=?, payerEmail=?, payerFirstName=?, payerLastName=?, ipAddress=?, verify=?, verified=?, time=?, pass=?, payStatus=?, paid=?, paymentDate=?, note=?, contributor=?, classifiedOnly=?, deliver=?, deliver2=?, deliveryAddress=?, dCityRegionPostal=?, billingAddress=?, bCityRegionPostal=?, evolve=?, expand=?, extend=? WHERE idUser=?');
+        $stmt->execute([$email, $payerEmail, $payerFirstName, $payerLastName, $ipAddress, $verify, $verified, $time, $pass, $payStatus, $paid, $paymentDate, $note, $contributor, $classifiedOnly, $deliver, $deliver2, $deliveryAddress, $dCityRegionPostal, $billingAddress, $bCityRegionPostal, $evolve, $expand, $extend, $idUser]);
     }
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'subscribersUpload') {
+if ($task === 'subscribersUpload') {
     $dbh = new PDO($dbSubscribers);
     $stmt = $dbh->prepare('INSERT INTO users (idUser, email, payerEmail, payerFirstName, payerLastName, ipAddress, verify, verified, time, pass, payStatus, paid, paymentDate, note, contributor, classifiedOnly, deliver, deliver2, deliveryAddress, dCityRegionPostal, billingAddress, bCityRegionPostal, soa, evolve, expand, extend) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
     $stmt->execute([$idUser, $email, $payerEmail, $payerFirstName, $payerLastName, $ipAddress, $verify, $verified, $time, $pass, $payStatus, $paid, $paymentDate, $note, $contributor, $classifiedOnly, $deliver, $deliver2, $deliveryAddress, $dCityRegionPostal, $billingAddress, $bCityRegionPostal, $soa, $evolve, $expand, $extend]);
@@ -1116,7 +1117,7 @@ if ($task == 'subscribersUpload') {
 //
 // Surveys
 //
-if ($task == 'surveySync') {
+if ($task === 'surveySync') {
     $answers = json_decode($answers, true);
     $dbh = new PDO($dbSurvey);
     $stmt = $dbh->query('DELETE FROM answers');
@@ -1130,7 +1131,7 @@ if ($task == 'surveySync') {
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'surveyUpdate') {
+if ($task === 'surveyUpdate') {
     $answers = json_decode($answers, true);
     $dbh = new PDO($dbSurvey);
     $stmt = $dbh->prepare('DELETE FROM answers WHERE idArticle=?');
@@ -1145,7 +1146,7 @@ if ($task == 'surveyUpdate') {
     $dbh = null;
     $response['result'] = 'success';
 }
-if ($task == 'surveyVotesDownload') {
+if ($task === 'surveyVotesDownload') {
     $votes = [];
     $dbh = new PDO($dbSurvey);
     $stmt = $dbh->prepare('SELECT * FROM tally WHERE idArticle=?');
@@ -1161,69 +1162,70 @@ if ($task == 'surveyVotesDownload') {
 //
 // Test
 //
-if ($task == 'test') {
+if ($task === 'test') {
     $response['result'] = 'success';
 }
 //
 // Check for error logs
 //
-if (($task == 'adDelete'
-    or $task == 'adInsert'
-    or $task == 'adOrder'
-    or $task == 'adSync'
-    or $task == 'archiveDelete'
-    or $task == 'archiveSearch'
-    or $task == 'archiveSync'
-    or $task == 'archiveSync2'
-    or $task == 'calendarSync'
-    or $task == 'classifiedsDelete'
-    or $task == 'classifiedsEarlyRemoval'
-    or $task == 'classifiedsNewCleanUp'
-    or $task == 'classifiedsNewDownload'
-    or $task == 'classifiedsNewDownloadPhoto'
-    or $task == 'classifiedsSync'
-    or $task == 'classifiedsSyncNew'
-    or $task == 'classifiedsSyncSections'
-    or $task == 'classifiedsUpdateInsert1'
-    or $task == 'classifiedsUpdateInsert2'
-    or $task == 'classifiedsUpload'
-    or $task == 'dbTest'
-    or $task == 'downloadContribution1'
-    or $task == 'downloadContribution2'
-    or $task == 'downloadContribution3'
-    or $task == 'downloadContribution4a'
-    or $task == 'downloadContribution4b'
-    or $task == 'downloadContributionDelete'
-    or $task == 'downloadContributionIDs'
-    or $task == 'menuDelete'
-    or $task == 'menuInsert'
-    or $task == 'menuOrder'
-    or $task == 'menuSync'
-    or $task == 'publishedDelete'
-    or $task == 'publishedDeletePhoto'
-    or $task == 'publishedOrder'
-    or $task == 'publishedSync'
-    or $task == 'publishedSync2'
-    or $task == 'setCrypt'
-    or $task == 'settingsUpdate'
-    or $task == 'sitemap'
-    or $task == 'subscriberDelete'
-    or $task == 'subscribersDownload'
-    or $task == 'subscribersNewCleanUp'
-    or $task == 'subscribersNewDownload'
-    or $task == 'subscribersSoaUnflag'
-    or $task == 'subscribersSync'
-    or $task == 'subscribersSyncSoaFlagged'
-    or $task == 'subscribersUpdate'
-    or $task == 'subscribersUpload'
-    or $task == 'surveySync'
-    or $task == 'surveyUpdate'
-    or $task == 'surveyVotesDownload'
-    or $task == 'test'
-    or $task == 'updateInsert1'
-    or $task == 'updateInsert2'
-    or $task == 'updateInsert3'
-    or $task == 'updateInsert4')
+if (($task === 'adDelete'
+    or $task === 'adInsert'
+    or $task === 'adMax'
+    or $task === 'adOrder'
+    or $task === 'adSync'
+    or $task === 'archiveDelete'
+    or $task === 'archiveSearch'
+    or $task === 'archiveSync'
+    or $task === 'archiveSync2'
+    or $task === 'calendarSync'
+    or $task === 'classifiedsDelete'
+    or $task === 'classifiedsEarlyRemoval'
+    or $task === 'classifiedsNewCleanUp'
+    or $task === 'classifiedsNewDownload'
+    or $task === 'classifiedsNewDownloadPhoto'
+    or $task === 'classifiedsSync'
+    or $task === 'classifiedsSyncNew'
+    or $task === 'classifiedsSyncSections'
+    or $task === 'classifiedsUpdateInsert1'
+    or $task === 'classifiedsUpdateInsert2'
+    or $task === 'classifiedsUpload'
+    or $task === 'dbTest'
+    or $task === 'downloadContribution1'
+    or $task === 'downloadContribution2'
+    or $task === 'downloadContribution3'
+    or $task === 'downloadContribution4a'
+    or $task === 'downloadContribution4b'
+    or $task === 'downloadContributionDelete'
+    or $task === 'downloadContributionIDs'
+    or $task === 'menuDelete'
+    or $task === 'menuInsert'
+    or $task === 'menuOrder'
+    or $task === 'menuSync'
+    or $task === 'publishedDelete'
+    or $task === 'publishedDeletePhoto'
+    or $task === 'publishedOrder'
+    or $task === 'publishedSync'
+    or $task === 'publishedSync2'
+    or $task === 'setCrypt'
+    or $task === 'settingsUpdate'
+    or $task === 'sitemap'
+    or $task === 'subscriberDelete'
+    or $task === 'subscribersDownload'
+    or $task === 'subscribersNewCleanUp'
+    or $task === 'subscribersNewDownload'
+    or $task === 'subscribersSoaUnflag'
+    or $task === 'subscribersSync'
+    or $task === 'subscribersSyncSoaFlagged'
+    or $task === 'subscribersUpdate'
+    or $task === 'subscribersUpload'
+    or $task === 'surveySync'
+    or $task === 'surveyUpdate'
+    or $task === 'surveyVotesDownload'
+    or $task === 'test'
+    or $task === 'updateInsert1'
+    or $task === 'updateInsert2'
+    or $task === 'updateInsert3'
+    or $task === 'updateInsert4')
     and isset($response['result'])
 ) {
     //

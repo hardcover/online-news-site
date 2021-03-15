@@ -2,17 +2,17 @@
 /**
  * An admin page for configuring the system
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 session_start();
@@ -23,7 +23,7 @@ require $includesPath . '/crypt.php';
 //
 // User-group authorization
 //
-if ($_SESSION['username'] != 'admin') {
+if ($_SESSION['username'] !== 'admin') {
     include 'logout.php';
     exit;
 }
@@ -62,9 +62,6 @@ $dbh = null;
 //
 // Test admin password authentication
 //
-if (isset($_POST['adminPass']) and ($_POST['adminPass'] == null or $_POST['adminPass'] == '')) {
-    $message = 'The admin password is required for all user maintenance.';
-}
 $dbh = new PDO($dbEditors);
 $stmt = $dbh->prepare('SELECT pass FROM users WHERE user=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -98,7 +95,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
     //
     // Button: Delete newspaper name
     //
-    if (isset($_POST['deleteName']) and $_POST['deleteName'] == 'Delete') {
+    if (isset($_POST['deleteName'])) {
         $dbh = new PDO($dbSettings);
         $stmt = $dbh->query('DELETE FROM names');
         $dbh = null;
@@ -124,7 +121,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
             //
             // Determine insert or update
             //
-            if ($_POST['existing'] == null) {
+            if (empty($_POST['existing'])) {
                 $dbh = new PDO($dbSettings);
                 $stmt = $dbh->prepare('INSERT INTO sections (idSection) VALUES (?)');
                 $stmt->execute([null]);
@@ -144,7 +141,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
             //
             // Update newspaper sections
             //
-            if ($_POST['addUpdateSection'] != null and $_POST['sortOrderSection'] != null) {
+            if (isset($_POST['addUpdateSection']) and isset($_POST['sortOrderSection'])) {
                 //
                 // Establish the change in sort order, if any
                 //
@@ -293,7 +290,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
         //
         // Create ID for add, not if update
         //
-        if ($_POST['existing'] == null) {
+        if (empty($_POST['existing'])) {
             $dbh = new PDO($dbRemote);
             $stmt = $dbh->prepare('INSERT INTO remotes (idRemote) VALUES (?)');
             $stmt->execute([null]);
@@ -313,7 +310,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
         //
         // Apply update
         //
-        if ($_POST['remote'] != null and isset($idRemote)) {
+        if (isset($_POST['remote']) and isset($idRemote)) {
             $dbh = new PDO($dbRemote);
             $stmt = $dbh->prepare('UPDATE remotes SET remote=? WHERE idRemote=?');
             $stmt->execute([$remotePost, $idRemote]);
@@ -339,15 +336,18 @@ if (password_verify($adminPassPost, $row['pass'])) {
             $request['task'] = 'test';
             foreach ($remotes as $remote) {
                 $response = soa($remote . 'z/', $request);
-                $message.= '  ' . $row['remote'] . "<br />\n";
-                if ($response['result'] == strval('success')) {
-                    $message.= "  Result: success<br /><br />\n";
+                if (empty($response['result'])) {
+                    $response['result'] = null;
+                }
+                $message.= '  ' . $remote . "<br /><br />\n";
+                if ($response['result'] === strval('success')) {
+                    $message.= "  Result: success<br />\n";
                     //
                     // Update the remote databases
                     //
                     include $includesPath . '/syncSettings.php';
                 } else {
-                    $message.= "  Result: failure<br /><br />\n";
+                    $message.= "  Result: failure<br />\n";
                 }
             }
         } else {
@@ -358,7 +358,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
     // Button: Delete URI
     //
     if (isset($_POST['deleteURI']) and isset($_POST['remote'])) {
-        if ($_POST['remote'] != null) {
+        if (isset($_POST['remote'])) {
             $dbh = new PDO($dbRemote);
             $stmt = $dbh->prepare('SELECT idRemote FROM remotes WHERE remote=?');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -396,7 +396,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
     // Button: Change admin password
     //
     if (isset($_POST['changeAdminPass']) and strval($_POST['changeAdminPass']) === strval('Change admin password')) {
-        if ($newAdminPassOnePost != $newAdminPassTwoPost) {
+        if ($newAdminPassOnePost !== $newAdminPassTwoPost) {
             $message = 'The passwords do not match.';
         } elseif (empty($newAdminPassOnePost) or empty($newAdminPassTwoPost)) {
             $message = 'Both password fields are required.';
@@ -412,7 +412,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
     //
     // Test connections
     //
-    if (isset($_POST['testConnections']) and $_POST['testConnections'] == strval('Test remote connections')) {
+    if (isset($_POST['testConnections'])) {
         //
         $remotes = [];
         $dbh = new PDO($dbRemote);
@@ -422,24 +422,24 @@ if (password_verify($adminPassPost, $row['pass'])) {
             $remotes[] = $row['remote'];
         }
         $dbh = null;
-        $message.= "Test connection results:<br /><br />\n";
+        $message.= "Test connection result:<br /><br />\n";
         $request = null;
         $response = null;
         $request['task'] = 'test';
         foreach ($remotes as $remote) {
             $response = soa($remote . 'z/', $request);
-            $message.= '  ' . $row['remote'] . "<br />\n";
-            if ($response['result'] == strval('success')) {
-                $message.= "  Result: success<br /><br />\n";
+            $message.= '  ' . $remote . "<br /><br />\n";
+            if ($response['result'] === strval('success')) {
+                $message.= "  Result: success<br />\n";
             } else {
-                $message.= "  Result: failure<br /><br />\n";
+                $message.= "  Result: failure<br />\n";
             }
         }
     }
     //
     // Change password for remote sites
     //
-    if (isset($_POST['changeRemotePass']) and $_POST['changeRemotePass'] == strval('Change remote passwords')) {
+    if (isset($_POST['changeRemotePass'])) {
         //
         $remotes = [];
         $dbh = new PDO($dbRemote);
@@ -458,7 +458,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
         $notRandom = 'jntwzLW';
         for ($i = 0; $i < 22; $i++) {
             $position = mt_rand(0, strlen($notRandom) - 1);
-            $character = $notRandom{$position};
+            $character = $notRandom[$position];
             $gig.= $character;
         }
         $message.= "Change remote passwords result:<br /><br />\n";
@@ -469,10 +469,10 @@ if (password_verify($adminPassPost, $row['pass'])) {
         $request['newGig'] = $gig;
         foreach ($remotes as $remote) {
             $response = soa($remote . 'z/', $request);
-            $message.= '  ' . $row['remote'] . "<br />\n";
-            if ($response['result'] == strval('success')) {
+            $message.= '  ' . $remote . "<br /><br />\n";
+            if ($response['result'] === strval('success')) {
                 $passHash = password_hash($newOnus, PASSWORD_DEFAULT);
-                $message.= "  Result: success<br /><br />\n";
+                $message.= "  Result: success<br />\n";
                 $content = "<?php\n";
                 $content.= '$onus = \'' . $newOnus . '\';' . "\n";
                 $content.= '$hash = \'' . $passHash . '\';' . "\n";
@@ -480,12 +480,16 @@ if (password_verify($adminPassPost, $row['pass'])) {
                 $content.= '?>' . "\n";
                 file_put_contents($includesPath . '/crypt.php', $content);
             } else {
-                $message.= "  Result: failure<br /><br />\n";
+                $message.= "  Result: failure<br />\n";
             }
         }
     }
-} elseif (isset($adminPassPost)) {
-    $message = 'The admin password is invalid.';
+} elseif (isset($_POST['addUpdate']) or isset($_POST['delete'])) {
+    if (empty($_POST['adminPass'])) {
+        $message = 'The admin password is required for all user maintenance.';
+    } else {
+        $message = 'The admin password is invalid.';
+    }
 }
 //
 // Button: Edit
@@ -586,6 +590,10 @@ $stmt = $dbh->query('SELECT idClassified, emailClassified FROM alertClassified')
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $row = $stmt->fetch();
 $dbh = null;
+if ($row === false) {
+    $row['idClassified'] = null;
+    $row['emailClassified'] = null;
+}
 echo '  <form action="' . $uri . 'settings.php" method="post">' . "\n";
 echo '    <p><span class="p">' . $row['emailClassified'] . "<br />\n";
 echo '    <input type="hidden" name="idClassified" value="' . $row['idClassified'] . '" /><input type="hidden" name="emailClassified" value="' . $row['emailClassified'] . '" /><input type="submit" value="Edit" name="edit" class="button" /></span></p>' . "\n";

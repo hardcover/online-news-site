@@ -2,17 +2,17 @@
 /**
  * Log in, when successful redirects to the appropriate page
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 @session_start();
@@ -40,11 +40,7 @@ if (empty($_POST['login']) or $_POST['login'] !== 'Log in') {
         }
         if ($kGet !== $getAuthorization) {
             header_remove();
-            if (substr(phpversion(), 0, 3) < '5.4') {
-                header(' ', true, 404);
-            } else {
-                http_response_code(404);
-            }
+            http_response_code(404);
             exit;
         }
     }
@@ -104,43 +100,45 @@ if (isset($_POST['login'], $userPost, $passPost)) {
     $stmt->execute([$userPost]);
     $row = $stmt->fetch();
     $dbh = null;
-    if (password_verify($passPost, $row['pass'])) {
-        if (password_needs_rehash($row['pass'], PASSWORD_DEFAULT)) {
-            $newHash = password_hash($passPost, PASSWORD_DEFAULT);
-            $dbh = new PDO($dbEditors);
-            $stmt = $dbh->prepare('UPDATE users SET pass=? WHERE idUser=?');
-            $stmt->execute([$newHash, $row['idUser']]);
+    if ($row) {
+        if (password_verify($passPost, $row['pass'])) {
+            if (password_needs_rehash($row['pass'], PASSWORD_DEFAULT)) {
+                $newHash = password_hash($passPost, PASSWORD_DEFAULT);
+                $dbh = new PDO($dbEditors);
+                $stmt = $dbh->prepare('UPDATE users SET pass=? WHERE idUser=?');
+                $stmt->execute([$newHash, $row['idUser']]);
+                $dbh = null;
+            }
+            $dbh = new PDO($dbLog);
+            $stmt = $dbh->prepare('UPDATE login SET time=? WHERE user=?');
+            $stmt->execute([null, $userPost]);
             $dbh = null;
+            $_SESSION['auth'] = hash('sha256', $_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']) . hash('sha512', $row['user'] . $row['idUser']);
+            $_SESSION['userID'] = hash('sha512', $row['user'] . $row['idUser']);
+            $_SESSION['userId'] = $row['idUser'];
+            $_SESSION['username'] = $row['user'];
+            if (strval($row['user']) === strval('admin')) {
+                header('Location: ' . $uri . 'usersEditors.php');
+                exit;
+            } elseif ($row['userType'] === '1') {
+                header('Location: ' . $uri . 'edit.php');
+                exit;
+            } elseif ($row['userType'] === '2') {
+                header('Location: ' . $uri . 'subscribers.php');
+                exit;
+            } elseif ($row['userType'] === '3') {
+                header('Location: ' . $uri . 'advertisingPublished.php');
+                exit;
+            } elseif ($row['userType'] === '4') {
+                header('Location: ' . $uri . 'classifieds.php');
+                exit;
+            } elseif ($row['userType'] === '5') {
+                header('Location: ' . $uri . 'menu.php');
+                exit;
+            }
+        } else {
+            $message = 'Login credentials are incorrect.';
         }
-        $dbh = new PDO($dbLog);
-        $stmt = $dbh->prepare('UPDATE login SET time=? WHERE user=?');
-        $stmt->execute([null, $userPost]);
-        $dbh = null;
-        $_SESSION['auth'] = hash('sha256', $_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']) . hash('sha512', $row['user'] . $row['idUser']);
-        $_SESSION['userID'] = hash('sha512', $row['user'] . $row['idUser']);
-        $_SESSION['userId'] = $row['idUser'];
-        $_SESSION['username'] = $row['user'];
-        if (strval($row['user']) === strval('admin')) {
-            header('Location: ' . $uri . 'usersEditors.php');
-            exit;
-        } elseif ($row['userType'] == 1) {
-            header('Location: ' . $uri . 'edit.php');
-            exit;
-        } elseif ($row['userType'] == 2) {
-            header('Location: ' . $uri . 'subscribers.php');
-            exit;
-        } elseif ($row['userType'] == 3) {
-            header('Location: ' . $uri . 'advertisingPublished.php');
-            exit;
-        } elseif ($row['userType'] == 4) {
-            header('Location: ' . $uri . 'classifieds.php');
-            exit;
-        } elseif ($row['userType'] == 5) {
-            header('Location: ' . $uri . 'menu.php');
-            exit;
-        }
-    } else {
-        $message = 'Login credentials are incorrect.';
     }
 }
 //
@@ -151,6 +149,9 @@ $stmt = $dbh->query('SELECT name FROM names');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $row = $stmt->fetch();
 $dbh = null;
+if ($row === false) {
+    $row['name'] = null;
+}
 $request['name'] = $row['name'];
 $request['remotes'] = null;
 $dbh = new PDO($dbRemote);
@@ -161,22 +162,24 @@ foreach ($stmt as $row) {
 }
 $dbh = null;
 $request['phpversion'] = phpversion();
-$request['version'] = '2019 12 7';
+$request['version'] = '2021 3 15';
 $request = http_build_query(array_map('base64_encode', $request));
-stream_context_set_default(['http' => ['method' => 'POST', 'header' => 'Content-Type: application/x-www-form-urlencoded', 'content' => $request]]);
-$fp = @fopen('https://online-news-site.com/v/', 'rb', false);
-$response = @stream_get_contents($fp);
+stream_context_set_default(['http' => ['user_agent' => 'PHP', 'method' => 'POST', 'header' => 'Content-Type: application/x-www-form-urlencoded', 'content' => $request]]);
+$fp = @fopen('https://onlinenewssite.com/v/', 'rb', false);
+if ($fp !== false) {
+    $response = @stream_get_contents($fp);
+}
 //
 // HTML
 //
 require $includesPath . '/header1.inc';
 ?>
   <title>Online News Site</title>
-  <meta name="generator" content="Online News Site, free open source news publishing software, https://online-news-site.com/" />
+  <meta name="generator" content="Online News Site, free open source news publishing software, https://onlinenewssite.com/" />
 <?php require $includesPath . '/header2.inc'; ?>
 <body>
   <p><br />
-  <a href="https://online-news-site.com/"><img src="images/logo.png" class="logo" alt="Online news site free open source software" /></a></p>
+  <a href="https://onlinenewssite.com/"><img src="images/logo.png" class="logo" alt="Online news site free open source software" /></a></p>
 
   <h1>News editor log in</h1>
 <?php echoIfMessage($message); ?>
@@ -192,15 +195,20 @@ require $includesPath . '/header1.inc';
   </form>
 
 <?php
+//
+// Alert for classified ads requiring review
+//
+require $includesPath . '/syncClassifiedsNew.php';
 $dbh = new PDO($dbClassifieds);
 $stmt = $dbh->query('SELECT count(idAd) FROM ads WHERE review IS NULL');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $row = $stmt->fetch();
 $dbRowCount = $row['count(idAd)'];
+$dbh = null;
 if ($dbRowCount !== '0') {
     echo '  <p>' . number_format($dbRowCount) . " classified ad(s) pending review.</p>\n\n";
 }
 ?>
-  <p>Version 2019 12 7. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.</p>
+  <p>Version 2021 3 15. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.</p>
 </body>
 </html>

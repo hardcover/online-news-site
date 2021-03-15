@@ -28,7 +28,7 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
-if (empty($row['userType']) or $row['userType'] !== '2') {
+if (empty($row['userType']) or $row['userType'] != 2) {
     include 'logout.php';
     exit;
 }
@@ -63,7 +63,7 @@ $passPost = inlinePost('pass');
 $payStatusEdit = null;
 $payStatusPost = strtotime(inlinePost('payStatus'));
 $subscribers = null;
-if ($passPost !== null) {
+if ($passPost != null) {
     $hash = password_hash($passPost, PASSWORD_DEFAULT);
 } else {
     $hash = null;
@@ -84,7 +84,7 @@ if (isset($_POST['addUpdate'])) {
     //
     // Determine insert or update, check for unique email address
     //
-    if (empty($_POST['existing'])) {
+    if ($_POST['existing'] == null) {
         $dbh = new PDO($dbSubscribers);
         $stmt = $dbh->prepare('SELECT email FROM users WHERE email=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -114,14 +114,14 @@ if (isset($_POST['addUpdate'])) {
     //
     // Apply update
     //
-    if (isset($_POST['email'])) {
+    if ($_POST['email'] != null) {
         $dbh = new PDO($dbSubscribers);
-        if (empty($passPost)) {
+        if ($passPost == null or $passPost == '') {
             $stmt = $dbh->prepare('UPDATE users SET email=?, payStatus=?, note=?, contributor=?, classifiedOnly=?, deliver=?, deliveryAddress=?, dCityRegionPostal=?, billingAddress=?, bCityRegionPostal=?, soa=? WHERE idUser=?');
-            $stmt->execute([muddle($emailPost), $payStatusPost, $notePost, $contributorPost, $classifiedOnlyPost, $deliverPost, $deliveryAddressPost, $dCityRegionPostalPost, $billingAddressPost, $bCityRegionPostalPost, '1', $idUser]);
+            $stmt->execute([muddle($emailPost), $payStatusPost, $notePost, $contributorPost, $classifiedOnlyPost, $deliverPost, $deliveryAddressPost, $dCityRegionPostalPost, $billingAddressPost, $bCityRegionPostalPost, 1, $idUser]);
         } else {
             $stmt = $dbh->prepare('UPDATE users SET email=?, pass=?, payStatus=?, note=?, contributor=?, classifiedOnly=?, deliver=?, deliveryAddress=?, dCityRegionPostal=?, billingAddress=?, bCityRegionPostal=?, soa=? WHERE idUser=?');
-            $stmt->execute([muddle($emailPost), $hash, $payStatusPost, $notePost, $contributorPost, $classifiedOnlyPost, $deliverPost, $deliveryAddressPost, $dCityRegionPostalPost, $billingAddressPost, $bCityRegionPostalPost, '1', $idUser]);
+            $stmt->execute([muddle($emailPost), $hash, $payStatusPost, $notePost, $contributorPost, $classifiedOnlyPost, $deliverPost, $deliveryAddressPost, $dCityRegionPostalPost, $billingAddressPost, $bCityRegionPostalPost, 1, $idUser]);
         }
         $dbh = null;
         //
@@ -136,7 +136,7 @@ if (isset($_POST['addUpdate'])) {
 // Button: Delete
 //
 if (isset($_POST['delete'])) {
-    if ($_POST['email'] !== null) {
+    if ($_POST['email'] != null) {
         $dbh = new PDO($dbSubscribers);
         $stmt = $dbh->prepare('SELECT idUser FROM users WHERE email=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);

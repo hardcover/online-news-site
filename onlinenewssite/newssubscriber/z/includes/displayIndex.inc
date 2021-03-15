@@ -2,17 +2,17 @@
 /**
  * Displays the article index
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 $html = null;
@@ -40,7 +40,7 @@ if (isset($_GET['a'])) {
             //
             // Omit the first section divider for subscribers
             //
-            if ($sortOrderSection == 1 and is_null($editorView)) {
+            if ($sortOrderSection === '1' and is_null($editorView)) {
                 // Do nothing
             } else {
                 $html.= "\n" . '      <h4>' . $section . "</h4>\n\n";
@@ -57,7 +57,7 @@ if (isset($_GET['a'])) {
             $stmt->execute([$idSection]);
             foreach ($stmt as $row) {
                 extract($row);
-                if ($count != null) {
+                if (isset($count)) {
                     $html.= "      <hr />\n\n";
                 }
                 $count++;
@@ -65,7 +65,7 @@ if (isset($_GET['a'])) {
                 if (!empty($standfirst)) {
                     $html.= '      <h5>' . html($standfirst) . "</h5>\n\n";
                 }
-                if ($thumbnailImageWidth != null) {
+                if (!empty($thumbnailImageWidth)) {
                     $html.= '      <p><a href="' . $use . '.php?a=' . $idArticle . '">';
                     if ($photoName === 'third') {
                         $html.= '<img class="t b mb" src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" alt="">';
@@ -74,7 +74,7 @@ if (isset($_GET['a'])) {
                     }
                     $html.= '</a>' . html($summary) . "</p>\n";
                 } else {
-                    if ($summary != '') {
+                    if (!empty($summary)) {
                         $html.= '      <p>' . html($summary) . "</p>\n";
                     }
                 }
@@ -83,9 +83,9 @@ if (isset($_GET['a'])) {
             // Modify for different uses, no include for subscribers
             //
             if (isset($editorView)) {
-                if ($use == 'edit') {
+                if ($use === 'edit') {
                     include $includesPath . '/displayEdit.php';
-                } elseif ($use == 'published') {
+                } elseif ($use === 'published') {
                     include $includesPath . '/displayPublished.php';
                 }
             }

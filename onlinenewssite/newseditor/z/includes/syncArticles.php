@@ -2,17 +2,17 @@
 /**
  * Synchronizes the remote and local databases
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 //
@@ -47,7 +47,7 @@ foreach ($remotes as $remote) {
                 $stmt = $dbh->prepare('INSERT INTO articles (idArticle, idSection, byline, headline, standfirst, text, summary, evolve, expand, extend, photoName, photoCredit, photoCaption) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
                 $stmt->execute([$idArticle, $idSection, $byline, $headline, $standfirst, $text, $summary, $evolve, $expand, $extend, $photoName, $photoCredit, $photoCaption]);
                 $dbh = null;
-                if (isset($thumbnailImageWidth) and $thumbnailImageWidth != 'null') {
+                if (!empty($thumbnailImageWidth)) {
                     $request = null;
                     $response = null;
                     $request['task'] = 'downloadContribution2';
@@ -86,9 +86,16 @@ foreach ($remotes as $remote) {
                         $response = null;
                         $response = soa($remote . 'z/', $request);
                         if (isset($response['hdImage'])) {
+                            $dbh = new PDO($dbPhotoId);
+                            $stmt = $dbh->prepare('INSERT INTO photos (idArticle) VALUES (?)');
+                            $stmt->execute([null]);
+                            $idPhotoNew = $dbh->lastInsertId();
+                            $stmt = $dbh->prepare('UPDATE photos SET idPhoto=? WHERE rowid=?');
+                            $stmt->execute([$idPhotoNew, $idPhotoNew]);
+                            $dbh = null;
                             $dbh = new PDO($dbEdit2);
-                            $stmt = $dbh->prepare('INSERT INTO imageSecondary (idArticle, image, photoName, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?, ?)');
-                            $stmt->execute([$idArticle, $response['hdImage'], $response['photoName'], $response['photoCredit'], $response['photoCaption'], time()]);
+                            $stmt = $dbh->prepare('INSERT INTO imageSecondary (idPhoto, idArticle, image, photoName, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?, ?, ?)');
+                            $stmt->execute([$idPhotoNew, $idArticle, $response['hdImage'], $response['photoName'], $response['photoCredit'], $response['photoCaption'], time()]);
                             $dbh = null;
                         }
                     }
@@ -124,7 +131,7 @@ foreach ($remotes as $remote) {
     //
     $response = soa($remote . 'z/', $request);
     $remoteArticles = json_decode($response['remoteArticles'], true);
-    if ($remoteArticles == 'null' or $remoteArticles == null) {
+    if ($remoteArticles === 'null' or $remoteArticles === null) {
         $remoteArticles = [];
     }
     $articles = [];
@@ -162,7 +169,7 @@ foreach ($remotes as $remote) {
         }
         $response = soa($remote . 'z/', $request);
         $remoteArticles = json_decode($response['remoteArticles'], true);
-        if ($remoteArticles == 'null' or $remoteArticles == null) {
+        if ($remoteArticles === 'null' or $remoteArticles === null) {
             $remoteArticles = [];
         }
         $dbh = new PDO($database);
@@ -192,12 +199,12 @@ foreach ($remotes as $remote) {
 //
 // Reset database variables
 //
-if ($use == 'edit') {
+if ($use === 'edit') {
     $database = $dbEdit;
     $database2 = $dbEdit2;
     $imagePath = 'imagee.php';
     $imagePath2 = 'imagee2.php';
-} elseif ($use == 'published') {
+} elseif ($use === 'published') {
     $database = $dbPublished;
     $database2 = $dbPublished2;
     $imagePath = 'imagep.php';

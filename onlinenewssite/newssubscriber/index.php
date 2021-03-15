@@ -2,17 +2,17 @@
 /**
  * The news home page
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 @session_start();
@@ -77,7 +77,7 @@ if (isset($_GET['t'])) {
     $tGet = null;
 }
 //
-// Verification of registration variable
+// Registration verification variable
 //
 if (isset($_GET['v'])) {
     $vGet = secure($_GET['v']);
@@ -138,7 +138,7 @@ if ($row) {
         $headers.= 'Content-Type: text/plain; charset=utf-8; format=flowed' . "\r\n";
         $headers.= 'Content-Transfer-Encoding: 7bit' . "\r\n";
         $result = mail($to, $subject, $body, $headers);
-        if ($result == true) {
+        if ($result) {
             $dbh = new PDO($dbClassifiedsNew);
             $stmt = $dbh->prepare('UPDATE ads SET payment=? WHERE review >= ?');
             $stmt->execute([1, time() + (15 * 60)]);
@@ -162,14 +162,17 @@ $dbh = null;
 //
 // Activate a registration
 //
-if (isset($tGet) and $tGet == 'l' and isset($vGet)) {
+if (isset($tGet)
+    and $tGet === 'l'
+    and isset($vGet)
+) {
     $dbh = new PDO($dbSubscribersNew);
     $stmt = $dbh->prepare('SELECT verify, ipAddress, payStatus FROM users WHERE verify=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute([$vGet]);
     $row = $stmt->fetch();
     $dbh = null;
-    if ($row and $row['ipAddress'] == $_SERVER['REMOTE_ADDR']) {
+    if ($row and $row['ipAddress'] === $_SERVER['REMOTE_ADDR']) {
         $dbh = new PDO($dbSubscribersNew);
         $stmt = $dbh->prepare('UPDATE users SET verify=?, verified=? WHERE verify=?');
         $stmt->execute([null, 1, $vGet]);
@@ -183,7 +186,7 @@ if (isset($tGet) and $tGet == 'l' and isset($vGet)) {
 require $includesPath . '/header1.inc';
 echo '  <title>' . $name . "</title>\n";
 echo '  <meta name="description" content="' . $description . '" />' . "\n";
-echo '  <meta name="application-name" content="Online News Site https://online-news-site.com/" />' . "\n";
+echo '  <meta name="application-name" content="Online News Site https://onlinenewssite.com/" />' . "\n";
 require $includesPath . '/header2Two.inc';
 if (file_exists('z/local.css')) {
     echo '  <link rel="stylesheet" type="text/css" href="z/local.css" />' . "\n";
@@ -226,7 +229,7 @@ if (isset($_SESSION['auth'])) {
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {
-        if ($row['contributor'] == 1) {
+        if ($row['contributor'] === '1') {
             echo '      <a class="n" href="' . $uri . '?m=article-contribution">Article contribution</a><br />' . "\n";
         }
     }
@@ -275,8 +278,10 @@ if (isset($maxAds)) {
             $adSortTemp[$key] = $value;
         }
     }
-    $adSort = $adSortTemp;
-    $adSortTemp = null;
+    if (!empty($adSortTemp)) {
+        $adSort = $adSortTemp;
+        $adSortTemp = null;
+    }
 }
 $dbh = new PDO($dbAdvertising);
 foreach ($adSort as $idAd) {
@@ -286,7 +291,7 @@ foreach ($adSort as $idAd) {
     $row = $stmt->fetch();
     if ($row) {
         extract($row);
-        if ($link != null and $link != '') {
+        if (!empty($link)) {
             $linkHtml1 = '<a href="' . $link . '" target="_blank" rel="nofollow">';
             $linkHtml2 = '</a>';
         } else {
@@ -305,9 +310,11 @@ if (empty($_GET)) {
     include $includesPath . '/displayIndex.inc';
 } elseif (isset($aGet) and isset($mGet)) {
     include $includesPath . '/archive.php';
+} elseif (isset($tGet) and isset($mGet)) {
+    include $includesPath . '/articleContribution.php';
 } elseif (isset($aGet)) {
     include $includesPath . '/displayArticleSEO.inc';
-} elseif ($mGet == 'archive-search') {
+} elseif ($mGet === 'archive-search') {
     $dbh = new PDO($dbSettings);
     $stmt = $dbh->prepare('SELECT access FROM archiveAccess WHERE idAccess=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -317,7 +324,7 @@ if (empty($_GET)) {
     if (!empty($row['access'])) {
         include $includesPath . '/archive.php';
     }
-} elseif ($mGet == 'calendar') {
+} elseif ($mGet === 'calendar') {
     $dbh = new PDO($dbSettings);
     $stmt = $dbh->prepare('SELECT access FROM calendarAccess WHERE idCalendarAccess=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -327,7 +334,7 @@ if (empty($_GET)) {
     if (!empty($row['access'])) {
         include $includesPath . '/calendar.php';
     }
-} elseif ($mGet == 'classified-ads') {
+} elseif ($mGet === 'classified-ads') {
     $dbh = new PDO($dbSettings);
     $stmt = $dbh->prepare('SELECT access FROM classifiedAccess WHERE idClassifiedAccess=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -337,7 +344,7 @@ if (empty($_GET)) {
     if (!empty($row['access'])) {
         include $includesPath . '/classifieds.php';
     }
-} elseif ($mGet == 'contact-us') {
+} elseif ($mGet === 'contact-us') {
     $dbh = new PDO($dbSettings);
     $stmt = $dbh->prepare('SELECT access FROM contactAccess WHERE idContactAccess=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -347,11 +354,11 @@ if (empty($_GET)) {
     if (!empty($row['access'])) {
         include $includesPath . '/contact.php';
     }
-} elseif ($mGet == 'article-contribution') {
+} elseif ($mGet === 'article-contribution') {
     include $includesPath . '/articleContribution.php';
-} elseif ($mGet == 'my-account') {
+} elseif ($mGet === 'my-account') {
     include $includesPath . '/myAccount.php';
-} elseif ($mGet == 'place-classified') {
+} elseif ($mGet === 'place-classified') {
     include $includesPath . '/placeClassified.php';
 } elseif (isset($mGet)) {
     $dbh = new PDO($dbMenu);
@@ -362,7 +369,7 @@ if (empty($_GET)) {
     if ($row) {
         extract($row);
         $test = substr($menuContent, 0, 8);
-        if ($test == 'require ') {
+        if ($test === 'require ') {
             //
             // Custom programs
             //
@@ -378,17 +385,17 @@ if (empty($_GET)) {
             echo '      ' . $content . "\n";
         }
     }
-} elseif (isset($tGet) and $tGet == 'c') {
+} elseif (isset($tGet) and $tGet === 'c') {
     //
     // Forgot password
     //
     include $includesPath . '/passwordForgot.php';
-} elseif (isset($tGet) and $tGet == 'p' and isset($vGet)) {
+} elseif (isset($tGet) and $tGet === 'p' and isset($vGet)) {
     //
     // Reset password
     //
     include $includesPath . '/passwordReset.php';
-} elseif (isset($tGet) and $tGet == 'pay') {
+} elseif (isset($tGet) and $tGet === 'pay') {
     //
     // Payment for subscription
     //

@@ -2,17 +2,17 @@
 /**
  * Display a single article as linked in sitemap.xml
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 //
@@ -44,9 +44,9 @@ if ($row) {
             $dbNumber++;
         } else {
             $dbNumber = -1;
-            $dbh = null;
+            $database = null;
         }
-        if ($database != null) {
+        if (!empty($database)) {
             $dbh = new PDO($database);
             $stmt = $dbh->prepare('SELECT * FROM articles WHERE idArticle=?');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -91,7 +91,7 @@ if (isset($standfirst)) {
 if (isset($hdImage)) {
     $html.= '      <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="w b" alt=""></p>' . "\n\n";
 }
-if ($photoCaption != '' and $photoCredit != '') {
+if (!empty($photoCaption) and !empty($photoCredit)) {
     $html.= '      <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
 } elseif (isset($photoCaption)) {
     $html.= '      <h6>' . html($photoCaption) . "</h6>\n\n";
@@ -141,7 +141,7 @@ while ($dbNumber2 !== -1) {
             extract($row);
             $dbNumber2 = -1;
             $html.= '      <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="w b" alt=""></p>' . "\n\n";
-            if ($photoCaption != '' and $photoCredit != '') {
+            if (!empty($photoCaption) and !empty($photoCredit)) {
                 $html.= '      <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
             } elseif (isset($photoCaption)) {
                 $html.= '      <h6>' . html($photoCaption) . "</h6>\n\n";
@@ -151,6 +151,35 @@ while ($dbNumber2 !== -1) {
         }
         $dbh = null;
     }
+}
+if ($survey === '1'
+    and (strpos($database, 'archive') !== false)
+    ) {
+    //
+    // Display a survey in the archives
+    //
+    $dbh = new PDO($dbSurvey);
+    $stmt = $dbh->prepare('SELECT count(idArticle) FROM tally WHERE idArticle=?');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $stmt->execute([$aGet]);
+    $row = $stmt->fetch();
+    $total = $row['count(idArticle)'];
+    if ($total === '0') {
+        $total = 1;
+    }
+    $stmt = $dbh->prepare('SELECT idAnswer, answer FROM answers WHERE idArticle=? ORDER BY sortOrder');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $stmt->execute([$aGet]);
+    foreach ($stmt as $row) {
+        extract($row);
+        $stmt = $dbh->prepare('SELECT count(idAnswer) FROM tally WHERE idAnswer=?');
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute([$idAnswer]);
+        $row = $stmt->fetch();
+        $each = $row['count(idAnswer)'];
+        $html.= '  <p><meter min="0" max="' . $total . '" value="' . $each . '" title="' . $answer . '">' . $answer . '"</meter> ' . $answer . ', ' . $each . "</p>\n\n";
+    }
+    $dbh = null;
 }
 $html.= "\n" . '      <p><span class="al"><a href="' . $uri . '?m=archive-search" class="n">Archive search</a></span></p>' . "\n";
 echo $html;

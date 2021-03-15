@@ -2,17 +2,17 @@
 /**
  * Predefined menu item: Calendar
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 echo "      <h1>Calendar for the next month</h1>\n\n";
@@ -31,13 +31,13 @@ for ($i = 0; $i < 31; $i++) {
     $secondSelect = date("Y-m-d", strtotime('second ' . $dayOfTheWeekSelect . ' of ' . $monthSelect . ' ' . $yearSelect));
     $thirdSelect = date("Y-m-d", strtotime('third ' . $dayOfTheWeekSelect . ' of ' . $monthSelect . ' ' . $yearSelect));
     $fourthSelect = date("Y-m-d", strtotime('fourth ' . $dayOfTheWeekSelect . ' of ' . $monthSelect . ' ' . $yearSelect));
-    if ($firstSelect == $selectDate) {
+    if ($firstSelect === $selectDate) {
         $weekSelect = 'first';
-    } elseif ($secondSelect == $selectDate) {
+    } elseif ($secondSelect === $selectDate) {
         $weekSelect = 'second';
-    } elseif ($thirdSelect == $selectDate) {
+    } elseif ($thirdSelect === $selectDate) {
         $weekSelect = 'third';
-    } elseif ($fourthSelect == $selectDate) {
+    } elseif ($fourthSelect === $selectDate) {
         $weekSelect = 'fourth';
     } else {
         $weekSelect = null;

@@ -2,17 +2,17 @@
 /**
  * The editing form, used by both edit and published
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 //
@@ -63,7 +63,7 @@ if ($publicationDatePost === $today) {
     $publicationTimePost = strtotime($publicationDatePost);
 }
 //
-if ($bylinePost != null) {
+if (!empty($bylinePost)) {
     $dbh = new PDO($dbEditors);
     $stmt = $dbh->prepare('SELECT fullName, email FROM users WHERE fullName=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -78,13 +78,13 @@ if ($bylinePost != null) {
     }
 }
 //
-if ($use == 'edit') {
+if ($use === 'edit') {
     $database = $dbEdit;
     $database2 = $dbEdit2;
     $imagePath = 'imagee.php';
     $imagePath2 = 'imagee2.php';
     $required = null;
-} elseif ($use == 'published') {
+} elseif ($use === 'published') {
     $database = $dbPublished;
     $database2 = $dbPublished2;
     $imagePath = 'imagep.php';
@@ -193,12 +193,12 @@ if (isset($_POST['addUpdate'])) {
         //
         // Store the image, if any
         //
-        if ($_FILES['image']['size'] > 0 and $_FILES['image']['error'] == 0) {
+        if ($_FILES['image']['size'] > 0 and $_FILES['image']['error'] === 0) {
             //
             // Verify JPG file
             //
             $sizes = getimagesize($_FILES['image']['tmp_name']);
-            if ($sizes['mime'] == 'image/jpeg') {
+            if ($sizes['mime'] === 'image/jpeg') {
                 //
                 // Variables
                 //
@@ -291,7 +291,7 @@ if (isset($_POST['addUpdate'])) {
                     //
                     // For published articles, upload the current secondary image, photo credit and caption
                     //
-                    if ($use == 'published') {
+                    if ($use === 'published') {
                         $request = null;
                         $response = null;
                         $request['task'] = 'updateInsert4';
@@ -309,9 +309,9 @@ if (isset($_POST['addUpdate'])) {
             } else {
                 $message = 'The uploaded file was not in the JPG format.';
             }
-        } elseif (isset($_FILES['image']['error']) and $_FILES['image']['error'] == 1) {
+        } elseif (isset($_FILES['image']['error']) and $_FILES['image']['error'] === 1) {
             $message = 'The uploaded image exceeds the upload_max_filesize directive in php.ini.';
-        } elseif (isset($_FILES['image']['error']) and ($_FILES['image']['error'] != 4 and $_FILES['image']['error'] != 1)) {
+        } elseif (isset($_FILES['image']['error']) and ($_FILES['image']['error'] !== 4 and $_FILES['image']['error'] !== 1)) {
             $message = 'There was an unknown error with the uploaded image.';
         }
         //
@@ -324,7 +324,7 @@ if (isset($_POST['addUpdate'])) {
         //
         // For published articles, add or update the remote site
         //
-        if ($use == 'published') {
+        if ($use === 'published') {
             $archive = null;
             $idSection = $idSectionPost;
             foreach ($remotes as $remote) {
@@ -337,7 +337,7 @@ if (isset($_POST['addUpdate'])) {
         //
         // Update sitemaps and rss
         //
-        if (empty($_POST['existing']) and $use == 'published') {
+        if (empty($_POST['existing']) and $use === 'published') {
             $request = [];
             $request['task'] = 'sitemap';
             $response = null;
@@ -360,7 +360,7 @@ if (isset($_POST['deletePhoto']) and isset($idArticle)) {
     $stmt = $dbh->prepare('DELETE FROM imageSecondary WHERE idArticle=?');
     $stmt->execute([$idArticle]);
     $dbh = null;
-    if ($use == 'published') {
+    if ($use === 'published') {
         $request = null;
         $response = null;
         $request['task'] = 'publishedDeletePhoto';
@@ -391,7 +391,7 @@ if (isset($_POST['delete']) and isset($idArticle)) {
     $stmt = $dbh->prepare('DELETE FROM articles WHERE idArticle=?');
     $stmt->execute([$idArticle]);
     $dbh = null;
-    if ($use == 'published') {
+    if ($use === 'published') {
         $request = null;
         $response = null;
         $request['task'] = 'publishedDelete';
@@ -405,7 +405,7 @@ if (isset($_POST['delete']) and isset($idArticle)) {
     //
     // Update sitemaps and rss
     //
-    if ($use == 'published') {
+    if ($use === 'published') {
         $request = [];
         $request['task'] = 'sitemap';
         $response = null;
@@ -450,7 +450,7 @@ if (isset($_POST['up']) or isset($_POST['down'])) {
 // Buttons: Publish and Archive
 //
 if (isset($_POST['publish'])
-    and $_POST['publish'] == 'Publish'
+    and $_POST['publish'] === 'Publish'
     and (!isset($_POST['addUpdate'])
     and !isset($_POST['delete'])
     and !isset($_POST['deletePhoto'])
@@ -469,7 +469,7 @@ if (isset($_POST['publish'])
         // Set the database for publish or archive
         //
         extract($row);
-        if (isset($_POST['archive']) and $_POST['archive'] == 'Archive') {
+        if (isset($_POST['archive']) and $_POST['archive'] === 'Archive') {
             $dbFrom = $dbPublished;
         } else {
             if (isset($publicationDate) and isset($endDate)) {
@@ -482,8 +482,8 @@ if (isset($_POST['publish'])
         // Move the article
         //
         if (isset($dbFrom)) {
-            if ($dbFrom == $dbPublished) {
-                $archiveSync = 1;
+            if ($dbFrom === $dbPublished) {
+                $archiveSync = '1';
             } else {
                 $archiveSync = null;
             }
@@ -559,7 +559,7 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([1]);
 foreach ($stmt as $row) {
     extract($row);
-    if ($user != 'admin') {
+    if ($user !== 'admin') {
         echo '      <option label="' . $fullName . '" value="' . $fullName . '">' . "\n";
     }
 }
@@ -577,7 +577,7 @@ $dbh = new PDO($dbSettings);
 $stmt = $dbh->query('SELECT idSection, section FROM sections ORDER BY sortOrderSection');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
-    $selected = $idSectionEdit == $row['idSection'] ? ' selected="selected"' : null;
+    $selected = $idSectionEdit === $row['idSection'] ? ' selected="selected"' : null;
     echo '      <option value="' . $row['idSection'] . '"' . $selected . '>' . $row['section'] . "</option>\n";
 }
 $dbh = null;
@@ -585,7 +585,7 @@ $dbh = null;
     </select></p>
 
 <?php
-if ($use == 'published') {
+if ($use === 'published') {
     echo '    <p><span class="rp">Sort order within section<br />' . "\n";
     echo '    <select name="sortOrderArticle">' . "\n";
     $count = 1;
@@ -594,7 +594,7 @@ if ($use == 'published') {
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     foreach ($stmt as $row) {
         extract($row);
-        $selected = ($sortOrderArticle == $count and $sortOrderArticle == $sortOrderArticleEdit) ? ' selected="selected"' : null;
+        $selected = ($sortOrderArticle === $count and $sortOrderArticle === $sortOrderArticleEdit) ? ' selected="selected"' : null;
         echo '      <option value="' . $count . '"' . $selected . '>' . $count . '</option>' . "\n";
         $count++;
     }

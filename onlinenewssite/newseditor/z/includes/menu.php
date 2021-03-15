@@ -2,17 +2,17 @@
 /**
  * Remote site menu maintenance
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 session_start();
@@ -28,7 +28,7 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
-if (empty($row['userType']) or $row['userType'] != 5) {
+if (empty($row['userType']) or $row['userType'] !== '5') {
     include 'logout.php';
     exit;
 }
@@ -98,7 +98,7 @@ if (isset($_POST['addUpdate'])) {
     //
     // Apply update
     //
-    if ($_POST['menuName'] != null) {
+    if (isset($_POST['menuName'])) {
         //
         // Establish the change in sort order, if any
         //
@@ -150,7 +150,7 @@ if (isset($_POST['addUpdate'])) {
 // Button: Delete
 //
 if (isset($_POST['delete'])) {
-    if ($_POST['menuName'] != null) {
+    if (isset($_POST['menuName'])) {
         $dbh = new PDO($dbMenu);
         $stmt = $dbh->prepare('SELECT menuName FROM menu WHERE menuName=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);

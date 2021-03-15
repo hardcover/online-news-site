@@ -2,17 +2,17 @@
 /**
  * Synchronizes the remote and local databases
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 //
@@ -38,7 +38,7 @@ foreach ($remotes as $remote) {
     $request['task'] = 'adSync';
     $response = soa($remote . 'z/', $request);
     $remoteAds = json_decode($response['remoteAds'], true);
-    if ($remoteAds == 'null' or $remoteAds == null) {
+    if ($remoteAds === 'null' or $remoteAds === null) {
         $remoteAds = [];
     }
     $ads = [];
@@ -85,7 +85,7 @@ foreach ($remotes as $remote) {
         $request['task'] = 'adSync';
         $response = soa($remote . 'z/', $request);
         $remoteAds = json_decode($response['remoteAds'], true);
-        if ($remoteAds == 'null' or $remoteAds == null) {
+        if ($remoteAds === 'null' or $remoteAds === null) {
             $remoteAds = [];
         }
         $dbh = new PDO($dbAdvertising);

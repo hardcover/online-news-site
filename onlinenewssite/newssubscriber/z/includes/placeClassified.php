@@ -2,17 +2,17 @@
 /**
  * For subscribers to place classified ads
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 if (empty($_SESSION['userId'])) {
@@ -88,9 +88,9 @@ if (isset($_POST['addUpdate'])) {
     //
     // Store the image, if any
     //
-    if ($_FILES['image']['size'] > 0 and $_FILES['image']['error'] == 0) {
+    if ($_FILES['image']['size'] > 0 and $_FILES['image']['error'] === 0) {
         $sizes = getimagesize($_FILES['image']['tmp_name']);
-        if ($sizes['mime'] == 'image/jpeg') {
+        if ($sizes['mime'] === 'image/jpeg') {
             //
             // Check for available images
             //
@@ -101,7 +101,7 @@ if (isset($_POST['addUpdate'])) {
                 $stmt->execute([$idAdPost]);
                 $row = $stmt->fetch();
                 $dbh = null;
-                if ($row['0'] == '') {
+                if (empty($row['0'])) {
                     $photoAvailable = $photo;
                 }
             }
@@ -121,7 +121,7 @@ if (isset($_POST['addUpdate'])) {
                     $widthHD = 2370;
                     $heightHD = round($widthHD / $aspectRatio);
                     $hd = imagecreatetruecolor($widthHD, $heightHD);
-                    imageinterlace($thumbnail, true);
+                    imageinterlace($hd, true);
                     $srcImage = imagecreatefromjpeg($_FILES['image']['tmp_name']);
                     imagecopyresampled($hd, $srcImage, 0, 0, 0, 0, $widthHD, $heightHD, ImageSX($srcImage), ImageSY($srcImage));
                     ob_start();
@@ -218,7 +218,7 @@ $stmt->execute([$email]);
 foreach ($stmt as $row) {
     extract($row);
     $i++;
-    if ($i == 1) {
+    if ($i === 1) {
         echo "    <h1>Ads pending review</h1>\n\n";
     }
     echo '    <form action="' . $uri . '?m=place-classified" method="post">' . "\n";
@@ -239,12 +239,12 @@ $stmt->execute([$email]);
 foreach ($stmt as $row) {
     extract($row);
     $ii++;
-    if ($duration == null) {
+    if (is_null($duration)) {
         $remove = ' <b> (early removal pending)</b>';
     } else {
         $remove = null;
     }
-    if ($ii == 1) {
+    if ($ii === 1) {
         echo "    <h1>Approved ads</h1>\n\n";
     }
     echo '    <form action="' . $uri . '?m=place-classified" method="post">' . "\n";
@@ -254,7 +254,7 @@ foreach ($stmt as $row) {
     echo '    </form>' . "\n\n";
 }
 $dbh = null;
-if ($i != null or $ii != null) {
+if (!empty($i) or !empty($ii)) {
     echo "    <hr />\n\n";
 }
 //
@@ -288,7 +288,7 @@ foreach ($stmt as $row) {
     $stmt->execute([$idSection]);
     foreach ($stmt as $row) {
         extract($row);
-        if ($idSubsection == $categoryIdEdit) {
+        if ($idSubsection === $categoryIdEdit) {
             $selected = ' selected';
         } else {
             $selected = null;
@@ -316,7 +316,7 @@ if (isset($idAdEdit)) {
         $stmt->execute([$idAdEdit]);
         $row = $stmt->fetch();
         $dbh = null;
-        if ($row['0'] != '') {
+        if (!empty($row['0'])) {
             echo '    <p><img class="w b" src="imagen.php?i=' . muddle($idAdEdit) . $photo . '" alt="" /></p>' . "\n\n";
         }
     }

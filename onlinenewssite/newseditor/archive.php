@@ -2,17 +2,17 @@
 /**
  * Search the archives and displays the results
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 session_start();
@@ -31,10 +31,10 @@ $idArticle = inlinePost('idArticle');
 $startDatePost = inlinePost('startDate');
 $textPost = inlinePost('text');
 //
-$archiveSync = 1;
+$archiveSync = '1';
 $database = $dbArchive;
 $database2 = $dbArchive2;
-$editorView = 1;
+$editorView = '1';
 $imagePath = 'imagea.php';
 $imagePath2 = 'imagea2.php';
 $menu = "\n" . '  <h4 class="m"><a class="m" href="edit.php">&nbsp;Edit&nbsp;</a><a class="m" href="published.php">&nbsp;Published&nbsp;</a><a class="m" href="preview.php">&nbsp;Preview&nbsp;</a><a class="s" href="archive.php">&nbsp;Archives&nbsp;</a></h4>' . "\n";
@@ -114,7 +114,7 @@ if (isset($_POST['delete'])) {
             $dbNumber = -1;
             $dbh = null;
         }
-        if ($database != null) {
+        if (!empty($database)) {
             $dbh = new PDO($database);
             $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE idArticle=?');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -167,7 +167,7 @@ if (isset($_POST['edit'])) {
             $dbNumber = -1;
             $dbh = null;
         }
-        if ($database != null) {
+        if (!empty($database)) {
             $dbh = new PDO($database);
             $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE idArticle=?');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -266,7 +266,7 @@ if (isset($_GET['a'])) {
                 $dbNumber = -1;
                 $dbh = null;
             }
-            if ($dbh != null) {
+            if (!empty($dbh)) {
                 $stmt = $dbh->prepare($sql1);
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
                 $stmt->execute($sql2);
@@ -297,7 +297,7 @@ if (isset($_GET['a'])) {
                         $summary = str_replace('*', '', $summary);
                         $html.= '  <p class="s">' . html($summary) . "</p>\n";
                     }
-                    if (isset($editorView) and $editorView == 1) {
+                    if (isset($editorView) and $editorView === '1') {
                         $html.= "\n" . '  <form action="' . $uri . 'archive.php" method="post" class="wait">' . "\n";
                         $html.= '    <p><input type="hidden" name="idArticle" value="' . $idArticle . '"><input type="submit" class="button" value="Delete" name="delete" /> <input type="submit" class="button" value="Return to edit" name="edit" /></p>' . "\n";
                         $html.= "  </form>\n";

@@ -2,17 +2,17 @@
 /**
  * Adds or updates a remote published or archived article from the same database on the main system
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 //
@@ -62,7 +62,7 @@ if ($row) {
     $stmt->execute([$idArticle]);
     $row = $stmt->fetch();
     $dbh = null;
-    if ($row['thumbnailImageWidth'] != '') {
+    if (!empty($row['thumbnailImageWidth'])) {
         //
         // Copy the thumbnail and other small items
         //
@@ -73,7 +73,7 @@ if ($row) {
         $stmt->execute([$idArticle]);
         $row = $stmt->fetch();
         $dbh = null;
-        if ($response['result'] == 'success') {
+        if ($response['result'] === 'success') {
             $request = null;
             $response = null;
             $request['task'] = 'updateInsert2';
@@ -98,7 +98,7 @@ if ($row) {
         $stmt->execute([$idArticle]);
         $row = $stmt->fetch();
         $dbh = null;
-        if ($response['result'] == 'success') {
+        if ($response['result'] === 'success') {
             $request = null;
             $response = null;
             $request['task'] = 'updateInsert3';
@@ -130,7 +130,7 @@ if ($row) {
     $imagesMain = $row['count(*)'];
     foreach ($remotes as $remote) {
         $response = soa($remote . 'z/', $request);
-        if ($imagesMain != $response['remotePhotos']) {
+        if ($imagesMain !== $response['remotePhotos']) {
             $dbh = new PDO($database2);
             $stmt = $dbh->prepare('SELECT idPhoto, image, photoName, photoCredit, photoCaption, time FROM imageSecondary WHERE idArticle=? ORDER BY time');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);

@@ -2,17 +2,17 @@
 /**
  * The post portion of the program that registers and loggs in users
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 session_start();
@@ -92,7 +92,7 @@ if ((isset($_POST['login'])
     // Determine if the user is in one subscriber database or the other
     //
     $dbh = new PDO($dbSubscribersNew);
-    $stmt = $dbh->prepare('SELECT idUser, pass, verified, payStatus FROM users WHERE email=? LIMIT 1');
+    $stmt = $dbh->prepare('SELECT * FROM users WHERE email=? LIMIT 1');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute([muddle($emailPost)]);
     $row = $stmt->fetch();
@@ -103,7 +103,7 @@ if ((isset($_POST['login'])
         $database = 'n';
     }
     $dbh = new PDO($dbSubscribers);
-    $stmt = $dbh->prepare('SELECT idUser, pass, payStatus FROM users WHERE email=? LIMIT 1');
+    $stmt = $dbh->prepare('SELECT * FROM users WHERE email=? LIMIT 1');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute([muddle($emailPost)]);
     $row = $stmt->fetch();
@@ -115,7 +115,7 @@ if ((isset($_POST['login'])
     }
     if ($rowSubscribers === false and $rowSubscribersNew === false) {
         //
-        // Register a new user
+        // Register a new subscriber
         //
         if (isset($_POST['register'])) {
             $hashPass = password_hash($passPost, PASSWORD_DEFAULT);
@@ -135,127 +135,120 @@ if ((isset($_POST['login'])
             //
             $message = 'Login credentials are incorrect.';
         }
+    } elseif ($rowSubscribersNew === $rowSubscribers) {
+        //
+        // When the subscriberNew and subscriber records are identical, delete from subscribersNew
+        //
+        $dbh = new PDO($dbSubscribersNew);
+        $stmt = $dbh->prepare('DELETE FROM users WHERE idUser=?');
+        $stmt->execute([$rowSubscribersNew['idUser']]);
+        $dbh = null;
+    }
+    //
+    // Authentication variables
+    //
+    if (isset($rowSubscribersNew['pass'])) {
+        $subscribersNewPass = $rowSubscribersNew['pass'];
     } else {
-        if ($rowSubscribers == true and $rowSubscribersNew == true) {
-            //
-            // Move to Subscribers from SubscribersNew
-            //
-            $dbh = new PDO($dbSubscribers);
-            $stmt = $dbh->prepare('SELECT * FROM users WHERE idUser=?');
-            $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $stmt->execute([$rowSubscribers['idUser']]);
-            $row = $stmt->fetch();
-            $rowS = $row;
-            $dbh = null;
-            $dbh = new PDO($dbSubscribersNew);
-            $stmt = $dbh->prepare('SELECT * FROM users WHERE idUser=?');
-            $stmt->setFetchMode(PDO::FETCH_ASSOC);
-            $stmt->execute([$rowSubscribersNew['idUser']]);
-            $row = $stmt->fetch();
-            $dbh = null;
-            if ($rowS == $row) {
-                //
-                // When the records are identical, delete from SubscribersNew
-                //
-                $dbh = new PDO($dbSubscribersNew);
-                $stmt = $dbh->prepare('DELETE FROM users WHERE idUser=?');
-                $stmt->execute([$rowSubscribersNew['idUser']]);
-                $dbh = null;
+        $subscribersNewPass = null;
+    }
+    //
+    if (isset($rowSubscribersNew['verified'])) {
+        $subscribersNewVerified = $rowSubscribersNew['verified'];
+    } else {
+        $subscribersNewVerified = null;
+    }
+    //
+    if (isset($rowSubscribers['pass'])) {
+        $subscribersPass = $rowSubscribers['pass'];
+    } else {
+        $subscribersPass = null;
+    }
+    //
+    if (isset($rowSubscribers['verified'])) {
+        $subscribersVerified = $rowSubscribers['verified'];
+    } else {
+        $subscribersVerified = null;
+    }
+    //
+    // Authentication
+    //
+    if (password_verify($passPost, $subscribersPass)
+        or (password_verify($passPost, $subscribersNewPass)
+        and $subscribersVerified === '1'
+        or $subscribersNewVerified === '1')
+    ) {
+        //
+        // Update the log database
+        //
+        $dbh = new PDO($dbLog);
+        $stmt = $dbh->prepare('UPDATE login SET time=? WHERE email=?');
+        $stmt->execute([null, muddle($emailPost)]);
+        $dbh = null;
+        if ($database === 's') {
+            if ($rowSubscribers['payStatus'] >= time()) {
+                $paid = 1;
             } else {
-                //
-                // When the records are not the same, update Subscribers from SubscribersNew, then delete from SubscribersNew
-                //
-                extract($row);
-                $idUser = $rowSubscribers['idUser'];
+                $paid = 0;
+            }
+        } else {
+            if ($rowSubscribersNew['payStatus'] >= time()) {
+                $paid = 1;
+            } else {
+                $paid = 0;
+            }
+        }
+        //
+        // Update the stored password when needed and possible
+        //
+        if ($database === 's') {
+            if (password_needs_rehash($subscribersPass, PASSWORD_DEFAULT)) {
+                $newHash = password_hash($passPost, PASSWORD_DEFAULT);
                 $dbh = new PDO($dbSubscribers);
-                $stmt = $dbh->prepare('UPDATE users SET email=?, payerEmail=?, payerFirstName=?, payerLastName=?, ipAddress=?, verify=?, verified=?, time=?, pass=?, payStatus=?, paid=?, paymentDate=?, note=?, contributor=?, classifiedOnly=?, deliver=?, deliver2=?, deliveryAddress=?, dCityRegionPostal=?, billingAddress=?, bCityRegionPostal=?, soa=?, evolve=?, expand=?, extend=? WHERE idUser=?');
-                $stmt->execute([$email, $payerEmail, $payerFirstName, $payerLastName, $ipAddress, $verify, $verified, $time, $pass, $payStatus, $paid, $paymentDate, $note, $contributor, $classifiedOnly, $deliver, $deliver2, $deliveryAddress, $dCityRegionPostal, $billingAddress, $bCityRegionPostal, 1, $evolve, $expand, $extend, $idUser]);
-                $dhh = null;
-                $dbh = new PDO($dbSubscribersNew);
-                $stmt = $dbh->prepare('DELETE FROM users WHERE idUser=?');
-                $stmt->execute([$rowSubscribersNew['idUser']]);
+                $stmt = $dbh->prepare('UPDATE users SET pass=? WHERE idUser=?');
+                $stmt->execute([$newHash, $idUser]);
                 $dbh = null;
             }
         }
         //
-        // Authentication
+        // Set the session variables
         //
-        if (password_verify($passPost, $rowSubscribers['pass'])
-            or (password_verify($passPost, $rowSubscribersNew['pass'])
-            and $rowSubscribersNew['verified'] == 1)
+        $_SESSION['auth'] = hash('sha256', $_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']) . hash('sha512', $emailPost . $idUser);
+        $_SESSION['db'] = $database;
+        $_SESSION['paid'] = $paid;
+        $_SESSION['userID'] = hash('sha512', $emailPost . $idUser);
+        $_SESSION['userId'] = $idUser;
+        //
+        // Check for a pay requirement for articles
+        //
+        if (isset($_SESSION['a'])
+            and $freeOrPaid === 'paid'
+            and $row['payStatus'] < time()
         ) {
-            //
-            // Update the log database
-            //
-            $dbh = new PDO($dbLog);
-            $stmt = $dbh->prepare('UPDATE login SET time=? WHERE email=?');
-            $stmt->execute([null, muddle($emailPost)]);
-            $dbh = null;
-            if ($database === 's') {
-                if ($rowSubscribers['payStatus'] >= time()) {
-                    $paid = 1;
-                } else {
-                    $paid = 0;
-                }
-            } else {
-                if ($rowSubscribersNew['payStatus'] >= time()) {
-                    $paid = 1;
-                } else {
-                    $paid = 0;
-                }
-            }
-            //
-            // Update the stored password when needed and possible
-            //
-            if ($database === 's') {
-                if (password_needs_rehash($passPost, PASSWORD_DEFAULT)) {
-                    $newHash = password_hash($passPost, PASSWORD_DEFAULT);
-                    $dbh = new PDO($dbSubscribers);
-                    $stmt = $dbh->prepare('UPDATE users SET pass=? WHERE idUser=?');
-                    $stmt->execute([$newHash, $idUser]);
-                    $dbh = null;
-                }
-            }
-            //
-            // Set the session variables
-            //
-            $_SESSION['auth'] = hash('sha256', $_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']) . hash('sha512', $emailPost . $idUser);
-            $_SESSION['db'] = $database;
-            $_SESSION['paid'] = $paid;
-            $_SESSION['userID'] = hash('sha512', $emailPost . $idUser);
-            $_SESSION['userId'] = $idUser;
-            //
-            // Check for a pay requirement for articles
-            //
-            if (isset($_SESSION['a'])
-                and $freeOrPaid == 'paid'
-                and $row['payStatus'] < time()
-            ) {
-                header('Location: ' . $uri . '?t=pay');
-                exit;
-            }
-            //
-            // Send to the selected article
-            //
-            if (isset($_SESSION['a'])) {
-                header('Location: ' . $uri . 'news.php?a=' . $_SESSION['a'], true);
-                exit;
-            } else {
-                header('Location: ' . $uri, true);
-                exit;
-            }
+            header('Location: ' . $uri . '?t=pay');
+            exit;
+        }
+        //
+        // Send to the selected article
+        //
+        if (isset($_SESSION['a'])) {
+            header('Location: ' . $uri . 'news.php?a=' . $_SESSION['a'], true);
+            exit;
         } else {
-            if (isset($_POST['register'])) {
-                //
-                // Set message for when a registration is begun again within the fifteen minute time for email confirmation
-                //
-                $message = 'Check your email for a message from us. Visit the link in the email to confirm the email address and continue registration.<br /><br />The website does not use cookies except for logged-in users. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.';
-            } else {
-                //
-                // Set message for when the email is found but the password is incorrect in a log in
-                //
-                $message = 'Login credentials are incorrect.';
-            }
+            header('Location: ' . $uri, true);
+            exit;
+        }
+    } else {
+        if (isset($_POST['register'])) {
+            //
+            // Set message for when a registration is begun again within the fifteen minute time for email confirmation
+            //
+            $message = 'Check your email for a message from us. Visit the link in the email to confirm the email address and continue registration.<br /><br />The website does not use cookies except for logged-in users. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.';
+        } else {
+            //
+            // Set message for when the email is found but the password is incorrect in a log in
+            //
+            $message = 'Login credentials are incorrect.';
         }
     }
 }
@@ -297,7 +290,7 @@ if (isset($_POST['resetPassword']) and isset($verifyPost)) {
         $_SESSION['message'] = 'Both password fields are required.';
         header('Location: ' . $uri . '?t=p&v=' . $verifyPost, true);
         exit;
-    } elseif ($passOnePost != $passTwoPost) {
+    } elseif ($passOnePost !== $passTwoPost) {
         $_SESSION['message'] = 'The passwords did not match. Please try again.';
         header('Location: ' . $uri . '?t=p&v=' . $verifyPost, true);
         exit;
@@ -328,7 +321,7 @@ if (isset($_POST['resetPassword']) and isset($verifyPost)) {
 //
 // Set session message
 //
-if ($message != null) {
+if ($message !== null) {
     $_SESSION['message'] = $message;
 }
 header('Location: ' . $uri . '?t=l', true);

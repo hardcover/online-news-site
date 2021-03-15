@@ -2,17 +2,17 @@
 /**
  * Predefined menu item: Classified ads
  *
- * PHP version 7
+ * PHP version 8
  *
  * @category  Publishing
- * @package   Online-News-Site
+ * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2018 Hardcover LLC
+ * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2019 12 7
+ * @version:  2021 3 15
  * @link      https://hardcoverwebdesign.com/
- * @link      https://online-news-site.com/
+ * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 echo '      <h1><a href="' . $uri . '?m=classified-ads">Classified ads</a></h1>' . "\n\n";
@@ -61,7 +61,7 @@ if (isset($_GET['s'])) {
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         foreach ($stmt as $row) {
             extract($row);
-            if ($categoryId != $categoryIdPrior) {
+            if ($categoryId !== $categoryIdPrior) {
                 $stmt = $dbh->prepare('SELECT parentId, subsection FROM subsections WHERE idSubsection=?');
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
                 $stmt->execute([$categoryId]);
@@ -138,7 +138,7 @@ if (isset($_GET['s'])) {
         $i = null;
         foreach ($photos as $photo) {
             $i++;
-            if ($photo == 1) {
+            if ($photo === 1) {
                 echo '      <p><img class="w b" src="imagec.php?i=' . muddle($idAd) . $i . '" alt="" /></p>' . "\n";
             }
         }
