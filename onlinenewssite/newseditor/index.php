@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 3 15
+ * @version:  2021 4 20
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -162,7 +162,7 @@ foreach ($stmt as $row) {
 }
 $dbh = null;
 $request['phpversion'] = phpversion();
-$request['version'] = '2021 3 15';
+$request['version'] = '2021 4 20';
 $request = http_build_query(array_map('base64_encode', $request));
 stream_context_set_default(['http' => ['user_agent' => 'PHP', 'method' => 'POST', 'header' => 'Content-Type: application/x-www-form-urlencoded', 'content' => $request]]);
 $fp = @fopen('https://onlinenewssite.com/v/', 'rb', false);
@@ -209,6 +209,6 @@ if ($dbRowCount !== '0') {
     echo '  <p>' . number_format($dbRowCount) . " classified ad(s) pending review.</p>\n\n";
 }
 ?>
-  <p>Version 2021 3 15. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.</p>
+  <p>Version 2021 4 20. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.</p>
 </body>
 </html>
