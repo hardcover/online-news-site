@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 4 20
+ * @version:  2021 5 17
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -124,7 +124,7 @@ if ((isset($_POST['login'])
             $stmt->execute([muddle($emailPost), $hashPass, $_SERVER['REMOTE_ADDR'], $verify, time() + 172800]);
             $idUser = $dbh->lastInsertId();
             $dbh = null;
-            $body = 'To continue registration, visit the link below within fifteen minutes from when registration was begun and from the same computer. If activation has not been completed by then, then begin registration again.' . "\n\n";
+            $body = 'To continue registration, visit the link below within forty-eight hours from when registration was begun and from the same computer. If activation has not been completed by then, then begin registration again.' . "\n\n";
             $body.= $uri . '?t=l&v=' . $verify . "\r\n";
             $subject = 'Confirm email address at ' . $name . "\r\n";
             mail($emailPost . "\r\n", $subject, $body, $headers);
