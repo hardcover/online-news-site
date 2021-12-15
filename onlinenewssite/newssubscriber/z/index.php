@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -769,7 +769,8 @@ if ($task === 'sitemap') {
     //
     // sitemap.xml
     //
-    $uri = $uriScheme . '://' . $_SERVER["HTTP_HOST"] . '/';
+    $uri = $uriScheme . '://' . $_SERVER["HTTP_HOST"] . rtrim(dirname($_SERVER['PHP_SELF']), "/\\") . '/';
+    $uri = str_replace('/z/', '/', $uri);
     $dbh = new PDO($dbSettings);
     $stmt = $dbh->prepare('SELECT name, description FROM names WHERE idName=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -942,7 +943,7 @@ if ($task === 'sitemap') {
                     $headline = str_replace('<', '&lt;', $str);
                     //
                     fwrite($fp, utf8_encode('  <url>' . "\n"));
-                    fwrite($fp, utf8_encode('    <loc>' . $uriScheme . '://' . $_SERVER["HTTP_HOST"] . '/?a=' . $idArticle . '+' . $headlineSEO . '</loc>' . "\n"));
+                    fwrite($fp, utf8_encode('    <loc>' . $uri . '?a=' . $idArticle . '+' . $headlineSEO . '</loc>' . "\n"));
                     fwrite($fp, utf8_encode('    <news:news>' . "\n"));
                     fwrite($fp, utf8_encode('      <news:publication>' . "\n"));
                     fwrite($fp, utf8_encode('        <news:name>' . $name . '</news:name>' . "\n"));

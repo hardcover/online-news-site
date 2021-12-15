@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -514,19 +514,103 @@ require $includesPath . '/header1.inc';
 echo "  <title>Settings maintenance</title>\n";
 echo '  <script src="z/wait.js"></script>' . "\n";
 require $includesPath . '/header2.inc';
-require $includesPath . '/body.inc';
 ?>
 
-  <h4 class="m"><a class="m" href="usersEditors.php">&nbsp;Editing users&nbsp;</a><a class="m" href="usersSubscribers.php">&nbsp;Patron mgt users&nbsp;</a></h4>
-
-  <h4 class="m"><a class="m" href="usersAdvertising.php">&nbsp;Advertising users&nbsp;</a><a class="m" href="usersClassified.php">&nbsp;Classified users&nbsp;</a></h4>
-
-  <h4 class="m"><a class="m" href="usersMenu.php">&nbsp;Menu users&nbsp;</a><a class="s" href="settings.php">&nbsp;Settings&nbsp;</a><a class="m" href="classifiedSections.php">&nbsp;Classifieds&nbsp;</a></h4>
+  <nav class="n">
+    <h4 class="m"><a class="m" href="usersEditors.php">Editing users</a> <a class="m" href="usersSubscribers.php">Patron mgt users</a> <a class="m" href="usersAdvertising.php">Advertising users</a> <a class="m" href="usersClassified.php">Classified users</a> <a class="m" href="usersMenu.php">Menu users</a> <a class="s" href="settings.php">Settings</a> <a class="m" href="classifiedSections.php">Classifieds</a></h4>
+  </nav>
 <?php echoIfMessage($message); ?>
 
   <h1 id="waiting">Please wait.</h1>
 
-  <h1><span class="h">Newspaper name and description</span></h1>
+  <div class="flex">
+    <main>
+      <h1>Settings maintenance</h1>
+
+      <form class="wait" action="<?php echo $uri; ?>settings.php" method="post">
+        <p>The admin password is required for all settings maintenance.</p>
+
+        <p><label for="adminPass">Admin password</label><br />
+        <input id="adminPass" name="adminPass" type="password" class="h" autofocus required /></p>
+
+        <h1>Newspaper name and description</h1>
+
+        <p><label for="newsName">Name</label><br />
+        <input id="newsName" name="newsName" type="text" class="h"<?php echoIfValue($newsNamePost); ?> /></p>
+
+        <p><label for="newsDescription">Description</label><br />
+        <input id="newsDescription" name="newsDescription" type="text" class="h"<?php echoIfValue($newsDescriptionPost); ?> /></p>
+
+        <p><input type="submit" value="Add / update" name="addUpdateName" class="button" /> <input type="submit" value="Delete" name="deleteName" class="button" /><input type="hidden" name="existing"<?php echoIfValue($editPost); ?> /></p>
+
+        <h1>Newspaper sections</h1>
+
+        <p><label for="section">Section name</label><br />
+        <input id="section" name="section" type="text" class="h"<?php echoIfValue($sectionPost); ?> /></p>
+
+        <p><label for="sortOrderSection">Section sort order</label><br />
+        <input id="sortOrderSection" name="sortOrderSection" type="text" class="h"<?php echoIfValue($sortOrderSectionPost); ?> /></p>
+
+        <p><input type="submit" value="Add / update" name="addUpdateSection" class="button" /> <input type="submit" value="Delete" name="deleteSection" class="button" /><input name="idSection" type="hidden"<?php echoIfValue($idSectionPost); ?> /><input type="hidden" name="existing"<?php echoIfValue($editPost); ?> /></p>
+
+        <h1>Registration information</h1>
+
+        <p><label for="information">Information (<a href="markdown.html" target="_blank">markdown syntax</a>)</label><br />
+        <textarea id="information" name="information" class="h"><?php echoIfText($informationPost); ?></textarea></p>
+
+        <p><input type="submit" value="Add / update" name="addUpdateRegistration" class="button" /></p>
+
+        <h1>Contact form information</h1>
+
+        <p><label for="infoForms">Information (<a href="markdown.html" target="_blank">markdown syntax</a>)</label><br />
+        <textarea id="infoForms" name="infoForms" class="h"><?php echoIfText($infoFormsPost); ?></textarea></p>
+
+        <p><input type="submit" value="Add / update" name="addUpdateContactForm" class="button" /></p>
+
+        <h1>Email address for contact forms and alerts</h1>
+
+        <p>Enter an email address to receive alerts when a classified ad requires review.</p>
+
+        <p><label for="emailClassified">Email</label><br />
+        <input id="emailClassified" name="emailClassified" type="email" class="h"<?php echoIfValue($emailClassifiedPost); ?> /></p>
+
+        <p><input type="submit" value="Add / update" name="addUpdateEmailClassified" class="button" /> <input type="submit" value="Delete" name="deleteEmailClassified" class="button" /><input name="idRemote" type="hidden" <?php echoIfValue($idRemotePost); ?> /><input type="hidden" name="existing"<?php echoIfValue($editPost); ?> /></p>
+
+        <h1>Remote sites URIs</h1>
+
+        <p>Enter the URIs of the remote sites with a trailing slash. For example: http://www.mysite.com/</p>
+
+        <p><label for="remote">URI</label><br />
+        <input id="remote" name="remote" type="url" class="h"<?php echoIfValue($remotePost); ?> /></p>
+
+        <p><input type="submit" value="Add / update" name="addUpdateURI" class="button" /> <input type="submit" value="Delete" name="deleteURI" class="button" /><input name="idRemote" type="hidden" <?php echoIfValue($idRemotePost); ?> /><input type="hidden" name="existing"<?php echoIfValue($editPost); ?> /></p>
+
+        <h1>Test connections to remote sites</h1>
+
+        <p><input type="submit" value="Test remote connections" name="testConnections" class="button" /></p>
+
+        <h1>Change the password for remote sites</h1>
+
+        <p>As with the admin password, the password for remote sites must be changed while the system is being set up. The system will choose a set of random passwords (authentication requires more than one). There is no recommendation for changing the passwords after that. A password change failure will require manual intervention to correct. Because the passwords incorporate the date in order to change daily, they will not work around midnight when the clocks on the systems are a little out of sync.</p>
+
+        <p><input type="submit" value="Change remote passwords" name="changeRemotePass" class="button" /></p>
+
+        <h1>Change the admin password</h1>
+
+        <p>For security reasons, the admin password must be changed from the default during system set up.</p>
+
+        <p><label for="newAdminPassOne">New password</label><br />
+        <input id="newAdminPassOne" name="newAdminPassOne" type="password" class="h" /></p>
+
+        <p><label for="newAdminPassTwo">Verify new password</label><br />
+        <input id="newAdminPassTwo" name="newAdminPassTwo" type="password" class="h" /></p>
+
+        <p><input type="submit" value="Change admin password" name="changeAdminPass" class="button" /></p>
+      </form>
+    </main>
+
+    <aside>
+      <h1>Newspaper name and description</h1>
 
 <?php
 $dbh = new PDO($dbSettings);
@@ -535,28 +619,28 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
-    echo '  <form action="' . $uri . 'settings.php" method="post">' . "\n";
-    echo '    <p><span class="p">' . $row['name'] . "<br />\n";
-    echo '    ' . $row['description'] . "<br />\n";
-    echo '    <input type="hidden" name="idName" value="' . $row['idName'] . '" /><input type="submit" value="Edit" name="edit" class="button" /></span></p>' . "\n";
-    echo "  </form>\n\n";
+    echo '      <form action="' . $uri . 'settings.php" method="post">' . "\n";
+    echo '        <p>' . $row['name'] . "<br />\n";
+    echo '        ' . $row['description'] . "<br />\n";
+    echo '        <input type="hidden" name="idName" value="' . $row['idName'] . '" /><input type="submit" value="Edit" name="edit" class="button" /></p>' . "\n";
+    echo "      </form>\n\n";
 }
 ?>
-  <h1><span class="h">Newspaper sections</span></h1>
+      <h1>Newspaper sections</h1>
 
 <?php
 $dbh = new PDO($dbSettings);
 $stmt = $dbh->query('SELECT idSection, section, sortOrderSection FROM sections ORDER BY sortOrderSection');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
-    echo '  <form action="' . $uri . 'settings.php" method="post">' . "\n";
-    echo '    <p><span class="p">' . $row['section'] . "<br />\n";
-    echo '    <input type="hidden" name="idSection" value="' . $row['idSection'] . '" /><input name="section" type="hidden" value="' . html($row['section']) . '" /><input name="sortOrderSection" type="hidden" value="' . html($row['sortOrderSection']) . '" /><input type="submit" value="Edit" name="edit" class="button" /></span></p>' . "\n";
-    echo "  </form>\n\n";
+    echo '      <form action="' . $uri . 'settings.php" method="post">' . "\n";
+    echo '        <p>' . $row['section'] . "<br />\n";
+    echo '        <input type="hidden" name="idSection" value="' . $row['idSection'] . '" /><input name="section" type="hidden" value="' . html($row['section']) . '" /><input name="sortOrderSection" type="hidden" value="' . html($row['sortOrderSection']) . '" /><input type="submit" value="Edit" name="edit" class="button" /></p>' . "\n";
+    echo "      </form>\n\n";
 }
 $dbh = null;
 ?>
-  <h1><span class="h">Registration information</span></h1>
+      <h1>Registration information</h1>
 
 <?php
 $dbh = new PDO($dbSettings);
@@ -564,12 +648,12 @@ $stmt = $dbh->query('SELECT idRegistration, information FROM registration');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $row = $stmt->fetch();
 $dbh = null;
-echo '  <form action="' . $uri . 'settings.php" method="post">' . "\n";
-echo '    <p><span class="p">' . $row['information'] . "<br />\n";
-echo '    <input type="hidden" name="idRegistration" value="' . $row['idRegistration'] . '" /><input type="hidden" name="information" value="' . $row['information'] . '" /><input type="submit" value="Edit" name="edit" class="button" /></span></p>' . "\n";
-echo "  </form>\n\n";
+echo '      <form action="' . $uri . 'settings.php" method="post">' . "\n";
+echo '        <p>' . $row['information'] . "<br />\n";
+echo '        <input type="hidden" name="idRegistration" value="' . $row['idRegistration'] . '" /><input type="hidden" name="information" value="' . $row['information'] . '" /><input type="submit" value="Edit" name="edit" class="button" /></p>' . "\n";
+echo "      </form>\n\n";
 ?>
-  <h1><span class="h">Contact form information</span></h1>
+      <h1>Contact form information</h1>
 
 <?php
 $dbh = new PDO($dbSettings);
@@ -577,12 +661,12 @@ $stmt = $dbh->query('SELECT idForm, infoForms FROM forms');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $row = $stmt->fetch();
 $dbh = null;
-echo '  <form action="' . $uri . 'settings.php" method="post">' . "\n";
-echo '    <p><span class="p">' . $row['infoForms'] . "<br />\n";
-echo '    <input type="hidden" name="idForm" value="' . $row['idForm'] . '" /><input type="hidden" name="infoForms" value="' . $row['infoForms'] . '" /><input type="submit" value="Edit" name="edit" class="button" /></span></p>' . "\n";
-echo "  </form>\n\n";
+echo '      <form action="' . $uri . 'settings.php" method="post">' . "\n";
+echo '        <p>' . $row['infoForms'] . "<br />\n";
+echo '        <input type="hidden" name="idForm" value="' . $row['idForm'] . '" /><input type="hidden" name="infoForms" value="' . $row['infoForms'] . '" /><input type="submit" value="Edit" name="edit" class="button" /></p>' . "\n";
+echo "      </form>\n\n";
 ?>
-  <h1><span class="h">Email address for contact forms and alerts</span></h1>
+      <h1>Email address for contact forms and alerts</h1>
 
 <?php
 $dbh = new PDO($dbSettings);
@@ -594,12 +678,12 @@ if ($row === false) {
     $row['idClassified'] = null;
     $row['emailClassified'] = null;
 }
-echo '  <form action="' . $uri . 'settings.php" method="post">' . "\n";
-echo '    <p><span class="p">' . $row['emailClassified'] . "<br />\n";
-echo '    <input type="hidden" name="idClassified" value="' . $row['idClassified'] . '" /><input type="hidden" name="emailClassified" value="' . $row['emailClassified'] . '" /><input type="submit" value="Edit" name="edit" class="button" /></span></p>' . "\n";
-echo "  </form>\n\n";
+echo '      <form action="' . $uri . 'settings.php" method="post">' . "\n";
+echo '        <p>' . $row['emailClassified'] . "<br />\n";
+echo '        <input type="hidden" name="idClassified" value="' . $row['idClassified'] . '" /><input type="hidden" name="emailClassified" value="' . $row['emailClassified'] . '" /><input type="submit" value="Edit" name="edit" class="button" /></p>' . "\n";
+echo "      </form>\n\n";
 ?>
-  <h1><span class="h">Remote URIs</span></h1>
+      <h1>Remote URIs</h1>
 
 <?php
 $rowcount = null;
@@ -609,98 +693,14 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
     extract($row);
     $rowcount++;
-    echo '  <form class="wait" action="' . $uri . 'settings.php" method="post">' . "\n";
-    echo '    <p><span class="p bw">' . html($row['remote']) . "<br />\n";
-    echo '    <input name="idRemote" type="hidden" value="' . html($row['idRemote']) . '" /><input name="remote" type="hidden" value="' . html($row['remote']) . '" /><input type="submit" value="Edit" name="edit" class="button" /></span></p>' . "\n";
-    echo "  </form>\n\n";
+    echo '      <form class="wait" action="' . $uri . 'settings.php" method="post">' . "\n";
+    echo '        <p class="bw">' . html($row['remote']) . "<br />\n";
+    echo '        <input name="idRemote" type="hidden" value="' . html($row['idRemote']) . '" /><input name="remote" type="hidden" value="' . html($row['remote']) . '" /><input type="submit" value="Edit" name="edit" class="button" /></span></p>' . "\n";
+    echo "      </form>\n\n";
 }
 $dbh = null;
 ?>
-  <h1>Settings maintenance</h1>
-
-  <form class="wait" action="<?php echo $uri; ?>settings.php" method="post">
-    <p>The admin password is required for all settings maintenance.</p>
-
-    <p><label for="adminPass">Admin password</label><br />
-    <input id="adminPass" name="adminPass" type="password" class="h" autofocus required /></p>
-
-    <h1>Newspaper name and description</h1>
-
-    <p><label for="newsName">Name</label><br />
-    <input id="newsName" name="newsName" type="text" class="h"<?php echoIfValue($newsNamePost); ?> /></p>
-
-    <p><label for="newsDescription">Description</label><br />
-    <input id="newsDescription" name="newsDescription" type="text" class="h"<?php echoIfValue($newsDescriptionPost); ?> /></p>
-
-    <p class="b"><input type="submit" value="Add / update" name="addUpdateName" class="button" /><br />
-    <input type="submit" value="Delete" name="deleteName" class="button" /><input type="hidden" name="existing"<?php echoIfValue($editPost); ?> /></p>
-
-    <h1>Newspaper sections</h1>
-
-    <p><label for="section">Section name</label><br />
-    <input id="section" name="section" type="text" class="h"<?php echoIfValue($sectionPost); ?> /></p>
-
-    <p><label for="sortOrderSection">Section sort order</label><br />
-    <input id="sortOrderSection" name="sortOrderSection" type="text" class="h"<?php echoIfValue($sortOrderSectionPost); ?> /></p>
-
-    <p class="b"><input type="submit" value="Add / update" name="addUpdateSection" class="button" /><br />
-    <input type="submit" value="Delete" name="deleteSection" class="button" /><input name="idSection" type="hidden"<?php echoIfValue($idSectionPost); ?> /><input type="hidden" name="existing"<?php echoIfValue($editPost); ?> /></p>
-
-    <h1>Registration information</h1>
-
-    <p><label for="information">Information (<a href="markdown.html" target="_blank">markdown syntax</a>)</label><br />
-    <span class="hl"><textarea id="information" name="information" class="h"><?php echoIfText($informationPost); ?></textarea></span></p>
-
-    <p class="b"><input type="submit" value="Add / update" name="addUpdateRegistration" class="button" /></p>
-
-    <h1>Contact form information</h1>
-
-    <p><label for="infoForms">Information (<a href="markdown.html" target="_blank">markdown syntax</a>)</label><br />
-    <span class="hl"><textarea id="infoForms" name="infoForms" class="h"><?php echoIfText($infoFormsPost); ?></textarea></span></p>
-
-    <p class="b"><input type="submit" value="Add / update" name="addUpdateContactForm" class="button" /></p>
-
-    <h1>Email address for contact forms and alerts</h1>
-
-    <p>Enter an email address to receive alerts when a classified ad requires review.</p>
-
-    <p><label for="emailClassified">Email</label><br />
-    <input id="emailClassified" name="emailClassified" type="email" class="h"<?php echoIfValue($emailClassifiedPost); ?> /></p>
-
-    <p class="b"><input type="submit" value="Add / update" name="addUpdateEmailClassified" class="button" /><br />
-    <input type="submit" value="Delete" name="deleteEmailClassified" class="button" /><input name="idRemote" type="hidden" <?php echoIfValue($idRemotePost); ?> /><input type="hidden" name="existing"<?php echoIfValue($editPost); ?> /></p>
-
-    <h1>Remote sites URIs</h1>
-
-    <p>Enter the URIs of the remote sites with a trailing slash. For example: http://www.mysite.com/</p>
-
-    <p><label for="remote">URI</label><br />
-    <input id="remote" name="remote" type="url" class="h"<?php echoIfValue($remotePost); ?> /></p>
-
-    <p class="b"><input type="submit" value="Add / update" name="addUpdateURI" class="button" /><br />
-    <input type="submit" value="Delete" name="deleteURI" class="button" /><input name="idRemote" type="hidden" <?php echoIfValue($idRemotePost); ?> /><input type="hidden" name="existing"<?php echoIfValue($editPost); ?> /></p>
-
-    <h1>Test connections to remote sites</h1>
-
-    <p><input type="submit" value="Test remote connections" name="testConnections" class="button" /></p>
-
-    <h1>Change the password for remote sites</h1>
-
-    <p>As with the admin password, the password for remote sites must be changed while the system is being set up. The system will choose a set of random passwords (authentication requires more than one). There is no recommendation for changing the passwords after that. A password change failure will require manual intervention to correct. Because the passwords incorporate the date in order to change daily, they will not work around midnight when the clocks on the systems are a little out of sync.</p>
-
-    <p><input type="submit" value="Change remote passwords" name="changeRemotePass" class="button" /></p>
-
-    <h1>Change the admin password</h1>
-
-    <p>For security reasons, the admin password must be changed from the default during system set up.</p>
-
-    <p><label for="newAdminPassOne">New password</label><br />
-    <input id="newAdminPassOne" name="newAdminPassOne" type="password" class="h" /></p>
-
-    <p><label for="newAdminPassTwo">Verify new password</label><br />
-    <input id="newAdminPassTwo" name="newAdminPassTwo" type="password" class="h" /></p>
-
-    <p><input type="submit" value="Change admin password" name="changeAdminPass" class="button" /></p>
-  </form>
+    </aside>
+  </div>
 </body>
 </html>

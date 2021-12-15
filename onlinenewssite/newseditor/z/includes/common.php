@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -89,7 +89,6 @@ function secure($str)
 {
     $str = stripslashes($str);                             // Magic quotes
     $str = html_entity_decode($str);                       // HTML chars
-    //$str = strip_tags($str);                               // HTML & PHP tags
     $str = preg_replace('{^\xEF\xBB\xBF|\x1A}', '', $str); // UTF-8 BOM
     $str = str_replace("\r\n", "\n", $str);                // Windows line ends
     $str = str_replace("\r", "\n", $str);                  // Old Mac line ends
@@ -164,7 +163,7 @@ function nl2p($str)
 function echoIfMessage($str)
 {
     if (!empty($str)) {
-        echo "\n" . '  <p class="e">' . $str . "</p>\n";
+        echo "\n" . '  <p class="error">' . $str . "</p>\n";
     }
 }
 /**

@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -197,37 +197,37 @@ if (isset($formPost) and $formPost === 'birth') {
         <input type="hidden" name="form" value="' . $formPost . '" />
 
         <p><label for="title">Email (optional)<br />
-        <input type="email" id="email" name="email" class="w"' . returnIfValue($emailEdit) . ' /></label></p>
+        <input type="email" id="email" name="email" class="wide"' . returnIfValue($emailEdit) . ' /></label></p>
 
         <p><label for="babyName">Full name of baby<br />
-        <input type="text" id="babyName" name="babyName" class="w"' . returnIfValue($babyNameEdit) . ' required /></label></p>
+        <input type="text" id="babyName" name="babyName" class="wide"' . returnIfValue($babyNameEdit) . ' required /></label></p>
 
         <p><label for="male"><input name="gender" id="male" type="radio" value="male"' . returnIfYes($maleEdit) . ' required /> Male</label><br />
         <label for="female"><input name="gender" id="female" type="radio" value="female"' . returnIfYes($femaleEdit) . ' /> Female</label></p>
 
         <p><label for="parentNames">First and last names of parents<br />
-        <input type="text" id="parentNames" name="parentNames" class="w"' . returnIfValue($parentNamesEdit) . ' required /></label></p>
+        <input type="text" id="parentNames" name="parentNames" class="wide"' . returnIfValue($parentNamesEdit) . ' required /></label></p>
 
         <p><label for="residence">Parents place of residence<br />
-        <input type="text" id="residence" name="residence" class="w"' . returnIfValue($residenceEdit) . ' required /></label></p>
+        <input type="text" id="residence" name="residence" class="wide"' . returnIfValue($residenceEdit) . ' required /></label></p>
 
         <p><label for="size">Weight and length of newborn<br />
-        <input type="text" id="size" name="size" class="w"' . returnIfValue($sizeEdit) . ' required /></label></p>
+        <input type="text" id="size" name="size" class="wide"' . returnIfValue($sizeEdit) . ' required /></label></p>
 
         <p><label for="birthday">Date and place of birth<br />
-        <input type="text" id="birthday" name="birthday" class="w"' . returnIfValue($birthdayEdit) . ' required /></label></p>
+        <input type="text" id="birthday" name="birthday" class="wide"' . returnIfValue($birthdayEdit) . ' required /></label></p>
 
         <p><label for="children">Other children in the family and their ages</label><br />
-        <textarea id="children" name="children" class="w" required>' . returnIfText($childrenEdit) . '</textarea></p>
+        <textarea id="children" name="children" class="wide" required>' . returnIfText($childrenEdit) . '</textarea></p>
 
         <p><label for="grandparents">Grandparents (first and last names and places of residence)</label><br />
-        <textarea id="grandparents" name="grandparents" class="w" required>' . returnIfText($grandparentsEdit) . '</textarea></p>
+        <textarea id="grandparents" name="grandparents" class="wide" required>' . returnIfText($grandparentsEdit) . '</textarea></p>
 
         <p><label for="greatGrandparents">Great grandparents (first and last names and places of residence)</label><br />
-        <textarea id="greatGrandparents" name="greatGrandparents" class="w" required>' . returnIfText($greatGrandparentsEdit) . '</textarea></p>
+        <textarea id="greatGrandparents" name="greatGrandparents" class="wide" required>' . returnIfText($greatGrandparentsEdit) . '</textarea></p>
 
         <p><label for="telephone">Telephone number in case we have questions<br />
-        <input type="tel" id="telephone" name="telephone" class="w"' . returnIfValue($telephoneEdit) . ' required /></label></p>
+        <input type="tel" id="telephone" name="telephone" class="wide"' . returnIfValue($telephoneEdit) . ' required /></label></p>
 
         <p><input name="submit" type="submit" class="button" value="Send announcement" /></p>' . "\n";
 }
@@ -384,52 +384,52 @@ if (isset($formPost) and $formPost === 'engagement') {
         <input type="hidden" name="form" value="' . $formPost . '" />
 
         <p><label for="title">Email (optional)<br />
-        <input type="email" id="email" name="email" class="w"' . returnIfValue($emailEdit) . ' /></label></p>
+        <input type="email" id="email" name="email" class="wide"' . returnIfValue($emailEdit) . ' /></label></p>
 
         <p><label for="date">Date of wedding<br />
-        <input type="date" id="date" name="date" class="w"' . returnIfValue($dateEdit) . ' required /></label></p>
+        <input type="date" id="date" name="date" class="wide"' . returnIfValue($dateEdit) . ' required /></label></p>
 
         <p><label for="weddingPlace">Place of wedding<br />
-        <input type="text" id="weddingPlace" name="weddingPlace" class="w"' . returnIfValue($weddingPlaceEdit) . ' required /></label></p>
+        <input type="text" id="weddingPlace" name="weddingPlace" class="wide"' . returnIfValue($weddingPlaceEdit) . ' required /></label></p>
 
         <p><label for="womansName">Woman\'s full name<br />
-        <input type="text" id="womansName" name="womansName" class="w"' . returnIfValue($womansNameEdit) . ' required /></label></p>
+        <input type="text" id="womansName" name="womansName" class="wide"' . returnIfValue($womansNameEdit) . ' required /></label></p>
 
         <p><label for="womansResidence">Woman\'s place of residence<br />
-        <input type="text" id="womansResidence" name="womansResidence" class="w"' . returnIfValue($womansResidenceEdit) . ' required /></label></p>
+        <input type="text" id="womansResidence" name="womansResidence" class="wide"' . returnIfValue($womansResidenceEdit) . ' required /></label></p>
 
         <p><label for="womansParents">Names of woman\'s parents<br />
-        <input type="text" id="womansParents" name="womansParents" class="w"' . returnIfValue($womansParentsEdit) . ' required /></label></p>
+        <input type="text" id="womansParents" name="womansParents" class="wide"' . returnIfValue($womansParentsEdit) . ' required /></label></p>
 
         <p><label for="womansParentsResidence">Place or places of residence of woman\'s parents</label><br />
-        <input type="text" id="womansParentsResidence" name="womansParentsResidence" class="w"' . returnIfValue($womansParentsResidenceEdit) . ' required /></label></p>
+        <input type="text" id="womansParentsResidence" name="womansParentsResidence" class="wide"' . returnIfValue($womansParentsResidenceEdit) . ' required /></label></p>
 
         <p><label for="mansName">Man\'s full name</label><br />
-        <input type="text" id="mansName" name="mansName" class="w"' . returnIfValue($mansNameEdit) . ' required /></label></p>
+        <input type="text" id="mansName" name="mansName" class="wide"' . returnIfValue($mansNameEdit) . ' required /></label></p>
 
         <p><label for="mansResidence">Man\'s place of residence<br />
-        <input type="text" id="mansResidence" name="mansResidence" class="w"' . returnIfValue($mansResidenceEdit) . ' required /></label></p>
+        <input type="text" id="mansResidence" name="mansResidence" class="wide"' . returnIfValue($mansResidenceEdit) . ' required /></label></p>
 
         <p><label for="mansParents">Names of man\'s parents<br />
-        <input type="text" id="mansParents" name="mansParents" class="w"' . returnIfValue($mansParentsEdit) . ' required /></label></p>
+        <input type="text" id="mansParents" name="mansParents" class="wide"' . returnIfValue($mansParentsEdit) . ' required /></label></p>
 
         <p><label for="mansParentsResidence">Place or places of residence of man\'s parents<br />
-        <input type="text" id="mansParentsResidence" name="mansParentsResidence" class="w"' . returnIfValue($mansParentsResidenceEdit) . ' required /></label></p>
+        <input type="text" id="mansParentsResidence" name="mansParentsResidence" class="wide"' . returnIfValue($mansParentsResidenceEdit) . ' required /></label></p>
 
         <p><label for="womansSchools">Schools woman has attended, year of graduation, degrees received<br />
-        <input type="text" id="womansSchools" name="womansSchools" class="w"' . returnIfValue($womansSchoolsEdit) . ' required /></label></p>
+        <input type="text" id="womansSchools" name="womansSchools" class="wide"' . returnIfValue($womansSchoolsEdit) . ' required /></label></p>
 
         <p><label for="womansEmployer">Woman\'s place of employment or school currently attending<br />
-        <input type="text" id="womansEmployer" name="womansEmployer" class="w"' . returnIfValue($womansEmployerEdit) . ' required /></label></p>
+        <input type="text" id="womansEmployer" name="womansEmployer" class="wide"' . returnIfValue($womansEmployerEdit) . ' required /></label></p>
 
         <p><label for="mansSchools">Schools man has attended, year of graduation, degrees received<br />
-        <input type="text" id="mansSchools" name="mansSchools" class="w"' . returnIfValue($mansSchoolsEdit) . ' required /></label></p>
+        <input type="text" id="mansSchools" name="mansSchools" class="wide"' . returnIfValue($mansSchoolsEdit) . ' required /></label></p>
 
         <p><label for="mansEmployer">Man\'s place of employment or school currently attending<br />
-        <input type="text" id="mansEmployer" name="mansEmployer" class="w"' . returnIfValue($mansEmployerEdit) . ' required /></label></p>
+        <input type="text" id="mansEmployer" name="mansEmployer" class="wide"' . returnIfValue($mansEmployerEdit) . ' required /></label></p>
 
         <p><label for="telephone">Telephone number in case we have questions<br />
-        <input type="tel" id="telephone" name="telephone" class="w"' . returnIfValue($telephoneEdit) . ' required /></label></p>
+        <input type="tel" id="telephone" name="telephone" class="wide"' . returnIfValue($telephoneEdit) . ' required /></label></p>
 
         <p><input name="submit" type="submit" class="button" value="Send announcement" /></p>' . "\n";
 }
@@ -735,73 +735,73 @@ if (isset($formPost) and $formPost === 'obituary') {
         <p><input type="hidden" name="form" value="' . $formPost . '" />
 
         <p><label for="title">Email (optional)<br />
-        <input type="email" id="email" name="email" class="w"' . returnIfValue($emailEdit) . ' /></label></p>
+        <input type="email" id="email" name="email" class="wide"' . returnIfValue($emailEdit) . ' /></label></p>
 
         <p><label for="name">Name<br />
-        <input type="text" id="name" name="name" class="w"' . returnIfValue($nameEdit) . ' required /></label></p>
+        <input type="text" id="name" name="name" class="wide"' . returnIfValue($nameEdit) . ' required /></label></p>
 
         <p><label for="gender">Sex<br />
-        <input type="text" id="gender" name="gender" class="w"' . returnIfValue($genderEdit) . ' required /></label></p>
+        <input type="text" id="gender" name="gender" class="wide"' . returnIfValue($genderEdit) . ' required /></label></p>
 
         <p><label for="age">Age<br />
-        <input type="text" id="age" name="age" class="w"' . returnIfValue($ageEdit) . ' required /></label></p>
+        <input type="text" id="age" name="age" class="wide"' . returnIfValue($ageEdit) . ' required /></label></p>
 
         <p><label for="residencePlace">Place of residence<br />
-        <input type="text" id="residencePlace" name="residencePlace" class="w"' . returnIfValue($residencePlaceEdit) . ' required /></label></p>
+        <input type="text" id="residencePlace" name="residencePlace" class="wide"' . returnIfValue($residencePlaceEdit) . ' required /></label></p>
 
         <p><label for="residenceLength">Length of residence<br />
-        <input type="text" id="residenceLength" name="residenceLength" class="w"' . returnIfValue($residenceLengthEdit) . ' required /></label></p>
+        <input type="text" id="residenceLength" name="residenceLength" class="wide"' . returnIfValue($residenceLengthEdit) . ' required /></label></p>
 
         <p><label for="deathPlace">Place of death<br />
-        <input type="text" id="deathPlace" name="deathPlace" class="w"' . returnIfValue($deathPlaceEdit) . ' required /></label></p>
+        <input type="text" id="deathPlace" name="deathPlace" class="wide"' . returnIfValue($deathPlaceEdit) . ' required /></label></p>
 
         <p><label for="deathTime">Date, weekday of death<br />
-        <input type="text" id="deathTime" name="deathTime" class="w"' . returnIfValue($deathTimeEdit) . ' required /></label></p>
+        <input type="text" id="deathTime" name="deathTime" class="wide"' . returnIfValue($deathTimeEdit) . ' required /></label></p>
 
         <p><label for="deathCause">Cause of death<br />
-        <input type="text" id="deathCause" name="deathCause" class="w"' . returnIfValue($deathCauseEdit) . ' required /></label></p>
+        <input type="text" id="deathCause" name="deathCause" class="wide"' . returnIfValue($deathCauseEdit) . ' required /></label></p>
 
         <p><label for="birthDate">Date of birth<br />
-        <input type="text" id="birthDate" name="birthDate" class="w"' . returnIfValue($birthDateEdit) . ' required /></label></p>
+        <input type="text" id="birthDate" name="birthDate" class="wide"' . returnIfValue($birthDateEdit) . ' required /></label></p>
 
         <p><label for="birthPlace">Place of birth<br />
-        <input type="text" id="birthPlace" name="birthPlace" class="w"' . returnIfValue($birthPlaceEdit) . ' required /></label></p>
+        <input type="text" id="birthPlace" name="birthPlace" class="wide"' . returnIfValue($birthPlaceEdit) . ' required /></label></p>
 
         <p><label for="parents">Parents (mother’s maiden name in parentheses)</label><br />
-        <textarea id="parents" name="parents" class="w" required>' . returnIfText($parentsEdit) . '</textarea></p>
+        <textarea id="parents" name="parents" class="wide" required>' . returnIfText($parentsEdit) . '</textarea></p>
 
         <p><label for="education">Education (if possible, high school attended and year of graduation as well as colleges and year of associate’s, bachelor’s and post- graduate degrees and discipline in which degree was earned)</label><br />
-        <textarea id="education" name="education" class="w" required>' . returnIfText($educationEdit) . '</textarea></p>
+        <textarea id="education" name="education" class="wide" required>' . returnIfText($educationEdit) . '</textarea></p>
 
         <p><label for="military">Military service and dates<br />
-        <input type="text" id="military" name="military" class="w"' . returnIfValue($militaryEdit) . ' required /></label></p>
+        <input type="text" id="military" name="military" class="wide"' . returnIfValue($militaryEdit) . ' required /></label></p>
 
         <p><label for="militaryRank">Rank on discharge<br />
-        <input type="text" id="militaryRank" name="militaryRank" class="w"' . returnIfValue($militaryRankEdit) . ' required /></label></p>
+        <input type="text" id="militaryRank" name="militaryRank" class="wide"' . returnIfValue($militaryRankEdit) . ' required /></label></p>
 
         <p><label for="marriage">Marriage<br />
-        <input type="text" id="marriage" name="marriage" class="w"' . returnIfValue($marriageEdit) . ' required /></label></p>
+        <input type="text" id="marriage" name="marriage" class="wide"' . returnIfValue($marriageEdit) . ' required /></label></p>
 
         <p><label for="marriagePlace">Marriage place<br />
-        <input type="text" id="marriagePlace" name="marriagePlace" class="w"' . returnIfValue($marriagePlaceEdit) . ' required /></label></p>
+        <input type="text" id="marriagePlace" name="marriagePlace" class="wide"' . returnIfValue($marriagePlaceEdit) . ' required /></label></p>
 
         <p><label for="marriageDate">Marriage date<br />
-        <input type="text" id="marriageDate" name="marriageDate" class="w"' . returnIfValue($marriageDateEdit) . ' required /></label></p>
+        <input type="text" id="marriageDate" name="marriageDate" class="wide"' . returnIfValue($marriageDateEdit) . ' required /></label></p>
 
         <p><label for="marriagePrevious">Previous marriage (specify how ended: i.e. divorce, death and date)<br />
-        <input type="text" id="marriagePrevious" name="marriagePrevious" class="w"' . returnIfValue($marriagePreviousEdit) . ' required /></label></p>
+        <input type="text" id="marriagePrevious" name="marriagePrevious" class="wide"' . returnIfValue($marriagePreviousEdit) . ' required /></label></p>
 
         <p><label for="employment">Occupations and Employment</label><br />
-        <textarea id="employment" name="employment" class="w" required>' . returnIfText($employmentEdit) . '</textarea></p>
+        <textarea id="employment" name="employment" class="wide" required>' . returnIfText($employmentEdit) . '</textarea></p>
 
         <p><label for="interests">Interests and memberships (hobbies, pastimes, community activities, club, church affiliations, special honors)</label><br />
-        <textarea id="interests" name="interests" class="w" required>' . returnIfText($interestsEdit) . '</textarea></p>
+        <textarea id="interests" name="interests" class="wide" required>' . returnIfText($interestsEdit) . '</textarea></p>
 
         <p><label for="survivors">Survivors - Relationship, Full Name, Place of Residence</label><br />
-        <textarea id="survivors" name="survivors" class="w" required>' . returnIfText($survivorsEdit) . '</textarea></p>
+        <textarea id="survivors" name="survivors" class="wide" required>' . returnIfText($survivorsEdit) . '</textarea></p>
 
         <p><label for="precededBy">Preceded in death by (name and relationship)<br />
-        <input type="text" id="precededBy" name="precededBy" class="w"' . returnIfValue($precededByEdit) . ' required /></label></p>
+        <input type="text" id="precededBy" name="precededBy" class="wide"' . returnIfValue($precededByEdit) . ' required /></label></p>
 
         <p>Services (check one)<br />
         <label for="graveside"><input name="services" id="graveside" type="radio" value="graveside"' . returnIfYes($gravesideEdit) . ' required /> Graveside</label><br />
@@ -809,29 +809,29 @@ if (isset($formPost) and $formPost === 'obituary') {
         <label for="funeral"><input name="services" id="funeral" type="radio" value="funeral"' . returnIfYes($funeralEdit) . ' /> Funeral</label></p>
 
         <p><label for="servicePlace">Place of service<br />
-        <input type="text" id="servicePlace" name="servicePlace" class="w"' . returnIfValue($servicePlaceEdit) . ' required /></label></p>
+        <input type="text" id="servicePlace" name="servicePlace" class="wide"' . returnIfValue($servicePlaceEdit) . ' required /></label></p>
 
         <p><label for="serviceTime">Date and time of service<br />
-        <input type="text" id="serviceTime" name="serviceTime" class="w"' . returnIfValue($serviceTimeEdit) . ' required /></label></p>
+        <input type="text" id="serviceTime" name="serviceTime" class="wide"' . returnIfValue($serviceTimeEdit) . ' required /></label></p>
 
         <p><label for="serviceOfficiant">Officiant at service<br />
-        <input type="text" id="serviceOfficiant" name="serviceOfficiant" class="w"' . returnIfValue($serviceOfficiantEdit) . ' required /></label></p>
+        <input type="text" id="serviceOfficiant" name="serviceOfficiant" class="wide"' . returnIfValue($serviceOfficiantEdit) . ' required /></label></p>
 
         <p>Burial or inurnment (check one)<br />
         <label for="burial"><input name="burialInurnment" id="burial" type="radio" value="burial"' . returnIfYes($burialEdit) . ' required /> Burial</label><br />
         <label for="inurnment"><input name="burialInurnment" id="inurnment" type="radio" value="inurnment"' . returnIfYes($inurnmentEdit) . ' /> Inurnment</label></p>
 
         <p><label for="burialPlace">Place of burial or inurnment<br />
-        <input type="text" id="burialPlace" name="burialPlace" class="w"' . returnIfValue($burialPlaceEdit) . ' required /></label></p>
+        <input type="text" id="burialPlace" name="burialPlace" class="wide"' . returnIfValue($burialPlaceEdit) . ' required /></label></p>
 
         <p><label for="arrangementsBy">Arrangements are under the direction of<br />
-        <input type="text" id="arrangementsBy" name="arrangementsBy" class="w"' . returnIfValue($arrangementsByEdit) . ' required /></label></p>
+        <input type="text" id="arrangementsBy" name="arrangementsBy" class="wide"' . returnIfValue($arrangementsByEdit) . ' required /></label></p>
 
         <p><label for="phone">Phone number in case we have questions<br />
-        <input type="text" id="phone" name="phone" class="w"' . returnIfValue($phoneEdit) . ' required /></label></p>
+        <input type="text" id="phone" name="phone" class="wide"' . returnIfValue($phoneEdit) . ' required /></label></p>
 
         <p><label for="memorialDonations">Memorial donations to (include address)<br />
-        <input type="text" id="memorialDonations" name="memorialDonations" class="w"' . returnIfValue($memorialDonationsEdit) . ' required /></label></p>
+        <input type="text" id="memorialDonations" name="memorialDonations" class="wide"' . returnIfValue($memorialDonationsEdit) . ' required /></label></p>
 
         <p><input name="submit" type="submit" class="button" value="Send obituary" /></p>' . "\n";
 }
@@ -1077,83 +1077,83 @@ if (isset($formPost) and $formPost === 'wedding') {
         <p><input type="hidden" name="form" value="' . $formPost . '" />
 
         <p><label for="title">Email (optional)<br />
-        <input type="email" id="email" name="email" class="w"' . returnIfValue($emailEdit) . ' /></label></p>
+        <input type="email" id="email" name="email" class="wide"' . returnIfValue($emailEdit) . ' /></label></p>
 
         <p>If a photo is to go with the announcement, then email the photo to: office@illinois-valley-news.com.</p>
 
         <p><label for="maidenName">Maiden name of the bride and her residence<br />
-        <input type="text" id="maidenName" name="maidenName" class="w"' . returnIfValue($maidenNameEdit) . ' required /></label></p>
+        <input type="text" id="maidenName" name="maidenName" class="wide"' . returnIfValue($maidenNameEdit) . ' required /></label></p>
 
         <p><label for="brideParents">Bride\'s parents and residence<br />
-        <input type="text" id="brideParents" name="brideParents" class="w"' . returnIfValue($brideParentsEdit) . ' required /></label></p>
+        <input type="text" id="brideParents" name="brideParents" class="wide"' . returnIfValue($brideParentsEdit) . ' required /></label></p>
 
         <p><label for="bridegroomName">Bridegroom\'s name and residence<br />
-        <input type="text" id="bridegroomName" name="bridegroomName" class="w"' . returnIfValue($bridegroomNameEdit) . ' required /></label></p>
+        <input type="text" id="bridegroomName" name="bridegroomName" class="wide"' . returnIfValue($bridegroomNameEdit) . ' required /></label></p>
 
         <p><label for="bridegroomParents">Bridegroom\'s parents and residence<br />
-        <input type="text" id="bridegroomParents" name="bridegroomParents" class="w"' . returnIfValue($bridegroomParentsEdit) . ' required /></label></p>
+        <input type="text" id="bridegroomParents" name="bridegroomParents" class="wide"' . returnIfValue($bridegroomParentsEdit) . ' required /></label></p>
 
         <p><label for="weddingPlace">Place of wedding<br />
-        <input type="text" id="weddingPlace" name="weddingPlace" class="w"' . returnIfValue($weddingPlaceEdit) . ' required /></label></p>
+        <input type="text" id="weddingPlace" name="weddingPlace" class="wide"' . returnIfValue($weddingPlaceEdit) . ' required /></label></p>
 
         <p><label for="dateHour">Date and hour<br />
-        <input type="text" id="dateHour" name="dateHour" class="w"' . returnIfValue($dateHourEdit) . ' required /></label></p>
+        <input type="text" id="dateHour" name="dateHour" class="wide"' . returnIfValue($dateHourEdit) . ' required /></label></p>
 
         <p><label for="ceremonyPerformer">Name of person performing ceremony<br />
-        <input type="text" id="ceremonyPerformer" name="ceremonyPerformer" class="w"' . returnIfValue($ceremonyPerformerEdit) . ' required /></label></p>
+        <input type="text" id="ceremonyPerformer" name="ceremonyPerformer" class="wide"' . returnIfValue($ceremonyPerformerEdit) . ' required /></label></p>
 
         <p><label for="doubleRing"><input name="ring" id="doubleRing" type="radio" value="doubleRing"' . returnIfYes($doubleRingEdit) . ' required /> Double-ring</label><br />
         <label for="singleRing"><input name="ring" id="singleRing" type="radio" value="singleRing"' . returnIfYes($singleRingEdit) . ' /> Single-ring</label><br />
         <label for="noRing"><input name="ring" id="noRing" type="radio" value="noRing"' . returnIfYes($noRingEdit) . ' /> No ring</label></p>
 
         <p><label for="matronName">Name of the matron or the maid of honor<br />
-        <input type="text" id="matronName" name="matronName" class="w"' . returnIfValue($matronNameEdit) . ' required /></label></p>
+        <input type="text" id="matronName" name="matronName" class="wide"' . returnIfValue($matronNameEdit) . ' required /></label></p>
 
         <p><label for="matron"><input name="honor" id="matron" type="radio" value="matron"' . returnIfYes($matronEdit) . ' required /> Matron</label><br />
         <label for="maid"><input name="honor" id="maid" type="radio" value="maid"' . returnIfYes($maidEdit) . ' /> Maid of honor</label><br />
         <label for="none"><input name="honor" id="none" type="radio" value="none"' . returnIfYes($noneEdit) . ' /> None</label></p>
 
         <p><label for="bridesmaidName">Names of the bridesmaids<br />
-        <input type="text" id="bridesmaidName" name="bridesmaidName" class="w"' . returnIfValue($bridesmaidNameEdit) . ' required /></label></p>
+        <input type="text" id="bridesmaidName" name="bridesmaidName" class="wide"' . returnIfValue($bridesmaidNameEdit) . ' required /></label></p>
 
         <p><label for="bestMan">Name of the best man<br />
-        <input type="text" id="bestMan" name="bestMan" class="w"' . returnIfValue($bestManEdit) . ' required /></label></p>
+        <input type="text" id="bestMan" name="bestMan" class="wide"' . returnIfValue($bestManEdit) . ' required /></label></p>
 
         <p><label for="ushersGroomsmen">Names of the ushers/groomsmen<br />
-        <input type="text" id="ushersGroomsmen" name="ushersGroomsmen" class="w"' . returnIfValue($ushersGroomsmenEdit) . ' required /></label></p>
+        <input type="text" id="ushersGroomsmen" name="ushersGroomsmen" class="wide"' . returnIfValue($ushersGroomsmenEdit) . ' required /></label></p>
 
         <p><label for="otherParticipants">Names of other participants and roles (e.g. ringbearer, flower girl, candlelighter)<br />
-        <input type="text" id="otherParticipants" name="otherParticipants" class="w"' . returnIfValue($otherParticipantsEdit) . ' required /></label></p>
+        <input type="text" id="otherParticipants" name="otherParticipants" class="wide"' . returnIfValue($otherParticipantsEdit) . ' required /></label></p>
 
         <p><label for="musicians">Musician(s) (specify)<br />
-        <input type="text" id="musicians" name="musicians" class="w"' . returnIfValue($musiciansEdit) . ' required /></label></p>
+        <input type="text" id="musicians" name="musicians" class="wide"' . returnIfValue($musiciansEdit) . ' required /></label></p>
 
         <p><label for="reception">Time and place of reception<br />
-        <input type="text" id="reception" name="reception" class="w"' . returnIfValue($receptionEdit) . ' required /></label></p>
+        <input type="text" id="reception" name="reception" class="wide"' . returnIfValue($receptionEdit) . ' required /></label></p>
 
         <p><label for="honorees">Honorees serving or assisting<br />
-        <input type="text" id="honorees" name="honorees" class="w"' . returnIfValue($honoreesEdit) . ' required /></label></p>
+        <input type="text" id="honorees" name="honorees" class="wide"' . returnIfValue($honoreesEdit) . ' required /></label></p>
 
         <p><label for="brideInfo">Bride\'s schools, sororities, employment<br />
-        <input type="text" id="brideInfo" name="brideInfo" class="w"' . returnIfValue($brideInfoEdit) . ' required /></label></p>
+        <input type="text" id="brideInfo" name="brideInfo" class="wide"' . returnIfValue($brideInfoEdit) . ' required /></label></p>
 
         <p><label for="groomInfo">Groom\'s schools, clubs, employment<br />
-        <input type="text" id="groomInfo" name="groomInfo" class="w"' . returnIfValue($groomInfoEdit) . ' required /></label></p>
+        <input type="text" id="groomInfo" name="groomInfo" class="wide"' . returnIfValue($groomInfoEdit) . ' required /></label></p>
 
         <p><label for="trip">Destination of wedding trip<br />
-        <input type="text" id="trip" name="trip" class="w"' . returnIfValue($tripEdit) . ' required /></label></p>
+        <input type="text" id="trip" name="trip" class="wide"' . returnIfValue($tripEdit) . ' required /></label></p>
 
         <p><label for="tripDate">Date of trip<br />
-        <input type="text" id="tripDate" name="tripDate" class="w"' . returnIfValue($tripDateEdit) . ' required /></label></p>
+        <input type="text" id="tripDate" name="tripDate" class="wide"' . returnIfValue($tripDateEdit) . ' required /></label></p>
 
         <p><label for="residence">Where couple will live<br />
-        <input type="text" id="residence" name="residence" class="w"' . returnIfValue($residenceEdit) . ' required /></label></p>
+        <input type="text" id="residence" name="residence" class="wide"' . returnIfValue($residenceEdit) . ' required /></label></p>
 
         <p><label for="yes"><input name="picture" id="yes" type="radio" value="yes"' . returnIfYes($yesEdit) . ' required /> I will email a photo to include with the announcement</label><br />
         <label for="no"><input name="picture" id="no" type="radio" value="no"' . returnIfYes($noEdit) . ' /> None</label></p>
 
         <p><label for="contactInfo">Name and phone (between 8 and 5) of contact person for the story<br />
-        <input type="text" id="contactInfo" name="contactInfo" class="w"' . returnIfValue($contactInfoEdit) . ' required /></label></p>
+        <input type="text" id="contactInfo" name="contactInfo" class="wide"' . returnIfValue($contactInfoEdit) . ' required /></label></p>
 
         <p><input name="submit" type="submit" class="button" value="Send announcement" /></p>' . "\n";
 }
@@ -1230,22 +1230,22 @@ if (isset($formPost) and $formPost === 'calendar') {
         <p><input type="hidden" name="form" value="' . $formPost . '" />
 
         <p><label for="title">Email (optional)<br />
-        <input type="email" id="email" name="email" class="w"' . returnIfValue($emailEdit) . ' /></label></p>
+        <input type="email" id="email" name="email" class="wide"' . returnIfValue($emailEdit) . ' /></label></p>
 
         <p><label for="name">Name<br />
-        <input type="text" id="name" name="name" class="w"' . returnIfValue($nameEdit) . ' required /></label></p>
+        <input type="text" id="name" name="name" class="wide"' . returnIfValue($nameEdit) . ' required /></label></p>
 
         <p><label for="address">Address<br />
-        <input type="text" id="address" name="address" class="w"' . returnIfValue($addressEdit) . ' required /></label></p>
+        <input type="text" id="address" name="address" class="wide"' . returnIfValue($addressEdit) . ' required /></label></p>
 
         <p><label for="telephone">Telephone<br />
-        <input type="tel" id="telephone" name="telephone" class="w"' . returnIfValue($telephoneEdit) . ' required /></label></p>
+        <input type="tel" id="telephone" name="telephone" class="wide"' . returnIfValue($telephoneEdit) . ' required /></label></p>
 
         <p><label for="title">Title<br />
-        <input type="text" id="title" name="title" class="w"' . returnIfValue($titleEdit) . ' required /></label></p>
+        <input type="text" id="title" name="title" class="wide"' . returnIfValue($titleEdit) . ' required /></label></p>
 
         <p><label for="content">Calendar event, time, date, and for recurring events, the schedule</label><br />
-        <textarea id="content" name="content" class="w" required>' . returnIfText($contentEdit) . '</textarea></p>
+        <textarea id="content" name="content" class="wide" required>' . returnIfText($contentEdit) . '</textarea></p>
 
         <p><input name="submit" type="submit" class="button" value="Send calendar event" /></p>' . "\n";
 }
@@ -1322,22 +1322,22 @@ if (isset($formPost) and $formPost === 'letter') {
         <p><input type="hidden" name="form" value="' . $formPost . '" />
 
         <p><label for="title">Email (optional)<br />
-        <input type="email" id="email" name="email" class="w"' . returnIfValue($emailEdit) . ' /></label></p>
+        <input type="email" id="email" name="email" class="wide"' . returnIfValue($emailEdit) . ' /></label></p>
 
         <p><label for="name">Name<br />
-        <input type="text" id="name" name="name" class="w"' . returnIfValue($nameEdit) . ' required /></label></p>
+        <input type="text" id="name" name="name" class="wide"' . returnIfValue($nameEdit) . ' required /></label></p>
 
         <p><label for="address">Address<br />
-        <input type="text" id="address" name="address" class="w"' . returnIfValue($addressEdit) . ' required /></label></p>
+        <input type="text" id="address" name="address" class="wide"' . returnIfValue($addressEdit) . ' required /></label></p>
 
         <p><label for="telephone">Telephone<br />
-        <input type="tel" id="telephone" name="telephone" class="w"' . returnIfValue($telephoneEdit) . ' required /></label></p>
+        <input type="tel" id="telephone" name="telephone" class="wide"' . returnIfValue($telephoneEdit) . ' required /></label></p>
 
         <p><label for="title">Title<br />
-        <input type="text" id="title" name="title" class="w"' . returnIfValue($titleEdit) . ' required /></label></p>
+        <input type="text" id="title" name="title" class="wide"' . returnIfValue($titleEdit) . ' required /></label></p>
 
         <p><label for="content">Content for publication</label><br />
-        <textarea id="content" name="content" class="w" required>' . returnIfText($contentEdit) . '</textarea></p>
+        <textarea id="content" name="content" class="wide" required>' . returnIfText($contentEdit) . '</textarea></p>
 
         <p><input name="submit" type="submit" class="button" value="Send letter" /></p>' . "\n";
 }
@@ -1414,22 +1414,22 @@ if (isset($formPost) and $formPost === 'other') {
         <p><input type="hidden" name="form" value="' . $formPost . '" />
 
         <p><label for="title">Email (optional)<br />
-        <input type="email" id="email" name="email" class="w"' . returnIfValue($emailEdit) . ' /></label></p>
+        <input type="email" id="email" name="email" class="wide"' . returnIfValue($emailEdit) . ' /></label></p>
 
         <p><label for="name">Name<br />
-        <input type="text" id="name" name="name" class="w"' . returnIfValue($nameEdit) . ' required /></label></p>
+        <input type="text" id="name" name="name" class="wide"' . returnIfValue($nameEdit) . ' required /></label></p>
 
         <p><label for="address">Address<br />
-        <input type="text" id="address" name="address" class="w"' . returnIfValue($addressEdit) . ' required /></label></p>
+        <input type="text" id="address" name="address" class="wide"' . returnIfValue($addressEdit) . ' required /></label></p>
 
         <p><label for="telephone">Telephone<br />
-        <input type="tel" id="telephone" name="telephone" class="w"' . returnIfValue($telephoneEdit) . ' required /></label></p>
+        <input type="tel" id="telephone" name="telephone" class="wide"' . returnIfValue($telephoneEdit) . ' required /></label></p>
 
         <p><label for="title">Title<br />
-        <input type="text" id="title" name="title" class="w"' . returnIfValue($titleEdit) . ' required /></label></p>
+        <input type="text" id="title" name="title" class="wide"' . returnIfValue($titleEdit) . ' required /></label></p>
 
         <p><label for="content">Message</label><br />
-        <textarea id="content" name="content" class="w" required>' . returnIfText($contentEdit) . '</textarea></p>
+        <textarea id="content" name="content" class="wide" required>' . returnIfText($contentEdit) . '</textarea></p>
 
         <p><input name="submit" type="submit" class="button" value="Send message" /></p>' . "\n";
 }

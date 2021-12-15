@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -162,7 +162,7 @@ foreach ($stmt as $row) {
 }
 $dbh = null;
 $request['phpversion'] = phpversion();
-$request['version'] = '2021 5 17';
+$request['version'] = '2021 12 2';
 $request = http_build_query(array_map('base64_encode', $request));
 stream_context_set_default(['http' => ['user_agent' => 'PHP', 'method' => 'POST', 'header' => 'Content-Type: application/x-www-form-urlencoded', 'content' => $request]]);
 $fp = @fopen('https://onlinenewssite.com/v/', 'rb', false);
@@ -175,24 +175,32 @@ if ($fp !== false) {
 require $includesPath . '/header1.inc';
 ?>
   <title>Online News Site</title>
-  <meta name="generator" content="Online News Site, free open source news publishing software, https://onlinenewssite.com/" />
-<?php require $includesPath . '/header2.inc'; ?>
-<body>
-  <p><br />
-  <a href="https://onlinenewssite.com/"><img src="images/logo.png" class="logo" alt="Online news site free open source software" /></a></p>
+  <link rel="icon" type="image/png" href="images/32.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="generator" content="Online News Site Software, https://onlinenewssite.com/" />
+  <link rel="stylesheet" type="text/css" href="z/base.css" />
+  <link rel="stylesheet" type="text/css" href="z/admin.css" />
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/192.png">
+</head>
 
-  <h1>News editor log in</h1>
+<body>
+  <div class="column">
+    <p  class="a"><br />
+    <a href="https://onlinenewssite.com/"><img src="images/logo.png" class="wide" alt="Online News Site Software" /></a></p>
+
+    <h1 class="a">News editor log in</h1>
 <?php echoIfMessage($message); ?>
 
-  <form action="<?php echo $uri; ?>" method="post">
-    <p><label for="user">User</label><br />
-    <input id="user" name="user" type="text" class="h" maxlength="254" autofocus required /></p>
+    <form action="<?php echo $uri; ?>" method="post">
+      <p  class="a"><label for="user">User</label><br />
+      <input id="user" name="user" type="text" class="h" maxlength="254" autofocus required /></p>
 
-    <p><label for="pass">Password</label><br />
-    <input id="pass" name="pass" type="password" class="h" maxlength="254" required /></p>
+      <p  class="a"><label for="pass">Password</label><br />
+      <input id="pass" name="pass" type="password" class="h" maxlength="254" required /></p>
 
-    <p><input type="submit" name="login" class="button" value="Log in" /></p>
-  </form>
+      <p  class="a"><input type="submit" name="login" class="button" value="Log in" /></p>
+    </form>
 
 <?php
 //
@@ -206,9 +214,10 @@ $row = $stmt->fetch();
 $dbRowCount = $row['count(idAd)'];
 $dbh = null;
 if ($dbRowCount !== '0') {
-    echo '  <p>' . number_format($dbRowCount) . " classified ad(s) pending review.</p>\n\n";
+    echo '  <p  class="a">' . number_format($dbRowCount) . " classified ad(s) pending review.</p>\n\n";
 }
 ?>
-  <p>Version 2021 5 17. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.</p>
+    <p  class="a">Version 2021 12 2. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.</p>
+  </div>
 </body>
 </html>

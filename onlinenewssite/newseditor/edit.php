@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -38,7 +38,9 @@ if (empty($row['userType']) or $row['userType'] !== '1') {
 //
 $editorView = '1';
 $links = null;
-$menu = "\n" . '  <h4 class="m"><a class="s" href="edit.php">&nbsp;Edit&nbsp;</a><a class="m" href="published.php">&nbsp;Published&nbsp;</a><a class="m" href="preview.php">&nbsp;Preview&nbsp;</a><a class="m" href="archive.php">&nbsp;Archives&nbsp;</a></h4>' . "\n\n";
+$menu = "\n" . '  <nav class="n">
+    <h4 class="m"><a class="s" href="edit.php">Edit</a><a class="m" href="published.php">Published</a><a class="m" href="preview.php">Preview</a><a class="m" href="archive.php">Archives</a></h4>
+  </nav>' . "\n\n";
 $publishedIndexAdminLinks = null;
 $title = 'Edit';
 $use = 'edit';

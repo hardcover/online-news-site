@@ -1,0 +1,27 @@
+/**
+ * Add custom styles to a file named local.css in the same directory.
+ * Do not modify this file as it will be overwritten by software updates.
+ */
+
+body {
+    margin: 0 1rem;
+}
+
+nav.article {
+  overflow: hidden;
+  position: sticky;
+  bottom: 0;
+  background-color: #fff;
+  border-top: 1px #aaa solid;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+@media (min-width: 1220px) {
+    body {
+        width: 61.8%;
+        margin: 0 auto;
+    }
+}

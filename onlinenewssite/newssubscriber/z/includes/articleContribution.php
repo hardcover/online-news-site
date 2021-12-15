@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -117,7 +117,7 @@ if (isset($_POST['addUpdate'])) {
                 $widthOriginal = $sizes['0'];
                 $heightOriginal = $sizes['1'];
                 $aspectRatio = $widthOriginal / $heightOriginal;
-                $widthHD = 2370;
+                $widthHD = 2360;
                 $heightHD = round($widthHD / $aspectRatio);
                 //
                 // Determine if the image is the primary image or a secondary image
@@ -270,7 +270,7 @@ echoIfMessage($message);
 
       <form class="wait" method="post" action="<?php echo $uri; ?>?m=article-contribution" enctype="multipart/form-data">
         <p><label for="byline">Byline</label><br />
-        <input id="byline" name="byline" type="text" class="w" <?php echoIfValue($bylineEdit); ?> /><input type="hidden" name="idArticle" value="<?php echo $idArticleEdit; ?>"></p>
+        <input id="byline" name="byline" type="text" class="wide" <?php echoIfValue($bylineEdit); ?> /><input type="hidden" name="idArticle" value="<?php echo $idArticleEdit; ?>"></p>
 
         <p><label for="idSection">Section</label><br />
         <select id="idSection" name="idSection">
@@ -306,24 +306,24 @@ if ($use === 'published') {
 }
 ?>
         <p><label for="headline">Headline</label><br />
-        <input id="headline" name="headline" type="text" class="w" <?php echoIfValue($headlineEdit); ?> /></p>
+        <input id="headline" name="headline" type="text" class="wide" <?php echoIfValue($headlineEdit); ?> /></p>
 
         <p><label for="standfirst">Standfirst</label><br />
-        <input id="standfirst" name="standfirst" type="text" class="w"<?php echoIfValue($standfirstEdit); ?> /></p>
+        <input id="standfirst" name="standfirst" type="text" class="wide"<?php echoIfValue($standfirstEdit); ?> /></p>
 
         <p><label for="text">Article text is entered in either HTML or the <a href="http://daringfireball.net/projects/markdown/syntax/" target="_blank">markdown syntax</a>. Enter iframe and video tags inside paragraph tags, for example, &lt;p&gt;&lt;iframe&gt;&lt;/iframe&gt;&lt;/p&gt;.</label><br />
-        <textarea id="text" name="text" rows="9" class="w"><?php echoIfText($textEdit); ?></textarea></p>
+        <textarea id="text" name="text" rows="9" class="wide"><?php echoIfText($textEdit); ?></textarea></p>
 
         <p><label for="image">Photo upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br />
-        <input id="image" name="image" type="file" class="w" accept="image/jpeg" /></p>
+        <input id="image" name="image" type="file" class="wide" accept="image/jpeg" /></p>
 
         <p><label for="full"><input type="radio" name="width" id="full" value=""<?php echo $widthEditFull; ?>> Full width</label> <label for="third"><input type="radio" name="width" id="third" value="third"<?php echo $widthEditThird; ?>> One-third width</label></p>
 
         <p><label for="photoCaption">Photo caption</label><br />
-        <input id="photoCaption" name="photoCaption" type="text" class="w" autocomplete="on" /></p>
+        <input id="photoCaption" name="photoCaption" type="text" class="wide" autocomplete="on" /></p>
 
         <p><label for="photoCredit">Photo credit</label><br />
-        <input id="photoCredit" name="photoCredit" type="text" class="w" /></p>
+        <input id="photoCredit" name="photoCredit" type="text" class="wide" /></p>
 
         <p><input type="submit" class="button" value="Add / update" name="addUpdate" /> <input type="submit" class="button" value="Delete photos" name="deletePhoto" /><input type="hidden" name="existing"<?php echoIfValue($edit); ?> /></p>
       </form>
@@ -348,28 +348,28 @@ if (isset($_GET['t'])) {
         }
         if (isset($hdImage)) {
             if ($photoName === 'third') {
-                $html.= '      <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="t b" alt=""></p>' . "\n\n";
+                $html.= '      <p class="a"><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="third border mb" alt=""></p>' . "\n\n";
             } else {
-                $html.= '      <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="w b" alt=""></p>' . "\n\n";
+                $html.= '      <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="wide border" alt=""></p>' . "\n\n";
             }
         }
         if (!empty($photoCaption) and !empty($photoCredit)) {
             if ($photoName === 'third') {
-                $html.= '      <h6 class="fn">' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
+                $html.= '      <h6 class="a">' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
             } else {
                 $html.= '      <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
             }
         } elseif (isset($photoCaption)) {
             if ($photoName === 'third') {
-                $html.= '      <h6 class="fn">' . html($photoCaption) . "</h6>\n\n";
+                $html.= '      <h6 class="a">' . html($photoCaption) . "</h6>\n\n";
             } else {
                 $html.= '      <h6>' . html($photoCaption) . "</h6>\n\n";
             }
         } elseif (isset($photoCredit)) {
             if ($photoName === 'third') {
-                $html.= '      <h6 class="fn">' . $photoCredit . "</h6>\n\n";
+                $html.= '      <h6 class="a">' . $photoCredit . "</h6>\n\n";
             } else {
-                $html.= '      <h6 class="r">' . $photoCredit . "</h6>\n\n";
+                $html.= '      <h6>' . $photoCredit . "</h6>\n\n";
             }
         }
         if (!empty($byline) or !empty($bylineDateTime)) {
@@ -397,34 +397,34 @@ if (isset($_GET['t'])) {
         foreach ($stmt as $row) {
             extract($row);
             if ($photoName === 'third') {
-                $html.= '      <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="t b" alt=""></p>' . "\n\n";
+                $html.= '      <p class="a"><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="third border mb" alt=""></p>' . "\n\n";
             } else {
-                $html.= '      <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="w b" alt=""></p>' . "\n\n";
+                $html.= '      <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="wide border" alt=""></p>' . "\n\n";
             }
             if (!empty($photoCaption) and !empty($photoCredit)) {
                 if ($photoName === 'third') {
-                    $html.= '  <h6 class="fn">' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
+                    $html.= '  <h6 class="a">' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
                 } else {
                     $html.= '      <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
                 }
             } elseif (isset($photoCaption)) {
                 if ($photoName === 'third') {
-                    $html.= '  <h6 class="fn">' . html($photoCaption) . "</h6>\n\n";
+                    $html.= '  <h6 class="a">' . html($photoCaption) . "</h6>\n\n";
                 } else {
                     $html.= '      <h6>' . html($photoCaption) . "</h6>\n\n";
                 }
             } elseif (isset($photoCredit)) {
                 if ($photoName === 'third') {
-                    $html.= '      <h6 class="fn">' . $photoCredit . "</h6>\n\n";
+                    $html.= '      <h6 class="a">' . $photoCredit . "</h6>\n\n";
                 } else {
-                    $html.= '      <h6 class="r">' . $photoCredit . "</h6>\n\n";
+                    $html.= '      <h6>' . $photoCredit . "</h6>\n\n";
                 }
             }
         }
         $dbhEdit2 = null;
     }
     $dbh = null;
-    $html.= '      <p><span class="al"><a class="n" href="' . $uri . '?m=article-contribution">Index</a></span></p>' . "\n";
+    $html.= '      <p><span class="fr"><a class="n" href="' . $uri . '?m=article-contribution">Index</a></span></p>' . "\n";
 } else {
     //
     // Display article list
@@ -453,7 +453,7 @@ if (isset($_GET['t'])) {
                 $count++;
                 $html.= '      <h2><a class="n" href="' . $uri . '?m=article-contribution&t=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
                 if (!empty($summary)) {
-                    $html.= '      <p class="s"><a href="' . $uri . '?m=article-contribution&t=' . $idArticle . '">';
+                    $html.= '      <p class="summary"><a href="' . $uri . '?m=article-contribution&t=' . $idArticle . '">';
                     if (!empty($thumbnailImageWidth)) {
                         $html.= '<img class="fr b" src="' . $imagePath . '?i=' . muddle($idArticle) . 't" width="' . $thumbnailImageWidth . '" height="' . $thumbnailImageHeight . '" alt="">';
                     }

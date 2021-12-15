@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -113,6 +113,7 @@ if (isset($_GET['s'])) {
     //
     // List the specified ad
     //
+    $paperDescription = $description;
     $idAd = filter_var($_GET['c'], FILTER_VALIDATE_INT);
     $dbh = new PDO($dbClassifieds);
     $stmt = $dbh->prepare('SELECT email, title, description, categoryId, review, startDate, duration, photos FROM ads WHERE idAd=?');
@@ -121,6 +122,8 @@ if (isset($_GET['s'])) {
     $row = $stmt->fetch();
     if ($row) {
         extract($row);
+        $listingDescription = $description;
+        $description = $paperDescription;
         $photos = json_decode($photos, true);
         $stmt = $dbh->prepare('SELECT parentId, subsection FROM subsections WHERE idSubsection=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -134,12 +137,12 @@ if (isset($_GET['s'])) {
         extract($row);
         echo '      <h5>' . $section . ', <a href="' . $uri . '?m=classified-ads&amp;s=' . $categoryId . '">'. html($subsection) . "</a></h5>\n\n";
         echo '      <h2>' . $title . "</h2>\n\n";
-        echo "      <p><br />\n    " . $description . "</p>\n\n";
+        echo "      <p><br />\n    " . $listingDescription . "</p>\n\n";
         $i = null;
         foreach ($photos as $photo) {
             $i++;
             if ($photo === 1) {
-                echo '      <p><img class="w b" src="imagec.php?i=' . muddle($idAd) . $i . '" alt="" /></p>' . "\n";
+                echo '      <p><img class="wide border" src="imagec.php?i=' . muddle($idAd) . $i . '" alt="" /></p>' . "\n";
             }
         }
     }

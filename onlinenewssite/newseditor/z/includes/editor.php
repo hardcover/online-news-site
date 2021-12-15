@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -205,7 +205,7 @@ if (isset($_POST['addUpdate'])) {
                 $widthOriginal = $sizes['0'];
                 $heightOriginal = $sizes['1'];
                 $aspectRatio = $widthOriginal / $heightOriginal;
-                $widthHD = 2370;
+                $widthHD = 2360;
                 $heightHD = round($widthHD / $aspectRatio);
                 //
                 // Determine if the image is the primary image or a secondary image
@@ -328,7 +328,6 @@ if (isset($_POST['addUpdate'])) {
             $archive = null;
             $idSection = $idSectionPost;
             foreach ($remotes as $remote) {
-                extract($row);
                 include $includesPath . '/addUpdateArticle.php';
             }
             include $includesPath . '/sortPublished.php';
@@ -342,7 +341,6 @@ if (isset($_POST['addUpdate'])) {
             $request['task'] = 'sitemap';
             $response = null;
             foreach ($remotes as $remote) {
-                extract($row);
                 $response = soa($remote . 'z/', $request);
             }
         }
@@ -410,10 +408,7 @@ if (isset($_POST['delete']) and isset($idArticle)) {
         $request['task'] = 'sitemap';
         $response = null;
         foreach ($remotes as $remote) {
-            if ($row) {
-                extract($row);
-                $response = soa($remote . 'z/', $request);
-            }
+            $response = soa($remote . 'z/', $request);
         }
     }
 }
@@ -498,7 +493,6 @@ if (isset($_POST['publish'])
         $request['task'] = 'sitemap';
         $response = null;
         foreach ($remotes as $remote) {
-            extract($row);
             $response = soa($remote . 'z/', $request);
         }
     }
@@ -528,30 +522,33 @@ if ($dbFrom !== $dbPublished) {
 require $includesPath . '/header1.inc';
 echo '  <title>' . $title . "</title>\n";
 ?>
-  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <link rel="icon" type="image/png" href="images/32.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="generator" content="Online News Site Software, https://onlinenewssite.com/" />
   <link rel="stylesheet" type="text/css" href="z/jquery-ui.theme.css" />
   <link rel="stylesheet" type="text/css" href="z/jquery-ui.structure.css" />
   <link rel="stylesheet" type="text/css" href="z/base.css" />
-  <link rel="stylesheet" type="text/css" media="(max-width: 768px)" href="z/small.css" />
-  <link rel="stylesheet" type="text/css" media="(min-width: 768px)" href="z/large.css" />
+  <link rel="stylesheet" type="text/css" href="z/admin.css" />
   <script src="z/jquery.min.js"></script>
   <script src="z/jquery-ui.min.js"></script>
   <script src="z/datepicker.js"></script>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/192.png">
 </head>
 
 <?php
 require $includesPath . '/body.inc';
 echo $menu;
 echo '  <h1 id="waiting">Please wait.</h1>' . "\n\n";
-echo '  <h1>' . $title . "</h1>\n";
+echo '  <div class="column">' . "\n";
+echo '    <h1>' . $title . "</h1>\n";
 echoIfMessage($message);
 ?>
 
-  <form class="wait" method="post" action="<?php echo $uri . $use; ?>.php" enctype="multipart/form-data">
-    <p><label for="byline">Byline</label><br />
-    <input id="byline" name="byline" type="text" class="w" list="bylineList"<?php echoIfValue($bylineEdit); ?> /><input type="hidden" name="idArticle" value="<?php echo $idArticleEdit; ?>"></p>
-    <datalist id="bylineList">
+    <form class="wait" method="post" action="<?php echo $uri . $use; ?>.php" enctype="multipart/form-data">
+      <p><label for="byline">Byline</label><br />
+      <input id="byline" name="byline" type="text" class="wide" list="bylineList"<?php echoIfValue($bylineEdit); ?> /><input type="hidden" name="idArticle" value="<?php echo $idArticleEdit; ?>"></p>
+      <datalist id="bylineList">
 <?php
 $dbh = new PDO($dbEditors);
 $stmt = $dbh->prepare('SELECT user, fullName FROM users WHERE userType=? ORDER BY fullName');
@@ -560,34 +557,34 @@ $stmt->execute([1]);
 foreach ($stmt as $row) {
     extract($row);
     if ($user !== 'admin') {
-        echo '      <option label="' . $fullName . '" value="' . $fullName . '">' . "\n";
+        echo '        <option label="' . $fullName . '" value="' . $fullName . '">' . "\n";
     }
 }
 $dbh = null;
 ?>
-    </datalist>
+      </datalist>
 
-    <p><label for="publicationDate">Publication dates (expired articles move to the archives)</label><br />
-    <input id="publicationDate" name="publicationDate" type="text" class="datepicker h" placeholder="Start date"<?php echoIfValue($publicationDateEdit); echo $required; ?> /> <input name="endDate" type="text" class="datepicker h" placeholder="End date"<?php echoIfValue($endDateEdit); echo $required; ?> /></p>
+      <p><label for="publicationDate">Publication dates (expired articles move to the archives)</label><br />
+      <input id="publicationDate" name="publicationDate" type="text" class="datepicker date" placeholder="Start date"<?php echoIfValue($publicationDateEdit); echo $required; ?> /> <input name="endDate" type="text" class="datepicker date" placeholder="End date"<?php echoIfValue($endDateEdit); echo $required; ?> /></p>
 
-    <p><label for="idSection">Section</label><br />
-    <select id="idSection" name="idSection">
+      <p><label for="idSection">Section</label><br />
+      <select id="idSection" name="idSection">
 <?php
 $dbh = new PDO($dbSettings);
 $stmt = $dbh->query('SELECT idSection, section FROM sections ORDER BY sortOrderSection');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
     $selected = $idSectionEdit === $row['idSection'] ? ' selected="selected"' : null;
-    echo '      <option value="' . $row['idSection'] . '"' . $selected . '>' . $row['section'] . "</option>\n";
+    echo '        <option value="' . $row['idSection'] . '"' . $selected . '>' . $row['section'] . "</option>\n";
 }
 $dbh = null;
 ?>
-    </select></p>
+      </select></p>
 
 <?php
 if ($use === 'published') {
-    echo '    <p><span class="rp">Sort order within section<br />' . "\n";
-    echo '    <select name="sortOrderArticle">' . "\n";
+    echo '      <p><span class="rp">Sort order within section<br />' . "\n";
+    echo '      <select name="sortOrderArticle">' . "\n";
     $count = 1;
     $dbh = new PDO($dbPublished);
     $stmt = $dbh->query('SELECT DISTINCT sortOrderArticle FROM articles ORDER BY sortOrderArticle');
@@ -595,41 +592,42 @@ if ($use === 'published') {
     foreach ($stmt as $row) {
         extract($row);
         $selected = ($sortOrderArticle === $count and $sortOrderArticle === $sortOrderArticleEdit) ? ' selected="selected"' : null;
-        echo '      <option value="' . $count . '"' . $selected . '>' . $count . '</option>' . "\n";
+        echo '        <option value="' . $count . '"' . $selected . '>' . $count . '</option>' . "\n";
         $count++;
     }
     $dbh = null;
-    echo '      <option value="' . $count . '">' . $count . '</option>' . "\n";
-    echo "    </select></span></p>\n\n";
+    echo '        <option value="' . $count . '">' . $count . '</option>' . "\n";
+    echo '      </select></span></p>' . "\n\n";
 }
 ?>
-    <p><label for="headline">Headline</label><br />
-    <input id="headline" name="headline" type="text" class="w" <?php echoIfValue($headlineEdit); ?> /></p>
+      <p><label for="headline">Headline</label><br />
+      <input id="headline" name="headline" type="text" class="wide" <?php echoIfValue($headlineEdit); ?> /></p>
 
-    <p><label for="standfirst">Standfirst</label><br />
-    <input id="standfirst" name="standfirst" type="text" class="w"<?php echoIfValue($standfirstEdit); ?> /></p>
+      <p><label for="standfirst">Standfirst</label><br />
+      <input id="standfirst" name="standfirst" type="text" class="wide"<?php echoIfValue($standfirstEdit); ?> /></p>
 
-    <p><label for="text">Article text is entered in either HTML or the <a href="markdown.html" target="_blank">markdown syntax</a>. Enter iframe and video tags inside paragraph tags, for example, &lt;p&gt;&lt;iframe height="315"&gt;&lt;/iframe&gt;&lt;/p&gt;. Do not enter a width attribute.</label><br />
-    <textarea id="text" name="text" rows="9" class="w"><?php echoIfText($textEdit); ?></textarea></p>
+      <p><label for="text">Article text is entered in either HTML or the <a href="markdown.html" target="_blank">markdown syntax</a>. Enter iframe and video tags inside paragraph tags, for example, &lt;p&gt;&lt;iframe height="315"&gt;&lt;/iframe&gt;&lt;/p&gt;. Do not enter a width attribute.</label><br />
+      <textarea id="text" name="text" rows="9" class="wide"><?php echoIfText($textEdit); ?></textarea></p>
 
-    <p><label for="image">Photo upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br />
-    <input id="image" name="image" type="file" class="w" accept="image/jpeg" /></p>
+      <p><label for="image">Photo upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br />
+      <input id="image" name="image" type="file" class="wide" accept="image/jpeg" /></p>
 
-    <p><label for="full"><input type="radio" name="width" id="full" value=""<?php echo $widthEditFull; ?>> Full width</label> <label for="third"><input type="radio" name="width" id="third" value="third"<?php echo $widthEditThird; ?>> One-third width</label></p>
+      <p><label for="full"><input type="radio" name="width" id="full" value=""<?php echo $widthEditFull; ?>> Full width</label> <label for="third"><input type="radio" name="width" id="third" value="third"<?php echo $widthEditThird; ?>> One-third width</label></p>
 
-    <p><label for="photoCaption">Photo caption</label><br />
-    <input id="photoCaption" name="photoCaption" type="text" class="w" autocomplete="on" /></p>
+      <p><label for="photoCaption">Photo caption</label><br />
+      <input id="photoCaption" name="photoCaption" type="text" class="wide" autocomplete="on" /></p>
 
-    <p><label for="photoCredit">Photo credit</label><br />
-    <input id="photoCredit" name="photoCredit" type="text" class="w" /></p>
+      <p><label for="photoCredit">Photo credit</label><br />
+      <input id="photoCredit" name="photoCredit" type="text" class="wide" /></p>
 
-    <p><input type="submit" class="button" value="Add / update" name="addUpdate" /> <input type="submit" class="button" value="Delete photos" name="deletePhoto" /><input type="hidden" name="existing"<?php echoIfValue($edit); ?> />&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo $uri; ?>survey.php" target="_blank">Create or edit a survey</a></p>
-  </form>
+      <p><input type="submit" class="button" value="Add / update" name="addUpdate" /> <input type="submit" class="button" value="Delete photos" name="deletePhoto" /><input type="hidden" name="existing"<?php echoIfValue($edit); ?> />&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo $uri; ?>survey.php" target="_blank">Create or edit a survey</a></p>
+    </form>
 
-  <p>When there are photos, upload the primary photo first. Then edit the article to upload additional photos one at a time. To correct any photo error — width, caption, credit, order — delete the photos and begin again.</p>
+    <p>When there are photos, upload the primary photo first. Then edit the article to upload additional photos one at a time. To correct any photo error — width, caption, credit, order — delete the photos and begin again.</p>
 
 <?php
 require $includesPath . '/displayIndex.inc';
 ?>
+  </div>
 </body>
 </html>

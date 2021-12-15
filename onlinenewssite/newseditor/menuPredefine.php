@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -233,34 +233,37 @@ require $includesPath . '/header1.inc';
 echo "  <title>Predefined menu items maintenance</title>\n";
 echo '  <script src="z/wait.js"></script>' . "\n";
 require $includesPath . '/header2.inc';
-require $includesPath . '/body.inc';
 ?>
 
-  <h4 class="m"><a class="m" href="menu.php">&nbsp;Menu&nbsp;</a><a class="m" href="menuCalendar.php">&nbsp;Calendar&nbsp;</a><a class="s" href="menuPredefine.php">&nbsp;Predefined&nbsp;</a></h4>
+  <nav class="n">
+    <h4 class="m"><a class="m" href="menu.php">Menu</a><a class="m" href="menuCalendar.php">Calendar</a><a class="s" href="menuPredefine.php">Predefined</a></h4>
+  </nav>
 <?php echoIfMessage($message); ?>
 
   <h1 id="waiting">Please wait.</h1>
 
-  <h1>Predefined menu items maintenance</h1>
+  <div class="column">
+    <h1>Predefined menu items maintenance</h1>
 
-  <form class="wait" action="<?php echo $uri; ?>menuPredefine.php" method="post">
-    <p><label>
-      <input type="checkbox" name="archive"<?php echoIfYes($archiveEdit); ?> /> Enable archive search
-    </label></p>
+    <form class="wait" action="<?php echo $uri; ?>menuPredefine.php" method="post">
+      <p><label>
+        <input type="checkbox" name="archive"<?php echoIfYes($archiveEdit); ?> /> Enable archive search
+      </label></p>
 
-    <p><label>
-      <input type="checkbox" name="calendar"<?php echoIfYes($calendarEdit); ?> /> Enable calendar
-    </label></p>
+      <p><label>
+        <input type="checkbox" name="calendar"<?php echoIfYes($calendarEdit); ?> /> Enable calendar
+      </label></p>
 
-    <p><label>
-      <input type="checkbox" name="classifieds"<?php echoIfYes($classifiedsEdit); ?> /> Enable classified ads
-    </label></p>
+      <p><label>
+        <input type="checkbox" name="classifieds"<?php echoIfYes($classifiedsEdit); ?> /> Enable classified ads
+      </label></p>
 
-    <p><label>
-      <input type="checkbox" name="contact"<?php echoIfYes($contactEdit); ?> /> Enable contact form
-    </label></p>
+      <p><label>
+        <input type="checkbox" name="contact"<?php echoIfYes($contactEdit); ?> /> Enable contact form
+      </label></p>
 
-    <p><input type="submit" value="Update" name="updatePredefined" class="button" /></p>
-  </form>
+      <p><input type="submit" value="Update" name="updatePredefined" class="button" /></p>
+    </form>
+  </div>
 </body>
 </html>

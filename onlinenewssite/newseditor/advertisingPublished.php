@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -126,7 +126,7 @@ if (isset($_POST['addUpdate'])) {
                 $widthOriginal = $sizes['0'];
                 $heightOriginal = $sizes['1'];
                 $aspectRatio = $widthOriginal / $heightOriginal;
-                $width = 770;
+                $width = 900;
                 $height = round($width / $aspectRatio);
                 $hd = imagecreatetruecolor($width, $height);
                 imageinterlace($hd, true);
@@ -235,26 +235,74 @@ if (isset($_POST['edit'])) {
 require $includesPath . '/header1.inc';
 ?>
   <title>Advertising maintenance</title>
-  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <link rel="icon" type="image/png" href="images/32.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="generator" content="Online News Site Software, https://onlinenewssite.com/" />
   <link rel="stylesheet" type="text/css" href="z/jquery-ui.theme.css" />
   <link rel="stylesheet" type="text/css" href="z/jquery-ui.structure.css" />
   <link rel="stylesheet" type="text/css" href="z/base.css" />
-  <link rel="stylesheet" type="text/css" media="(max-width: 768px)" href="z/small.css" />
-  <link rel="stylesheet" type="text/css" media="(min-width: 768px)" href="z/large.css" />
+  <link rel="stylesheet" type="text/css" href="z/admin.css" />
   <script src="z/jquery.min.js"></script>
   <script src="z/jquery-ui.min.js"></script>
   <script src="z/datepicker.js"></script>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/192.png">
 </head>
 
 <?php require $includesPath . '/body.inc';?>
 
-  <h4 class="m"><a class="s" href="advertisingPublished.php">&nbsp;Published ads&nbsp;</a><a class="m" href="advertisingEdit.php">&nbsp;Edit ads&nbsp;</a><a class="m" href="advertisingMax.php">&nbsp;Ads max&nbsp;</a></h4>
+  <nav class="n">
+    <h4 class="m"><a class="s" href="advertisingPublished.php">Published ads</a><a class="m" href="advertisingEdit.php">Edit ads</a><a class="m" href="advertisingMax.php">Ads max</a></h4>
+  </nav>
 <?php echoIfMessage($message); ?>
 
   <h1 id="waiting">Please wait.</h1>
 
-  <h1><span class="h">Published ads</span></h1>
+  <div class="flex">
+    <main>
+      <form class="wait" action="<?php echo $uri; ?>advertisingPublished.php" method="post" enctype="multipart/form-data">
+        <h1>Add, update and delete ads</h1>
+
+        <p>Organization is required for add, update and delete. Publication dates determine what ads are currently published. Unless a sort order is specified, ad order is random and will change each time the page is loaded.</p>
+
+        <p><label for="startDateAd">Publication dates</label><br />
+        <input type="text" class="datepicker h" id="startDateAd" name="startDateAd" placeholder="Start date" <?php echoIfValue($startDateAdEdit); ?> /><br /><br />
+        <input type="text" class="datepicker h" name="endDateAd" placeholder="End date" <?php echoIfValue($endDateAdEdit); ?> /></p>
+
+        <p><label for="sortOrderAd">Sort order (optional)</label><br />
+        <input id="sortOrderAd" name="sortOrderAd" type="text" class="h" <?php echoIfValue($sortOrderAdEdit); ?> /></p>
+
+        <p><label for="organization">Organization</label><br />
+        <input id="organization" name="organization" type="text" class="h" required<?php echoIfValue($organizationEdit); ?> /><input name="idAd" type="hidden"<?php echoIfValue($idAdEdit); ?> /></p>
+
+        <p>Pay status<br />
+        <label>
+          <input name="payStatus" type="radio" value="1"<?php echoIfYes($paidEdit); ?> /> Paid<br>
+        </label>
+        <label>
+        <input name="payStatus" type="radio" value="0"<?php echoIfYes($notPaidEdit); ?> /> Not paid
+        </label></p>
+
+        <p><label for="image">Ad image upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br />
+        <input type="file" class="h" accept="image/jpeg" id="image" name="image" /><br /></p>
+
+        <p><label for="link">Link from ad (optional)</label><br />
+        <input id="link" name="link" type="text" class="h"<?php echoIfValue($linkEdit); ?> /></p>
+
+        <p><label for="linkAlt">Alternate text for ad image (if different from the organization name above)</label><br />
+        <input id="linkAlt" name="linkAlt" type="text" class="h" <?php echoIfValue($linkAltEdit); ?> /></p>
+
+        <p><label for="note">Note</label><br />
+        <input id="note" name="note" type="text" class="h"<?php echoIfValue($noteEdit); ?> /></p>
+
+        <p><input type="submit" value="Add / update" name="addUpdate" class="button" /> <input type="submit" value="Delete" name="delete" class="button" /><input type="hidden" name="existing"<?php echoIfValue($edit); ?> /></p>
+      </form>
+
+      <p>The optimal image size for ads is 900 pixels or wider. Because ads contain text, the optimal image quality for ads is 100 percent to eliminate compression artifacts.</p>
+    </main>
+
+    <aside>
+      <h1>Published ads</h1>
 
 <?php
 $rowcount = null;
@@ -269,60 +317,21 @@ foreach ($stmt as $row) {
     }
     $width = (200 / $imageWidth) * $imageWidth;
     $height = round((200 / $imageWidth) * $imageHeight);
-    echo '  <form class="wait" action="' . $uri . 'advertisingPublished.php" method="post">' . "\n";
-    echo '    <p><span class="p"><img class="b" src="imaged.php?i=' . muddle($idAd) . '" alt="" width="' . $width . '" height="' . $height . '" /><br />' . "\n";
-    echo '    ' . $organization . ', by ' . $enteredBy . ', expires: ' . $endDateAd . "<br />\n";
+    echo '      <form class="wait" action="' . $uri . 'advertisingPublished.php" method="post">' . "\n";
+    echo '        <p><img class="b" src="imaged.php?i=' . muddle($idAd) . '" alt="" width="' . $width . '" height="' . $height . '" /><br />' . "\n";
+    echo '        ' . $organization . ', by ' . $enteredBy . ', expires: ' . $endDateAd . "<br />\n";
     if ($link !== null and $link !== '') {
-        echo '    <a href="' . html($link) . '" target="_blank">' . $linkAlt . "</a><br />\n";
+        echo '        <a href="' . html($link) . '" target="_blank">' . $linkAlt . "</a><br />\n";
     }
     if (isset($note)) {
         echo '    ' . $note . "<br />\n";
     }
-    echo '    <input name="idAd" type="hidden" value="' . $idAd . '" /><input type="submit" value="Edit" name="edit" class="button" /></span></p>' . "\n";
-    echo '  </form>' . "\n\n";
+    echo '        <input name="idAd" type="hidden" value="' . $idAd . '" /><input type="submit" value="Edit" name="edit" class="button" /></p>' . "\n";
+    echo '      </form>' . "\n\n";
 }
 $dbh = null;
 ?>
-  <form class="wait" action="<?php echo $uri; ?>advertisingPublished.php" method="post" enctype="multipart/form-data">
-    <h1>Add, update and delete ads</h1>
-
-    <p>Organization is required for add, update and delete. Publication dates determine what ads are currently published. Unless a sort order is specified, ad order is random and will change each time the page is loaded.</p>
-
-    <p><label for="startDateAd">Publication dates</label><br />
-    <input type="text" class="datepicker h" id="startDateAd" name="startDateAd" placeholder="Start date" <?php echoIfValue($startDateAdEdit); ?> /><br /><br />
-    <input type="text" class="datepicker h" name="endDateAd" placeholder="End date" <?php echoIfValue($endDateAdEdit); ?> /></p>
-
-    <p><label for="sortOrderAd">Sort order (optional)</label><br />
-    <input id="sortOrderAd" name="sortOrderAd" type="text" class="h" <?php echoIfValue($sortOrderAdEdit); ?> /></p>
-
-    <p><label for="organization">Organization</label><br />
-    <input id="organization" name="organization" type="text" class="h" required<?php echoIfValue($organizationEdit); ?> /><input name="idAd" type="hidden"<?php echoIfValue($idAdEdit); ?> /></p>
-
-    <p>Pay status<br />
-    <label>
-      <input name="payStatus" type="radio" value="1"<?php echoIfYes($paidEdit); ?> /> Paid<br>
-    </label>
-    <label>
-    <input name="payStatus" type="radio" value="0"<?php echoIfYes($notPaidEdit); ?> /> Not paid
-    </label></p>
-
-    <p><label for="image">Ad image upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br />
-    <input type="file" class="h" accept="image/jpeg" id="image" name="image" /><br /></p>
-
-    <p><label for="link">Link from ad (optional)</label><br />
-    <input id="link" name="link" type="text" class="h"<?php echoIfValue($linkEdit); ?> /></p>
-
-    <p><label for="linkAlt">Alternate text for ad image (if different from the organization name above)</label><br />
-    <input id="linkAlt" name="linkAlt" type="text" class="h" <?php echoIfValue($linkAltEdit); ?> /></p>
-
-    <p><label for="note">Note</label><br />
-    <input id="note" name="note" type="text" class="h"<?php echoIfValue($noteEdit); ?> /></p>
-
-    <p><input type="submit" value="Add / update" name="addUpdate" class="button" /></p>
-
-    <p><input type="submit" value="Delete" name="delete" class="button" /><input type="hidden" name="existing"<?php echoIfValue($edit); ?> /></p>
-  </form>
-
-  <p>The optimal image size for ads is 770 pixels or wider. Because ads contain text, unlike photographs, the optimal image quality for ads is 100 percent, to eliminate compression artifacts.</p>
+    </aside>
+  </div>
 </body>
 </html>

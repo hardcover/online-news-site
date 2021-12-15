@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -55,7 +55,7 @@ if (isset($_GET['a'])) {
         $row = $stmt->fetch();
         if ($row) {
             $count = null;
-            $html.= "\n" . '  <h4>' . $section . "</h4>\n\n";
+            $html.= "\n" . '    <h2 class="section">' . $section . "</h2>\n\n";
             if (is_null($editorView)) {
                 $stmt = $dbh->prepare('SELECT idArticle, survey, headline, summary, thumbnailImageWidth, thumbnailImageHeight FROM articles WHERE idSection = ? AND publicationDate <= "' . $datePost . '" AND "' . $datePost . '" <= endDate ORDER BY sortOrderArticle');
             } else {
@@ -66,12 +66,12 @@ if (isset($_GET['a'])) {
             foreach ($stmt as $row) {
                 extract($row);
                 if (isset($count)) {
-                    $html.= "  <hr />\n\n";
+                    $html.= "    <hr />\n\n";
                 }
                 $count++;
-                $html.= '  <h2><a class="n" href="' . $use . '.php?a=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
+                $html.= '    <h2><a class="n" href="' . $use . '.php?a=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
                 if (!empty($summary)) {
-                    $html.= '  <p class="s"><a href="' . $use . '.php?a=' . $idArticle . '">';
+                    $html.= '    <p class="summary flex"><a href="' . $use . '.php?a=' . $idArticle . '">';
                     if (!empty($thumbnailImageWidth)) {
                         $html.= '<img class="fr b" src="' . $imagePath . '?i=' . muddle($idArticle) . 't" width="' . $thumbnailImageWidth . '" height="' . $thumbnailImageHeight . '" alt="">';
                     }

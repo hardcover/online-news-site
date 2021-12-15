@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -127,8 +127,8 @@ if (isset($_POST['update']) and isset($idAdPost)) {
                     //
                     // Reduce an oversize image
                     //
-                    if ($widthOriginal > 2370) {
-                        $widthHD = 2370;
+                    if ($widthOriginal > 2360) {
+                        $widthHD = 2360;
                         $heightHD = round($widthHD / $aspectRatio);
                         $hd = imagecreatetruecolor($widthHD, $heightHD);
                         imageinterlace($hd, true);
@@ -239,61 +239,55 @@ if (isset($_POST['edit']) and isset($_POST['idAd'])) {
 require $includesPath . '/header1.inc';
 ?>
   <title>Create a new classified ad</title>
-  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <link rel="icon" type="image/png" href="images/32.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="generator" content="Online News Site Software, https://onlinenewssite.com/" />
   <link rel="stylesheet" type="text/css" href="z/jquery-ui.theme.css" />
   <link rel="stylesheet" type="text/css" href="z/jquery-ui.structure.css" />
   <link rel="stylesheet" type="text/css" href="z/base.css" />
-  <link rel="stylesheet" type="text/css" media="(max-width: 768px)" href="z/small.css" />
-  <link rel="stylesheet" type="text/css" media="(min-width: 768px)" href="z/large.css" />
+  <link rel="stylesheet" type="text/css" href="z/admin.css" />
   <script src="z/jquery.min.js"></script>
   <script src="z/jquery-ui.min.js"></script>
   <script src="z/datepicker.js"></script>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/192.png">
 </head>
 <?php require $includesPath . '/body.inc'; ?>
 
-  <h4 class="m"><a class="m" href="classifieds.php">&nbsp;Pending review&nbsp;</a><a class="m" href="classifiedCreate.php">&nbsp;Create&nbsp;</a><a class="s" href="classifiedEdit.php">&nbsp;Edit&nbsp;</a></h4>
+  <nav class="n">
+    <h4 class="m"><a class="m" href="classifieds.php">Pending review</a><a class="m" href="classifiedCreate.php">Create</a><a class="s" href="classifiedEdit.php">Edit</a></h4>
+  </nav>
 <?php echoIfMessage($message); ?>
 
   <h1 id="waiting">Please wait.</h1>
 
-  <h1><span class="h">Search results</span></h1>
-<?php
-foreach ($searchResults as $searchResult) {
-    echo '  <form class="wait" action="' . $uri . 'classifiedEdit.php" method="post">' . "\n";
-    echo '    <p><span class="p">' . $title . " - Title<br />\n";
-    echo '    ' . plain($email) . " - By<br />\n";
-    echo '    ' . $description . " - Description<br />\n";
-    echo '    <input name="idAd" type="hidden" value="' . $idAd . '" /><input type="submit" value="Edit" name="edit" class="button" /></span></p>' . "\n";
-    echo "  </form>\n\n";
-}
-?>
+  <div class="flex">
+    <main>
+      <h1>Edit a published classified ad</h1>
 
-  <h1>Edit a published classified ad</h1>
+      <form class="wait" action="<?php echo $uri; ?>classifiedEdit.php" method="post" enctype="multipart/form-data">
+        <p><label for="titleSearch">Search for an ad by title</label><br />
+        <input id="titleSearch" name="titleSearch" type="text" class="h"<?php echoIfValue($titleSearchPost); ?> /></p>
 
-  <form class="wait" action="<?php echo $uri; ?>classifiedEdit.php" method="post" enctype="multipart/form-data">
-    <p><label for="titleSearch">Search for an ad by title</label><br />
-    <input id="titleSearch" name="titleSearch" type="text" class="h"<?php echoIfValue($titleSearchPost); ?> /></p>
+        <p><input type="submit" class="button" name="search" value="Search" /></p>
 
-    <p><input type="submit" class="button" name="search" value="Search" /></p>
+        <p><label for="title">Title</label><br />
+        <input id="title" name="title" type="text" class="h"<?php echoIfValue($titleEdit); ?> /><input type="hidden" name="idAd"<?php echoIfValue($idAdEdit); ?> /></p>
 
-    <p><label for="title">Title</label><br />
-    <input id="title" name="title" type="text" class="h"<?php echoIfValue($titleEdit); ?> /><input type="hidden" name="idAd"<?php echoIfValue($idAdEdit); ?> /></p>
+        <p><label for="description">Description</label><br />
+        <textarea id="description" name="description" class="h"><?php echoIfText($descriptionEdit); ?></textarea><p>
 
-    <p><label for="description">Description</label><br />
-    <span class="hl"><textarea id="description" name="description" class="h"><?php echoIfText($descriptionEdit); ?></textarea></span><p>
+        <p><label for="invoice"><input id="invoice" name="invoice" type="checkbox" value="1"<?php echoIfYes($invoiceEdit); ?> /> Send an invoice to also have the add in the print version of the paper.</label></p>
 
-    <p><label for="invoice"><input id="invoice" name="invoice" type="checkbox" value="1"<?php echoIfYes($invoiceEdit); ?> /> Send an invoice to also have the add in the print version of the paper.</label></p>
-
-    <p><label for="categoryId">Categories (select a subcategory)</label><br />
-    <select id="categoryId" name="categoryId" size="1" class="h">
+        <p><label for="categoryId">Categories (select a subcategory)</label><br />
+          <select id="categoryId" name="categoryId" size="1" class="h">
 <?php
 $dbh = new PDO($dbClassifieds);
 $stmt = $dbh->query('SELECT idSection, section FROM sections ORDER BY sortOrderSection');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
     extract($row);
-    echo '        <option value="">' . html($section) . "</option>\n";
+    echo '            <option value="">' . html($section) . "</option>\n";
     $stmt = $dbh->prepare('SELECT idSubsection, subsection FROM subsections WHERE parentId=? ORDER BY sortOrderSubsection');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute([$idSection]);
@@ -304,31 +298,29 @@ foreach ($stmt as $row) {
         } else {
             $selected = null;
         }
-        echo '        <option value="' . $idSubsection . '"' . $selected . '>&nbsp;&nbsp;&nbsp;' . html($subsection) . "</option>\n";
+        echo '            <option value="' . $idSubsection . '"' . $selected . '>&nbsp;&nbsp;&nbsp;' . html($subsection) . "</option>\n";
     }
 }
 $dbh = null;
 ?>
-    </select></p>
+          </select></p>
 
-    <p><label for="startDate">Start date</label><br />
-    <input type="text" class="datepicker h" id="startDate" name="startDate"<?php echoIfValue($startDateEdit); ?> /></p>
+        <p><label for="startDate">Start date</label><br />
+        <input type="text" class="datepicker h" id="startDate" name="startDate"<?php echoIfValue($startDateEdit); ?> /></p>
 
-    <p><label for="duration">Duration (weeks)</label><br />
-    <input type="number" id="duration" name="duration" class="h"<?php echoIfValue($durationEdit); ?> /></p>
+        <p><label for="duration">Duration (weeks)</label><br />
+        <input type="number" id="duration" name="duration" class="h"<?php echoIfValue($durationEdit); ?> /></p>
 
-    <p><label for="image">Photo upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br />
-    <input id="image" name="image" type="file" class="h" accept="image/jpeg"></p>
+        <p><label for="image">Photo upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br />
+        <input id="image" name="image" type="file" class="h" accept="image/jpeg"></p>
 
-    <p>Up to seven images may be included in an ad. Upload one image at a time. Edit the listing to add each additional image. JPG is the only permitted image format. The best image size is 2370 pixels or wider. Larger images are reduced to that width.</p>
+        <p>Up to seven images may be included in an ad. Upload one image at a time. Edit the listing to add each additional image. JPG is the only permitted image format. The best image size is 2360 pixels or wider. Larger images are reduced to that width.</p>
 
-    <p><input type="submit" class="button" name="update" value="Update"/></p>
+        <p><input type="submit" class="button" name="update" value="Update"/></p>
 
-    <p><input type="submit" class="button" name="photoDelete" value="Delete photos" /></p>
+        <p><input type="submit" class="button" name="photoDelete" value="Delete photos" /> <input type="submit" class="button" name="delete" value="Delete ad" /></p>
+      </form>
 
-    <p><input type="submit" class="button" name="delete" value="Delete ad" /></p>
-
-  </form>
 <?php
 if (isset($idAdEdit)) {
     foreach ($photosOrdered as $photo) {
@@ -339,10 +331,26 @@ if (isset($idAdEdit)) {
         $row = $stmt->fetch();
         $dbh = null;
         if (!empty($row['0'])) {
-            echo '    <p><img class="w b" src="imagec.php?i=' . muddle($idAdEdit) . $photo . '" alt="" /></p>' . "\n\n";
+            echo '      <p><img class="wide border" src="imagec.php?i=' . muddle($idAdEdit) . $photo . '" alt="" /></p>' . "\n\n";
         }
     }
 }
 ?>
+    </main>
+
+    <aside>
+      <h1>Search results</h1>
+<?php
+foreach ($searchResults as $searchResult) {
+    echo '        <form class="wait" action="' . $uri . 'classifiedEdit.php" method="post">' . "\n";
+    echo '          <p>' . $title . " - Title<br />\n";
+    echo '          ' . plain($email) . " - By<br />\n";
+    echo '          ' . $description . " - Description<br />\n";
+    echo '          <input name="idAd" type="hidden" value="' . $idAd . '" /><input type="submit" value="Edit" name="edit" class="button" /></p>' . "\n";
+    echo "        </form>\n\n";
+}
+?>
+    </aside>
+  </div>
 </body>
 </html>

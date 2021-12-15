@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -108,8 +108,8 @@ if (isset($_POST['addUpdate'])) {
                 //
                 // Reduce an oversize image
                 //
-                if ($widthOriginal > 2370) {
-                    $widthHD = 2370;
+                if ($widthOriginal > 2360) {
+                    $widthHD = 2360;
                     $heightHD = round($widthHD / $aspectRatio);
                     $hd = imagecreatetruecolor($widthHD, $heightHD);
                     imageinterlace($hd, true);
@@ -246,39 +246,44 @@ if ($row) {
 require $includesPath . '/header1.inc';
 ?>
   <title>Create a new classified ad</title>
-  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <link rel="icon" type="image/png" href="images/32.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="generator" content="Online News Site Software, https://onlinenewssite.com/" />
   <link rel="stylesheet" type="text/css" href="z/jquery-ui.theme.css" />
   <link rel="stylesheet" type="text/css" href="z/jquery-ui.structure.css" />
   <link rel="stylesheet" type="text/css" href="z/base.css" />
-  <link rel="stylesheet" type="text/css" media="(max-width: 768px)" href="z/small.css" />
-  <link rel="stylesheet" type="text/css" media="(min-width: 768px)" href="z/large.css" />
+  <link rel="stylesheet" type="text/css" href="z/admin.css" />
   <script src="z/jquery.min.js"></script>
   <script src="z/jquery-ui.min.js"></script>
   <script src="z/datepicker.js"></script>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/192.png">
 </head>
 <?php require $includesPath . '/body.inc'; ?>
 
-  <h4 class="m"><a class="m" href="classifieds.php">&nbsp;Pending review&nbsp;</a><a class="s" href="classifiedCreate.php">&nbsp;Create&nbsp;</a><a class="m" href="classifiedEdit.php">&nbsp;Edit&nbsp;</a></h4>
+  <nav class="n">
+    <h4 class="m"><a class="m" href="classifieds.php">Pending review</a><a class="s" href="classifiedCreate.php">Create</a><a class="m" href="classifiedEdit.php">Edit</a></h4>
+  </nav>
 <?php echoIfMessage($message); ?>
 
   <h1 id="waiting">Please wait.</h1>
 
-  <h1>Create a classified ad</h1>
+  <div class="column">
+    <h1>Create a classified ad</h1>
 
-  <p>One classified ad at a time may be created and edited by each classifieds management user. Until either published or deleted, the ad will be here available for further editing each time the user logs in.</p>
+    <p>One classified ad at a time may be created and edited by each classifieds management user. Until either published or deleted, the ad will be here available for further editing each time the user logs in.</p>
 
-  <form class="wait" action="<?php echo $uri; ?>classifiedCreate.php" method="post" enctype="multipart/form-data">
-    <p><label for="title">Title</label><br />
-    <input id="title" name="title" type="text" class="w"<?php echoIfValue($titleEdit); ?> /><input type="hidden" name="idAd"<?php echoIfValue($idAdEdit); ?> /></p>
+    <form class="wait" action="<?php echo $uri; ?>classifiedCreate.php" method="post" enctype="multipart/form-data">
+      <p><label for="title">Title</label><br />
+      <input id="title" name="title" type="text" class="wide"<?php echoIfValue($titleEdit); ?> /><input type="hidden" name="idAd"<?php echoIfValue($idAdEdit); ?> /></p>
 
-    <p><label for="description">Description</label><br />
-    <textarea id="description" name="description" class="w"><?php echoIfText($descriptionEdit); ?></textarea><p>
+      <p><label for="description">Description</label><br />
+      <textarea id="description" name="description" class="wide"><?php echoIfText($descriptionEdit); ?></textarea><p>
 
-    <p><label for="invoice"><input id="invoice" name="invoice" type="checkbox" value="1"<?php echoIfYes($invoiceEdit); ?> /> Send an invoice to also have the add in the print version of the paper.</label></p>
+      <p><label for="invoice"><input id="invoice" name="invoice" type="checkbox" value="1"<?php echoIfYes($invoiceEdit); ?> /> Send an invoice to also have the add in the print version of the paper.</label></p>
 
-    <p><label for="categoryId">Categories (select a subcategory)</label><br />
-    <select id="categoryId" name="categoryId" size="1">
+      <p><label for="categoryId">Categories (select a subcategory)</label><br />
+        <select id="categoryId" name="categoryId" size="1">
 <?php
 $dbh = new PDO($dbClassifieds);
 $stmt = $dbh->query('SELECT idSection, section FROM sections ORDER BY sortOrderSection');
@@ -301,24 +306,24 @@ foreach ($stmt as $row) {
 }
 $dbh = null;
 ?>
-    </select></p>
+      </select></p>
 
-    <p><label for="startDate">Start date</label><br />
-    <input type="text" class="datepicker h" id="startDate" name="startDate"<?php echoIfValue($startDateEdit); ?> /></p>
+      <p><label for="startDate">Start date</label><br />
+      <input type="text" class="datepicker h" id="startDate" name="startDate"<?php echoIfValue($startDateEdit); ?> /></p>
 
-    <p><label for="duration">Duration (weeks)</label><br />
-    <input type="number" id="duration" name="duration" class="h"<?php echoIfValue($durationEdit); ?> /></p>
+      <p><label for="duration">Duration (weeks)</label><br />
+      <input type="number" id="duration" name="duration" class="h"<?php echoIfValue($durationEdit); ?> /></p>
 
-    <p><label for="image">Photo upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br />
-    <input id="image" name="image" type="file" class="w" accept="image/jpeg"></p>
+      <p><label for="image">Photo upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br />
+      <input id="image" name="image" type="file" class="wide" accept="image/jpeg"></p>
 
-    <p>Up to seven images may be included in an ad. Upload one image at a time. Edit the listing to add each additional image. JPG is the only permitted image format. The best image size is 2370 pixels wide. Larger images are reduced to that width.</p>
+      <p>Up to seven images may be included in an ad. Upload one image at a time. Edit the listing to add each additional image. JPG is the only permitted image format. The best image size is 2360 pixels wide. Larger images are reduced to that width.</p>
 
-    <p><input type="submit" class="button" name="addUpdate" value="Add/update"/> <input type="submit" class="button" name="publish" value="Publish" /></p>
+      <p><input type="submit" class="button" name="addUpdate" value="Add/update"/> <input type="submit" class="button" name="publish" value="Publish" /></p>
 
-    <p><input type="submit" class="button" name="photoDelete" value="Delete photos" /> <input type="submit" class="button" name="delete" value="Delete ad" /></p>
+      <p><input type="submit" class="button" name="photoDelete" value="Delete photos" /> <input type="submit" class="button" name="delete" value="Delete ad" /></p>
+    </form>
 
-  </form>
 <?php
 if (isset($idAdEdit)) {
     foreach ($photosOrdered as $photo) {
@@ -329,10 +334,11 @@ if (isset($idAdEdit)) {
         $row = $stmt->fetch();
         $dbh = null;
         if (!empty($row['0'])) {
-            echo '    <p><img class="w b" src="imagen.php?i=' . muddle($idAdEdit) . $photo . '" alt="" /></p>' . "\n\n";
+            echo '    <p><img class="wide border" src="imagen.php?i=' . muddle($idAdEdit) . $photo . '" alt="" /></p>' . "\n\n";
         }
     }
 }
 ?>
+  </div>
 </body>
 </html>

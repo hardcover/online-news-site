@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -121,16 +121,16 @@ if (isset($_GET['a'])) {
 
       <form method="post" action="' . $uri . '?m=archive-search">
         <p><label for="headline">Headline contains</label><br />
-        <input id="headline" name="headline" type="text" class="w" /></p>
+        <input id="headline" name="headline" type="text" class="wide" /></p>
 
         <p><label for="startDate">Publication date range search</label><br />
-        <input id="startDate" name="startDate" type="date" class="h" placeholder="Start date" /> <input name="endDate" type="date" class="h" placeholder="End date" /></p>
+        <input id="startDate" name="startDate" type="date" class="date" placeholder="Start date" /> <input name="endDate" type="date" class="date" placeholder="End date" /></p>
 
         <p><label for="byline">Byline contains</label><br />
-        <input id="byline" name="byline" type="text" class="w" /></p>
+        <input id="byline" name="byline" type="text" class="wide" /></p>
 
         <p><label for="text">Article contains</label><br />
-        <input id="text" name="text" type="text" class="w" /></p>
+        <input id="text" name="text" type="text" class="wide" /></p>
 
         <p><input type="submit" class="button" value="Search" name="search" />
       </form>' . "\n";
@@ -183,7 +183,7 @@ if (isset($_GET['a'])) {
                     }
                     if (!empty($summary)) {
                         $summary = str_replace('*', '', $summary);
-                        $html.= '  <p class="s">' . html($summary) . "</p>\n";
+                        $html.= '  <p class="summary">' . html($summary) . "</p>\n";
                     }
                 }
                 $dbh = null;

@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -371,80 +371,83 @@ require $includesPath . '/header1.inc';
 echo "  <title>Classified sections</title>\n";
 echo '  <script src="z/wait.js"></script>' . "\n";
 require $includesPath . '/header2.inc';
-require $includesPath . '/body.inc';
 ?>
 
-  <h4 class="m"><a class="m" href="usersEditors.php">&nbsp;Editing users&nbsp;</a><a class="m" href="usersSubscribers.php">&nbsp;Patron mgt users&nbsp;</a></h4>
-
-  <h4 class="m"><a class="m" href="usersAdvertising.php">&nbsp;Advertising users&nbsp;</a><a class="m" href="usersClassified.php">&nbsp;Classified users&nbsp;</a></h4>
-
-  <h4 class="m"><a class="m" href="usersMenu.php">&nbsp;Menu users&nbsp;</a><a class="m" href="settings.php">&nbsp;Settings&nbsp;</a><a class="s" href="classifiedSections.php">&nbsp;Classifieds&nbsp;</a></h4>
+  <nav class="n">
+    <h4 class="m"><a class="m" href="usersEditors.php">Editing users</a> <a class="m" href="usersSubscribers.php">Patron mgt users</a> <a class="m" href="usersAdvertising.php">Advertising users</a> <a class="m" href="usersClassified.php">Classified users</a> <a class="m" href="usersMenu.php">Menu users</a> <a class="m" href="settings.php">Settings</a> <a class="s" href="classifiedSections.php">Classifieds</a></h4>
+  </nav>
 <?php echoIfMessage($message); ?>
 
   <h1 id="waiting">Please wait.</h1>
 
-  <h1><span class="h">Classified sections</span></h1>
+  <div class="flex">
+    <main>
+      <h1>Classified section maintenance</h1>
+
+      <form class="wait" action="<?php echo $uri; ?>classifiedSections.php" method="post">
+        <p>The admin password is required for all classified section maintenance.</p>
+
+        <p><label for="adminPass">Password</label><br />
+        <input id="adminPass" name="adminPass" type="password" class="h" autofocus required /></p>
+
+        <h1>Add, update and delete sections</h1>
+
+        <p>Parent section level, section name and sort order are required for add and update. The section name only is required for delete. Section names must be unique.</p>
+
+        <p>Parent section level (two parent levels)<br />
+        <select name="parentSection">
+          <option value="0">Top index</option>
+    <?php
+    $dbh = new PDO($dbClassifieds);
+    $stmt = $dbh->query('SELECT idSection, section, sortOrderSection FROM sections ORDER BY sortOrderSection');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    foreach ($stmt as $row) {
+        if ($row['idSection'] === $parentIdEdit) {
+            $selected = ' selected';
+        } else {
+            $selected = null;
+        }
+        echo '          <option value="' . $row['idSection'] . '"' . $selected . '>- ' . $row['section'] . "</option>\n";
+    }
+    $dbh = null;
+    ?>
+        </select></p>
+
+        <p><label for="section">Section name</label><br />
+        <input id="section" name="section" type="text" class="h" required<?php echoIfValue($sectionEdit); ?> /><input name="idSection" type="hidden" <?php echoIfValue($idSectionEdit); ?> /></p>
+
+        <p><label for="sortOrderSection">Sort order</label><br />
+        <input id="sortOrderSection" name="sortOrderSection" type="number" class="h"<?php echoIfValue($sortOrderSectionEdit); ?> /></p>
+
+        <p><input type="submit" value="Add / update" name="addUpdate" class="button" /> <input type="submit" value="Delete" name="delete" class="button" /><input type="hidden" name="existing"<?php echoIfValue($edit); ?> /></p>
+      </form>
+    </main>
+
+    <aside>
+      <h1>Classified sections</h1>
 
 <?php
 $dbh = new PDO($dbClassifieds);
 $stmt = $dbh->query('SELECT idSection, section, sortOrderSection FROM sections ORDER BY sortOrderSection');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
-    echo '  <form class="wait" action="' . $uri . 'classifiedSections.php" method="post">' . "\n";
-    echo '    <p><span class="p">' . $row['section'] . ', sort order: ' . $row['sortOrderSection'] . "<br />\n";
-    echo '    <input type="hidden" name="idSection" value="' . $row['idSection'] . '" /><input name="section" type="hidden" value="' . html($row['section']) . '" /><input name="sortOrderSection" type="hidden" value="' . html($row['sortOrderSection']) . '" /><input type="submit" value="Edit" name="edit" class="button" /></span></p>' . "\n";
-    echo "  </form>\n\n";
+    echo '      <form class="wait" action="' . $uri . 'classifiedSections.php" method="post">' . "\n";
+    echo '        <p>' . $row['section'] . ', sort order: ' . $row['sortOrderSection'] . "<br />\n";
+    echo '        <input type="hidden" name="idSection" value="' . $row['idSection'] . '" /><input name="section" type="hidden" value="' . html($row['section']) . '" /><input name="sortOrderSection" type="hidden" value="' . html($row['sortOrderSection']) . '" /><input type="submit" value="Edit" name="edit" class="button" /></p>' . "\n";
+    echo "      </form>\n\n";
     $stmt = $dbh->prepare('SELECT idSubsection, subsection, sortOrderSubsection FROM subsections WHERE parentId=? ORDER BY sortOrderSubsection');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute([$row['idSection']]);
     foreach ($stmt as $row) {
-        echo '  <form class="wait" action="' . $uri . 'classifiedSections.php" method="post">' . "\n";
-        echo '    <p><span class="p">&nbsp;&nbsp;&nbsp;&nbsp;' . $row['subsection'] . ', sort order: ' . $row['sortOrderSubsection'] . "<br />\n";
-        echo '    &nbsp;&nbsp;&nbsp;&nbsp;<input type="hidden" name="idSection" value="' . $row['idSubsection'] . '" /><input name="section" type="hidden" value="' . html($row['subsection']) . '" /><input name="subsectionFlag" type="hidden" value="1"><input name="sortOrderSection" type="hidden" value="' . html($row['sortOrderSubsection']) . '" /><input type="submit" value="Edit" name="edit" class="button" /></span></p>' . "\n";
-        echo "  </form>\n\n";
+        echo '      <form class="wait" action="' . $uri . 'classifiedSections.php" method="post">' . "\n";
+        echo '        <p> - ' . $row['subsection'] . ', sort order: ' . $row['sortOrderSubsection'] . "<br />\n";
+        echo '        <input type="hidden" name="idSection" value="' . $row['idSubsection'] . '" /><input name="section" type="hidden" value="' . html($row['subsection']) . '" /><input name="subsectionFlag" type="hidden" value="1"><input name="sortOrderSection" type="hidden" value="' . html($row['sortOrderSubsection']) . '" /><input type="submit" value="Edit" name="edit" class="button" /></p>' . "\n";
+        echo "      </form>\n\n";
     }
 }
 $dbh = null;
 ?>
-  <h1>Classified section maintenance</h1>
-
-  <form class="wait" action="<?php echo $uri; ?>classifiedSections.php" method="post">
-    <p>The admin password is required for all classified section maintenance.</p>
-
-    <p><label for="adminPass">Password</label><br />
-    <input id="adminPass" name="adminPass" type="password" class="h" autofocus required /></p>
-
-    <h1>Add, update and delete sections</h1>
-
-    <p>Parent section level, section name and sort order are required for add and update. The section name only is required for delete. Section names must be unique.</p>
-
-    <p>Parent section level (two parent levels)<br />
-    <select name="parentSection">
-      <option value="0">Top index</option>
-<?php
-$dbh = new PDO($dbClassifieds);
-$stmt = $dbh->query('SELECT idSection, section, sortOrderSection FROM sections ORDER BY sortOrderSection');
-$stmt->setFetchMode(PDO::FETCH_ASSOC);
-foreach ($stmt as $row) {
-    if ($row['idSection'] === $parentIdEdit) {
-        $selected = ' selected';
-    } else {
-        $selected = null;
-    }
-    echo '      <option value="' . $row['idSection'] . '"' . $selected . '>- ' . $row['section'] . "</option>\n";
-}
-$dbh = null;
-?>
-    </select></p>
-
-    <p><label for="section">Section name</label><br />
-    <input id="section" name="section" type="text" class="h" required<?php echoIfValue($sectionEdit); ?> /><input name="idSection" type="hidden" <?php echoIfValue($idSectionEdit); ?> /></p>
-
-    <p><label for="sortOrderSection">Sort order</label><br />
-    <input id="sortOrderSection" name="sortOrderSection" type="number" class="h"<?php echoIfValue($sortOrderSectionEdit); ?> /></p>
-
-    <p class="b"><input type="submit" value="Add / update" name="addUpdate" class="button" /><br />
-    <input type="submit" value="Delete" name="delete" class="button" /><input type="hidden" name="existing"<?php echoIfValue($edit); ?> /></p>
-  </form>
+    </aside>
+  </div>
 </body>
 </html>

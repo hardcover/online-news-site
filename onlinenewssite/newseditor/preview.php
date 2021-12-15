@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -34,7 +34,9 @@ $editorView = null;
 $imagePath = 'imagep.php';
 $imagePath2 = 'imagep2.php';
 $links = null;
-$menu = "\n" . '  <h4 class="m"><a class="m" href="edit.php">&nbsp;Edit&nbsp;</a><a class="m" href="published.php">&nbsp;Published&nbsp;</a><a class="s" href="preview.php">&nbsp;Preview&nbsp;</a><a class="m" href="archive.php">&nbsp;Archives&nbsp;</a></h4>' . "\n\n";
+$menu = "\n" . '  <nav class="n">
+    <h4 class="m"><a class="m" href="edit.php">Edit</a><a class="m" href="published.php">Published</a><a class="s" href="preview.php">Preview</a><a class="m" href="archive.php">Archives</a></h4>
+  </nav>' . "\n\n";
 $message = null;
 $publishedIndexAdminLinks = null;
 $title = 'Preview';
@@ -45,29 +47,32 @@ $use = 'preview';
 require $includesPath . '/header1.inc';
 echo '  <title>' . $title . "</title>\n";
 ?>
-  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <link rel="icon" type="image/png" href="images/32.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="generator" content="Online News Site Software, https://onlinenewssite.com/" />
   <link rel="stylesheet" type="text/css" href="z/jquery-ui.theme.css" />
   <link rel="stylesheet" type="text/css" href="z/jquery-ui.structure.css" />
   <link rel="stylesheet" type="text/css" href="z/base.css" />
-  <link rel="stylesheet" type="text/css" media="(max-width: 768px)" href="z/small.css" />
-  <link rel="stylesheet" type="text/css" media="(min-width: 768px)" href="z/large.css" />
+  <link rel="stylesheet" type="text/css" href="z/admin.css" />
   <script src="z/jquery.min.js"></script>
   <script src="z/jquery-ui.min.js"></script>
   <script src="z/datepicker.js"></script>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/192.png">
 </head>
 
 <?php
 require $includesPath . '/body.inc';
 echo $menu;
-echo '  <h1>' . $title . "</h1>\n\n";
+echo '  <div class="column">' . "\n";
+echo '    <h1>' . $title . "</h1>\n\n";
 echoIfMessage($message);
-echo '  <form method="post" action="' . $uri . 'preview.php">' . "\n";
-echo '    <p><label for="date">Publication date</label><br />' . "\n";
-echo '    <input id="date" name="date" type="text" class="datepicker h" value="' . $datePost . '" /></p>' . "\n\n";
-echo '    <p><input type="submit" class="button" value="Select date" /></p>' . "\n";
-echo "  </form>\n\n";
+echo '    <form method="post" action="' . $uri . 'preview.php">' . "\n";
+echo '      <p><label for="date">Publication date</label><br />' . "\n";
+echo '      <input id="date" name="date" type="text" class="datepicker date" value="' . $datePost . '" /> <input type="submit" class="button" value="Select starting date" /></p>' . "\n";
+echo "    </form>\n";
 require $includesPath . '/displayIndex.inc';
+echo '  </div>' . "\n";
 ?>
 </body>
 </html>

@@ -1,0 +1,49 @@
+/**
+ * Do not modify this file as it will be overwritten by software updates.
+ */
+
+h1#waiting {
+    position: absolute;
+    top: 0;
+    margin: 0;
+    border: 1px solid #ff0;
+    padding: 4em 0;
+    width: 100%;
+    text-align: center;
+    background: #ffc;
+}
+
+h4.m {
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
+    display: inline-flex;
+    -ms-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+
+main {
+    -ms-flex-preferred-size: 50%;
+    flex-basis: 50%;
+    padding-right: 1rem;
+}
+
+aside {
+    -ms-flex-preferred-size: 50%;
+    flex-basis: 50%;
+    padding-left: 1rem;
+    border-left: 1px solid #aaa;
+}
+
+@media (min-width: 961px) {
+
+    header, nav.n, div.flex, div.column {
+        padding-right: 19.1%;
+        padding-left: 19.1%;
+    }
+
+    p.error {
+        margin-right: 19.1%;
+        margin-left: 19.1%
+    }
+}
+

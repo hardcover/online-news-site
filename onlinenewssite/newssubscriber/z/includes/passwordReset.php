@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -54,10 +54,10 @@ echoIfMessage($message);
 
       <form action="<?php echo $uri; ?>post.php" method="post">
         <p><label for="passOne">New password</label><br />
-        <input id="passOne" name="passOne" type="password" class="w" required /></p>
+        <input id="passOne" name="passOne" type="password" class="wide" required /></p>
 
         <p><label for="passTwo">Confirm new password</label><br />
-        <input id="passTwo" name="passTwo" type="password" class="w" required /></p>
+        <input id="passTwo" name="passTwo" type="password" class="wide" required /></p>
 
         <p><input type="submit" class="button" name="resetPassword" value="Set new password" /><input type="hidden" name="verify"<?php echoIfValue($vGet); ?> /></p>
       </form>

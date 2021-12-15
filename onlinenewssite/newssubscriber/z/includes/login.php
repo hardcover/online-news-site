@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -59,10 +59,10 @@ if ($row) {
 ?>
       <form action="<?php echo $uri; ?>post.php" method="post">
         <p><label for="email">Email</label><br />
-        <input id="email" name="email" type="email" class="w" required /></p>
+        <input id="email" name="email" type="email" class="wide" required /></p>
 
         <p><label for="pass">Password</label><br />
-        <input id="pass" name="pass" type="password" class="w" required /></p>
+        <input id="pass" name="pass" type="password" class="wide" required /></p>
 
         <p><input type="submit" name="login" value="Log in" class="button" /> <input type="submit" name="register" value="Register" class="button" /></p>
       </form>

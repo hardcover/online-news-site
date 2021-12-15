@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -87,27 +87,34 @@ if ($row) {
 require $includesPath . '/header1.inc';
 ?>
   <title>Advertising maintenance</title>
-  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <link rel="icon" type="image/png" href="images/32.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="generator" content="Online News Site Software, https://onlinenewssite.com/" />
   <link rel="stylesheet" type="text/css" href="z/base.css" />
-  <link rel="stylesheet" type="text/css" media="(max-width: 768px)" href="z/small.css" />
-  <link rel="stylesheet" type="text/css" media="(min-width: 768px)" href="z/large.css" />
+  <link rel="stylesheet" type="text/css" href="z/admin.css" />
   <script src="z/wait.js"></script>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/192.png">
 </head>
 
 <?php require $includesPath . '/body.inc';?>
 
-  <h4 class="m"><a class="m" href="advertisingPublished.php">&nbsp;Published ads&nbsp;</a><a class="m" href="advertisingEdit.php">&nbsp;Edit ads&nbsp;</a><a class="s" href="advertisingMax.php">&nbsp;Ads max&nbsp;</a></h4>
+  <nav class="n">
+    <h4 class="m"><a class="m" href="advertisingPublished.php">Published ads</a><a class="m" href="advertisingEdit.php">Edit ads</a><a class="s" href="advertisingMax.php">Ads max</a></h4>
+  </nav>
 <?php echoIfMessage($message); ?>
 
   <h1 id="waiting">Please wait.</h1>
 
-  <h1>Set the maximum number of ads to display simultaneously</h1>
-  <form class="wait" action="<?php echo $uri; ?>advertisingMax.php" method="post">
-    <p><label for="maxAds">Maximum number of ads</label><br />
-    <input type="number" id="maxAds" name="maxAds"<?php echoIfValue($maxAdsEdit); ?> /></p>
+  <div class="column">
+    <h1>Set the maximum number of ads to display simultaneously</h1>
 
-    <p><input type="submit" class="button" name="setMaximum" value="Set maximum" /></p>
-  </form>
+    <form class="wait" action="<?php echo $uri; ?>advertisingMax.php" method="post">
+      <p><label for="maxAds">Maximum number of ads</label><br />
+      <input type="number" id="maxAds" name="maxAds"<?php echoIfValue($maxAdsEdit); ?> /></p>
+
+      <p><input type="submit" class="button" name="setMaximum" value="Set maximum" /></p>
+    </form>
+  </div>
 </body>
 </html>

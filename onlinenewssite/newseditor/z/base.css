@@ -1,138 +1,117 @@
 /**
  * Do not modify this file as it will be overwritten by software updates.
  */
-html {
-    color: #000;
-    background: #fff;
+
+html, body, h4, img {
+    margin: 0;
 }
 
-body, h4, h5, h6, p, div, form, table {
-    margin: 0;
+html {
+    background: #fff;
+    color: #000;
+    font-size: 18px;
+}
+
+body {
     padding: 0;
 }
 
-body, h1, h2, h3, h4, h5, h6, p, ol, ul, li, blockquote, pre, div, span, form, input, select, textarea, table, caption, th {
+body, h5, h6, p, nav {
+    margin: 0 0 1rem 0;
+}
+
+body, h1, h2, h3, h4, h5, h6, p, ol, ul, li, blockquote, pre, div, span, form, input, select, textarea {
     font-style: normal;
-}
-
-body, h1, h2, h3, h4, h5, h6, p, ol, ul, li, blockquote, pre, div, span, form, input, select, textarea, table, caption, th {
     font-weight: normal;
-}
-
-caption, th {
-    font-weight: bold;
-}
-
-body, h1, h2, h3, h4, h5, h6, div, span, form, input, select, textarea, caption, th, .button, p.e {
-    font-family: "Lucida Grande", Verdana, Arial, sans-serif;
-}
-
-p, blockquote, li, span.p {
-    font-family: Cheltenham, Georgia, Times, "Times New Roman", serif;
-}
-
-pre {
-    font-family: monospace;
-    line-height: 1em;
-}
-
-h1, h2, h3, p, div.h, div.n {
-    min-width: 320px;
-}
-
-h1, h3, h4, h6 {
-    clear: left;
-}
-
-h1, h2, h3, h5, h6, span {
-    color: #777;
-}
-
-h1, h3, div.n {
-    margin: 1em 0;
-}
-
-h1#waiting {
-    position: absolute;
-    top: 0;
-    margin: 0;
-    padding: 3em 0;
-    width: 100%;
-    text-align: center;
-    background: #ffc;
-}
-
-h2 {
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
-h4.m {
-    margin: 0;
-}
-
-h4, span.p, a.n:link, a.m:link, a.m:visited, a.m:hover, a.s:hover, a.m:focus, a.s:focus, .button, .button:hover, .button:focus {
-    color: #000;
-}
-
-h4 {
-    min-width: 318px;
-}
-
-h6 {
-    margin-top: -1.3em;
-    margin-bottom: 1.3em;
-}
-
-h6, span.al, span.fr, span.h, span.p, img.fr, img.frm, #searchForm {
-    float: right;
-}
-
-h6.fn {
-    float: none;
-    margin-top: -2.3em;
-}
-
-h5, p, table, pre {
-    margin-bottom: 1em;
-}
-
-p, li, div.t, span.fr {
     line-height: 1.5em;
 }
 
-p.b {
-    line-height: 4em;
+body, h1, h2, h3, h4, h5, h6, div, span, form, input, select, textarea, .button, p.error {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI Variable", "Segoe UI", "Helvetica Neue", Arial, Noto, Roboto, Ubuntu, sans-serif;
 }
 
-p.bw, span.bw {
+p, blockquote, ol, ul {
+    font-family: "Times New Roman", Times, serif;
+}
+
+h1.a, h5.a, h6.a, p.a, blockquote.a, ol.a, ul.a {
+    margin-right: auto;
+    margin-left: auto;
+}
+
+h1.a, h5.a, h6.a, p.a {
+    max-width: 33rem;
+}
+
+blockquote.a, ol.a, ul.a {
+    max-width: 29rem;
+}
+
+h1, h2, h3, h5, h6, span {
+    color: #666;
+}
+
+h1 {
+    font-size: 1.6rem;
+    margin: 1em 0;
+}
+
+h2, h3 {
+    margin: .5rem 0;
+}
+
+h2 {
+    font-size: 1.4rem;
+    clear: left;
+}
+
+h2.section {
+    padding: .2rem;
+    color: #000;
+}
+
+h2, h5 {
+    line-height: 1em;
+}
+
+h3 {
+    font-size: 1.2rem;
+}
+
+h4, a.n:link, a.m:link, a.m:visited, a.m:hover, a.s:hover, a.m:focus, a.s:focus, .button, .button:hover, .button:focus, .button:visited, form, input, select, textarea {
+    color: #000;
+    font-size: 1em;
+}
+
+h5 {
+    font-size: 1.1rem;
+    margin-top: 1rem;
+}
+
+h6 {
+    font-size: .9rem;
+    margin-top: -1.1rem;
+}
+
+h6.fn {
+    margin-top: 0;
+}
+
+p.bw {
     word-wrap: break-word;
 }
 
-p.e, p.m {
-    margin-top: 1em;
-    padding: .1em 1%;
-}
-
-p.e {
+p.error {
+    background-color: #fee;
     border: 1px solid #f22;
     color: #000;
-    background-color: #fee;
+    margin: 1rem;
+    padding: 1rem;
 }
 
-p.m {
-    border: 1px solid #a60;
-    color: #000;
-    background-color: #fffff7;
-}
-
-p.s {
-    height: 6em;
+p.summary {
+    height: 6rem;
     overflow: hidden;
-}
-
-blockquote, ul, ol {
-    min-width: 270px;
 }
 
 ol {
@@ -141,6 +120,10 @@ ol {
 
 ul {
     list-style: disc outside;
+}
+
+pre {
+    font-family: monospace;
 }
 
 sup {
@@ -163,91 +146,61 @@ hr {
     border-top: 1px solid #aaa;
     border-bottom: 0;
     height: 0px;
-    clear: left;
 }
 
-input, select, textarea, span.fr, p.e {
+input, select, textarea, p.error, .button {
     border-radius: 5px;
 }
 
-input, select, textarea, a.m, a.s, h4, span.fr, img.b, iframe, video {
+input, select, textarea, .button, h2.section, a.m, a.s, img.border, iframe, video {
     border: 1px solid #aaa;
 }
 
+input, select, textarea, a.m, a.s, a.button {
+    padding: .4rem;
+    color: #000;
+}
+
 input, select, textarea {
-    padding: 9px;
     background: #f5f5f9;
     background: linear-gradient(#fff, #f5f5f9);
 }
 
-input.h, select.h, textarea.h, span.hl {
-    width: 38%;
+input.date {
+    width: 6rem;
 }
 
-input.w, select.w, textarea.w {
+input.h, select.h, textarea.h {
+    width: 94%;
+}
+
+input.wide, select.wide, textarea.wide {
     width: 98%;
-}
-
-div.h, div.n {
-    background: #dededf;
-}
-
-div.logo, div.n {
-    clear: both;
-}
-
-div.h {
-    background: linear-gradient(#c4d3d5, #fff);
-    padding-top: .5em;
-}
-
-div.n {
-    padding: 1em 0;
-    background: linear-gradient(#fff, #c4d3d5);
-    border-top: 1px solid #aaa;
-    border-bottom: 1px solid #aaa;
-}
-
-span.fr, img.fr {
-    margin: .4em 0 1em 2%;
-}
-
-h5, span.fr, img.fr, span.h, span.p {
-    clear: right;
-}
-
-span.fr {
-    width: 34.2%;
-    background: #777;
-    background: linear-gradient(#fafeff, #f0fdff);
-}
-
-span.fr {
-    padding: 2%;
-}
-
-span.h, span.p {
-    margin: 0 0 2% 2%;
-    padding-left: 5%;
-    width: 45%;
 }
 
 img {
     border: 0;
 }
 
-img.lead, img.lead2, img.lead3, img.lead4 {
-    float: left;
+img.lead, img.wide, iframe, video {
+    width: 100%;
+}
+
+img.fr, span.fr {
+    float: right;
+}
+
+img.fr {
+    margin: .4rem 0 1rem 2%;
+}
+
+img.lead, img.lead2, img.lead3, img.lead4, img.third {
     clear: left;
-    margin: .4em 1em 1em 0;
+    float: left;
 }
 
-img.lead {
-    width: 61.8%;
-}
-
-img.lead2 {
-    width: 38.2%;
+img.lead2, img.third {
+    width: 32.8%;
 }
 
 img.lead3 {
@@ -258,39 +211,46 @@ img.lead4 {
     width: 9.55%;
 }
 
-img.fr {
-    margin: .4em 0 1em 2%;
-}
-
-img.frm {
-    margin: 1em 0 1em 2%;
-}
-
 img.logo {
     width: 61.8%;
 }
 
-img.t, iframe, video {
-    width: 38.2%;
-    float: left;
-    margin-right: 1em;
+img.mb, li {
+    margin-bottom: 1rem;
 }
 
-img.w, iframe, video {
-    width: 100%;
+img.third {
+    margin-right: 1rem;
+}
+
+img.wide {
+    width: 99.6%;
 }
 
 iframe, video {
-    margin-top: 1em;
+    margin-top: 1rem;
+    margin-right: 1rem;
+}
+
+nav.n {
+    border-top: 1px solid #aaa;
+    border-bottom: 1px solid #aaa;
 }
 
 a:active {
     position: relative;
-    top: 1px;
+    top: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    a:hover, .button:hover {
+        position: relative;
+        left: 2px;
+    }
 }
 
 a:link, a.n:link, a.n:visited, a.n:hover, a.n:focus, a.n:active {
-    color: #00a;
+    color: #004;
 }
 
 a:visited {
@@ -305,12 +265,7 @@ a.n:active, a.n:focus, a.n:hover {
     text-decoration: underline;
 }
 
-a.m, a.s, h4 {
-    padding-top: 9px;
-    padding-bottom: 9px;
-}
-
-a.m:link, a.m:visited, h4, .button {
+a.m:link, a.m:visited, h4, nav.n, .button, h2.section {
     background: #ddd;
     background: linear-gradient(#eef2f3, #cdcdcd);
 }
@@ -326,30 +281,25 @@ a.m:hover, a.s:hover, a.m:focus, a.s:focus, .button:hover, .button:focus {
     background: linear-gradient(#c4d3d5, #a9a9a9);
 }
 
-#searchForm {
-    margin: 0 0 .5em 1em;
+.button, input.date {
+    margin-right: .4rem;
 }
 
-#searchForm .search {
-    width: 5em;
-    margin-top: .5em;
-    background: transparent;
+header {
+    background: #dededf;
+    padding-top: .4rem;
+    background: linear-gradient(#c4d3d5, #fff);
 }
 
-table {
-    border-collapse: collapse;
-    border-spacing: 0;
+div.column, div.flex, header {
+    padding: 0 1rem;
 }
 
-caption, th {
-    text-align: center;
+div.flex {
+    display: flex;
 }
 
-caption {
-    margin-bottom: .5em;
-}
-
-th {
-    border: 1px solid #000;
-    padding: .5em;
+div.logo, span.fr {
+    clear: both;
+    padding-top: .5rem;
 }

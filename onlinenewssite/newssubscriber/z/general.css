@@ -1,0 +1,93 @@
+/**
+ * Add custom styles to a file named local.css in the same directory.
+ * Do not modify this file as it will be overwritten by software updates.
+ */
+
+input.paypal {
+    margin: 0;
+    border: 0;
+    padding: 0 0 0 1%;
+    vertical-align: text-bottom;
+}
+
+div.flex {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    margin: 0 1rem;
+    padding: 0;
+}
+
+main {
+    -ms-flex-preferred-size: 61.8%;
+    flex-basis: 61.8%;
+    padding: 0 1rem 0 0;
+}
+
+aside {
+    -ms-flex-preferred-size: 32.2%;
+    flex-basis: 32.2%;
+    padding: 0 0 0 1rem;
+    border-left: 1px solid #aaa;
+}
+
+input.slim {
+    width: 1.7rem;
+}
+
+@media (min-width: 360px) {
+    input.slim {
+        width: 2.8rem;
+    }
+}
+
+@media (min-width: 411px) {
+    input.slim {
+        width: 4.2rem;
+    }
+}
+
+@media (min-width: 1270px) {
+
+    header, main {
+        padding-left: 19.1%;
+    }
+
+    header, aside {
+        padding-right: 19.1%;
+    }
+
+    main.columns {
+        -ms-flex-preferred-size: 76.4%;
+        flex-basis: 76.4%;
+        padding-left: 0;
+    }
+
+    aside.columns {
+        -ms-flex-preferred-size: 23.6%;
+        flex-basis: 23.6%;
+        padding-right: 0;
+    }
+
+    div.row {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+    }
+
+    div.right, div.left {
+        width: 49%;
+    }
+
+    div.right {
+        padding: 0 0 0 1rem;
+        border-left: 1px solid #aaa;
+    }
+
+    div.left {
+        padding: 0 1rem 0 0;
+    }
+}

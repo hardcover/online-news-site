@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -117,8 +117,8 @@ if (isset($_POST['addUpdate'])) {
                 //
                 // Reduce an oversize image
                 //
-                if ($widthOriginal > 2370) {
-                    $widthHD = 2370;
+                if ($widthOriginal > 2360) {
+                    $widthHD = 2360;
                     $heightHD = round($widthHD / $aspectRatio);
                     $hd = imagecreatetruecolor($widthHD, $heightHD);
                     imageinterlace($hd, true);
@@ -267,10 +267,10 @@ if (!empty($i) or !empty($ii)) {
 
     <form action="<?php echo $uri; ?>?m=place-classified" method="post" enctype="multipart/form-data">
       <p><label for="title">Title</label><br />
-      <input id="title" name="title" type="text" class="w"<?php echoIfValue($titleEdit); ?> /><input type="hidden" name="idAd"<?php echoIfValue($idAdEdit); ?> /></p>
+      <input id="title" name="title" type="text" class="wide"<?php echoIfValue($titleEdit); ?> /><input type="hidden" name="idAd"<?php echoIfValue($idAdEdit); ?> /></p>
 
       <p><label for="description">Description</label><br />
-      <textarea id="description" name="description" class="w"><?php echoIfText($descriptionEdit); ?></textarea><p>
+      <textarea id="description" name="description" class="wide"><?php echoIfText($descriptionEdit); ?></textarea><p>
 
       <p><label for="invoice"><input id="invoice" name="invoice" type="checkbox" value="1"<?php echoIfYes($invoiceEdit); ?> /> Send an invoice to also have the add in the print version of the paper.</label></p>
 
@@ -301,9 +301,9 @@ $dbh = null;
       </select></p>
 
       <p><label for="image">Photo upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br />
-      <input id="image" name="image" type="file" class="w" accept="image/jpeg"></p>
+      <input id="image" name="image" type="file" class="wide" accept="image/jpeg"></p>
 
-      <p>Up to seven images may be included in an ad. Upload one image at a time. Edit the listing to add each additional image. JPG is the only permitted image format. The best image size is 2370 pixels or wider. Larger images are reduced to that width.</p>
+      <p>Up to seven images may be included in an ad. Upload one image at a time. Edit the listing to add each additional image. JPG is the only permitted image format. The best image size is 2360 pixels or wider. Larger images are reduced to that width.</p>
 
 <?php
 echo $button;
@@ -317,7 +317,7 @@ if (isset($idAdEdit)) {
         $row = $stmt->fetch();
         $dbh = null;
         if (!empty($row['0'])) {
-            echo '    <p><img class="w b" src="imagen.php?i=' . muddle($idAdEdit) . $photo . '" alt="" /></p>' . "\n\n";
+            echo '    <p><img class="wide border" src="imagen.php?i=' . muddle($idAdEdit) . $photo . '" alt="" /></p>' . "\n\n";
         }
     }
 }

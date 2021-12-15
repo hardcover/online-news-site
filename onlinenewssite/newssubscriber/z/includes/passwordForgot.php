@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -49,7 +49,7 @@ echoIfMessage($message);
 
       <form action="<?php echo $uri; ?>post.php" method="post">
         <p><label for="email">Email</label><br />
-        <input id="email" name="email" class="w" type="email" required /></p>
+        <input id="email" name="email" class="wide" type="email" required /></p>
 
         <p><label>
           <input name="forgot" type="checkbox" value="1" required /> Send me an email with a link to reset my password

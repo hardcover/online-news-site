@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -163,19 +163,44 @@ require $includesPath . '/header1.inc';
 echo "  <title>Advertising user maintenance</title>\n";
 echo '  <script src="z/wait.js"></script>' . "\n";
 require $includesPath . '/header2.inc';
-require $includesPath . '/body.inc';
 ?>
 
-  <h4 class="m"><a class="m" href="usersEditors.php">&nbsp;Editing users&nbsp;</a><a class="m" href="usersSubscribers.php">&nbsp;Patron mgt users&nbsp;</a></h4>
-
-  <h4 class="m"><a class="s" href="usersAdvertising.php">&nbsp;Advertising users&nbsp;</a><a class="m" href="usersClassified.php">&nbsp;Classified users&nbsp;</a></h4>
-
-  <h4 class="m"><a class="m" href="usersMenu.php">&nbsp;Menu users&nbsp;</a><a class="m" href="settings.php">&nbsp;Settings&nbsp;</a><a class="m" href="classifiedSections.php">&nbsp;Classifieds&nbsp;</a></h4>
+  <nav class="n">
+    <h4 class="m"><a class="m" href="usersEditors.php">Editing users</a> <a class="m" href="usersSubscribers.php">Patron mgt users</a> <a class="s" href="usersAdvertising.php">Advertising users</a> <a class="m" href="usersClassified.php">Classified users</a> <a class="m" href="usersMenu.php">Menu users</a> <a class="m" href="settings.php">Settings</a> <a class="m" href="classifiedSections.php">Classifieds</a></h4>
+  </nav>
 <?php echoIfMessage($message); ?>
 
   <h1 id="waiting">Please wait.</h1>
 
-  <h1><span class="h">Advertising users</span></h1>
+  <div class="flex">
+    <main>
+      <h1>Advertising user maintenance</h1>
+
+      <form class="wait" action="<?php echo $uri; ?>usersAdvertising.php" method="post">
+        <p>The admin password is required for all user maintenance.</p>
+
+        <p><label for="adminPass">Password</label><br />
+        <input id="adminPass" name="adminPass" type="password" class="h" autofocus required /></p>
+
+        <h1>Add, update and delete users</h1>
+
+        <p>All fields are required to add a user. For an update, the full name and user name are required, the password will remain unchanged if left blank. The user name only is required for delete. User names must be unique.</p>
+
+        <p><label for="fullName">Full name</label><br />
+        <input id="fullName" name="fullName" type="text" class="h"<?php echoIfValue($fullNameEdit); ?> /></p>
+
+        <p><label for="user">User name</label><br />
+        <input id="user" name="user" type="text" class="h" required<?php echoIfValue($userEdit); ?> /><input name="idUser" type="hidden" <?php echoIfValue($idUserEdit); ?> /></p>
+
+        <p><label for="pass">Password</label><br />
+        <input id="pass" name="pass" type="text" class="h" /></p>
+
+        <p><input type="submit" class="button" value="Add / update" name="addUpdate" /> <input type="submit" class="button" value="Delete" name="delete" /><input type="hidden" name="existing"<?php echoIfValue($edit); ?> /></p>
+      </form>
+    </main>
+
+    <aside>
+     <h1>Advertising users</h1>
 
 <?php
 $rowcount = null;
@@ -191,39 +216,17 @@ foreach ($stmt as $row) {
     }
     if ($user !== 'admin') {
         $rowcount++;
-        echo '  <form class="wait" action="' . $uri . 'usersAdvertising.php" method="post">' . "\n";
-        echo '    <p><span class="p">' . html($fullName) . " - Full name<br />\n";
-        echo '    ' . html($user) . " - User name, count: $rowcount<br />\n";
-        echo "    The password is $printPass<br />\n";
-        echo '    <input name="idUser" type="hidden" value="' . $idUser . '" /><input type="submit" class="button" value="Edit" name="edit" /></span></p>' . "\n";
-        echo "  </form>\n\n";
+        echo '      <form class="wait" action="' . $uri . 'usersAdvertising.php" method="post">' . "\n";
+        echo '        <p>' . html($fullName) . " - Full name<br />\n";
+        echo '        ' . html($user) . " - User name, count: $rowcount<br />\n";
+        echo "        The password is $printPass<br />\n";
+        echo '        <input name="idUser" type="hidden" value="' . $idUser . '" /><input type="submit" class="button" value="Edit" name="edit" /></p>' . "\n";
+        echo "      </form>\n\n";
     }
 }
 $dbh = null;
 ?>
-  <h1>Advertising user maintenance</h1>
-
-  <form class="wait" action="<?php echo $uri; ?>usersAdvertising.php" method="post">
-    <p>The admin password is required for all user maintenance.</p>
-
-    <p><label for="adminPass">Password</label><br />
-    <input id="adminPass" name="adminPass" type="password" class="h" autofocus required /></p>
-
-    <h1>Add, update and delete users</h1>
-
-    <p>All fields are required to add a user. For an update, the full name and user name are required, the password will remain unchanged if left blank. The user name only is required for delete. User names must be unique.</p>
-
-    <p><label for="fullName">Full name</label><br />
-    <input id="fullName" name="fullName" type="text" class="h"<?php echoIfValue($fullNameEdit); ?> /></p>
-
-    <p><label for="user">User name</label><br />
-    <input id="user" name="user" type="text" class="h" required<?php echoIfValue($userEdit); ?> /><input name="idUser" type="hidden" <?php echoIfValue($idUserEdit); ?> /></p>
-
-    <p><label for="pass">Password</label><br />
-    <input id="pass" name="pass" type="text" class="h" /></p>
-
-    <p class="b"><input type="submit" class="button" value="Add / update" name="addUpdate" /><br />
-    <input type="submit" class="button" value="Delete" name="delete" /><input type="hidden" name="existing"<?php echoIfValue($edit); ?> /></p>
-  </form>
+    </aside>
+  </div>
 </body>
 </html>

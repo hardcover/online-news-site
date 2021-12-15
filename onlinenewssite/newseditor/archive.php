@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -37,7 +37,9 @@ $database2 = $dbArchive2;
 $editorView = '1';
 $imagePath = 'imagea.php';
 $imagePath2 = 'imagea2.php';
-$menu = "\n" . '  <h4 class="m"><a class="m" href="edit.php">&nbsp;Edit&nbsp;</a><a class="m" href="published.php">&nbsp;Published&nbsp;</a><a class="m" href="preview.php">&nbsp;Preview&nbsp;</a><a class="s" href="archive.php">&nbsp;Archives&nbsp;</a></h4>' . "\n";
+$menu = "\n" . '  <nav class="n">
+    <h4 class="m"><a class="m" href="edit.php">Edit</a><a class="m" href="published.php">Published</a><a class="m" href="preview.php">Preview</a><a class="s" href="archive.php">Archives</a></h4>
+  </nav>' . "\n";
 $publishedIndexAdminLinks = null;
 $title = 'Archives';
 $use = 'archive';
@@ -201,23 +203,26 @@ if (isset($_POST['edit'])) {
 require $includesPath . '/header1.inc';
 echo '  <title>' . $title . "</title>\n";
 ?>
-  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <link rel="icon" type="image/png" href="images/32.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="generator" content="Online News Site Software, https://onlinenewssite.com/" />
   <link rel="stylesheet" type="text/css" href="z/jquery-ui.theme.css" />
   <link rel="stylesheet" type="text/css" href="z/jquery-ui.structure.css" />
   <link rel="stylesheet" type="text/css" href="z/base.css" />
-  <link rel="stylesheet" type="text/css" media="(max-width: 768px)" href="z/small.css" />
-  <link rel="stylesheet" type="text/css" media="(min-width: 768px)" href="z/large.css" />
+  <link rel="stylesheet" type="text/css" href="z/admin.css" />
   <script src="z/jquery.min.js"></script>
   <script src="z/jquery-ui.min.js"></script>
   <script src="z/datepicker.js"></script>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/192.png">
 </head>
 
 <?php
 require $includesPath . '/body.inc';
 echo $menu . "\n";
-echo '  <h1 id="waiting">Please wait.</h1>' . "\n\n";
-echo '  <h1>' . $title . "</h1>\n";
+echo '  <div class="column">' . "\n";
+echo '    <h1 id="waiting">Please wait.</h1>' . "\n\n";
+echo '    <h1>' . $title . "</h1>\n";
 //
 // Article view displays an entire single article
 //
@@ -230,23 +235,23 @@ if (isset($_GET['a'])) {
     //
 } else {
     echo '
-  <p>Search by any of the following criteria. Enter complete words or the beginning of words followed by an asterisk, for example, either <i>the</i> or <i>th*</i>.</p>
+    <p>Search by any of the following criteria. Enter complete words or the beginning of words followed by an asterisk, for example, either <i>the</i> or <i>th*</i>.</p>
 
-  <form action="' . $uri . 'archive.php" method="post" class="wait">
-    <p><label for="headline">Headline contains</label><br />
-    <input type="text" class="w" id="headline" name="headline" autofocus /></p>
+    <form action="' . $uri . 'archive.php" method="post" class="wait">
+      <p><label for="headline">Headline contains</label><br />
+      <input type="text" class="wide" id="headline" name="headline" autofocus /></p>
 
-    <p><label for="startDate">Publication date range search</label><br />
-    <input type="text" class="datepicker h" id="startDate" name="startDate" placeholder="Start date" /> <input type="text" class="datepicker h" name="endDate" placeholder="End date" /></p>
+      <p><label for="startDate">Publication date range search</label><br />
+      <input type="text" class="datepicker date" id="startDate" name="startDate" placeholder="Start date" /> <input type="text" class="datepicker date" name="endDate" placeholder="End date" /></p>
 
-    <p><label for="byline">Byline contains</label><br />
-    <input type="text" class="w" id="byline" name="byline" /></p>
+      <p><label for="byline">Byline contains</label><br />
+      <input type="text" class="wide" id="byline" name="byline" /></p>
 
-    <p><label for="text">Article contains</label><br />
-    <input type="text" class="w" id="text" name="text" /></p>
+      <p><label for="text">Article contains</label><br />
+      <input type="text" class="wide" id="text" name="text" /></p>
 
-    <p><input type="submit" class="button" value="Search" name="search" />
-  </form>' . "\n";
+      <p><input type="submit" class="button" value="Search" name="search" />
+    </form>' . "\n";
     if (isset($bylinePost) or isset($headlinePost) or isset($startDatePost) or isset($textPost)) {
         $html = null;
         $stopTime = 19 + time();
@@ -295,7 +300,7 @@ if (isset($_GET['a'])) {
                     }
                     if (!empty($summary)) {
                         $summary = str_replace('*', '', $summary);
-                        $html.= '  <p class="s">' . html($summary) . "</p>\n";
+                        $html.= '  <p class="summary">' . html($summary) . "</p>\n";
                     }
                     if (isset($editorView) and $editorView === '1') {
                         $html.= "\n" . '  <form action="' . $uri . 'archive.php" method="post" class="wait">' . "\n";
@@ -309,6 +314,7 @@ if (isset($_GET['a'])) {
     }
 }
 echo $html;
+echo '  </div>' . "\n";
 ?>
 </body>
 </html>

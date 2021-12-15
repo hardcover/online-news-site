@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 5 17
+ * @version:  2021 12 15
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -350,26 +350,70 @@ if (isset($_POST['reset'])) {
 require $includesPath . '/header1.inc';
 ?>
   <title>Calendar maintenance</title>
-  <link rel="icon" type="image/png" href="images/favicon.png" />
+  <link rel="icon" type="image/png" href="images/32.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="generator" content="Online News Site Software, https://onlinenewssite.com/" />
   <link rel="stylesheet" type="text/css" href="z/jquery-ui.theme.css" />
   <link rel="stylesheet" type="text/css" href="z/jquery-ui.structure.css" />
   <link rel="stylesheet" type="text/css" href="z/base.css" />
-  <link rel="stylesheet" type="text/css" media="(max-width: 768px)" href="z/small.css" />
-  <link rel="stylesheet" type="text/css" media="(min-width: 768px)" href="z/large.css" />
+  <link rel="stylesheet" type="text/css" href="z/admin.css" />
   <script src="z/jquery.min.js"></script>
   <script src="z/jquery-ui.min.js"></script>
   <script src="z/datepicker.js"></script>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/192.png">
 </head>
 
 <?php require $includesPath . '/body.inc'; ?>
 
-  <h4 class="m"><a class="m" href="menu.php">&nbsp;Menu&nbsp;</a><a class="s" href="menuCalendar.php">&nbsp;Calendar&nbsp;</a><a class="m" href="menuPredefine.php">&nbsp;Predefined&nbsp;</a></h4>
+  <nav class="n">
+    <h4 class="m"><a class="m" href="menu.php">Menu</a><a class="s" href="menuCalendar.php">Calendar</a><a class="m" href="menuPredefine.php">Predefined</a></h4>
+  </nav>
 <?php echoIfMessage($message); ?>
 
   <h1 id="waiting">Please wait.</h1>
 
-  <h1><span class="h">Calendar, 53 weeks</span></h1>
+  <div class="flex">
+    <main>
+      <h1>Calendar maintenance</h1>
+
+      <form class="wait" action="<?php echo $uri; ?>menuCalendar.php" method="post">
+    <?php
+    if (empty($datePost)) {
+        echo '    <p><label for="date">Date</label><br />' . "\n";
+        echo '        <input id="date" name="date" type="text" class="datepicker h" required /></p>' . "\n\n";
+        echo '        <p><input type="submit" value="Select" name="select" class="button" /></p>' . "\n";
+    } else {
+        echo '    <input id="idOneTimeEvent" name="idOneTimeEvent" type="hidden" value="' . $idOneTimeEventEdit . '" /><input id="date" name="date" type="hidden" value="' . $datePost . '" />' . "\n\n";
+        echo '        <p><label for="oneTimeEvent">One-time event ' . $dayOfTheWeek . ', ' . $month . ' ' . $dayOfTheMonth . ', ' . $year . ".</label><br />\n";
+        echo '        <textarea id="oneTimeEvent" name="oneTimeEvent" class="h">' . $oneTimeEventEdit . "</textarea></p>\n\n";
+        //
+        echo '        <input id="idWeeklyDayOfWeek" name="idWeeklyDayOfWeek" type="hidden" value="' . $idWeeklyDayOfWeekEdit . '" />' . "\n\n";
+        echo '        <p><label for="weeklyDayOfWeek">Weekly event each ' . $dayOfTheWeek . ".</label><br />\n";
+        echo '        <textarea id="weeklyDayOfWeek" name="weeklyDayOfWeek" class="h">' . $weeklyDayOfWeekEdit . "</textarea></p>\n\n";
+        //
+        echo '        <input id="idMonthlyDayOfWeek" name="idMonthlyDayOfWeek" type="hidden" value="' . $idMonthlyDayOfWeekEdit . '" />' . "\n\n";
+        echo '        <p><label for="monthlyDayOfWeek">Monthly event each ' . $week . ' ' . $dayOfTheWeek . ".</label><br />\n";
+        echo '        <textarea id="monthlyDayOfWeek" name="monthlyDayOfWeek" class="h">' . $monthlyDayOfWeekEdit . "</textarea></p>\n\n";
+        //
+        echo '        <input id="idAnnual" name="idAnnual" type="hidden" value="' . $idAnnualEdit . '" />' . "\n\n";
+        echo '        <p><label for="annualEvent">Annual event each ' . $month . ' ' . $dayOfTheMonth . ".</label><br />\n";
+        echo '        <textarea id="annualEvent" name="annualEvent" class="h">' . $annualEventEdit . "</textarea></p>\n\n";
+        //
+        echo '        <input id="idAnnualDayOfWeek" name="idAnnualDayOfWeek" type="hidden" value="' . $idAnnualDayOfWeekEdit . '" />' . "\n\n";
+        echo '        <p><label for="annualDayOfWeek">Annual event each ' . $week . ' ' . $dayOfTheWeek . ' of  ' . $month . ".</label><br />\n";
+        echo '        <textarea id="annualDayOfWeek" name="annualDayOfWeek" class="h">' . $annualDayOfWeekEdit . "</textarea></p>\n\n";
+        //
+        echo '        <p><label for="note">Calendar-bottom note</label><br />' . "\n";
+        echo '        <textarea id="note" name="note" class="h">' . $noteEdit . "</textarea></p>\n\n";
+        echo '        <p><input type="submit" class="button" value="Update" name="update" /> <input type="submit" class="button" value="Reset" name="reset" /></p>' . "\n";
+    }
+    ?>
+      </form>
+    </main>
+
+    <aside>
+      <h1>Calendar, 53 weeks</h1>
 
 <?php
 $selectTime = time();
@@ -433,8 +477,8 @@ for ($i = 0; $i < 371; $i++) {
     }
     $dbh = null;
     if (isset($description)) {
-        echo '  <p><span class="p"><span>' . $dayOfTheWeekSelect . ', ' . $monthSelect . ' ' . $dayOfTheMonthSelect . ', ' . $yearSelect . "</span><br />\n";
-        echo '  ' . $description . "</span></p>\n\n";
+        echo '      <p><span>' . $dayOfTheWeekSelect . ', ' . $monthSelect . ' ' . $dayOfTheMonthSelect . ', ' . $yearSelect . "</span><br />\n";
+        echo '      ' . $description . "</p>\n\n";
     }
     $selectTime = $selectTime + 86400;
 }
@@ -444,44 +488,11 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $row = $stmt->fetch();
 $dbh = null;
 if (isset($row['description'])) {
-    echo '  <p><span class="p"><span>Notes' . "</span><br />\n";
-    echo '  ' . $row['description'] . "</span></p>\n\n";
+    echo '      <p><span>Notes' . "</span><br />\n";
+    echo '      ' . $row['description'] . "</p>\n\n";
 }
 ?>
-  <h1>Calendar maintenance</h1>
-
-  <form class="wait" action="<?php echo $uri; ?>menuCalendar.php" method="post">
-<?php
-if (empty($datePost)) {
-    echo '    <p><label for="date">Date</label><br />' . "\n";
-    echo '    <input id="date" name="date" type="text" class="datepicker h" required /></p>' . "\n\n";
-    echo '    <p class="b"><input type="submit" value="Select" name="select" class="button" /></p>' . "\n";
-} else {
-    echo '    <input id="idOneTimeEvent" name="idOneTimeEvent" type="hidden" value="' . $idOneTimeEventEdit . '" /><input id="date" name="date" type="hidden" value="' . $datePost . '" />' . "\n\n";
-    echo '    <p><label for="oneTimeEvent">One-time event ' . $dayOfTheWeek . ', ' . $month . ' ' . $dayOfTheMonth . ', ' . $year . ".</label><br />\n";
-    echo '    <span class="hl"><textarea id="oneTimeEvent" name="oneTimeEvent" class="h">' . $oneTimeEventEdit . "</textarea></span></p>\n\n";
-    //
-    echo '    <input id="idWeeklyDayOfWeek" name="idWeeklyDayOfWeek" type="hidden" value="' . $idWeeklyDayOfWeekEdit . '" />' . "\n\n";
-    echo '    <p><label for="weeklyDayOfWeek">Weekly event each ' . $dayOfTheWeek . ".</label><br />\n";
-    echo '    <span class="hl"><textarea id="weeklyDayOfWeek" name="weeklyDayOfWeek" class="h">' . $weeklyDayOfWeekEdit . "</textarea></span></p>\n\n";
-    //
-    echo '    <input id="idMonthlyDayOfWeek" name="idMonthlyDayOfWeek" type="hidden" value="' . $idMonthlyDayOfWeekEdit . '" />' . "\n\n";
-    echo '    <p><label for="monthlyDayOfWeek">Monthly event each ' . $week . ' ' . $dayOfTheWeek . ".</label><br />\n";
-    echo '    <span class="hl"><textarea id="monthlyDayOfWeek" name="monthlyDayOfWeek" class="h">' . $monthlyDayOfWeekEdit . "</textarea></span></p>\n\n";
-    //
-    echo '    <input id="idAnnual" name="idAnnual" type="hidden" value="' . $idAnnualEdit . '" />' . "\n\n";
-    echo '    <p><label for="annualEvent">Annual event each ' . $month . ' ' . $dayOfTheMonth . ".</label><br />\n";
-    echo '    <span class="hl"><textarea id="annualEvent" name="annualEvent" class="h">' . $annualEventEdit . "</textarea></span></p>\n\n";
-    //
-    echo '    <input id="idAnnualDayOfWeek" name="idAnnualDayOfWeek" type="hidden" value="' . $idAnnualDayOfWeekEdit . '" />' . "\n\n";
-    echo '    <p><label for="annualDayOfWeek">Annual event each ' . $week . ' ' . $dayOfTheWeek . ' of  ' . $month . ".</label><br />\n";
-    echo '    <span class="hl"><textarea id="annualDayOfWeek" name="annualDayOfWeek" class="h">' . $annualDayOfWeekEdit . "</textarea></span></p>\n\n";
-    //
-    echo '    <p><label for="note">Calendar-bottom note</label><br />' . "\n";
-    echo '    <span class="hl"><textarea id="note" name="note" class="h">' . $noteEdit . "</textarea></span></p>\n\n";
-    echo '    <p class="b"><input type="submit" class="button" value="Update" name="update" /> <input type="submit" class="button" value="Reset" name="reset" /></p>' . "\n";
-}
-?>
-  </form>
+    </aside>
+  </div>
 </body>
 </html>
