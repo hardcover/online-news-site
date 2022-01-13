@@ -60,40 +60,40 @@ if ($row) {
 //
 $sql1 = 'SELECT idArticle, publicationDate, byline, headline, summary FROM articles WHERE ';
 $sql2 = null;
-if (isset($bylinePost)) {
+if (!empty($bylinePost)) {
     $sql1.= 'byline MATCH ?';
     $sql2[] = $bylinePost;
 }
-if (isset($bylinePost, $headlinePost)) {
+if (!empty($bylinePost) and !empty($headlinePost)) {
     $sql1.= ' INTERSECT SELECT idArticle, publicationDate, byline, headline, summary FROM articles WHERE';
 }
-if (isset($headlinePost)) {
+if (!empty($headlinePost)) {
     $sql1.= ' headline MATCH ?';
     $sql2[] = $headlinePost;
 }
-if (isset($bylinePost, $textPost) or isset($headlinePost, $textPost)) {
+if (!empty($bylinePost) and !empty($textPost) or !empty($headlinePost) and !empty($textPost)) {
     $sql1.= ' INTERSECT SELECT idArticle, publicationDate, byline, headline, summary FROM articles WHERE';
 }
-if (isset($textPost)) {
+if (!empty($textPost)) {
     $sql1.= ' text MATCH ?';
     $sql2[] = $textPost;
 }
-if (isset($bylinePost, $startDatePost)
-    or isset($headlinePost, $startDatePost)
-    or isset($textPost, $startDatePost)
-    or isset($bylinePost, $endDatePost)
-    or isset($headlinePost, $endDatePost)
-    or isset($textPost, $endDatePost)
+if (!empty($bylinePost) and !empty($startDatePost)
+    or !empty($headlinePost) and !empty($startDatePost)
+    or !empty($textPost) and !empty($startDatePost)
+    or !empty($bylinePost) and !empty($endDatePost)
+    or !empty($headlinePost) and !empty($endDatePost)
+    or !empty($textPost) and !empty($endDatePost)
 ) {
     $sql1.= ' INTERSECT SELECT idArticle, publicationDate, byline, headline, summary FROM articles WHERE';
 }
-if (empty($startDatePost) and isset($endDatePost)) {
+if (empty($startDatePost) and !empty($endDatePost)) {
     $startDatePost = '1970-01-01';
 }
 if (empty($endDatePost)) {
     $endDatePost = date("Y-m-d");
 }
-if (isset($startDatePost, $endDatePost)) {
+if (!empty($startDatePost) and !empty($endDatePost)) {
     $sql1.= ' ? <= publicationDate AND publicationDate <= ?';
     $sql2[] = $startDatePost;
     $sql2[] = $endDatePost;
@@ -164,13 +164,13 @@ if (isset($_GET['a'])) {
                         echoIfMessage('The query is taking too long. Please refine the search criteria to narrow the search results.');
                         break;
                     }
-                    $html.= "  <hr />\n\n";
+                    $html.= "      <hr />\n\n";
                     if (isset($headline)) {
-                        $html.= '  <h2><a class="n" href="' . $uri . '?a=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
+                        $html.= '      <h2><a class="n" href="' . $uri . '?a=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
                     }
                     $bylineDateTime = isset($publicationDate) ? date("l, F j, Y", strtotime($publicationDate)) : null;
                     if (!empty($bylineDateTime)) {
-                        $html.= '  <p>' . html($bylineDateTime);
+                        $html.= '      <p>' . html($bylineDateTime);
                     }
                     if (!empty($byline) and isset($bylineDateTime)) {
                         $html.= ', ';
@@ -183,7 +183,7 @@ if (isset($_GET['a'])) {
                     }
                     if (!empty($summary)) {
                         $summary = str_replace('*', '', $summary);
-                        $html.= '  <p class="summary">' . html($summary) . "</p>\n";
+                        $html.= '      <p class="summary">' . html($summary) . "</p>\n";
                     }
                 }
                 $dbh = null;
