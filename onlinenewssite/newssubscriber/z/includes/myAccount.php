@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -34,9 +34,9 @@ $emailNewsPost = inlinePost('emailNews');
 $emailNewsEdit = null;
 $emailEdit = null;
 $emailPost = muddle(inlinePost('email'));
-$idUserEdit = null;
+$idUserEdit = '';
 $idUserPost = inlinePost('idUser');
-$message = null;
+$message = '';
 $payNow = null;
 //
 // Button: Send
@@ -67,6 +67,7 @@ if (!empty($_SESSION['db'])) {
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {
+        $row = array_map('strval', $row);
         extract($row);
         $idUserEdit = $_SESSION['userId'];
         $emailEdit = ' value="' . html(plain($email)) . '"';
@@ -89,11 +90,13 @@ if (!empty($_SESSION['db'])) {
             $paidThrough = date("F j, Y", $payStatus);
             $payStatusEdit = 'The account is paid through ' . $paidThrough . '.';
         }
+        /*
         if (($emailNewsEdit === ' checked' or $deliverEdit === ' checked') and $payStatusEdit === 'The account is not paid.') {
             $payNow = "      <p><label>\n";
             $payNow.= '        <input type="checkbox" name="payNow" value="1" /> Pay now' . "\n";
             $payNow.= "      </label></p>\n\n";
         }
+        */
     }
 }
 //

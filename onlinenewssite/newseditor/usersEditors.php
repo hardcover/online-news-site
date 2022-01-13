@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -35,13 +35,13 @@ $emailEdit = null;
 $emailPost = inlinePost('email');
 $fullNameEdit = null;
 $fullNamePost = html(inlinePost('fullName'));
-$idUserEdit = null;
+$idUserEdit = '';
 $idUserPost = inlinePost('idUser');
-$message = null;
+$message = '';
 $passPost = inlinePost('pass');
-$userEdit = null;
+$userEdit = '';
 $userPost = inlinePost('user');
-if (!is_null($passPost)) {
+if (!empty($passPost)) {
     $hash = password_hash($passPost, PASSWORD_DEFAULT);
 } else {
     $hash = null;
@@ -103,7 +103,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
             }
             $dbh = null;
         } else {
-            if (is_null($message)) {
+            if (empty($message)) {
                 $message = 'No user name was input.';
             }
         }

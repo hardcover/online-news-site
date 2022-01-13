@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -25,7 +25,7 @@ require $includesPath . '/parsedown-master/Parsedown.php';
 //
 $datePost = inlinePost('date');
 //
-if (is_null($datePost)) {
+if (empty($datePost)) {
     $datePost = $today;
 }
 $database = $dbPublished;
@@ -37,7 +37,7 @@ $links = null;
 $menu = "\n" . '  <nav class="n">
     <h4 class="m"><a class="m" href="edit.php">Edit</a><a class="m" href="published.php">Published</a><a class="s" href="preview.php">Preview</a><a class="m" href="archive.php">Archives</a></h4>
   </nav>' . "\n\n";
-$message = null;
+$message = '';
 $publishedIndexAdminLinks = null;
 $title = 'Preview';
 $use = 'preview';

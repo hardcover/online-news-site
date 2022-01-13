@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -300,8 +300,14 @@ if ($task === 'updateInsert3') {
 }
 if ($task === 'updateInsert4') {
     $dbh = new PDO($db2);
-    $stmt = $dbh->prepare('INSERT INTO imageSecondary (idPhoto, idArticle, image, photoName, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?, ?, ?)');
-    $stmt->execute([$idPhoto, $idArticle, $image, $photoName, $photoCredit, $photoCaption, time()]);
+    $stmt = $dbh->prepare('SELECT idPhoto FROM imageSecondary WHERE idPhoto=?');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $stmt->execute([$idPhoto]);
+    $row = $stmt->fetch();
+    if ($row === false) {
+        $stmt = $dbh->prepare('INSERT INTO imageSecondary (idPhoto, idArticle, image, photoName, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?, ?, ?)');
+        $stmt->execute([$idPhoto, $idArticle, $image, $photoName, $photoCredit, $photoCaption, time()]);
+    }
     $dbh = null;
     $response['result'] = 'success';
 }
@@ -564,8 +570,8 @@ if ($task === 'classifiedsUpdateInsert1') {
         $stmt = $dbh->prepare('DELETE FROM ads WHERE idAd=?');
         $stmt->execute([$idAd]);
     }
-    $stmt = $dbh->prepare('INSERT INTO ads (idAd, email, title, description, categoryId, review, startDate, duration, photos) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)');
-    $stmt->execute([$idAd, $email, $title, $description, $categoryId, $review, $startDate, $duration, $photos]);
+    $stmt = $dbh->prepare('INSERT INTO ads (idAd, email, title, description, categoryId, review, startDate, duration, invoice, photos) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+    $stmt->execute([$idAd, $email, $title, $description, $categoryId, $review, $startDate, $duration, $invoice, $photos]);
     $dbh = null;
     $response['result'] = 'success';
 }
@@ -1232,6 +1238,7 @@ if (($task === 'adDelete'
     //
     // Respond
     //
+    $response = array_map('strval', $response);
     echo json_encode(array_map('base64_encode', $response));
 }
 ?>

@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -22,15 +22,15 @@ foreach ($remotes as $remote) {
     //
     // Download contributed articles to the edit database
     //
-    $request = null;
-    $response = null;
+    $request = [];
+    $response = [];
     $request['task'] = 'downloadContributionIDs';
     $response = soa($remote . 'z/', $request);
     if (isset($response['IDs'])) {
         $IDs = json_decode($response['IDs'], true);
         foreach ($IDs as $idArticleRemote) {
-            $request = null;
-            $response = null;
+            $request = [];
+            $response = [];
             $request['task'] = 'downloadContribution1';
             $request['idArticle'] = $idArticleRemote;
             $response = soa($remote . 'z/', $request);
@@ -48,8 +48,8 @@ foreach ($remotes as $remote) {
                 $stmt->execute([$idArticle, $idSection, $byline, $headline, $standfirst, $text, $summary, $evolve, $expand, $extend, $photoName, $photoCredit, $photoCaption]);
                 $dbh = null;
                 if (!empty($thumbnailImageWidth)) {
-                    $request = null;
-                    $response = null;
+                    $request = [];
+                    $response = [];
                     $request['task'] = 'downloadContribution2';
                     $request['idArticle'] = $idArticleRemote;
                     $response = soa($remote . 'z/', $request);
@@ -59,8 +59,8 @@ foreach ($remotes as $remote) {
                         $stmt = $dbh->prepare('UPDATE articles SET thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
                         $stmt->execute([$thumbnailImage, $thumbnailImageWidth, $thumbnailImageHeight, $hdImageWidth, $hdImageHeight, $idArticle]);
                         $dbh = null;
-                        $request = null;
-                        $response = null;
+                        $request = [];
+                        $response = [];
                         $request['task'] = 'downloadContribution3';
                         $request['idArticle'] = $idArticleRemote;
                         $response = soa($remote . 'z/', $request);
@@ -72,18 +72,18 @@ foreach ($remotes as $remote) {
                         }
                     }
                 }
-                $request = null;
-                $response = null;
+                $request = [];
+                $response = [];
                 $request['task'] = 'downloadContribution4a';
                 $request['idArticle'] = $idArticleRemote;
                 $response = soa($remote . 'z/', $request);
                 if (isset($response['idPhotos'])) {
                     $idPhotos = json_decode($response['idPhotos'], true);
-                    $request = null;
+                    $request = [];
                     $request['task'] = 'downloadContribution4b';
                     foreach ($idPhotos as $idPhoto) {
                         $request['idPhoto'] = $idPhoto;
-                        $response = null;
+                        $response = [];
                         $response = soa($remote . 'z/', $request);
                         if (isset($response['hdImage'])) {
                             $dbh = new PDO($dbPhotoId);
@@ -102,8 +102,8 @@ foreach ($remotes as $remote) {
                 }
             }
             if ($response['result'] = 'success') {
-                $request = null;
-                $response = null;
+                $request = [];
+                $response = [];
                 $request['task'] = 'downloadContributionDelete';
                 $request['idArticle'] = $idArticleRemote;
                 $response = soa($remote . 'z/', $request);
@@ -113,8 +113,8 @@ foreach ($remotes as $remote) {
     //
     // Determine the published or archive databases
     //
-    $request = null;
-    $response = null;
+    $request = [];
+    $response = [];
     if (empty($archiveSync)) {
         $archive = null;
         $database = $dbPublished;
@@ -160,8 +160,8 @@ foreach ($remotes as $remote) {
     // When extra remote articles were found above, check again and delete the extra articles
     //
     if (count($extraArticles) > 0) {
-        $request = null;
-        $response = null;
+        $request = [];
+        $response = [];
         if (isset($archiveSync)) {
             $request['task'] = 'archiveSync';
         } else {
@@ -184,8 +184,8 @@ foreach ($remotes as $remote) {
         // Delete extra remote articles
         //
         if (isset($archiveSync)) {
-            $request = null;
-            $response = null;
+            $request = [];
+            $response = [];
             $request['task'] = 'archiveDelete';
         } else {
             $request['task'] = 'publishedDelete';

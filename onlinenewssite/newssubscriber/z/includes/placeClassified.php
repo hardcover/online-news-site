@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -31,7 +31,7 @@ $idAdEdit = null;
 $idAdPost = inlinePost('idAd');
 $invoiceEdit = null;
 $invoicePost = inlinePost('invoice');
-$message = null;
+$message = '';
 $photosOrdered = [1, 2, 3, 4, 5, 6, 7];
 $photosReverse = array_reverse($photosOrdered);
 $photoAvailable = null;
@@ -190,7 +190,7 @@ if (isset($_POST['edit']) and isset($idAdPost)) {
         $idAdEdit = $idAdPost;
         $invoiceEdit = $row['invoice'];
         $titleEdit = $row['title'];
-        if (!is_null($row['photo1'])) {
+        if (!empty($row['photo1'])) {
             $button = '      <p><input type="submit" class="button" name="addUpdate" value="Add / update"/> <input type="submit" class="button" name="photoDelete" value="Delete photos" /> <input type="submit" class="button" name="reset" value="Reset" /></p>'. "\n";
         }
     }
@@ -210,7 +210,7 @@ echoIfMessage($message);
 //
 // List pending ads first
 //
-$i = null;
+$i = 0;
 $dbh = new PDO($dbClassifiedsNew);
 $stmt = $dbh->prepare('SELECT idAd, title, description, startDate FROM ads WHERE email=? ORDER BY title');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);

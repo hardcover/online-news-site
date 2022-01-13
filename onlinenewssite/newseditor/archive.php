@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -140,8 +140,8 @@ if (isset($_POST['delete'])) {
             }
         }
     }
-    $request = null;
-    $response = null;
+    $request = [];
+    $response = [];
     $request['task'] = 'archiveDelete';
     $request['idArticle'] = $idArticle;
     foreach ($remotes as $remote) {
@@ -181,16 +181,16 @@ if (isset($_POST['edit'])) {
                 $dbFrom = $database;
                 include $includesPath . '/moveArticle.php';
                 include $includesPath . '/syncArticles.php';
-                $request = null;
-                $response = null;
+                $request = [];
+                $response = [];
                 $request['task'] = 'archiveDelete';
                 $request['idArticle'] = $idArticle;
                 foreach ($remotes as $remote) {
                     $response = soa($remote . 'z/', $request);
                 }
                 foreach ($remotes as $remote) {
-                    $request = null;
-                    $response = null;
+                    $request = [];
+                    $response = [];
                     $request['task'] = 'sitemap';
                 }
             }

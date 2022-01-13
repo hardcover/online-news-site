@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -92,7 +92,7 @@ function secure($str)
     return trim($str);                                     // Extra space & lines
 }
 /**
- * Function to set a value to either null or a secure post variable
+ * Function to set a value to either '' or a secure post variable
  *
  * @param mixed $param The post value
  *
@@ -103,7 +103,7 @@ function securePost($param)
     if (!empty($_POST[$param])) {
         $str = secure($_POST[$param]);
     } else {
-        $str = null;
+        $str = '';
     }
     return $str;
 }
@@ -120,7 +120,7 @@ function inlinePost($param)
         $str = secure($_POST[$param]);
         $str = preg_replace("'\s+'", ' ', $str);
     } else {
-        $str = null;
+        $str = '';
     }
     return $str;
 }
@@ -197,7 +197,7 @@ function echoIfText($str)
  */
 function echoIfYes($str)
 {
-    if ($str === '1') {
+    if (strval($str) === '1') {
         echo ' checked';
     }
 }
@@ -250,7 +250,7 @@ function returnIfYes($str)
 function muddle($str)
 {
     if (empty($str)) {
-        return null;
+        return '';
     } else {
         return str_rot13(base64_encode($str));
     }
@@ -265,7 +265,7 @@ function muddle($str)
 function plain($str)
 {
     if (empty($str)) {
-        return null;
+        return '';
     } else {
         return base64_decode(str_rot13($str));
     }
@@ -287,7 +287,7 @@ function uploadFilesizeMaximum()
         }
         $maxFileSize = ', ' . $maxFileSize . ' MB maximum filesize';
     } else {
-        $maxFileSize = null;
+        $maxFileSize = '';
     }
     echo $maxFileSize;
 }

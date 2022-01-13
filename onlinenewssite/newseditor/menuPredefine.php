@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -28,7 +28,7 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
-if (empty($row['userType']) or $row['userType'] !== '5') {
+if (empty($row['userType']) or strval($row['userType']) !== '5') {
     include 'logout.php';
     exit;
 }
@@ -44,7 +44,7 @@ $classifiedsPost = inlinePost('classifieds');
 $contactEdit = null;
 $contactPost = inlinePost('contact');
 $edit = inlinePost('edit');
-$message = null;
+$message = '';
 //
 // Archive search edit variable
 //

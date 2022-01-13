@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -33,8 +33,8 @@ foreach ($remotes as $remote) {
     //
     // Integrate new subscribers from remote sites
     //
-    $request = null;
-    $response = null;
+    $request = [];
+    $response = [];
     $request['task'] = 'subscribersNewDownload';
     $response = soa($remote . 'z/', $request);
     if ($response['result'] === 'success') {
@@ -62,8 +62,8 @@ foreach ($remotes as $remote) {
     //
     // Update changed remote subscriber records to the main database
     //
-    $request = null;
-    $response = null;
+    $request = [];
+    $response = [];
     $request['task'] = 'subscribersSyncSoaFlagged';
     $response = soa($remote . 'z/', $request);
     if (isset($response) and $response['result'] === 'success' and isset($response['remoteSubscribers'])) {
@@ -72,8 +72,8 @@ foreach ($remotes as $remote) {
             $remoteSubscribers = [];
         }
         foreach ($remoteSubscribers as $idUser) {
-            $request = null;
-            $response = null;
+            $request = [];
+            $response = [];
             $request['task'] = 'subscribersDownload';
             $request['idUser'] = $idUser;
             $response = soa($remote . 'z/', $request);
@@ -84,8 +84,8 @@ foreach ($remotes as $remote) {
                 $stmt->execute([$email, $payerEmail, $payerFirstName, $payerLastName, $ipAddress, $verify, $verified, $time, $pass, $payStatus, $paid, $paymentDate, $note, $contributor, $classifiedOnly, $deliver, $deliver2, $deliveryAddress, $dCityRegionPostal, $billingAddress, $bCityRegionPostal, $soa, $evolve, $expand, $extend, $idUser]);
                 $dbh = null;
             }
-            $request = null;
-            $response = null;
+            $request = [];
+            $response = [];
             $request['task'] = 'subscribersSoaUnflag';
             $request['idUser'] = $idUser;
             $response = soa($remote . 'z/', $request);
@@ -100,8 +100,8 @@ foreach ($remotes as $remote) {
     $stmt->execute([1]);
     foreach ($stmt as $row) {
         extract($row);
-        $request = null;
-        $response = null;
+        $request = [];
+        $response = [];
         $request['task'] = 'subscribersUpdate';
         $request['idUser'] = $idUser;
         $request['email'] = $email;
@@ -138,8 +138,8 @@ foreach ($remotes as $remote) {
     //
     // Determine the missing and extra subscribers
     //
-    $request = null;
-    $response = null;
+    $request = [];
+    $response = [];
     $request['task'] = 'subscribersSync';
     $response = soa($remote . 'z/', $request);
     $remoteSubscribers = json_decode($response['remoteSubscribers'], true);
@@ -161,8 +161,8 @@ foreach ($remotes as $remote) {
     //
     if (count($missingSubscribers) > 0) {
         foreach ($missingSubscribers as $idUser) {
-            $request = null;
-            $response = null;
+            $request = [];
+            $response = [];
             $request['task'] = 'subscribersUpload';
             $dbh = new PDO($dbSubscribers);
             $stmt = $dbh->prepare('SELECT idUser, email, payerEmail, payerFirstName, payerLastName, ipAddress, verify, verified, time, pass, payStatus, paid, paymentDate, note, contributor, classifiedOnly, deliver, deliver2, deliveryAddress, dCityRegionPostal, billingAddress, bCityRegionPostal, soa, evolve, expand, extend FROM users WHERE idUser=?');
@@ -204,8 +204,8 @@ foreach ($remotes as $remote) {
     // When extra remote subscribers were found above, check again and delete the extra subscribers
     //
     if (count($extraSubscribers) > 0) {
-        $request = null;
-        $response = null;
+        $request = [];
+        $response = [];
         $request['task'] = 'subscribersSync';
         $response = soa($remote . 'z/', $request);
         $remoteSubscribers = json_decode($response['remoteSubscribers'], true);
@@ -224,8 +224,8 @@ foreach ($remotes as $remote) {
         // Delete extra remote subscribers
         //
         foreach ($extraSubscribers as $idUser) {
-            $request = null;
-            $response = null;
+            $request = [];
+            $response = [];
             $request['task'] = 'subscriberDelete';
             $request['idUser'] = $idUser;
             $response = soa($remote . 'z/', $request);

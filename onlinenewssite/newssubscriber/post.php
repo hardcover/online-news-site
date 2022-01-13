@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -31,7 +31,7 @@ if (empty($_POST)) {
 // Variables
 //
 $emailPost = inlinePost('email');
-$message = null;
+$message = '';
 $passOnePost = inlinePost('passOne');
 $passPost = inlinePost('pass');
 $passTwoPost = inlinePost('passTwo');
@@ -97,8 +97,10 @@ if ((isset($_POST['login'])
     $stmt->execute([muddle($emailPost)]);
     $row = $stmt->fetch();
     $dbh = null;
-    $rowSubscribersNew = $row;
+    $rowSubscribersNew = null;
     if ($row) {
+        $row = array_map('strval', $row);
+        $rowSubscribersNew = $row;
         $idUser = $row['idUser'];
         $database = 'n';
     }
@@ -108,12 +110,14 @@ if ((isset($_POST['login'])
     $stmt->execute([muddle($emailPost)]);
     $row = $stmt->fetch();
     $dbh = null;
-    $rowSubscribers = $row;
+    $rowSubscribers = null;
     if ($row) {
+        $row = array_map('strval', $row);
+        $rowSubscribers = $row;
         $idUser = $row['idUser'];
         $database = 's';
     }
-    if ($rowSubscribers === false and $rowSubscribersNew === false) {
+    if (is_null($rowSubscribers) and is_null($rowSubscribersNew)) {
         //
         // Register a new subscriber
         //
@@ -150,33 +154,31 @@ if ((isset($_POST['login'])
     if (isset($rowSubscribersNew['pass'])) {
         $subscribersNewPass = $rowSubscribersNew['pass'];
     } else {
-        $subscribersNewPass = null;
+        $subscribersNewPass = '';
     }
     //
     if (isset($rowSubscribersNew['verified'])) {
         $subscribersNewVerified = $rowSubscribersNew['verified'];
     } else {
-        $subscribersNewVerified = null;
+        $subscribersNewVerified = '';
     }
     //
     if (isset($rowSubscribers['pass'])) {
         $subscribersPass = $rowSubscribers['pass'];
     } else {
-        $subscribersPass = null;
+        $subscribersPass = '';
     }
     //
     if (isset($rowSubscribers['verified'])) {
         $subscribersVerified = $rowSubscribers['verified'];
     } else {
-        $subscribersVerified = null;
+        $subscribersVerified = '';
     }
     //
     // Authentication
     //
-    if (password_verify($passPost, $subscribersPass)
-        or (password_verify($passPost, $subscribersNewPass)
-        and $subscribersVerified === '1'
-        or $subscribersNewVerified === '1')
+    if ((password_verify($passPost, $subscribersPass) or (password_verify($passPost, $subscribersNewPass))
+        and ($subscribersVerified === '1' or $subscribersNewVerified === '1'))
     ) {
         //
         // Update the log database
@@ -241,7 +243,7 @@ if ((isset($_POST['login'])
     } else {
         if (isset($_POST['register'])) {
             //
-            // Set message for when a registration is begun again within the fifteen minute time for email confirmation
+            // Set message for when a registration is begun again within the time limit for email confirmation
             //
             $message = 'Check your email for a message from us. Visit the link in the email to confirm the email address and continue registration.<br /><br />The website does not use cookies except for logged-in users. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.';
         } else {
@@ -286,7 +288,7 @@ if (isset($_POST['email']) and isset($_POST['forgot']) and isset($_POST['forgotP
 // Reset password
 //
 if (isset($_POST['resetPassword']) and isset($verifyPost)) {
-    if (is_null($passOnePost) or is_null($passTwoPost)) {
+    if (empty($passOnePost) or empty($passTwoPost)) {
         $_SESSION['message'] = 'Both password fields are required.';
         header('Location: ' . $uri . '?t=p&v=' . $verifyPost, true);
         exit;

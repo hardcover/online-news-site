@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -33,40 +33,42 @@ foreach ($remotes as $remote) {
     $dbh = new PDO($dbClassifieds);
     $stmt = $dbh->prepare('SELECT email, review, photos FROM ads WHERE idAd=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute([$idAdPost]);
+    $stmt->execute([$idAdPublish]);
     $row = $stmt->fetch();
     $dbh = null;
     $photos = json_decode($row['photos'], true);
-    $request = null;
-    $response = null;
+    $photos = array_map('strval', $photos);
+    $request = [];
+    $response = [];
     $request['task'] = 'classifiedsUpdateInsert1';
     $request['email'] = $row['email'];
-    $request['idAd'] = $idAdPost;
+    $request['idAd'] = $idAdPublish;
     $request['title'] = $titlePost;
     $request['description'] = $descriptionPost;
     $request['categoryId'] = $categoryIdPost;
     $request['review'] = $row['review'];
     $request['startDate'] = $startDatePost;
-    $request['duration'] = '1';
+    $request['duration'] = $durationPost;
+    $request['invoice'] = $invoicePost;
     $request['photos'] = $row['photos'];
     $response = soa($remote . 'z/', $request);
     if ($response['result'] === 'success') {
         //
         // Add, update or set to null the photos
         //
-        $i = null;
+        $i = 0;
         foreach ($photos as $photo) {
             $i++;
-            if ($photo === 1) {
-                $request = null;
-                $response = null;
+            if ($photo === '1') {
+                $request = [];
+                $response = [];
                 $request['task'] = 'classifiedsUpdateInsert2';
-                $request['idAd'] = $idAdPost;
+                $request['idAd'] = $idAdPublish;
                 $request['photoNumber'] = $i;
                 $dbh = new PDO($dbClassifieds);
                 $stmt = $dbh->prepare('SELECT photo' . $i . ' FROM ads WHERE idAd=?');
                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
-                $stmt->execute([$idAdPost]);
+                $stmt->execute([$idAdPublish]);
                 $row = $stmt->fetch();
                 $dbh = null;
                 $request['photo'] = $row['photo' . $i];

@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -29,7 +29,7 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
-if (empty($row['userType']) or $row['userType'] !== '1') {
+if (empty($row['userType']) or strval($row['userType']) !== '1') {
     include 'logout.php';
     exit;
 }
@@ -83,13 +83,13 @@ foreach ($stmt as $row) {
 }
 $dbh = null;
 //
-// Button: Update
+// Button: Add / Update
 //
 if (isset($_POST['update'])) {
     //
     // Determine insert or update
     //
-    if (isset($idArticlePost)) {
+    if (!empty($idArticlePost)) {
         $idArticleEdit = $idArticlePost;
     } else {
         $dbh = new PDO($dbArticleId);
@@ -149,35 +149,35 @@ if (isset($_POST['update'])) {
     $stmt = $dbh->prepare('DELETE FROM answers WHERE idArticle=?');
     $stmt->execute([$idArticlePost]);
     $stmt = $dbh->prepare('INSERT INTO answers (idArticle, sortOrder, answer) VALUES (?, ?, ?)');
-    if (isset($answer1Post)) {
+    if (!empty($answer1Post)) {
         $stmt->execute([$idArticleEdit, 1, $answer1Post]);
         $answer1Edit = $answer1Post;
     }
-    if (isset($answer2Post)) {
+    if (!empty($answer2Post)) {
         $stmt->execute([$idArticleEdit, 2, $answer2Post]);
         $answer2Edit = $answer2Post;
     }
-    if (isset($answer3Post)) {
+    if (!empty($answer3Post)) {
         $stmt->execute([$idArticleEdit, 3, $answer3Post]);
         $answer3Edit = $answer3Post;
     }
-    if (isset($answer4Post)) {
+    if (!empty($answer4Post)) {
         $stmt->execute([$idArticleEdit, 4, $answer4Post]);
         $answer4Edit = $answer4Post;
     }
-    if (isset($answer5Post)) {
+    if (!empty($answer5Post)) {
         $stmt->execute([$idArticleEdit, 5, $answer5Post]);
         $answer5Edit = $answer5Post;
     }
-    if (isset($answer6Post)) {
+    if (!empty($answer6Post)) {
         $stmt->execute([$idArticleEdit, 6, $answer6Post]);
         $answer6Edit = $answer6Post;
     }
-    if (isset($answer7Post)) {
+    if (!empty($answer7Post)) {
         $stmt->execute([$idArticleEdit, 7, $answer7Post]);
         $answer7Edit = $answer7Post;
     }
-    if (isset($answer8Post)) {
+    if (!empty($answer8Post)) {
         $stmt->execute([$idArticleEdit, 8, $answer8Post]);
         $answer8Edit = $answer8Post;
     }
@@ -193,8 +193,8 @@ if (isset($_POST['update'])) {
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {
-        $request = null;
-        $response = null;
+        $request = [];
+        $response = [];
         $request['task'] = 'surveyUpdate';
         $request['archive'] = null;
         $request['idArticle'] = $idArticleEdit;
@@ -251,6 +251,7 @@ if (isset($_POST['edit']) and isset($_POST['idArticle'])) {
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {
+        $row = array_map('strval', $row);
         $endDateEdit = $row['endDate'];
         $idArticleEdit = $row['idArticle'];
         $publicationDateEdit = $row['publicationDate'];
@@ -261,6 +262,7 @@ if (isset($_POST['edit']) and isset($_POST['idArticle'])) {
         $stmt->execute([$idArticlePost]);
         $count = 1;
         foreach ($stmt as $row) {
+            $row = array_map('strval', $row);
             if ($row['sortOrder'] === '1') {
                 $answer1Edit = $row['answer'];
             }
@@ -295,6 +297,7 @@ if (isset($_POST['edit']) and isset($_POST['idArticle'])) {
         $row = $stmt->fetch();
         $dbh = null;
         if ($row) {
+            $row = array_map('strval', $row);
             $endDateEdit = $row['endDate'];
             $idArticleEdit = $row['idArticle'];
             $publicationDateEdit = $row['publicationDate'];
@@ -305,6 +308,7 @@ if (isset($_POST['edit']) and isset($_POST['idArticle'])) {
             $stmt->execute([$idArticlePost]);
             $count = 1;
             foreach ($stmt as $row) {
+                $row = array_map('strval', $row);
                 if ($row['sortOrder'] === '1') {
                     $answer1Edit = $row['answer'];
                 }
@@ -381,10 +385,10 @@ require $includesPath . '/body.inc';
         <textarea id="question" name="question" class="h"><?php echoIfText($questionEdit); ?></textarea></p>
 
         <p>Start date<br />
-        <input id="publicationDate" name="publicationDate" type="text" class="datepicker h"<?php echoIfValue($publicationDateEdit); ?> /></p>
+        <input id="publicationDate" name="publicationDate" type="text" class="datepicker date"<?php echoIfValue($publicationDateEdit); ?> /></p>
 
         <p>End date<br />
-        <input name="endDate" type="text" class="datepicker h" <?php echoIfValue($endDateEdit); ?> /></p>
+        <input name="endDate" type="text" class="datepicker date" <?php echoIfValue($endDateEdit); ?> /></p>
 
         <p><label for="idSection">Section</label><br />
         <select id="idSection" name="idSection">

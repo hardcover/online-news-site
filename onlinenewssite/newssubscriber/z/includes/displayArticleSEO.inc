@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -25,6 +25,7 @@ $stmt->execute([$aGet]);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
+    $row = array_map('strval', $row);
     extract($row);
     $database2 = $dbPublished2;
     $imagePath = 'images.php';
@@ -54,6 +55,7 @@ if ($row) {
             $row = $stmt->fetch();
             $dbh = null;
             if ($row) {
+                $row = array_map('strval', $row);
                 extract($row);
                 $dbNumber = -1;
                 $database2 = $dbArchive2;
@@ -81,10 +83,10 @@ if ($row) {
 //
 // HTML
 //
-$html = '    <p><span class="fr"><a href="' . $uri . '?m=archive-search" class="n">Archive search</a></span></p>' . "\n\n";
+$html = '      <p><span class="fr"><a href="' . $uri . '?m=archive-search" class="n">Archive search</a></span></p>' . "\n\n";
 $bylineDateTime = isset($publicationDate) ? date("l, F j, Y", strtotime($publicationDate)) : null;
-$html.= '    <p><b>' . $section . "</b></p>\n\n";
-$html.= '    <h1>' . html($headline) . "</h1>\n\n";
+$html.= '      <p><b>' . $section . "</b></p>\n\n";
+$html.= '      <h1>' . html($headline) . "</h1>\n\n";
 if (!empty($standfirst)) {
     $html.= '    <h3>' . html($standfirst) . "</h3>\n\n";
 }
@@ -115,7 +117,7 @@ if (!empty($hdImage)) {
     }
 }
 if (!empty($byline) or !empty($bylineDateTime)) {
-    $html.= '    <h5>';
+    $html.= '      <h5 class="a">';
 }
 if (!empty($byline)) {
     $html.= 'By ' . $byline;
@@ -197,10 +199,10 @@ if ($survey === '1'
         $stmt->execute([$idAnswer]);
         $row = $stmt->fetch();
         $each = $row['count(idAnswer)'];
-        $html.= '  <p><meter min="0" max="' . $total . '" value="' . $each . '" title="' . $answer . '">' . $answer . '"</meter> ' . $answer . ', ' . $each . "</p>\n\n";
+        $html.= '      <p class="a"><meter min="0" max="' . $total . '" value="' . $each . '" title="' . $answer . '">' . $answer . '"</meter> ' . $answer . ', ' . $each . "</p>\n\n";
     }
     $dbh = null;
 }
-$html.= "\n" . '    <p><span class="fr"><a href="' . $uri . '?m=archive-search" class="n">Archive search</a></span></p>' . "\n";
+$html.= "\n" . '      <p><span class="fr"><a href="' . $uri . '?m=archive-search" class="n">Archive search</a></span></p>' . "\n";
 echo $html;
 ?>

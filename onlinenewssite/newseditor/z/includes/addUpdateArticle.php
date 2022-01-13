@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -26,8 +26,8 @@ $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
     extract($row);
-    $request = null;
-    $response = null;
+    $request = [];
+    $response = [];
     $request['task'] = 'updateInsert1';
     $request['archive'] = $archive;
     $request['idArticle'] = $idArticle;
@@ -66,7 +66,7 @@ if ($row) {
         //
         // Copy the thumbnail and other small items
         //
-        $request = null;
+        $request = [];
         $dbh = new PDO($database);
         $stmt = $dbh->prepare('SELECT thumbnailImage, thumbnailImageWidth, thumbnailImageHeight, hdImageWidth, hdImageHeight FROM articles WHERE idArticle=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -74,8 +74,8 @@ if ($row) {
         $row = $stmt->fetch();
         $dbh = null;
         if ($response['result'] === 'success') {
-            $request = null;
-            $response = null;
+            $request = [];
+            $response = [];
             $request['task'] = 'updateInsert2';
             $request['archive'] = $archive;
             $request['idArticle'] = $idArticle;
@@ -91,7 +91,7 @@ if ($row) {
         //
         // Upload the published HD image
         //
-        $request = null;
+        $request = [];
         $dbh = new PDO($database);
         $stmt = $dbh->prepare('SELECT hdImage FROM articles WHERE idArticle=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -99,8 +99,8 @@ if ($row) {
         $row = $stmt->fetch();
         $dbh = null;
         if ($response['result'] === 'success') {
-            $request = null;
-            $response = null;
+            $request = [];
+            $response = [];
             $request['task'] = 'updateInsert3';
             $request['archive'] = $archive;
             $request['idArticle'] = $idArticle;
@@ -113,8 +113,8 @@ if ($row) {
     //
     // Move the secondary images
     //
-    $request = null;
-    $response = null;
+    $request = [];
+    $response = [];
     if (is_null($archive)) {
         $request['task'] = 'publishedSync2';
     } else {
@@ -136,8 +136,8 @@ if ($row) {
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
             $stmt->execute([$idArticle]);
             foreach ($stmt as $row) {
-                $request = null;
-                $response = null;
+                $request = [];
+                $response = [];
                 $request['task'] = 'updateInsert4';
                 $request['archive'] = $archive;
                 $request['idPhoto'] = $row['idPhoto'];

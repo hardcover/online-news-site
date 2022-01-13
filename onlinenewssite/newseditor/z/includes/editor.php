@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -34,7 +34,7 @@ $idSectionEdit = null;
 $idSectionPost = inlinePost('idSection');
 $keywordsEdit = null;
 $keywordsPost = inlinePost('keywords');
-$message = null;
+$message = '';
 $photoCaptionPost = inlinePost('photoCaption');
 $photoCreditPost = inlinePost('photoCredit');
 $publicationDateEdit = null;
@@ -292,8 +292,8 @@ if (isset($_POST['addUpdate'])) {
                     // For published articles, upload the current secondary image, photo credit and caption
                     //
                     if ($use === 'published') {
-                        $request = null;
-                        $response = null;
+                        $request = [];
+                        $response = [];
                         $request['task'] = 'updateInsert4';
                         $request['idPhoto'] = $idPhoto;
                         $request['idArticle'] = $idArticle;
@@ -338,8 +338,8 @@ if (isset($_POST['addUpdate'])) {
         //
         if (empty($_POST['existing']) and $use === 'published') {
             $request = [];
+            $response = [];
             $request['task'] = 'sitemap';
-            $response = null;
             foreach ($remotes as $remote) {
                 $response = soa($remote . 'z/', $request);
             }
@@ -359,8 +359,8 @@ if (isset($_POST['deletePhoto']) and isset($idArticle)) {
     $stmt->execute([$idArticle]);
     $dbh = null;
     if ($use === 'published') {
-        $request = null;
-        $response = null;
+        $request = [];
+        $response = [];
         $request['task'] = 'publishedDeletePhoto';
         $request['idArticle'] = $idArticle;
         foreach ($remotes as $remote) {
@@ -390,8 +390,8 @@ if (isset($_POST['delete']) and isset($idArticle)) {
     $stmt->execute([$idArticle]);
     $dbh = null;
     if ($use === 'published') {
-        $request = null;
-        $response = null;
+        $request = [];
+        $response = [];
         $request['task'] = 'publishedDelete';
         $request['idArticle'] = $idArticle;
         foreach ($remotes as $remote) {
@@ -405,8 +405,8 @@ if (isset($_POST['delete']) and isset($idArticle)) {
     //
     if ($use === 'published') {
         $request = [];
+        $response = [];
         $request['task'] = 'sitemap';
-        $response = null;
         foreach ($remotes as $remote) {
             $response = soa($remote . 'z/', $request);
         }
@@ -490,8 +490,8 @@ if (isset($_POST['publish'])
         // Update sitemaps and rss
         //
         $request = [];
+        $response = [];
         $request['task'] = 'sitemap';
-        $response = null;
         foreach ($remotes as $remote) {
             $response = soa($remote . 'z/', $request);
         }

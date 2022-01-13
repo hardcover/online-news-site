@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -33,8 +33,8 @@ foreach ($remotes as $remote) {
     //
     // Determine the missing and extra menu items
     //
-    $request = null;
-    $response = null;
+    $request = [];
+    $response = [];
     $request['task'] = 'menuSync';
     $response = soa($remote . 'z/', $request);
     $remoteMenu = json_decode($response['remoteMenu'], true);
@@ -63,8 +63,8 @@ foreach ($remotes as $remote) {
             $row = $stmt->fetch();
             $dbh = null;
             extract($row);
-            $request = null;
-            $response = null;
+            $request = [];
+            $response = [];
             $request['task'] = 'menuInsert';
             $request['idMenu'] = $idMenu;
             $request['menuName'] = $menuName;
@@ -79,8 +79,8 @@ foreach ($remotes as $remote) {
     // When extra remote menu items were found above, check again and delete the extra items
     //
     if (count($extraMenuItems) > 0) {
-        $request = null;
-        $response = null;
+        $request = [];
+        $response = [];
         $request['task'] = 'menuSync';
         $response = soa($remote . 'z/', $request);
         $remoteMenu = json_decode($response['remoteMenu'], true);
@@ -98,8 +98,8 @@ foreach ($remotes as $remote) {
         //
         // Delete extra remote menu items
         //
-        $request = null;
-        $response = null;
+        $request = [];
+        $response = [];
         $request['task'] = 'menuDelete';
         foreach ($extraMenuItems as $idMenu) {
             $request['idMenu'] = $idMenu;

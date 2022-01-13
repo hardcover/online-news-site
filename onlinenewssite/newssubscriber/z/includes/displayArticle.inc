@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -42,6 +42,7 @@ if (strpos($database, 'archive') === false) {
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute([$aGet]);
         $row = $stmt->fetch();
+        $row = array_map('strval', $row);
         extract($row);
         //
         // Set previous and next links
@@ -172,36 +173,36 @@ if (strpos($database, 'archive') === false) {
                 // Display a survey not yet in the archives
                 //
                 if (empty($_POST['vote'])) {
-                    $html.= '  <form class="wait" action="' . $uri . 'news.php?a=' . $aGet . '" method="post">' . "\n";
-                    $html.= '    <input name="idQuestion" type="hidden" value="' . $aGet . '" />' . "\n";
+                    $html.= '    <form class="wait" action="' . $uri . 'news.php?a=' . $aGet . '" method="post">' . "\n";
+                    $html.= '      <input name="idQuestion" type="hidden" value="' . $aGet . '" />' . "\n";
                     $dbh = new PDO($dbSurvey);
                     $stmt = $dbh->prepare('SELECT idAnswer, sortOrder, answer FROM answers WHERE idArticle=? ORDER BY sortOrder');
                     $stmt->setFetchMode(PDO::FETCH_ASSOC);
                     $stmt->execute([$aGet]);
                     foreach ($stmt as $row) {
                         extract($row);
-                        $html.= '    <p class="a"><label for="' . $idAnswer . '"><input id="' . $idAnswer . '" name="answer" type="radio" value="' . $idAnswer . '" /> ' . $answer . '</label></p>' . "\n\n";
+                        $html.= '      <p class="a"><label for="' . $idAnswer . '"><input id="' . $idAnswer . '" name="answer" type="radio" value="' . $idAnswer . '" /> ' . $answer . '</label></p>' . "\n\n";
                     }
-                    $html.= '    <p class="a"><input type="submit" class="button" value="Cast vote" name="vote" /></p>' . "\n";
-                    $html.= "  </form>\n";
+                    $html.= '      <p class="a"><input type="submit" class="button" value="Cast vote" name="vote" /></p>' . "\n";
+                    $html.= "    </form>\n";
                 } else {
                     if (empty($_POST['answer'])) {
                         //
                         // If no vote was cast
                         //
-                        $html.= '  <p class="error">A selection is required.</p>' . "\n\n";
-                        $html.= '  <form class="wait" action="' . $uri . 'news.php?a=' . $aGet . '" method="post">' . "\n";
-                        $html.= '    <input name="idQuestion" type="hidden" value="' . $aGet . '" />' . "\n";
+                        $html.= '    <p class="error">A selection is required.</p>' . "\n\n";
+                        $html.= '    <form class="wait" action="' . $uri . 'news.php?a=' . $aGet . '" method="post">' . "\n";
+                        $html.= '      <input name="idQuestion" type="hidden" value="' . $aGet . '" />' . "\n";
                         $dbh = new PDO($dbSurvey);
                         $stmt = $dbh->prepare('SELECT idAnswer, sortOrder, answer FROM answers WHERE idArticle=? ORDER BY sortOrder');
                         $stmt->setFetchMode(PDO::FETCH_ASSOC);
                         $stmt->execute([$aGet]);
                         foreach ($stmt as $row) {
                             extract($row);
-                            $html.= '  <p class="a"><label for="' . $sortOrder . '"><input id="' . $sortOrder . '" name="answer" type="radio" value="' . $sortOrder . '" /> ' . $answer . '</label></p>' . "\n\n";
+                            $html.= '    <p class="a"><label for="' . $sortOrder . '"><input id="' . $sortOrder . '" name="answer" type="radio" value="' . $sortOrder . '" /> ' . $answer . '</label></p>' . "\n\n";
                         }
-                        $html.= '  <p class="a"><input type="submit" class="button" value="Cast vote" name="vote" /></p>' . "\n";
-                        $html.= "  </form>\n";
+                        $html.= '    <p class="a"><input type="submit" class="button" value="Cast vote" name="vote" /></p>' . "\n";
+                        $html.= "    </form>\n";
                     } else {
                         //
                         // Tally the vote, display the survey results
@@ -213,7 +214,7 @@ if (strpos($database, 'archive') === false) {
                         $row = $stmt->fetch();
                         $dbh = null;
                         if ($row) {
-                            $html.= '  <p class="error">Your vote had already been tallied.</p>' . "\n\n";
+                            $html.= '    <p class="error">Your vote had already been tallied.</p>' . "\n\n";
                         } else {
                             $dbh = new PDO($dbSurvey);
                             $stmt = $dbh->prepare('INSERT INTO tally (idArticle, idAnswer, ipAddress) VALUES (?, ?, ?)');
@@ -236,7 +237,7 @@ if (strpos($database, 'archive') === false) {
                             $stmt->execute([$idAnswer]);
                             $row = $stmt->fetch();
                             $each = $row['count(idAnswer)'];
-                            $html.= '  <p class="a"><meter min="0" max="' . $total . '" value="' . $each . '" title="' . $answer . '">' . $answer . '"</meter> ' . $answer . ', ' . $each . "</p>\n\n";
+                            $html.= '    <p class="a"><meter min="0" max="' . $total . '" value="' . $each . '" title="' . $answer . '">' . $answer . '"</meter> ' . $answer . ', ' . $each . "</p>\n\n";
                         }
                         $dbh = null;
                     }

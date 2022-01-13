@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -24,7 +24,7 @@ $headers.= 'Content-Type: text/plain; charset=utf-8; format=flowed' . "\r\n";
 $headers.= 'Content-Transfer-Encoding: 7bit' . "\r\n";
 $formPost = inlinePost('form');
 $location = null;
-$message = null;
+$message = '';
 //
 $emailTo = null;
 $information = null;
@@ -53,7 +53,7 @@ if (file_exists($includesPath . '/custom/programs/location.php')) {
 //
 // Form select
 //
-if (is_null($formPost)) {
+if (empty($formPost)) {
     $html = '        <h3>Type of content</h3>
 
         <p><label for="birth"><input name="form" id="birth" type="radio" value="birth" required /> Birth announcement</label><br />
@@ -104,40 +104,40 @@ if (isset($formPost) and $formPost === 'birth') {
     //
     // Birth announcement error messages
     //
-    if (isset($_POST['submit']) and is_null($babyNamePost)) {
+    if (isset($_POST['submit']) and empty($babyNamePost)) {
         $message.= 'Full name of baby is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($genderPost)) {
+    if (isset($_POST['submit']) and empty($genderPost)) {
         $message.= 'Gender is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($parentNamesPost)) {
+    if (isset($_POST['submit']) and empty($parentNamesPost)) {
         $message.= 'First and last names of parents are required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($residencePost)) {
+    if (isset($_POST['submit']) and empty($residencePost)) {
         $message.= 'Parents place of residence is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($sizePost)) {
+    if (isset($_POST['submit']) and empty($sizePost)) {
         $message.= 'Weight and length of newborn are required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($birthdayPost)) {
+    if (isset($_POST['submit']) and empty($birthdayPost)) {
         $message.= 'Date and place of birth are required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($childrenPost)) {
+    if (isset($_POST['submit']) and empty($childrenPost)) {
         $message.= 'Other children in the family and their ages are required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($grandparentsPost)) {
+    if (isset($_POST['submit']) and empty($grandparentsPost)) {
         $message.= 'Grandparents (first and last names and places of residence) are required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($greatGrandparentsPost)) {
+    if (isset($_POST['submit']) and empty($greatGrandparentsPost)) {
         $message.= 'Great grandparents (first and last names and places of residence) are required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($telephonePost)) {
+    if (isset($_POST['submit']) and empty($telephonePost)) {
         $message.= 'Telephone number is required.';
     }
     //
     // Send the information or reset the form
     //
-    if (isset($_POST['submit']) and is_null($message)) {
+    if (isset($_POST['submit']) and empty($message)) {
         $body = null;
         if (!empty($emailPost)) {
             $body.= 'Email' . "\n";
@@ -271,55 +271,55 @@ if (isset($formPost) and $formPost === 'engagement') {
     //
     // Engagement announcement error messages
     //
-    if (isset($_POST['submit']) and is_null($datePost)) {
+    if (isset($_POST['submit']) and empty($datePost)) {
         $message.= 'Date of wedding is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($weddingPlacePost)) {
+    if (isset($_POST['submit']) and empty($weddingPlacePost)) {
         $message.= 'Place of wedding is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($womansNamePost)) {
+    if (isset($_POST['submit']) and empty($womansNamePost)) {
         $message.= 'Woman\'s full name is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($womansResidencePost)) {
+    if (isset($_POST['submit']) and empty($womansResidencePost)) {
         $message.= 'Woman\'s place of residence is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($womansParentsPost)) {
+    if (isset($_POST['submit']) and empty($womansParentsPost)) {
         $message.= 'Names of woman\'s parents are required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($womansParentsResidencePost)) {
+    if (isset($_POST['submit']) and empty($womansParentsResidencePost)) {
         $message.= 'Place or places of residence of woman\'s parents is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($mansNamePost)) {
+    if (isset($_POST['submit']) and empty($mansNamePost)) {
         $message.= 'Man\'s full name is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($mansResidencePost)) {
+    if (isset($_POST['submit']) and empty($mansResidencePost)) {
         $message.= 'Man\'s place of residence is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($mansParentsPost)) {
+    if (isset($_POST['submit']) and empty($mansParentsPost)) {
         $message.= 'Names of man\'s parents are required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($mansParentsResidencePost)) {
+    if (isset($_POST['submit']) and empty($mansParentsResidencePost)) {
         $message.= 'Place or places of residence of man\'s parents is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($womansSchoolsPost)) {
+    if (isset($_POST['submit']) and empty($womansSchoolsPost)) {
         $message.= 'Schools woman has attended, year of graduation, degrees received are required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($womansEmployerPost)) {
+    if (isset($_POST['submit']) and empty($womansEmployerPost)) {
         $message.= 'Woman\'s place of employment or school currently attending is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($mansSchoolsPost)) {
+    if (isset($_POST['submit']) and empty($mansSchoolsPost)) {
         $message.= 'Schools man has attended, year of graduation, degrees received are required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($mansEmployerPost)) {
+    if (isset($_POST['submit']) and empty($mansEmployerPost)) {
         $message.= 'Man\'s place of employment or school currently attending is required.';
     }
-    if (isset($_POST['submit']) and is_null($telephonePost)) {
+    if (isset($_POST['submit']) and empty($telephonePost)) {
         $message.= 'Telephone number is required.<br />';
     }
     //
     // Send the information or reset the form
     //
-    if (isset($_POST['submit']) and is_null($message)) {
+    if (isset($_POST['submit']) and empty($message)) {
         $body = null;
         if (!empty($emailPost)) {
             $body.= 'Email' . "\n";
@@ -524,103 +524,103 @@ if (isset($formPost) and $formPost === 'obituary') {
     //
     // Obituary error messages
     //
-    if (isset($_POST['submit']) and is_null($namePost)) {
+    if (isset($_POST['submit']) and empty($namePost)) {
         $message.= 'Name is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($genderPost)) {
+    if (isset($_POST['submit']) and empty($genderPost)) {
         $message.= 'Sex is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($agePost)) {
+    if (isset($_POST['submit']) and empty($agePost)) {
         $message.= 'Age is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($residencePlacePost)) {
+    if (isset($_POST['submit']) and empty($residencePlacePost)) {
         $message.= 'Place of residence is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($residenceLengthPost)) {
+    if (isset($_POST['submit']) and empty($residenceLengthPost)) {
         $message.= 'Length of residence is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($deathPlacePost)) {
+    if (isset($_POST['submit']) and empty($deathPlacePost)) {
         $message.= 'Place of death is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($deathTimePost)) {
+    if (isset($_POST['submit']) and empty($deathTimePost)) {
         $message.= 'Date, weekday of death is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($deathCausePost)) {
+    if (isset($_POST['submit']) and empty($deathCausePost)) {
         $message.= 'Cause of death is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($birthDatePost)) {
+    if (isset($_POST['submit']) and empty($birthDatePost)) {
         $message.= 'Date of birth is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($birthPlacePost)) {
+    if (isset($_POST['submit']) and empty($birthPlacePost)) {
         $message.= 'Place of birth is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($parentsPost)) {
+    if (isset($_POST['submit']) and empty($parentsPost)) {
         $message.= 'Parents are required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($educationPost)) {
+    if (isset($_POST['submit']) and empty($educationPost)) {
         $message.= 'Education is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($militaryPost)) {
+    if (isset($_POST['submit']) and empty($militaryPost)) {
         $message.= 'Military service and dates are required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($militaryRankPost)) {
+    if (isset($_POST['submit']) and empty($militaryRankPost)) {
         $message.= 'Rank on discharge is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($marriagePost)) {
+    if (isset($_POST['submit']) and empty($marriagePost)) {
         $message.= 'Marriage is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($marriagePlacePost)) {
+    if (isset($_POST['submit']) and empty($marriagePlacePost)) {
         $message.= 'Marriage place is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($marriageDatePost)) {
+    if (isset($_POST['submit']) and empty($marriageDatePost)) {
         $message.= 'Marriage date is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($marriagePreviousPost)) {
+    if (isset($_POST['submit']) and empty($marriagePreviousPost)) {
         $message.= 'Previous marriage is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($employmentPost)) {
+    if (isset($_POST['submit']) and empty($employmentPost)) {
         $message.= 'Occupations and Employment are required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($interestsPost)) {
+    if (isset($_POST['submit']) and empty($interestsPost)) {
         $message.= 'Interests and memberships are required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($survivorsPost)) {
+    if (isset($_POST['submit']) and empty($survivorsPost)) {
         $message.= 'Survivors are required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($precededByPost)) {
+    if (isset($_POST['submit']) and empty($precededByPost)) {
         $message.= 'Preceded in death is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($servicesPost)) {
+    if (isset($_POST['submit']) and empty($servicesPost)) {
         $message.= 'Services is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($servicePlacePost)) {
+    if (isset($_POST['submit']) and empty($servicePlacePost)) {
         $message.= 'Place of service is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($serviceTimePost)) {
+    if (isset($_POST['submit']) and empty($serviceTimePost)) {
         $message.= 'Date and time of service is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($serviceOfficiantPost)) {
+    if (isset($_POST['submit']) and empty($serviceOfficiantPost)) {
         $message.= 'Officiant at service is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($burialInurnmentPost)) {
+    if (isset($_POST['submit']) and empty($burialInurnmentPost)) {
         $message.= 'Burial or inurnment is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($burialPlacePost)) {
+    if (isset($_POST['submit']) and empty($burialPlacePost)) {
         $message.= 'Place of burial or inurnment is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($arrangementsByPost)) {
+    if (isset($_POST['submit']) and empty($arrangementsByPost)) {
         $message.= 'Arrangements are under the direction of is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($phonePost)) {
+    if (isset($_POST['submit']) and empty($phonePost)) {
         $message.= 'Phone number is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($memorialDonationsPost)) {
+    if (isset($_POST['submit']) and empty($memorialDonationsPost)) {
         $message.= 'Memorial donations to is required.<br />';
     }
     //
     // Send the information or reset the form
     //
-    if (isset($_POST['submit']) and is_null($message)) {
+    if (isset($_POST['submit']) and empty($message)) {
         $body = null;
         if (!empty($emailPost)) {
             $body.= 'Email' . "\n";
@@ -898,79 +898,79 @@ if (isset($formPost) and $formPost === 'wedding') {
     //
     // Wedding announcement error messages
     //
-    if (isset($_POST['submit']) and is_null($maidenNamePost)) {
+    if (isset($_POST['submit']) and empty($maidenNamePost)) {
         $message.= 'Maiden name of the bride and her residence is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($brideParentsPost)) {
+    if (isset($_POST['submit']) and empty($brideParentsPost)) {
         $message.= 'Bride\'s parents and residence is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($bridegroomNamePost)) {
+    if (isset($_POST['submit']) and empty($bridegroomNamePost)) {
         $message.= 'Bridegroom\'s name and residence is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($bridegroomParentsPost)) {
+    if (isset($_POST['submit']) and empty($bridegroomParentsPost)) {
         $message.= 'Bridegroom\'s parents and residence is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($weddingPlacePost)) {
+    if (isset($_POST['submit']) and empty($weddingPlacePost)) {
         $message.= 'Place of wedding is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($dateHourPost)) {
+    if (isset($_POST['submit']) and empty($dateHourPost)) {
         $message.= 'Date and hour are required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($ceremonyPerformerPost)) {
+    if (isset($_POST['submit']) and empty($ceremonyPerformerPost)) {
         $message.= 'Name of person performing ceremony is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($ringPost)) {
+    if (isset($_POST['submit']) and empty($ringPost)) {
         $message.= 'Ring ceremony type is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($matronNamePost)) {
+    if (isset($_POST['submit']) and empty($matronNamePost)) {
         $message.= 'Name of the matron or the maid of honor is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($honorPost)) {
+    if (isset($_POST['submit']) and empty($honorPost)) {
         $message.= 'Matron or maid of honor is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($bridesmaidNamePost)) {
+    if (isset($_POST['submit']) and empty($bridesmaidNamePost)) {
         $message.= 'Names of the bridesmaids are required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($bestManPost)) {
+    if (isset($_POST['submit']) and empty($bestManPost)) {
         $message.= 'Name of the best man is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($ushersGroomsmenPost)) {
+    if (isset($_POST['submit']) and empty($ushersGroomsmenPost)) {
         $message.= 'Names of the ushers/groomsmen are required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($otherParticipantsPost)) {
+    if (isset($_POST['submit']) and empty($otherParticipantsPost)) {
         $message.= 'Names of other participants and roles are required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($musiciansPost)) {
+    if (isset($_POST['submit']) and empty($musiciansPost)) {
         $message.= 'Musician(s) is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($receptionPost)) {
+    if (isset($_POST['submit']) and empty($receptionPost)) {
         $message.= 'Time and place of reception is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($honoreesPost)) {
+    if (isset($_POST['submit']) and empty($honoreesPost)) {
         $message.= 'Honorees serving or assisting are required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($brideInfoPost)) {
+    if (isset($_POST['submit']) and empty($brideInfoPost)) {
         $message.= 'Bride\'s schools, sororities, employment is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($groomInfoPost)) {
+    if (isset($_POST['submit']) and empty($groomInfoPost)) {
         $message.= 'Groom\'s schools, clubs, employment is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($tripPost)) {
+    if (isset($_POST['submit']) and empty($tripPost)) {
         $message.= 'Destination of wedding trip is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($residencePost)) {
+    if (isset($_POST['submit']) and empty($residencePost)) {
         $message.= 'Where couple will live is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($picturePost)) {
+    if (isset($_POST['submit']) and empty($picturePost)) {
         $message.= 'Photo yes or no is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($contactInfoPost)) {
+    if (isset($_POST['submit']) and empty($contactInfoPost)) {
         $message.= 'Name and phone (between 8 and 5) of contact person for the story is required.<br />';
     }
     //
     // Send the information or reset the form
     //
-    if (isset($_POST['submit']) and is_null($message)) {
+    if (isset($_POST['submit']) and empty($message)) {
         $body = null;
         if (!empty($emailPost)) {
             $body.= 'Email' . "\n";
@@ -1177,25 +1177,25 @@ if (isset($formPost) and $formPost === 'calendar') {
     //
     // Letter to the editor error messages
     //
-    if (isset($_POST['submit']) and is_null($namePost)) {
+    if (isset($_POST['submit']) and empty($namePost)) {
         $message.= 'Name is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($addressPost)) {
+    if (isset($_POST['submit']) and empty($addressPost)) {
         $message.= 'Address is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($telephonePost)) {
+    if (isset($_POST['submit']) and empty($telephonePost)) {
         $message.= 'Telephone is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($titlePost)) {
+    if (isset($_POST['submit']) and empty($titlePost)) {
         $message.= 'Title is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($contentPost)) {
+    if (isset($_POST['submit']) and empty($contentPost)) {
         $message.= 'Calendar event is required.';
     }
     //
     // Send the information or reset the form
     //
-    if (isset($_POST['submit']) and is_null($message)) {
+    if (isset($_POST['submit']) and empty($message)) {
         $body = null;
         if (!empty($emailPost)) {
             $body.= 'Email' . "\n";
@@ -1269,25 +1269,25 @@ if (isset($formPost) and $formPost === 'letter') {
     //
     // Letter to the editor error messages
     //
-    if (isset($_POST['submit']) and is_null($namePost)) {
+    if (isset($_POST['submit']) and empty($namePost)) {
         $message.= 'Name is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($addressPost)) {
+    if (isset($_POST['submit']) and empty($addressPost)) {
         $message.= 'Address is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($telephonePost)) {
+    if (isset($_POST['submit']) and empty($telephonePost)) {
         $message.= 'Telephone is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($titlePost)) {
+    if (isset($_POST['submit']) and empty($titlePost)) {
         $message.= 'Title is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($contentPost)) {
+    if (isset($_POST['submit']) and empty($contentPost)) {
         $message.= 'Content is required.';
     }
     //
     // Send the information or reset the form
     //
-    if (isset($_POST['submit']) and is_null($message)) {
+    if (isset($_POST['submit']) and empty($message)) {
         $body = null;
         if (!empty($emailPost)) {
             $body.= 'Email' . "\n";
@@ -1361,25 +1361,25 @@ if (isset($formPost) and $formPost === 'other') {
     //
     // Other error messages
     //
-    if (isset($_POST['submit']) and is_null($namePost)) {
+    if (isset($_POST['submit']) and empty($namePost)) {
         $message.= 'Name is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($addressPost)) {
+    if (isset($_POST['submit']) and empty($addressPost)) {
         $message.= 'Address is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($telephonePost)) {
+    if (isset($_POST['submit']) and empty($telephonePost)) {
         $message.= 'Telephone is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($titlePost)) {
+    if (isset($_POST['submit']) and empty($titlePost)) {
         $message.= 'Title is required.<br />';
     }
-    if (isset($_POST['submit']) and is_null($contentPost)) {
+    if (isset($_POST['submit']) and empty($contentPost)) {
         $message.= 'Message is required.';
     }
     //
     // Send the information or reset the form
     //
-    if (isset($_POST['submit']) and is_null($message)) {
+    if (isset($_POST['submit']) and empty($message)) {
         $body = null;
         if (!empty($emailPost)) {
             $body.= 'Email' . "\n";

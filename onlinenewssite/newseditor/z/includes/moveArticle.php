@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -85,8 +85,8 @@ if ($row) {
         // When moving surveys to the archive, copy the votes to the local survey database
         //
         if ($survey === strval(1)) {
-            $request = null;
-            $response = null;
+            $request = [];
+            $response = [];
             $request['task'] = 'surveyVotesDownload';
             $request['idArticle'] = $idArticle;
             foreach ($remotes as $remote) {
@@ -127,8 +127,8 @@ if ($row) {
     $stmt->execute([$publicationDate, $publicationTime, $endDate, $survey, $genre, $keywords, $idSection, $byline, $headline, $standfirst, $text, $summary, $evolve, $expand, $extend, $photoName, $photoCredit, $photoCaption, $idArticle]);
     $dbh = null;
     if ($dbFrom !== $dbArchive) {
-        $request = null;
-        $response = null;
+        $request = [];
+        $response = [];
         $request['task'] = 'updateInsert1';
         $request['archive'] = $archive;
         $request['idArticle'] = $idArticle;
@@ -171,7 +171,7 @@ if ($row) {
         //
         // Move the thumbnail and other small items
         //
-        $request = null;
+        $request = [];
         $dbh = new PDO($dbFrom);
         $stmt = $dbh->prepare('SELECT originalImageWidth, originalImageHeight, thumbnailImage, thumbnailImageWidth, thumbnailImageHeight, hdImageWidth, hdImageHeight FROM articles WHERE idArticle=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -183,8 +183,8 @@ if ($row) {
         $stmt->execute([$row['originalImageWidth'], $row['originalImageHeight'], $row['thumbnailImage'], $row['thumbnailImageWidth'], $row['thumbnailImageHeight'], $row['hdImageWidth'], $row['hdImageHeight'], $idArticle]);
         $dbh = null;
         if ($dbFrom !== $dbArchive) {
-            $request = null;
-            $response = null;
+            $request = [];
+            $response = [];
             $request['task'] = 'updateInsert2';
             $request['archive'] = $archive;
             $request['thumbnailImage'] = $row['thumbnailImage'];
@@ -200,7 +200,7 @@ if ($row) {
         //
         // Move the HD image
         //
-        $request = null;
+        $request = [];
         $dbh = new PDO($dbFrom);
         $stmt = $dbh->prepare('SELECT hdImage FROM articles WHERE idArticle=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -213,8 +213,8 @@ if ($row) {
         $dbh = null;
         if ($dbFrom !== $dbArchive) {
             if ($response['result'] === 'success') {
-                $request = null;
-                $response = null;
+                $request = [];
+                $response = [];
                 $request['task'] = 'updateInsert3';
                 $request['archive'] = $archive;
                 $request['idArticle'] = $idArticle;
@@ -237,8 +237,8 @@ if ($row) {
             $stmt->execute([$row['idPhoto'], $idArticle, $row['image'], $row['photoName'], $row['photoCredit'], $row['photoCaption'], $row['time']]);
             $dbh = null;
             if ($dbFrom !== $dbArchive) {
-                $request = null;
-                $response = null;
+                $request = [];
+                $response = [];
                 $request['task'] = 'updateInsert4';
                 $request['archive'] = $archive;
                 $request['idPhoto'] = $row['idPhoto'];
@@ -299,8 +299,8 @@ if ($row) {
             //
             // Delete the From article on the remote sites
             //
-            $request = null;
-            $response = null;
+            $request = [];
+            $response = [];
             if ($dbFrom === $dbPublished) {
                 $request['task'] = 'publishedDelete';
                 $request['archive'] = $archive;

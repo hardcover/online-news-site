@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -60,7 +60,7 @@ require $includesPath . '/common.php';
 //
 // Variables
 //
-$message = null;
+$message = '';
 $passPost = inlinePost('pass');
 $userPost = inlinePost('user');
 //
@@ -87,7 +87,7 @@ if (isset($userPost, $passPost)) {
     $row = $stmt->fetch();
     $dbh = null;
     if ($row['count(*)'] > 5) {
-        include 'logout.php';
+        //include 'logout.php';
     }
 }
 //
@@ -101,6 +101,7 @@ if (isset($_POST['login'], $userPost, $passPost)) {
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {
+        $row = array_map('strval', $row);
         if (password_verify($passPost, $row['pass'])) {
             if (password_needs_rehash($row['pass'], PASSWORD_DEFAULT)) {
                 $newHash = password_hash($passPost, PASSWORD_DEFAULT);
@@ -150,10 +151,11 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row === false) {
-    $row['name'] = null;
+    $row = [];
+    $row['name'] = '';
 }
 $request['name'] = $row['name'];
-$request['remotes'] = null;
+$request['remotes'] = '';
 $dbh = new PDO($dbRemote);
 $stmt = $dbh->query('SELECT remote FROM remotes');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -162,7 +164,8 @@ foreach ($stmt as $row) {
 }
 $dbh = null;
 $request['phpversion'] = phpversion();
-$request['version'] = '2021 12 2';
+$request['version'] = '2022 01 12';
+$request= array_map('strval', $request);
 $request = http_build_query(array_map('base64_encode', $request));
 stream_context_set_default(['http' => ['user_agent' => 'PHP', 'method' => 'POST', 'header' => 'Content-Type: application/x-www-form-urlencoded', 'content' => $request]]);
 $fp = @fopen('https://onlinenewssite.com/v/', 'rb', false);
@@ -186,20 +189,20 @@ require $includesPath . '/header1.inc';
 
 <body>
   <div class="column">
-    <p  class="a"><br />
+    <p class="a"><br />
     <a href="https://onlinenewssite.com/"><img src="images/logo.png" class="wide" alt="Online News Site Software" /></a></p>
 
     <h1 class="a">News editor log in</h1>
 <?php echoIfMessage($message); ?>
 
     <form action="<?php echo $uri; ?>" method="post">
-      <p  class="a"><label for="user">User</label><br />
+      <p class="a"><label for="user">User</label><br />
       <input id="user" name="user" type="text" class="h" maxlength="254" autofocus required /></p>
 
-      <p  class="a"><label for="pass">Password</label><br />
+      <p class="a"><label for="pass">Password</label><br />
       <input id="pass" name="pass" type="password" class="h" maxlength="254" required /></p>
 
-      <p  class="a"><input type="submit" name="login" class="button" value="Log in" /></p>
+      <p class="a"><input type="submit" name="login" class="button" value="Log in" /></p>
     </form>
 
 <?php
@@ -214,10 +217,10 @@ $row = $stmt->fetch();
 $dbRowCount = $row['count(idAd)'];
 $dbh = null;
 if ($dbRowCount !== '0') {
-    echo '  <p  class="a">' . number_format($dbRowCount) . " classified ad(s) pending review.</p>\n\n";
+    echo '    <p class="a">' . number_format($dbRowCount) . " classified ad(s) pending review.</p>\n\n";
 }
 ?>
-    <p  class="a">Version 2021 12 2. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.</p>
+    <p class="a">Version 2022 01 12. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.</p>
   </div>
 </body>
 </html>

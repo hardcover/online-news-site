@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -28,7 +28,7 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
-if (empty($row['userType']) or $row['userType'] !== '3') {
+if (empty($row['userType']) or strval($row['userType']) !== '3') {
     include 'logout.php';
     exit;
 }
@@ -37,7 +37,7 @@ if (empty($row['userType']) or $row['userType'] !== '3') {
 //
 $maxAdsEdit = null;
 $maxAdsPost = inlinePost('maxAds');
-$message = null;
+$message = '';
 //
 $remotes = [];
 $dbh = new PDO($dbRemote);
@@ -62,7 +62,8 @@ if (isset($_POST['setMaximum']) and isset($maxAdsPost)) {
     //
     // Update remote sites
     //
-    $request = null;
+    $request = [];
+    $response = [];
     $request['task'] = 'adMax';
     $request['maxAds'] = $maxAdsPost;
     foreach ($remotes as $remote) {

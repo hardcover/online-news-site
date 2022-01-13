@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -28,7 +28,7 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
-if (empty($row['userType']) or $row['userType'] !== '4') {
+if (empty($row['userType']) or strval($row['userType']) !== '4') {
     include 'logout.php';
     exit;
 }
@@ -42,7 +42,9 @@ $descriptionPost = securePost('description');
 $durationEdit = null;
 $durationPost = inlinePost('duration');
 $idAdPost = inlinePost('idAd');
-$message = null;
+$invoiceEdit = null;
+$invoicePost = inlinePost('invoice');
+$message = '';
 $startDateEdit = null;
 $startDatePost = inlinePost('startDate');
 $titleEdit = null;
@@ -61,6 +63,7 @@ if (isset($_POST['publish'])) {
         $stmt = $dbh->prepare('UPDATE ads SET title=?, description=?, categoryId=?, review=?, startDate=?, duration=? WHERE idAd=?');
         $stmt->execute([$titlePost, $descriptionPost, $categoryIdPost, $review, $startDatePost, 1, $idAdPost]);
         $dbh = null;
+        $idAdPublish = $idAdPost;
         include $includesPath . '/addUpdateClassified.php';
     } else {
         $message = 'No ad was selected.';
@@ -145,9 +148,10 @@ foreach ($stmt as $row) {
         $durationEdit = '1';
         $email = plain($email);
         $photos = json_decode($photos, true);
+        $photos = array_map('strval', $photos);
         $startDateEdit = $startDate;
         $titleEdit = $title;
-        if (is_null($startDate)) {
+        if (empty($startDate)) {
             $startDateEdit = $today;
         } else {
             $startDateEdit = $startDate;
@@ -163,17 +167,22 @@ foreach ($stmt as $row) {
         echo '      <textarea class="wide" id="description" name="description" rows="9">';
         echo echoIfText($description);
         echo '</textarea></p>' . "\n\n";
+        echo '      <p><label for="invoice"><input id="invoice" name="invoice" type="checkbox" value="1"';
+        echoIfYes($invoiceEdit);
+        echo ' /> Send an invoice to also have the add in the print version of the paper.</label></p>' . "\n\n";
         echo '      <p><label for="categoryId">Category (select a subcategory)</label><br />' . "\n";
         echo '      <select size="1" id="categoryId" name="categoryId" required>' . "\n";
         $stmt = $dbh->query('SELECT idSection, section FROM sections ORDER BY sortOrderSection');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         foreach ($stmt as $row) {
+            $row = array_map('strval', $row);
             extract($row);
             echo '        <option value="">' . html($section) . "</option>\n";
             $stmt = $dbh->prepare('SELECT idSubsection, subsection FROM subsections WHERE parentId=? ORDER BY sortPrioritySubSection');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
             $stmt->execute([$idSection]);
             foreach ($stmt as $row) {
+                $row = array_map('strval', $row);
                 extract($row);
                 if ($idSubsection === $categoryIdEdit) {
                     $selected = ' selected';
@@ -185,17 +194,17 @@ foreach ($stmt as $row) {
         }
         echo '      </select></p>' . "\n\n";
         echo '      <p><label for="startDate">Start date</label><br />' . "\n";
-        echo '      <input type="text" class="datepicker" id="startDate" name="startDate" ';
+        echo '      <input type="text" class="datepicker date" id="startDate" name="startDate" ';
         echo echoIfValue($startDateEdit);
-        echo ' /></p>' . "\n";
+        echo ' /></p>' . "\n\n";
         echo '      <p><label for="duration">Duration (weeks)</label><br />' . "\n";
-        echo '      <input type="number" id="duration" name="duration" ';
+        echo '      <input type="number" id="duration" name="duration" class="date" ';
         echo echoIfValue($durationEdit);
-        echo ' /></p>' . "\n";
+        echo ' /></p>' . "\n\n";
         $i = null;
         foreach ($photos as $photo) {
             $i++;
-            if ($photo === 1) {
+            if ($photo === '1') {
                 echo '      <p><img class="wide border" src="imagec.php?i=' . muddle($idAd) . $i . '" alt="" /></p>' . "\n";
             }
         }

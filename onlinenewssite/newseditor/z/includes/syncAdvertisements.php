@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -33,8 +33,8 @@ foreach ($remotes as $remote) {
     //
     // Determine the missing and extra ads
     //
-    $request = null;
-    $response = null;
+    $request = [];
+    $response = [];
     $request['task'] = 'adSync';
     $response = soa($remote . 'z/', $request);
     $remoteAds = json_decode($response['remoteAds'], true);
@@ -63,8 +63,8 @@ foreach ($remotes as $remote) {
             $row = $stmt->fetch();
             $dbh = null;
             extract($row);
-            $request = null;
-            $response = null;
+            $request = [];
+            $response = [];
             $request['task'] = 'adInsert';
             $request['idAd'] = $idAd;
             $request['startDateAd'] = $startDateAd;
@@ -80,8 +80,8 @@ foreach ($remotes as $remote) {
     // When extra remote ads were found above, check again and delete the extra ads
     //
     if (count($extraAds) > 0) {
-        $request = null;
-        $response = null;
+        $request = [];
+        $response = [];
         $request['task'] = 'adSync';
         $response = soa($remote . 'z/', $request);
         $remoteAds = json_decode($response['remoteAds'], true);
@@ -99,8 +99,8 @@ foreach ($remotes as $remote) {
         //
         // Delete extra remote articles
         //
-        $request = null;
-        $response = null;
+        $request = [];
+        $response = [];
         $request['task'] = 'adDelete';
         foreach ($extraAds as $idAd) {
             $request['idAd'] = $idAd;
@@ -110,8 +110,8 @@ foreach ($remotes as $remote) {
     //
     // Upload the current sort order and maximum number of ads
     //
-    $request = null;
-    $response = null;
+    $request = [];
+    $response = [];
     $sortOrder = null;
     $request['task'] = 'adOrder';
     $dbh = new PDO($dbAdvertising);

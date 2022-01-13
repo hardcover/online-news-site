@@ -33,6 +33,7 @@ aside {
 
 input.slim {
     width: 1.7rem;
+    margin-right: .4rem;
 }
 
 @media (min-width: 360px) {

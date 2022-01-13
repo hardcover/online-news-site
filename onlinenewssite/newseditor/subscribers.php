@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -28,7 +28,7 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
-if (empty($row['userType']) or $row['userType'] !== '2') {
+if (empty($row['userType']) or strval($row['userType']) !== '2') {
     include 'logout.php';
     exit;
 }
@@ -52,9 +52,9 @@ $deliverEdit = null;
 $edit = inlinePost('edit');
 $emailEdit = null;
 $emailPost = inlinePost('email');
-$idUserEdit = null;
+$idUserEdit = '';
 $idUserPost = inlinePost('idUser');
-$message = null;
+$message = '';
 $notPaidEdit = null;
 $noteEdit = null;
 $notePost = inlinePost('note');
@@ -152,8 +152,8 @@ if (isset($_POST['delete'])) {
             //
             // Update remote sites
             //
-            $request = null;
-            $response = null;
+            $request = [];
+            $response = [];
             $request['task'] = 'subscriberDelete';
             $request['idUser'] = $idUser;
             foreach ($remotes as $remote) {
@@ -247,7 +247,7 @@ require $includesPath . '/body.inc';
         </label></p>
 
         <p><label for="payStatus">Paid through date<br />
-          <input id="payStatus" name="payStatus" type="text" <?php echoIfValue($payStatusEdit); ?>class="datepicker h" /></label></p>
+          <input id="payStatus" name="payStatus" type="text" <?php echoIfValue($payStatusEdit); ?>class="datepicker date" /></label></p>
 
         <p><label for="billingAddress">Billing address</label><br />
         <input id="billingAddress" name="billingAddress" type="text" class="h" placeholder="Billing address" <?php echoIfValue($billingAddressEdit); ?> /><br />

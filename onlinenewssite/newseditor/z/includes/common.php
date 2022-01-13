@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -96,7 +96,7 @@ function secure($str)
     return trim($str);                                     // Extra space & lines
 }
 /**
- * Function to set a value to either null or a secure post variable
+ * Function to set a value to either '' or a secure post variable
  *
  * @param mixed $param The post value
  *
@@ -107,7 +107,7 @@ function securePost($param)
     if (!empty($_POST[$param])) {
         $str = secure($_POST[$param]);
     } else {
-        $str = null;
+        $str = '';
     }
     return $str;
 }
@@ -124,7 +124,7 @@ function inlinePost($param)
         $str = secure($_POST[$param]);
         $str = preg_replace("'\s+'", ' ', $str);
     } else {
-        $str = null;
+        $str = '';
     }
     return $str;
 }
@@ -201,7 +201,7 @@ function echoIfText($str)
  */
 function echoIfYes($str)
 {
-    if ($str === '1') {
+    if (strval($str) === '1') {
         echo ' checked';
     }
 }
@@ -215,7 +215,7 @@ function echoIfYes($str)
 function muddle($str)
 {
     if (empty($str)) {
-        return null;
+        return '';
     } else {
         return str_rot13(base64_encode($str));
     }
@@ -230,7 +230,7 @@ function muddle($str)
 function plain($str)
 {
     if (empty($str)) {
-        return null;
+        return '';
     } else {
         return base64_decode(str_rot13($str));
     }
@@ -252,7 +252,7 @@ function uploadFilesizeMaximum()
         }
         $maxFileSize = ', ' . $maxFileSize . ' MB maximum filesize';
     } else {
-        $maxFileSize = null;
+        $maxFileSize = '';
     }
     echo $maxFileSize;
 }
@@ -270,6 +270,7 @@ function soa($uri, $request)
     $request['onus'] = $onus;
     date_default_timezone_set('America/Los_Angeles');
     $request['gig'] = date($gig);
+    $request = array_map('strval', $request);
     $request = http_build_query(array_map('base64_encode', $request));
     stream_context_set_default(
         [
@@ -278,7 +279,7 @@ function soa($uri, $request)
             'verify_peer' => false,
             'verify_peer_name' => false],
         'http' => [
-            'user_agent' => 'PHP',
+            'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:95.0) Gecko/20100101 Firefox/95.0',
             'method' => 'POST',
             'header' => 'Content-Type: application/x-www-form-urlencoded',
             'content' => $request]
@@ -289,6 +290,7 @@ function soa($uri, $request)
         $response = @stream_get_contents($fp);
         $response = json_decode($response, true);
         if (is_array($response)) {
+            $response = array_map('strval', $response);
             $response = array_map('base64_decode', $response);
         } else {
             $response['result'] = 'fail';

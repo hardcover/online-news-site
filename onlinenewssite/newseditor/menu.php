@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -28,7 +28,7 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
-if (empty($row['userType']) or $row['userType'] !== '5') {
+if (empty($row['userType']) or strval($row['userType']) !== '5') {
     include 'logout.php';
     exit;
 }
@@ -50,7 +50,7 @@ $menuNameEdit = null;
 $menuNamePost = inlinePost('menuName');
 $menuSortOrderEdit = null;
 $menuSortOrderPost = inlinePost('menuSortOrder');
-$message = null;
+$message = '';
 //
 $remotes = [];
 $dbh = new PDO($dbRemote);
@@ -126,13 +126,13 @@ if (isset($_POST['addUpdate'])) {
         // Update remote sites
         //
         foreach ($remotes as $remote) {
-            $request = null;
-            $response = null;
+            $request = [];
+            $response = [];
             $request['task'] = 'menuDelete';
             $request['idMenu'] = $idMenu;
             $response = soa($remote . 'z/', $request);
-            $request = null;
-            $response = null;
+            $request = [];
+            $response = [];
             $request['task'] = 'menuInsert';
             $request['idMenu'] = $idMenu;
             $request['menuName'] = $menuNamePost;
@@ -165,8 +165,8 @@ if (isset($_POST['delete'])) {
             //
             // Update remote sites
             //
-            $request = null;
-            $response = null;
+            $request = [];
+            $response = [];
             $request['task'] = 'menuDelete';
             $request['idMenu'] = $idMenuPost;
             foreach ($remotes as $remote) {
@@ -208,8 +208,8 @@ if (isset($_POST['addUpdate']) or isset($_POST['delete'])) {
     }
     $dbh = null;
     $sortOrder = json_encode($sortOrder);
-    $request = null;
-    $response = null;
+    $request = [];
+    $response = [];
     $request['task'] = 'menuOrder';
     $request['sortOrder'] = $sortOrder;
     foreach ($remotes as $remote) {

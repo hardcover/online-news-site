@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -28,7 +28,7 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
-if (empty($row['userType']) or $row['userType'] !== '4') {
+if (empty($row['userType']) or strval($row['userType']) !== '4') {
     include 'logout.php';
     exit;
 }
@@ -40,11 +40,12 @@ $categoryIdPost = inlinePost('categoryId');
 $descriptionEdit = null;
 $descriptionPost = securePost('description');
 $durationEdit = null;
-$durationPost = inlinePost('duration');
+$durationPost = intval(inlinePost('duration'));
 $idAdEdit = null;
 $idAdPost = inlinePost('idAd');
-$invoiceEdit = inlinePost('invoice');
-$message = null;
+$invoiceEdit = null;
+$invoicePost = inlinePost('invoice');
+$message = '';
 $startDateEdit = null;
 $startDatePost = inlinePost('startDate');
 $startTime = strtotime($startDatePost);
@@ -73,8 +74,8 @@ if (isset($_POST['addUpdate'])) {
     // Apply the update except for the image
     //
     $dbh = new PDO($dbClassifiedsNew);
-    $stmt = $dbh->prepare('UPDATE ads SET email=?, title=?, description=?, categoryId=?, startDate=?, duration=?, photos=? WHERE idAd=?');
-    $stmt->execute([muddle($_SESSION['username']), $titlePost, $descriptionPost, $categoryIdPost, $startDatePost, $durationPost, $_SESSION['userId'], $idAdPost]);
+    $stmt = $dbh->prepare('UPDATE ads SET email=?, title=?, description=?, categoryId=?, startDate=?, duration=?, invoice=?, photos=? WHERE idAd=?');
+    $stmt->execute([muddle($_SESSION['username']), $titlePost, $descriptionPost, $categoryIdPost, $startDatePost, $durationPost, $invoicePost, $_SESSION['userId'], $idAdPost]);
     $dbh = null;
     //
     // Store the image, if any
@@ -157,22 +158,22 @@ if (isset($_POST['publish'])) {
         $idAdPost = $dbh->lastInsertId();
         $dbh = null;
     }
-    if (is_null($titlePost)) {
+    if (empty($titlePost)) {
         $message = 'Title is a required field.';
     }
-    if (is_null($descriptionPost)) {
+    if (empty($descriptionPost)) {
         $message = 'Description is a required field.';
     }
-    if (is_null($categoryIdPost)) {
+    if (empty($categoryIdPost)) {
         $message = 'Category is a required field and must be a subcategory.';
     }
-    if (is_null($startDatePost)) {
+    if (empty($startDatePost)) {
         $message = 'Start date is a required field.';
     }
-    if (is_null($durationPost)) {
+    if (empty($durationPost)) {
         $message = 'Duration is a required field.';
     }
-    if (is_null($startDatePost) and is_null($durationPost)) {
+    if (empty($startDatePost) and empty($durationPost)) {
         $message = 'Start date and duration are required fields.';
     }
     if (isset($titlePost) and isset($descriptionPost) and isset($categoryIdPost) and isset($startDatePost) and isset($durationPost)) {
@@ -201,8 +202,8 @@ if (isset($_POST['publish'])) {
         }
         $photosPublished = json_encode($num);
         $dbh = new PDO($dbClassifieds);
-        $stmt = $dbh->prepare('UPDATE ads SET email=?, title=?, description=?, categoryId=?, review=?, startDate=?, duration=?, photos=? WHERE idAd=?');
-        $stmt->execute([muddle($_SESSION['username']), $titlePost, $descriptionPost, $categoryIdPost, $review, $startDatePost, $durationPost, $photosPublished, $idAdPublish]);
+        $stmt = $dbh->prepare('UPDATE ads SET email=?, title=?, description=?, categoryId=?, review=?, startDate=?, duration=?, invoice=?, photos=? WHERE idAd=?');
+        $stmt->execute([muddle($_SESSION['username']), $titlePost, $descriptionPost, $categoryIdPost, $review, $startDatePost, $durationPost, $invoicePost, $photosPublished, $idAdPublish]);
         $dbh = null;
         $dbh = new PDO($dbClassifiedsNew);
         $stmt = $dbh->prepare('DELETE FROM ads WHERE idAd=?');
@@ -225,7 +226,7 @@ if (isset($_POST['photoDelete']) and isset($idAdPost)) {
 // Set the edit variables
 //
 $dbh = new PDO($dbClassifiedsNew);
-$stmt = $dbh->prepare('SELECT idAd, email, title, description, categoryId, review, startDate, duration FROM ads WHERE photos=?');
+$stmt = $dbh->prepare('SELECT idAd, email, title, description, categoryId, review, startDate, duration, invoice FROM ads WHERE photos=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
@@ -236,6 +237,7 @@ if ($row) {
     $durationEdit = $row['duration'];
     $emailEdit = $row['email'];
     $idAdEdit = $row['idAd'];
+    $invoiceEdit = $row['invoice'];
     $reviewEdit = $row['review'];
     $startDateEdit = $row['startDate'];
     $titleEdit = $row['title'];
@@ -289,14 +291,16 @@ $dbh = new PDO($dbClassifieds);
 $stmt = $dbh->query('SELECT idSection, section FROM sections ORDER BY sortOrderSection');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
+    $row = array_map('strval', $row);
     extract($row);
     echo '        <option value="">' . html($section) . "</option>\n";
     $stmt = $dbh->prepare('SELECT idSubsection, subsection FROM subsections WHERE parentId=? ORDER BY sortOrderSubsection');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute([$idSection]);
     foreach ($stmt as $row) {
+        $row = array_map('strval', $row);
         extract($row);
-        if ($idSubsection === $categoryIdEdit) {
+        if ($idSubsection === strval($categoryIdEdit)) {
             $selected = ' selected';
         } else {
             $selected = null;
@@ -309,10 +313,10 @@ $dbh = null;
       </select></p>
 
       <p><label for="startDate">Start date</label><br />
-      <input type="text" class="datepicker h" id="startDate" name="startDate"<?php echoIfValue($startDateEdit); ?> /></p>
+      <input type="text" class="datepicker date" id="startDate" name="startDate"<?php echoIfValue($startDateEdit); ?> /></p>
 
       <p><label for="duration">Duration (weeks)</label><br />
-      <input type="number" id="duration" name="duration" class="h"<?php echoIfValue($durationEdit); ?> /></p>
+      <input type="number" id="duration" name="duration" class="date"<?php echoIfValue($durationEdit); ?> /></p>
 
       <p><label for="image">Photo upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br />
       <input id="image" name="image" type="file" class="wide" accept="image/jpeg"></p>

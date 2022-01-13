@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -28,7 +28,7 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([$_SESSION['userId']]);
 $row = $stmt->fetch();
 $dbh = null;
-if (empty($row['userType']) or $row['userType'] !== '3') {
+if (empty($row['userType']) or strval($row['userType']) !== '3') {
     include 'logout.php';
     exit;
 }
@@ -45,7 +45,7 @@ $linkAltEdit = null;
 $linkAltPost = str_replace("\"", '', str_replace("'", '', inlinePost('linkAlt')));
 $linkEdit = null;
 $linkPost = inlinePost('link');
-$message = null;
+$message = '';
 $notPaidEdit = null;
 $noteEdit = null;
 $notePost = inlinePost('note');
@@ -156,7 +156,7 @@ if (isset($_POST['addUpdate'])) {
         $dbh = null;
         if ($row) {
             extract($row);
-            $request = null;
+            $request = [];
             $request['task'] = 'adInsert';
             $request['idAd'] = $idAd;
             $request['startDateAd'] = $startDateAd;
@@ -192,7 +192,8 @@ if (isset($_POST['delete']) and isset($idAdPost)) {
         //
         // Update remote sites
         //
-        $response = null;
+        $request = [];
+        $response = [];
         $request['task'] = 'adDelete';
         $request['idAd'] = $idAd;
         foreach ($remotes as $remote) {
@@ -266,8 +267,8 @@ require $includesPath . '/header1.inc';
         <p>Organization is required for add, update and delete. Publication dates determine what ads are currently published. Unless a sort order is specified, ad order is random and will change each time the page is loaded.</p>
 
         <p><label for="startDateAd">Publication dates</label><br />
-        <input type="text" class="datepicker h" id="startDateAd" name="startDateAd" placeholder="Start date" <?php echoIfValue($startDateAdEdit); ?> /><br /><br />
-        <input type="text" class="datepicker h" name="endDateAd" placeholder="End date" <?php echoIfValue($endDateAdEdit); ?> /></p>
+        <input type="text" class="datepicker date" id="startDateAd" name="startDateAd" placeholder="Start date" <?php echoIfValue($startDateAdEdit); ?> /><br /><br />
+        <input type="text" class="datepicker date" name="endDateAd" placeholder="End date" <?php echoIfValue($endDateAdEdit); ?> /></p>
 
         <p><label for="sortOrderAd">Sort order (optional)</label><br />
         <input id="sortOrderAd" name="sortOrderAd" type="text" class="h" <?php echoIfValue($sortOrderAdEdit); ?> /></p>
@@ -323,7 +324,7 @@ foreach ($stmt as $row) {
     if ($link !== null and $link !== '') {
         echo '        <a href="' . html($link) . '" target="_blank">' . $linkAlt . "</a><br />\n";
     }
-    if (isset($note)) {
+    if (!empty($note)) {
         echo '    ' . $note . "<br />\n";
     }
     echo '        <input name="idAd" type="hidden" value="' . $idAd . '" /><input type="submit" value="Edit" name="edit" class="button" /></p>' . "\n";

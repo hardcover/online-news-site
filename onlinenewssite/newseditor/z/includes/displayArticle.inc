@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -38,6 +38,7 @@ if (strpos($database, 'archive') === false) {
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute([secure($aGet)]);
         $row = $stmt->fetch();
+        $row = array_map('strval', $row);
         extract($row);
         //
         // Set section name
@@ -63,32 +64,32 @@ if (strpos($database, 'archive') === false) {
         }
         if (!empty($hdImage)) {
             if ($photoName === 'third') {
-                $html.= '    <p class="a"><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="third border mb" alt=""></p>' . "\n\n";
+                $html.= '    <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="third border mb" alt=""></p>' . "\n\n";
             } else {
                 $html.= '    <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="wide border" alt=""></p>' . "\n\n";
             }
         }
         if (!empty($photoCaption) and !empty($photoCredit)) {
             if ($photoName === 'third') {
-                $html.= '    <h6 class="a">' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
+                $html.= '    <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
             } else {
                 $html.= '    <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
             }
         } elseif (!empty($photoCaption)) {
             if ($photoName === 'third') {
-                $html.= '    <h6 class="a">' . html($photoCaption) . "</h6>\n\n";
+                $html.= '    <h6>' . html($photoCaption) . "</h6>\n\n";
             } else {
                 $html.= '    <h6>' . html($photoCaption) . "</h6>\n\n";
             }
         } elseif (!empty($photoCredit)) {
             if ($photoName === 'third') {
-                $html.= '    <h6 class="a">' . $photoCredit . "</h6>\n\n";
+                $html.= '    <h6>' . $photoCredit . "</h6>\n\n";
             } else {
                 $html.= '    <h6>' . $photoCredit . "</h6>\n\n";
             }
         }
         if (!empty($byline) or !empty($bylineDateTime)) {
-            $html.= '    <h5 class="a">';
+            $html.= '    <h5>';
         }
         if (!empty($byline)) {
             $html.= 'By ' . $byline;
@@ -104,9 +105,9 @@ if (strpos($database, 'archive') === false) {
         }
         $temp = Parsedown::instance()->parse($text);
         $temp = str_replace("\n", "\n\n    ", $temp);
-        $temp = str_replace('<p>', '<p class="a">', $temp);
-        $temp = str_replace('<ol>', '<ol class="a">', $temp);
-        $temp = str_replace('<ul>', '<ul class="a">', $temp);
+        $temp = str_replace('<p>', '<p>', $temp);
+        $temp = str_replace('<ol>', '<ol>', $temp);
+        $temp = str_replace('<ul>', '<ul>', $temp);
         $temp = str_replace('<li>', '    <li>', $temp);
         $html.= '    ' . $temp . "\n";
         if ($survey === '1') {
@@ -132,10 +133,9 @@ if (strpos($database, 'archive') === false) {
                 $stmt->execute([$idAnswer]);
                 $row = $stmt->fetch();
                 $each = $row['count(idAnswer)'];
-                $html.= '<p><meter min="0" max="' . $total . '" value="' . $each . '" title="' . $answer . '">' . $answer . '"</meter> ' . $answer . ', ' . $each . "</p>\n\n";
+                $html.= '    <p><meter min="0" max="' . $total . '" value="' . $each . '" title="' . $answer . '">' . $answer . '"</meter> ' . $answer . ', ' . $each . "</p>\n\n";
             }
             $dbh = null;
-            $html.= '<form class="wait"></form>' . "\n\n";
         } else {
             $dbh = new PDO($database2);
             $stmt = $dbh->prepare('SELECT idPhoto, photoName, photoCredit, photoCaption FROM imageSecondary WHERE idArticle=? ORDER BY time');
@@ -144,25 +144,25 @@ if (strpos($database, 'archive') === false) {
             foreach ($stmt as $row) {
                 extract($row);
                 if ($photoName === 'third') {
-                    $html.= '    <p class="a"><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="third border mb" alt=""></p>' . "\n\n";
+                    $html.= '    <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="third border mb" alt=""></p>' . "\n\n";
                 } else {
                     $html.= '    <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="wide border" alt=""></p>' . "\n\n";
                 }
                 if (!empty($photoCaption) and !empty($photoCredit)) {
                     if ($photoName === 'third') {
-                        $html.= '    <h6 class="a">' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
+                        $html.= '    <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
                     } else {
                         $html.= '    <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
                     }
                 } elseif (!empty($photoCaption)) {
                     if ($photoName === 'third') {
-                        $html.= '    <h6 class="a">' . html($photoCaption) . "</h6>\n\n";
+                        $html.= '    <h6>' . html($photoCaption) . "</h6>\n\n";
                     } else {
                         $html.= '    <h6>' . html($photoCaption) . "</h6>\n\n";
                     }
                 } elseif (!empty($photoCredit)) {
                     if ($photoName === 'third') {
-                        $html.= '    <h6 class="a">' . $photoCredit . "</h6>\n\n";
+                        $html.= '    <h6>' . $photoCredit . "</h6>\n\n";
                     } else {
                         $html.= '    <h6>' . $photoCredit . "</h6>\n\n";
                     }
@@ -233,32 +233,32 @@ if (strpos($database, 'archive') === false) {
                 }
                 if (!empty($hdImage)) {
                     if ($photoName === 'third') {
-                        $html.= '    <p class="a"><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="third border mb" alt=""></p>' . "\n\n";
+                        $html.= '    <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="third border mb" alt=""></p>' . "\n\n";
                     } else {
                         $html.= '    <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="wide border" alt=""></p>' . "\n\n";
                     }
                 }
                 if (!empty($photoCaption) and !empty($photoCredit)) {
                     if ($photoName === 'third') {
-                        $html.= '    <h6 class="a">' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
+                        $html.= '    <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
                     } else {
                         $html.= '    <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
                     }
                 } elseif (!empty($photoCaption)) {
                     if ($photoName === 'third') {
-                        $html.= '    <h6 class="a">' . html($photoCaption) . "</h6>\n\n";
+                        $html.= '    <h6>' . html($photoCaption) . "</h6>\n\n";
                     } else {
                         $html.= '    <h6>' . html($photoCaption) . "</h6>\n\n";
                     }
                 } elseif (!empty($photoCredit)) {
                     if ($photoName === 'third') {
-                        $html.= '    <h6 class="a">' . $photoCredit . "</h6>\n\n";
+                        $html.= '    <h6>' . $photoCredit . "</h6>\n\n";
                     } else {
                         $html.= '    <h6>' . $photoCredit . "</h6>\n\n";
                     }
                 }
                 if (!empty($byline) or !empty($bylineDateTime)) {
-                    $html.= '    <h5 class="a">';
+                    $html.= '    <h5>';
                 }
                 if (!empty($byline)) {
                     $html.= 'By ' . $byline;
@@ -274,10 +274,10 @@ if (strpos($database, 'archive') === false) {
                 }
                 $temp = Parsedown::instance()->parse($text);
                 $temp = str_replace("\n", "\n\n    ", $temp);
-                $temp = str_replace('<p>', '<p class="a">', $temp);
-                $temp = str_replace('<blockquote>', '<blockquote class="a">', $temp);
-                $temp = str_replace('<ol>', '<ol class="a">', $temp);
-                $temp = str_replace('<ul>', '<ul class="a">', $temp);
+                $temp = str_replace('<p>', '<p>', $temp);
+                $temp = str_replace('<blockquote>', '<blockquote>', $temp);
+                $temp = str_replace('<ol>', '<ol>', $temp);
+                $temp = str_replace('<ul>', '<ul>', $temp);
                 $temp = str_replace('<li>', '    <li>', $temp);
                 $html.= '    ' . $temp . "\n";
                 if ($survey === '1') {
@@ -303,10 +303,9 @@ if (strpos($database, 'archive') === false) {
                         $stmt->execute([$idAnswer]);
                         $row = $stmt->fetch();
                         $each = $row['count(idAnswer)'];
-                        $html.= '<p><meter min="0" max="' . $total . '" value="' . $each . '" title="' . $answer . '">' . $answer . '"</meter> ' . $answer . ', ' . $each . "</p>\n\n";
+                        $html.= '    <p><meter min="0" max="' . $total . '" value="' . $each . '" title="' . $answer . '">' . $answer . '"</meter> ' . $answer . ', ' . $each . "</p>\n\n";
                     }
                     $dbh = null;
-                    $html.= '<form class="wait"></form>' . "\n\n";
                 } else {
                     if ($database2 === $dbArchive2) {
                         $dbNumber2 = 0;
@@ -336,25 +335,25 @@ if (strpos($database, 'archive') === false) {
                                         extract($row);
                                         if ($photoName === 'third') {
 
-                                            $html.= '    <p class="a"><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="third border mb" alt=""></p>' . "\n\n";
+                                            $html.= '    <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="third border mb" alt=""></p>' . "\n\n";
                                         } else {
                                             $html.= '    <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="wide border" alt=""></p>' . "\n\n";
                                         }
                                         if (!empty($photoCaption) and !empty($photoCredit)) {
                                             if ($photoName === 'third') {
-                                                $html.= '    <h6 class="a">' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
+                                                $html.= '    <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
                                             } else {
                                                 $html.= '    <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
                                             }
                                         } elseif (!empty($photoCaption)) {
                                             if ($photoName === 'third') {
-                                                $html.= '    <h6 class="a">' . html($photoCaption) . "</h6>\n\n";
+                                                $html.= '    <h6>' . html($photoCaption) . "</h6>\n\n";
                                             } else {
                                                 $html.= '    <h6>' . html($photoCaption) . "</h6>\n\n";
                                             }
                                         } elseif (!empty($photoCredit)) {
                                             if ($photoName === 'third') {
-                                                $html.= '    <h6 class="a">' . $photoCredit . "</h6>\n\n";
+                                                $html.= '    <h6>' . $photoCredit . "</h6>\n\n";
                                             } else {
                                                 $html.= '    <h6>' . $photoCredit . "</h6>\n\n";
                                             }
@@ -372,25 +371,25 @@ if (strpos($database, 'archive') === false) {
                         foreach ($stmt as $row) {
                             extract($row);
                             if ($photoName === 'third') {
-                                $html.= '    <p class="a"><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="third border mb" alt=""></p>' . "\n\n";
+                                $html.= '    <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="third border mb" alt=""></p>' . "\n\n";
                             } else {
                                 $html.= '    <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="wide border" alt=""></p>' . "\n\n";
                             }
                             if (!empty($photoCaption) and !empty($photoCredit)) {
                                 if ($photoName === 'third') {
-                                    $html.= '    <h6 class="a">' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
+                                    $html.= '    <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
                                 } else {
                                     $html.= '    <h6>' . html($photoCaption) . ' (' . $photoCredit . ")</h6>\n\n";
                                 }
                             } elseif (!empty($photoCaption)) {
                                 if ($photoName === 'third') {
-                                    $html.= '    <h6 class="a">' . html($photoCaption) . "</h6>\n\n";
+                                    $html.= '    <h6>' . html($photoCaption) . "</h6>\n\n";
                                 } else {
                                     $html.= '    <h6>' . html($photoCaption) . "</h6>\n\n";
                                 }
                             } elseif (!empty($photoCredit)) {
                                 if ($photoName === 'third') {
-                                    $html.= '    <h6 class="a">' . $photoCredit . "</h6>\n\n";
+                                    $html.= '    <h6>' . $photoCredit . "</h6>\n\n";
                                 } else {
                                     $html.= '    <h6>' . $photoCredit . "</h6>\n\n";
                                 }

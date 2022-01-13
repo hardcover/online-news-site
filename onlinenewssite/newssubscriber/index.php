@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -53,7 +53,7 @@ $use = 'news';
 //
 // Article variable
 //
-if (isset($_GET['a'])) {
+if (!empty($_GET['a'])) {
     $aGet = secure($_GET['a']);
     $aGet = str_replace(strstr($aGet, '+'), '', $aGet);
     $aGet = str_replace(strstr($aGet, ' '), '', $aGet);
@@ -87,7 +87,7 @@ if (isset($_GET['v'])) {
 //
 // $payNow
 //
-if (isset($payNowPost)) {
+if (!empty($payNowPost)) {
     header('Location: ' . $uri . '?t=pay');
     exit;
 }
@@ -100,12 +100,12 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([1]);
 $row = $stmt->fetch();
 $dbh = null;
-//
 if ($row) {
-    extract($row);
+    $paperName = $row['name'];
+    $paperDescription = $row['description'];
 } else {
-    $name = null;
-    $description = null;
+    $paperName = '';
+    $paperDescription = '';
 }
 //
 $loginButtons= '      <form method="post" action="post.php">
@@ -184,8 +184,8 @@ if (isset($tGet)
 // HTML
 //
 require $includesPath . '/header1.inc';
-echo '  <title>' . $name . "</title>\n";
-echo '  <meta name="description" content="' . $description . '" />' . "\n";
+echo '  <title>' . $paperName . "</title>\n";
+echo '  <meta name="description" content="' . $paperDescription . '" />' . "\n";
 echo '  <meta name="application-name" content="Online News Site https://onlinenewssite.com/" />' . "\n";
 require $includesPath . '/header2Two.inc';
 if (file_exists('z/local.css')) {
@@ -202,7 +202,7 @@ if (!isset($_SESSION['auth'])) {
     echo $logoutButtons;
 }
 echo '      <div class="logo">
-        <a href="./"><img src="images/logo.png" class="logo" alt="'. $name . '" /></a>
+        <a href="./"><img src="images/logo.png" class="logo" alt="'. $paperName . '" /></a>
       </div>
     </nav>
   </header>' . "\n\n";
@@ -329,7 +329,7 @@ if (empty($_GET)) {
 } else {
     echo '    <aside>' . "\n";
 }
-echo '      <h5>' . $description . "</h5>\n\n";
+echo '      <h5>' . $paperDescription . "</h5>\n\n";
 echo '      <nav>' . "\n      ";
 if (file_exists($includesPath . '/custom/programs/home.php')) {
     include $includesPath . '/custom/programs/home.php';
@@ -349,6 +349,7 @@ if (isset($_SESSION['auth'])) {
     $row = $stmt->fetch();
     $dbh = null;
     if ($row) {
+        $row = array_map('strval', $row);
         if ($row['contributor'] === '1') {
             echo '        <a class="n" href="' . $uri . '?m=article-contribution">Article contribution</a><br />' . "\n";
         }
@@ -365,7 +366,7 @@ foreach ($stmt as $row) {
     echo '        <a class="n" href="' . $uri . '?m=' . $menuPath . '">' . $menuName . '</a><br />' . "\n";
 }
 $dbh = null;
-echo "      <br />\n";
+echo "        <br />\n";
 echo "      </nav>\n\n";
 //
 // Aside, ads
@@ -392,7 +393,7 @@ foreach ($stmt as $row) {
 $dbh = null;
 ksort($adSort);
 if (isset($maxAds)) {
-    $i = null;
+    $i = 0;
     foreach ($adSort as $key => $value) {
         $i++;
         if ($i <= $maxAds) {

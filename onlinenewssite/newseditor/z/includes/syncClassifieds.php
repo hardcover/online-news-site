@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -34,8 +34,8 @@ foreach ($remotes as $remote) {
     // Delete remote requests for early removal
     //
     $remoteClassifieds = [];
-    $request = null;
-    $response = null;
+    $request = [];
+    $response = [];
     $request['task'] = 'classifiedsEarlyRemoval';
     $response = soa($remote . 'z/', $request);
     if ($response['result'] === 'success') {
@@ -51,8 +51,8 @@ foreach ($remotes as $remote) {
     // Determine the missing and extra classifieds
     //
     $remoteClassifieds = [];
-    $request = null;
-    $response = null;
+    $request = [];
+    $response = [];
     $request['task'] = 'classifiedsSync';
     $response = soa($remote . 'z/', $request);
     if ($response['result'] === 'success') {
@@ -84,10 +84,11 @@ foreach ($remotes as $remote) {
         if ($row) {
             extract($row);
             $photos = json_decode($photos, true);
+            $photos = array_map('strval', $photos);
             $startTime = strtotime($startDate);
             $review = date("Y-m-d", $startTime + ($duration * 7 * 86400));
-            $request = null;
-            $response = null;
+            $request = [];
+            $response = [];
             $request['task'] = 'classifiedsUpdateInsert1';
             $request['idAd'] = $idAd;
             $request['email'] = $email;
@@ -100,12 +101,12 @@ foreach ($remotes as $remote) {
             $request['photos'] = $row['photos'];
             $response = soa($remote . 'z/', $request);
             if ($response['result'] = 'success') {
-                $i = null;
+                $i = 0;
                 foreach ($photos as $photo) {
                     $i++;
-                    if ($photo === 1) {
-                        $request = null;
-                        $response = null;
+                    if ($photo === '1') {
+                        $request = [];
+                        $response = [];
                         $request['task'] = 'classifiedsUpdateInsert2';
                         $request['idAd'] = $idAd;
                         $request['photoNumber'] = $i;
@@ -126,8 +127,8 @@ foreach ($remotes as $remote) {
     // Delete extra classifieds
     //
     foreach ($extraClassifieds as $idAd) {
-        $request = null;
-        $response = null;
+        $request = [];
+        $response = [];
         $request['task'] = 'classifiedsDelete';
         $request['idAd'] = $idAd;
         $response = soa($remote . 'z/', $request);

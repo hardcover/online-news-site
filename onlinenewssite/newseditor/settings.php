@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -49,7 +49,7 @@ $sortOrderSectionPost = inlinePost('sortOrderSection');
 $hash = null;
 $idRemote = null;
 $idSection = null;
-$message = null;
+$message = '';
 //
 $remotes = [];
 $dbh = new PDO($dbRemote);
@@ -73,7 +73,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
     // Button: Add / update newspaper name
     //
     if (isset($_POST['addUpdateName'])) {
-        if (is_null($newsNamePost)) {
+        if (empty($newsNamePost)) {
             $message = 'A newspaper name is required.';
         } else {
             $dbh = new PDO($dbSettings);
@@ -113,9 +113,9 @@ if (password_verify($adminPassPost, $row['pass'])) {
     // Button: Add / update newspaper section
     //
     if (isset($_POST['addUpdateSection'])) {
-        if (is_null($sectionPost)) {
+        if (empty($sectionPost)) {
             $message = 'A section name is required.';
-        } elseif (is_null($sortOrderSectionPost)) {
+        } elseif (empty($sortOrderSectionPost)) {
             $message = 'Section sort order is required.';
         } else {
             //
@@ -205,7 +205,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
     // Button: Add / update registration information
     //
     if (isset($_POST['addUpdateRegistration'])) {
-        if (is_null($informationPost)) {
+        if (empty($informationPost)) {
             $message = 'Registration information is required.';
         } else {
             $dbh = new PDO($dbSettings);
@@ -227,7 +227,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
     // Button: Add / update contact form information
     //
     if (isset($_POST['addUpdateContactForm'])) {
-        if (is_null($infoFormsPost)) {
+        if (empty($infoFormsPost)) {
             $message = 'Contact form information is required.';
         } else {
             $dbh = new PDO($dbSettings);
@@ -249,7 +249,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
     // Button: Add / update email alert for classifieds
     //
     if (isset($_POST['addUpdateEmailClassified'])) {
-        if (is_null($emailClassifiedPost)) {
+        if (empty($emailClassifiedPost)) {
             $message = 'Email is required.';
         } else {
             $dbh = new PDO($dbSettings);
@@ -331,8 +331,8 @@ if (password_verify($adminPassPost, $row['pass'])) {
             //
             // Test the connection to the remote URI
             //
-            $request = null;
-            $response = null;
+            $request = [];
+            $response = [];
             $request['task'] = 'test';
             foreach ($remotes as $remote) {
                 $response = soa($remote . 'z/', $request);
@@ -423,8 +423,8 @@ if (password_verify($adminPassPost, $row['pass'])) {
         }
         $dbh = null;
         $message.= "Test connection result:<br /><br />\n";
-        $request = null;
-        $response = null;
+        $request = [];
+        $response = [];
         $request['task'] = 'test';
         foreach ($remotes as $remote) {
             $response = soa($remote . 'z/', $request);
@@ -462,8 +462,8 @@ if (password_verify($adminPassPost, $row['pass'])) {
             $gig.= $character;
         }
         $message.= "Change remote passwords result:<br /><br />\n";
-        $request = null;
-        $response = null;
+        $request = [];
+        $response = [];
         $request['task'] = 'setCrypt';
         $request['hash'] = $newOnus;
         $request['newGig'] = $gig;
@@ -502,9 +502,11 @@ if (isset($editPost)) {
         $stmt->execute([$idNamePost]);
         $row = $stmt->fetch();
         $dbh = null;
-        extract($row);
-        $newsDescriptionPost = $description;
-        $newsNamePost = $name;
+        if ($row) {
+            extract($row);
+            $newsDescriptionPost = $description;
+            $newsNamePost = $name;
+        }
     }
 }
 //
@@ -675,7 +677,8 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row === false) {
-    $row['idClassified'] = null;
+    $row = [];
+    $row['idClassified'] = '';
     $row['emailClassified'] = null;
 }
 echo '      <form action="' . $uri . 'settings.php" method="post">' . "\n";
@@ -686,7 +689,7 @@ echo "      </form>\n\n";
       <h1>Remote URIs</h1>
 
 <?php
-$rowcount = null;
+$rowcount = 0;
 $dbh = new PDO($dbRemote);
 $stmt = $dbh->query('SELECT idRemote, remote FROM remotes ORDER BY remote');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);

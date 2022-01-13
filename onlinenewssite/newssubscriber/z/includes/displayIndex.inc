@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2021 12 15
+ * @version:  2022 01 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -40,12 +40,10 @@ if (isset($_GET['a'])) {
             //
             // Omit the first section divider for subscribers
             //
-            if ($sortOrderSection === '1' and is_null($editorView)) {
-                //$html.= '      <section>' . "\n";
+            if (strval($sortOrderSection) === '1' and is_null($editorView)) {
+                //
             } else {
-                //$html.= '      </section>' . "\n\n";
                 $html.= '      <h2 class="section">' . $section . "</h2>\n\n";
-                //$html.= '      <section>' . "\n";
             }
             //
             // Pull all articles in editing, by date range in published
