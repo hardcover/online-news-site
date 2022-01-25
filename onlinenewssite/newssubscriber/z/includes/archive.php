@@ -134,7 +134,7 @@ if (isset($_GET['a'])) {
 
         <p><input type="submit" class="button" value="Search" name="search" />
       </form>' . "\n";
-    if (isset($bylinePost) or isset($headlinePost) or isset($startDatePost) or isset($textPost)) {
+    if (!empty($bylinePost) or !empty($headlinePost) or !empty($startDatePost) or !empty($textPost)) {
         $html = null;
         $stopTime = 19 + time();
         $dbNumber = 0;
