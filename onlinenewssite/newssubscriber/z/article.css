@@ -7,6 +7,10 @@ body {
     margin: 0 1rem;
 }
 
+p, blockquote, ol, ul {
+    font-size: 1.17rem;
+}
+
 nav.article {
   overflow: hidden;
   position: sticky;

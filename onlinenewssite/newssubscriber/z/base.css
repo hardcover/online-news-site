@@ -33,6 +33,7 @@ body, h1, h2, h3, h4, h5, h6, div, span, form, input, select, textarea, .button,
 
 p, blockquote, ol, ul {
     font-family: "Times New Roman", Times, serif;
+    font-size: 1.11rem;
 }
 
 h1.a, h5.a, h6.a, p.a, blockquote.a, ol.a, ul.a {
