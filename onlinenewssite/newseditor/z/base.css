@@ -299,11 +299,6 @@ hr {
 }
 
 @media (hover: hover) and (pointer: fine) {
-    a:hover, .button:hover {
-        position: relative;
-        left: 2px;
-    }
-
     a.n:hover {
         color: #02c;
         text-decoration: underline;

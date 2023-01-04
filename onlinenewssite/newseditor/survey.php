@@ -354,8 +354,7 @@ require $includesPath . '/header1.inc';
   <link rel="icon" type="image/png" href="images/32.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="generator" content="Online News Site Software, https://onlinenewssite.com/" />
-  <link rel="stylesheet" type="text/css" href="z/jquery-ui.structure.min.css" />
-  <link rel="stylesheet" type="text/css" href="z/jquery-ui.theme.min.css" />
+  <link rel="stylesheet" type="text/css" href="z/jquery-ui.min.css" />
   <link rel="stylesheet" type="text/css" href="z/base.css" />
   <link rel="stylesheet" type="text/css" href="z/admin.css" />
   <script src="z/jquery.min.js"></script>

@@ -525,10 +525,9 @@ echo '  <title>' . $title . "</title>\n";
   <link rel="icon" type="image/png" href="images/32.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="generator" content="Online News Site Software, https://onlinenewssite.com/" />
-  <link rel="stylesheet" type="text/css" href="z/jquery-ui.structure.min.css" />
-  <link rel="stylesheet" type="text/css" href="z/jquery-ui.theme.min.css" />
   <link rel="stylesheet" type="text/css" href="z/base.css" />
   <link rel="stylesheet" type="text/css" href="z/admin.css" />
+  <link rel="stylesheet" type="text/css" href="z/jquery-ui.min.css" />
   <script src="z/jquery.min.js"></script>
   <script src="z/jquery-ui.min.js"></script>
   <script src="z/datepicker.js"></script>

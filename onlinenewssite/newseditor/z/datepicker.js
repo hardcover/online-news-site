@@ -4,8 +4,11 @@ $(document).ready(function () {
     // Date picker
     //
     $.datepicker.setDefaults({
+        showButtonPanel: "true",
+        closeText: "X",
         dateFormat: 'yy-mm-dd',
-        numberOfMonths: 2
+        changeMonth: true,
+        changeYear: true
     });
 
     $(function () {
