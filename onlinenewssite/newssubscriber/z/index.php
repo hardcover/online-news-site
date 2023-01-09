@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 02
+ * @version:  2023 01 09
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -809,7 +809,7 @@ if ($task === 'sitemap') {
         $h = preg_replace('/^[\-]+/', '', $h);
         $h = preg_replace('/[\-]+$/', '', $h);
         $headline = strtolower($h);
-        fwrite($fp, utf8_encode('  <url><loc>' . $uri . '?a=' . $page['0'] . '+' . $headline . '</loc><lastmod>' . $page[1] . '</lastmod></url>' . "\n"));
+        fwrite($fp, utf8('  <url><loc>' . $uri . '?a=' . $page['0'] . '+' . $headline . '</loc><lastmod>' . $page[1] . '</lastmod></url>' . "\n"));
     }
     //
     // Determine the number of needed sitemap files
@@ -825,22 +825,22 @@ if ($task === 'sitemap') {
         //
         $numOfSiteMaps = intval(($row['0'] + 25000) / 49996);
         $fp = fopen('../sitemap_index.xml', 'w');
-        fwrite($fp, utf8_encode('<?xml version="1.0" encoding="UTF-8"?>' . "\n"));
-        fwrite($fp, utf8_encode('<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n"));
+        fwrite($fp, utf8('<?xml version="1.0" encoding="UTF-8"?>' . "\n"));
+        fwrite($fp, utf8('<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n"));
         $mapCount = null;
         while ($mapCount < $numOfSiteMaps) {
             $mapCount++;
-            fwrite($fp, utf8_encode('  <sitemap><loc>' . $uri . 'sitemap' . sprintf('%02d', $mapCount) . '.xml</loc><lastmod>' . $today . '</lastmod></sitemap>' . "\n"));
+            fwrite($fp, utf8('  <sitemap><loc>' . $uri . 'sitemap' . sprintf('%02d', $mapCount) . '.xml</loc><lastmod>' . $today . '</lastmod></sitemap>' . "\n"));
         }
-        fwrite($fp, utf8_encode('</sitemapindex>' . "\n"));
+        fwrite($fp, utf8('</sitemapindex>' . "\n"));
         fclose($fp);
         $fp = null;
         $mapCount = 1;
         $lineCount = 2;
         $fp = fopen('../sitemap' . sprintf('%02d', $mapCount) . '.xml', 'w');
-        fwrite($fp, utf8_encode('<?xml version="1.0" encoding="UTF-8"?>' . "\n"));
-        fwrite($fp, utf8_encode('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n"));
-        fwrite($fp, utf8_encode('  <url><loc>' . $uri . '</loc><priority>1.0</priority></url>' . "\n"));
+        fwrite($fp, utf8('<?xml version="1.0" encoding="UTF-8"?>' . "\n"));
+        fwrite($fp, utf8('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n"));
+        fwrite($fp, utf8('  <url><loc>' . $uri . '</loc><priority>1.0</priority></url>' . "\n"));
         $dbh = new PDO($dbPublished);
         $stmt = $dbh->query('SELECT idArticle, publicationDate, headline FROM articles ORDER BY publicationDate DESC, idArticle DESC');
         $stmt->setFetchMode(PDO::FETCH_NUM);
@@ -857,16 +857,16 @@ if ($task === 'sitemap') {
             urlLoc($uri, $row);
             if (is_int($lineCount / 49996)) {
                 $mapCount++;
-                fwrite($fp, utf8_encode('</urlset>' . "\n"));
+                fwrite($fp, utf8('</urlset>' . "\n"));
                 fclose($fp);
                 $fp = null;
                 $fp = fopen('../sitemap' . sprintf('%02d', $mapCount) . '.xml', 'w');
-                fwrite($fp, utf8_encode('<?xml version="1.0" encoding="UTF-8"?>' . "\n"));
-                fwrite($fp, utf8_encode('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n"));
+                fwrite($fp, utf8('<?xml version="1.0" encoding="UTF-8"?>' . "\n"));
+                fwrite($fp, utf8('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n"));
             }
         }
         $dbh = null;
-        fwrite($fp, utf8_encode('</urlset>' . "\n"));
+        fwrite($fp, utf8('</urlset>' . "\n"));
         fclose($fp);
         $fp = null;
     } else {
@@ -874,9 +874,9 @@ if ($task === 'sitemap') {
         // Write when there is only one sitemap
         //
         $fp = fopen('../sitemap.xml', 'w');
-        fwrite($fp, utf8_encode('<?xml version="1.0" encoding="UTF-8"?>' . "\n"));
-        fwrite($fp, utf8_encode('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n"));
-        fwrite($fp, utf8_encode('  <url><loc>' . $uri . '</loc></url>' . "\n"));
+        fwrite($fp, utf8('<?xml version="1.0" encoding="UTF-8"?>' . "\n"));
+        fwrite($fp, utf8('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n"));
+        fwrite($fp, utf8('  <url><loc>' . $uri . '</loc></url>' . "\n"));
         $dbh = new PDO($dbPublished);
         $stmt = $dbh->query('SELECT idArticle, publicationDate, headline FROM articles ORDER BY publicationDate DESC, idArticle DESC');
         $stmt->setFetchMode(PDO::FETCH_NUM);
@@ -891,7 +891,7 @@ if ($task === 'sitemap') {
             urlLoc($uri, $row);
         }
         $dbh = null;
-        fwrite($fp, utf8_encode('</urlset>' . "\n"));
+        fwrite($fp, utf8('</urlset>' . "\n"));
         fclose($fp);
         $fp = null;
     }
@@ -910,9 +910,9 @@ if ($task === 'sitemap') {
     // Begin the sitemap-news.xml file
     //
     $fp = fopen('../sitemap-news.xml', 'w');
-    fwrite($fp, utf8_encode('<?xml version="1.0" encoding="UTF-8"?>' . "\n"));
-    fwrite($fp, utf8_encode('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' . "\n"));
-    fwrite($fp, utf8_encode('        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">' . "\n"));
+    fwrite($fp, utf8('<?xml version="1.0" encoding="UTF-8"?>' . "\n"));
+    fwrite($fp, utf8('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"' . "\n"));
+    fwrite($fp, utf8('        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">' . "\n"));
     //
     // Add articles
     //
@@ -948,30 +948,30 @@ if ($task === 'sitemap') {
                     $str = str_replace('>', '&gt;', $str);
                     $headline = str_replace('<', '&lt;', $str);
                     //
-                    fwrite($fp, utf8_encode('  <url>' . "\n"));
-                    fwrite($fp, utf8_encode('    <loc>' . $uri . '?a=' . $idArticle . '+' . $headlineSEO . '</loc>' . "\n"));
-                    fwrite($fp, utf8_encode('    <news:news>' . "\n"));
-                    fwrite($fp, utf8_encode('      <news:publication>' . "\n"));
-                    fwrite($fp, utf8_encode('        <news:name>' . $name . '</news:name>' . "\n"));
-                    fwrite($fp, utf8_encode('        <news:language>en</news:language>' . "\n"));
-                    fwrite($fp, utf8_encode('      </news:publication>' . "\n"));
+                    fwrite($fp, utf8('  <url>' . "\n"));
+                    fwrite($fp, utf8('    <loc>' . $uri . '?a=' . $idArticle . '+' . $headlineSEO . '</loc>' . "\n"));
+                    fwrite($fp, utf8('    <news:news>' . "\n"));
+                    fwrite($fp, utf8('      <news:publication>' . "\n"));
+                    fwrite($fp, utf8('        <news:name>' . $name . '</news:name>' . "\n"));
+                    fwrite($fp, utf8('        <news:language>en</news:language>' . "\n"));
+                    fwrite($fp, utf8('      </news:publication>' . "\n"));
                     if (!empty($genre)) {
-                        fwrite($fp, utf8_encode('      <news:genres>' . $genre . '</news:genres>' . "\n"));
+                        fwrite($fp, utf8('      <news:genres>' . $genre . '</news:genres>' . "\n"));
                     }
-                    fwrite($fp, utf8_encode('      <news:publication_date>' . date(DATE_W3C, $publicationTime) . '</news:publication_date>' . "\n"));
-                    fwrite($fp, utf8_encode('      <news:title>' . $headline . '</news:title>' . "\n"));
+                    fwrite($fp, utf8('      <news:publication_date>' . date(DATE_W3C, $publicationTime) . '</news:publication_date>' . "\n"));
+                    fwrite($fp, utf8('      <news:title>' . $headline . '</news:title>' . "\n"));
                     if (!empty($keywords)) {
-                        fwrite($fp, utf8_encode('      <news:keywords>' . $keywords . '</news:keywords>' . "\n"));
+                        fwrite($fp, utf8('      <news:keywords>' . $keywords . '</news:keywords>' . "\n"));
                     }
-                    fwrite($fp, utf8_encode('    </news:news>' . "\n"));
-                    fwrite($fp, utf8_encode('  </url>' . "\n"));
+                    fwrite($fp, utf8('    </news:news>' . "\n"));
+                    fwrite($fp, utf8('  </url>' . "\n"));
                 }
             }
         }
         $dbh = null;
     }
     $dbhSection = null;
-    fwrite($fp, utf8_encode('</urlset>' . "\n"));
+    fwrite($fp, utf8('</urlset>' . "\n"));
     fclose($fp);
     $fp = null;
     //

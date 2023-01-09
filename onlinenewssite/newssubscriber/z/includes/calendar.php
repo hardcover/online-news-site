@@ -10,11 +10,12 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 02
+ * @version:  2023 01 09
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
+echo '    <div class="main">' . "\n";
 echo "      <h1>Calendar for the next month</h1>\n\n";
 //
 // Select events for the next 31 days from now
@@ -114,4 +115,5 @@ if (!empty($row['description'])) {
     echo '      <span>Notes' . "</span><br />\n";
     echo '      ' . $temp . "</p>\n\n";
 }
+echo '    </div>' . "\n";
 ?>

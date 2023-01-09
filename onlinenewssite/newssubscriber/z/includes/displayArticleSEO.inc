@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 02
+ * @version:  2023 01 09
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -83,7 +83,8 @@ if ($row) {
 //
 // HTML
 //
-$html = '      <p><span class="fr"><a href="' . $uri . '?m=archive-search" class="n">Archive search</a></span></p>' . "\n\n";
+$html = '    <div class="row">' . "\n";
+$html.= '      <p><span class="fr"><a href="' . $uri . '?m=archive-search" class="n">Archive search</a></span></p>' . "\n\n";
 $bylineDateTime = isset($publicationDate) ? date("l, F j, Y", strtotime($publicationDate)) : null;
 $html.= '      <p><b>' . $section . "</b></p>\n\n";
 $html.= '      <h1>' . html($headline) . "</h1>\n\n";
@@ -204,5 +205,6 @@ if ($survey === '1'
     $dbh = null;
 }
 $html.= "\n" . '      <p><span class="fr"><a href="' . $uri . '?m=archive-search" class="n">Archive search</a></span></p>' . "\n";
+$html.= '    </div>' . "\n";
 echo $html;
 ?>

@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 02
+ * @version:  2023 01 09
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -1436,10 +1436,12 @@ if (isset($formPost) and $formPost === 'other') {
 //
 // HTML
 //
+echo '    <div class="main">' . "\n";
 echoIfMessage($message);
 echo '      <h1>Contact us</h1>' . "\n\n";
 echo $information;
 echo '      <form method="post" action="' . $uri . '?m=contact-us">' . "\n";
 echo $html;
 echo '      </form>' . "\n";
+echo '    </div>' . "\n";
 ?>

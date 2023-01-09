@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 02
+ * @version:  2023 01 09
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -184,12 +184,12 @@ if (isset($tGet)
 // HTML
 //
 require $includesPath . '/header1.inc';
-echo '  <title>' . $paperName . "</title>\n";
-echo '  <meta name="description" content="' . $paperDescription . '" />' . "\n";
-echo '  <meta name="application-name" content="Online News Site https://onlinenewssite.com/" />' . "\n";
+echo '<title>' . $paperName . "</title>\n";
+echo '<meta name="description" content="' . $paperDescription . '" />' . "\n";
+echo '<meta name="application-name" content="Online News Site https://onlinenewssite.com/" />' . "\n";
 require $includesPath . '/header2Two.inc';
 if (file_exists('z/local.css')) {
-    echo '  <link rel="stylesheet" type="text/css" href="z/local.css" />' . "\n";
+    echo '<link rel="stylesheet" type="text/css" href="z/local.css" />' . "\n";
 }
 echo '</head>
 
@@ -207,14 +207,112 @@ echo '      <div class="logo">
     </nav>
   </header>' . "\n\n";
 //
+// Aside, menu
+//
+if (empty($_GET)) {
+    echo '  <aside>' . "\n";
+} else {
+    echo '  <aside>' . "\n";
+}
+echo '    <h5>' . $paperDescription . "</h5>\n\n";
+echo '    <nav>' . "\n      ";
+if (file_exists($includesPath . '/custom/programs/home.php')) {
+    include $includesPath . '/custom/programs/home.php';
+}
+if (isset($_SESSION['auth'])) {
+    //
+    // My account
+    //
+    echo '<a class="n" href="' . $uri . '?m=my-account">My account</a><br />' . "\n";
+    //
+    // Article contribution
+    //
+    $dbh = new PDO($dbSubscribers);
+    $stmt = $dbh->prepare('SELECT contributor FROM users WHERE idUser=?');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $stmt->execute([$_SESSION['userId']]);
+    $row = $stmt->fetch();
+    $dbh = null;
+    if ($row) {
+        $row = array_map('strval', $row);
+        if ($row['contributor'] === '1') {
+            echo '      <a class="n" href="' . $uri . '?m=article-contribution">Article contribution</a><br />' . "\n";
+        }
+    }
+}
+//
+// Aside, custom menu
+//
+$dbh = new PDO($dbMenu);
+$stmt = $dbh->query('SELECT menuName, menuPath, menuAuthorization FROM menu ORDER BY menuSortOrder');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+foreach ($stmt as $row) {
+    extract($row);
+    echo '      <a class="n" href="' . $uri . '?m=' . $menuPath . '">' . $menuName . '</a><br />' . "\n";
+}
+$dbh = null;
+echo "      <br />\n";
+echo "    </nav>\n\n";
+//
+// Aside, ads
+//
+$dbh = new PDO($dbAdvertising);
+$stmt = $dbh->prepare('SELECT maxAds FROM maxAd WHERE idMaxAds=?');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+$stmt->execute([1]);
+$row = $stmt->fetch();
+if ($row) {
+    $maxAds = $row['maxAds'];
+}
+$stmt = $dbh->prepare('SELECT idAd, sortOrderAd FROM advertisements WHERE (? >= startDateAd AND ? <= endDateAd) ORDER BY sortOrderAd');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+$stmt->execute([$today, $today]);
+foreach ($stmt as $row) {
+    extract($row);
+    if (empty($sortOrderAd)) {
+        $adSort[mt_rand()] = $idAd;
+    } else {
+        $adSort[$sortOrderAd] = $idAd;
+    }
+}
+$dbh = null;
+ksort($adSort);
+if (isset($maxAds)) {
+    $i = 0;
+    foreach ($adSort as $key => $value) {
+        $i++;
+        if ($i <= $maxAds) {
+            $adSortTemp[$key] = $value;
+        }
+    }
+    if (!empty($adSortTemp)) {
+        $adSort = $adSortTemp;
+        $adSortTemp = null;
+    }
+}
+$dbh = new PDO($dbAdvertising);
+foreach ($adSort as $idAd) {
+    $stmt = $dbh->prepare('SELECT link, linkAlt FROM advertisements WHERE idAd=?');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $stmt->execute([$idAd]);
+    $row = $stmt->fetch();
+    if ($row) {
+        extract($row);
+        if (!empty($link)) {
+            $linkHtml1 = '<a href="' . $link . '" target="_blank" rel="nofollow">';
+            $linkHtml2 = '</a>';
+        } else {
+            $linkHtml1 = $linkHtml2 = null;
+        }
+        echo '    ' . $linkHtml1 . '<img class="wide border" src="imaged.php?i=' . muddle($idAd) . '" alt="' . $linkAlt . '" />' . $linkHtml2 . '<br />' . "\n";
+    }
+}
+$dbh = null;
+echo '  </aside>' . "\n";
+//
 // Main
 //
-echo '  <div class="flex">' . "\n";
-if (empty($_GET)) {
-    echo '    <main class="columns">' . "\n";
-} else {
-    echo '    <main>' . "\n";
-}
+echo "\n" . '  <main>' . "\n";
 if (empty($_GET)) {
     include $includesPath . '/displayIndex.inc';
 } elseif (isset($aGet) and isset($mGet)) {
@@ -290,8 +388,10 @@ if (empty($_GET)) {
             //
             $content = Parsedown::instance()->parse($menuContent);
             $content = str_replace("\n", "\n      ", $content);
+            echo '    <div class="main">' . "\n";
             echo '      <h1>' . $menuName . "</h1>\n";
             echo '      ' . $content . "\n";
+            echo '    </div>' . "\n";
         }
     }
 } elseif (isset($tGet) and $tGet === 'c') {
@@ -320,111 +420,7 @@ if (empty($_GET)) {
 if (file_exists($includesPath . '/custom/programs/footer.php')) {
     include $includesPath . '/custom/programs/footer.php';
 }
-echo '    </main>' . "\n\n";
-//
-// Aside, menu
-//
-if (empty($_GET)) {
-    echo '    <aside class="columns">' . "\n";
-} else {
-    echo '    <aside>' . "\n";
-}
-echo '      <h5>' . $paperDescription . "</h5>\n\n";
-echo '      <nav>' . "\n      ";
-if (file_exists($includesPath . '/custom/programs/home.php')) {
-    include $includesPath . '/custom/programs/home.php';
-}
-if (isset($_SESSION['auth'])) {
-    //
-    // My account
-    //
-    echo '<a class="n" href="' . $uri . '?m=my-account">My account</a><br />' . "\n";
-    //
-    // Article contribution
-    //
-    $dbh = new PDO($dbSubscribers);
-    $stmt = $dbh->prepare('SELECT contributor FROM users WHERE idUser=?');
-    $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute([$_SESSION['userId']]);
-    $row = $stmt->fetch();
-    $dbh = null;
-    if ($row) {
-        $row = array_map('strval', $row);
-        if ($row['contributor'] === '1') {
-            echo '        <a class="n" href="' . $uri . '?m=article-contribution">Article contribution</a><br />' . "\n";
-        }
-    }
-}
-//
-// Aside, custom menu
-//
-$dbh = new PDO($dbMenu);
-$stmt = $dbh->query('SELECT menuName, menuPath, menuAuthorization FROM menu ORDER BY menuSortOrder');
-$stmt->setFetchMode(PDO::FETCH_ASSOC);
-foreach ($stmt as $row) {
-    extract($row);
-    echo '        <a class="n" href="' . $uri . '?m=' . $menuPath . '">' . $menuName . '</a><br />' . "\n";
-}
-$dbh = null;
-echo "        <br />\n";
-echo "      </nav>\n\n";
-//
-// Aside, ads
-//
-$dbh = new PDO($dbAdvertising);
-$stmt = $dbh->prepare('SELECT maxAds FROM maxAd WHERE idMaxAds=?');
-$stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute([1]);
-$row = $stmt->fetch();
-if ($row) {
-    $maxAds = $row['maxAds'];
-}
-$stmt = $dbh->prepare('SELECT idAd, sortOrderAd FROM advertisements WHERE (? >= startDateAd AND ? <= endDateAd) ORDER BY sortOrderAd');
-$stmt->setFetchMode(PDO::FETCH_ASSOC);
-$stmt->execute([$today, $today]);
-foreach ($stmt as $row) {
-    extract($row);
-    if (empty($sortOrderAd)) {
-        $adSort[mt_rand()] = $idAd;
-    } else {
-        $adSort[$sortOrderAd] = $idAd;
-    }
-}
-$dbh = null;
-ksort($adSort);
-if (isset($maxAds)) {
-    $i = 0;
-    foreach ($adSort as $key => $value) {
-        $i++;
-        if ($i <= $maxAds) {
-            $adSortTemp[$key] = $value;
-        }
-    }
-    if (!empty($adSortTemp)) {
-        $adSort = $adSortTemp;
-        $adSortTemp = null;
-    }
-}
-$dbh = new PDO($dbAdvertising);
-foreach ($adSort as $idAd) {
-    $stmt = $dbh->prepare('SELECT link, linkAlt FROM advertisements WHERE idAd=?');
-    $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute([$idAd]);
-    $row = $stmt->fetch();
-    if ($row) {
-        extract($row);
-        if (!empty($link)) {
-            $linkHtml1 = '<a href="' . $link . '" target="_blank" rel="nofollow">';
-            $linkHtml2 = '</a>';
-        } else {
-            $linkHtml1 = $linkHtml2 = null;
-        }
-        echo '      ' . $linkHtml1 . '<img class="wide border" src="imaged.php?i=' . muddle($idAd) . '" alt="' . $linkAlt . '" />' . $linkHtml2 . '<br />' . "\n";
-    }
-}
-$dbh = null;
-echo '    </aside>' . "\n";
-echo '  </div>' . "\n";
+echo '  </main>' . "\n";
 ?>
 </body>
 </html>

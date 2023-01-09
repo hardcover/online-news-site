@@ -10,30 +10,25 @@ input.paypal {
     vertical-align: text-bottom;
 }
 
-div.flex {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    margin: 0 1rem;
-    padding: 0;
-}
-
 main {
-    -ms-flex-preferred-size: 61.8%;
-    flex-basis: 61.8%;
-    padding: 0 1rem 0 0;
+    margin: 0 1rem 1rem 1rem;
 }
 
 aside {
-    -ms-flex-preferred-size: 32.2%;
-    flex-basis: 32.2%;
-    padding: 0 0 0 1rem;
+    float: right;
+    width: 32.2%;
+    padding: 0 0 1rem 1rem;
+    margin: 0 1rem 1rem 1rem;
+    border-bottom: 1px solid #aaa;
     border-left: 1px solid #aaa;
+}
+
+div.main, div.row {
+    display: grid;
 }
 
 input.slim {
     width: 1.7rem;
-    margin-right: .4rem;
 }
 
 @media (min-width: 360px) {
@@ -58,15 +53,14 @@ input.slim {
         padding-right: 19.1%;
     }
 
-    main.columns {
+    main {
         -ms-flex-preferred-size: 76.4%;
         flex-basis: 76.4%;
         padding-left: 0;
     }
 
-    aside.columns {
-        -ms-flex-preferred-size: 23.6%;
-        flex-basis: 23.6%;
+    aside {
+        width: 23.6%;
         padding-right: 0;
     }
 
@@ -77,6 +71,11 @@ input.slim {
         -webkit-box-pack: center;
         -ms-flex-pack: center;
         justify-content: center;
+    }
+
+    div.main {
+        padding-left: 19.1%;
+        padding-right: 19.1%;
     }
 
     div.right, div.left {

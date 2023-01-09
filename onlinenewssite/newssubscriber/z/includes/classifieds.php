@@ -10,11 +10,12 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 02
+ * @version:  2023 01 09
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
+echo '    <div class="main">' . "\n";
 echo '      <h1><a href="' . $uri . '?m=classified-ads">Classified ads</a></h1>' . "\n\n";
 echo '      <p><a href="' . $uri . '?m=place-classified">Place a classified ad</a>.</p>' . "\n\n";
 echo "      <hr />\n\n";
@@ -148,4 +149,5 @@ if (isset($_GET['s'])) {
     }
     $dbh = null;
 }
+echo '    </div>' . "\n";
 ?>

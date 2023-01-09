@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 02
+ * @version:  2023 01 09
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -36,14 +36,14 @@ if (isset($_GET['a'])) {
         $stmt->execute([$idSection]);
         $row = $stmt->fetch();
         if ($row) {
-            $count = null;
             //
             // Omit the first section divider for subscribers
             //
             if (strval($sortOrderSection) === '1' and is_null($editorView)) {
                 //
             } else {
-                $html.= '      <h2 class="section">' . $section . "</h2>\n\n";
+                $html.= "\n" . '    <hr />' . "\n";
+                $html.= '    <h2 class="section">' . $section . "</h2>\n\n";
             }
             //
             // Pull all articles in editing, by date range in published
@@ -58,42 +58,38 @@ if (isset($_GET['a'])) {
             $stmt->execute([$idSection]);
             foreach ($stmt as $row) {
                 extract($row);
-                if (isset($count)) {
-                    $html.= '      <hr />' . "\n\n";
-                }
-                $count++;
                 $i++;
                 if ($i === 1) {
-                    $html.= '      <div class="row">' . "\n";
-                    $html.= '        <div class="left">' . "\n";
+                    $html.= '    <div class="row">' . "\n";
+                    $html.= '      <div class="left">' . "\n\n";
                 } else {
-                    $html.= '        <div class="right">' . "\n";
+                    $html.= "\n" . '      <div class="right">' . "\n";
                 }
-                $html.= '          <h2><a class="n" href="' . $use . '.php?a=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
+                $html.= '        <h2><a class="n" href="' . $use . '.php?a=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
                 if (!empty($standfirst)) {
-                    $html.= '          <h5>' . html($standfirst) . "</h5>\n\n";
+                    $html.= '        <h5>' . html($standfirst) . "</h5>\n\n";
                 }
                 if (!empty($thumbnailImageWidth)) {
                     if ($photoName === 'third') {
-                        $html.= '          <p><a href="' . $use . '.php?a=' . $idArticle . '"><img class="third border mb" src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" alt=""></a></p>' . "\n";
+                        $html.= '        <p><a href="' . $use . '.php?a=' . $idArticle . '"><img class="third border mb" src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" alt=""></a></p>' . "\n";
                     } else {
-                        $html.= '          <p><a href="' . $use . '.php?a=' . $idArticle . '"><img class="lead b mb" src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" alt=""></a></p>' . "\n";
+                        $html.= '        <p><a href="' . $use . '.php?a=' . $idArticle . '"><img class="lead b mb" src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" alt=""></a></p>' . "\n";
                     }
-                    $html.= '          <p>' . html($summary) . "</p>\n";
+                    $html.= '        <p>' . html($summary) . "</p>\n";
                 } else {
                     if (!empty($summary)) {
                         $html.= '        <p>' . html($summary) . "</p>\n";
                     }
                 }
-                $html.= '        </div>' . "\n";
+                $html.= '      </div>' . "\n";
                 $j = $i;
                 if ($i === 2) {
-                    $html.= '      </div>' . "\n";
+                    $html.= '    </div>' . "\n\n";
                     $i = 0;
                 }
             }
             if ($j === 1) {
-                $html.= '      </div>' . "\n";
+                $html.= '    </div>' . "\n";
             }
             //
             // Modify for different uses, no include for subscribers
@@ -109,7 +105,7 @@ if (isset($_GET['a'])) {
         $dbh = null;
     }
     $dbhSection = null;
-    //$html.= '      </section>' . "\n";
+    //$html.= '    </section>' . "\n";
 }
 echo $html;
 ?>

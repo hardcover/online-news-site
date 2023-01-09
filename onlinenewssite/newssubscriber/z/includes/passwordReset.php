@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 02
+ * @version:  2023 01 09
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -48,6 +48,7 @@ if (isset($_GET['v'])) {
 //
 echoIfMessage($message);
 ?>
+    <div class="main">
       <h1>Reset Password</h1>
 
       <p>Complete the form below to set a new password.</p>
@@ -61,3 +62,4 @@ echoIfMessage($message);
 
         <p><input type="submit" class="button" name="resetPassword" value="Set new password" /><input type="hidden" name="verify"<?php echoIfValue($vGet); ?> /></p>
       </form>
+    </div>
