@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -179,23 +179,23 @@ require $includesPath . '/header2.inc';
       <form class="wait" action="<?php echo $uri; ?>usersClassified.php" method="post">
         <p>The admin password is required for all user maintenance.</p>
 
-        <p><label for="adminPass">Password</label><br />
-        <input id="adminPass" name="adminPass" type="password" class="h" autofocus required /></p>
+        <p><label for="adminPass">Password</label><br>
+        <input id="adminPass" name="adminPass" type="password" class="h" autofocus required></p>
 
         <h1>Add, update and delete users</h1>
 
         <p>All fields are required to add a user. For an update, the full name and user name are required, the password will remain unchanged if left blank. The user name only is required for delete. User names must be unique.</p>
 
-        <p><label for="fullName">Full name</label><br />
-        <input id="fullName" name="fullName" type="text" class="h"<?php echoIfValue($fullNameEdit); ?> /></p>
+        <p><label for="fullName">Full name</label><br>
+        <input id="fullName" name="fullName" type="text" class="h"<?php echoIfValue($fullNameEdit); ?>></p>
 
-        <p><label for="user">User name</label><br />
-        <input id="user" name="user" type="text" class="h" required<?php echoIfValue($userEdit); ?> /><input name="idUser" type="hidden" <?php echoIfValue($idUserEdit); ?> /></p>
+        <p><label for="user">User name</label><br>
+        <input id="user" name="user" type="text" class="h" required<?php echoIfValue($userEdit); ?>><input name="idUser" type="hidden" <?php echoIfValue($idUserEdit); ?>></p>
 
-        <p><label for="pass">Password</label><br />
-        <input id="pass" name="pass" type="text" class="h" /></p>
+        <p><label for="pass">Password</label><br>
+        <input id="pass" name="pass" type="text" class="h"></p>
 
-        <p><input type="submit" class="button" value="Add / update" name="addUpdate" /> <input type="submit" class="button" value="Delete" name="delete" /><input type="hidden" name="existing"<?php echoIfValue($edit); ?> /></p>
+        <p><input type="submit" class="button" value="Add / update" name="addUpdate"> <input type="submit" class="button" value="Delete" name="delete"><input type="hidden" name="existing"<?php echoIfValue($edit); ?>></p>
       </form>
     </main>
 
@@ -217,10 +217,10 @@ foreach ($stmt as $row) {
     if ($user !== 'admin') {
         $rowcount++;
         echo '      <form class="wait" action="' . $uri . 'usersClassified.php" method="post">' . "\n";
-        echo '        <p>' . html($fullName) . " - Full name<br />\n";
-        echo '        ' . html($user) . " - User name, count: $rowcount<br />\n";
-        echo "        The password is $printPass<br />\n";
-        echo '        <input name="idUser" type="hidden" value="' . $idUser . '" /><input type="submit" class="button" value="Edit" name="edit" /></p>' . "\n";
+        echo '        <p>' . html($fullName) . " - Full name<br>\n";
+        echo '        ' . html($user) . " - User name, count: $rowcount<br>\n";
+        echo "        The password is $printPass<br>\n";
+        echo '        <input name="idUser" type="hidden" value="' . $idUser . '"><input type="submit" class="button" value="Edit" name="edit"></p>' . "\n";
         echo "      </form>\n\n";
     }
 }

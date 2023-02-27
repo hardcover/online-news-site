@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -41,21 +41,21 @@ if (isset($_SESSION['message'])) {
 //
 // HTML
 //
-echoIfMessage($message);
 ?>
     <div class="main">
+      echoIfMessage($message);
       <h1>Reset Password</h1>
 
       <p>Complete the form below to receive an email to reset the password.</p>
 
       <form action="<?php echo $uri; ?>post.php" method="post">
-        <p><label for="email">Email</label><br />
-        <input id="email" name="email" class="wide" type="email" required /></p>
+        <p><label for="email">Email</label><br>
+        <input id="email" name="email" class="wide" type="email" required></p>
 
         <p><label>
-          <input name="forgot" type="checkbox" value="1" required /> Send me an email with a link to reset my password
+          <input name="forgot" type="checkbox" value="1" required> Send me an email with a link to reset my password
         </label></p>
 
-        <p><input type="submit" class="button" name="forgotPassword" value="Forgot password" /></p>
+        <p><input type="submit" class="button" name="forgotPassword" value="Forgot password"></p>
       </form>
     </div>

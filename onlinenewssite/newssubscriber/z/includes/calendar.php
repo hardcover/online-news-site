@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -96,7 +96,7 @@ for ($i = 0; $i < 31; $i++) {
     }
     $dbh = null;
     if (isset($description)) {
-        echo '      <h3><br />' . "\n";
+        echo '      <h3><br>' . "\n";
         echo '      ' . $dayOfTheWeekSelect . ', ' . $monthSelect . ' ' . $dayOfTheMonthSelect . ', ' . $yearSelect . "</h3>\n";
         echo '  ' . $description . "\n";
         $temp = null;
@@ -111,8 +111,8 @@ $dbh = null;
 if (!empty($row['description'])) {
     $temp = Parsedown::instance()->parse($row['description']);
     $temp = str_replace("\n", "\n\n      ", $temp);
-    echo '      <p><br />' . "\n";
-    echo '      <span>Notes' . "</span><br />\n";
+    echo '      <p><br>' . "\n";
+    echo '      <span>Notes' . "</span><br>\n";
     echo '      ' . $temp . "</p>\n\n";
 }
 echo '    </div>' . "\n";

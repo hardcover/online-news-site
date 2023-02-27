@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -351,12 +351,10 @@ if (isset($_POST['reset'])) {
 require $includesPath . '/header1.inc';
 ?>
   <title>Survey</title>
-  <link rel="icon" type="image/png" href="images/32.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="generator" content="Online News Site Software, https://onlinenewssite.com/" />
-  <link rel="stylesheet" type="text/css" href="z/jquery-ui.min.css" />
-  <link rel="stylesheet" type="text/css" href="z/base.css" />
-  <link rel="stylesheet" type="text/css" href="z/admin.css" />
+  <link rel="icon" type="image/png" href="images/32.png">
+  <link rel="stylesheet" type="text/css" href="z/jquery-ui.min.css">
+  <link rel="stylesheet" type="text/css" href="z/base.css">
+  <link rel="stylesheet" type="text/css" href="z/admin.css">
   <script src="z/jquery.min.js"></script>
   <script src="z/jquery-ui.min.js"></script>
   <script src="z/datepicker.js"></script>
@@ -379,17 +377,17 @@ require $includesPath . '/body.inc';
       <h1>Create and edit surveys</h1>
 
       <form class="wait" method="post" action="survey.php">
-        <input type="hidden" name="idArticle"<?php echoIfValue($idArticleEdit); ?> />
-        <p>Question<br />
+        <input type="hidden" name="idArticle"<?php echoIfValue($idArticleEdit); ?>>
+        <p>Question<br>
         <textarea id="question" name="question" class="h"><?php echoIfText($questionEdit); ?></textarea></p>
 
-        <p>Start date<br />
-        <input id="publicationDate" name="publicationDate" type="text" class="datepicker date"<?php echoIfValue($publicationDateEdit); ?> /></p>
+        <p>Start date<br>
+        <input id="publicationDate" name="publicationDate" type="text" class="datepicker date"<?php echoIfValue($publicationDateEdit); ?>></p>
 
-        <p>End date<br />
-        <input name="endDate" type="text" class="datepicker date" <?php echoIfValue($endDateEdit); ?> /></p>
+        <p>End date<br>
+        <input name="endDate" type="text" class="datepicker date" <?php echoIfValue($endDateEdit); ?>></p>
 
-        <p><label for="idSection">Section</label><br />
+        <p><label for="idSection">Section</label><br>
         <select id="idSection" name="idSection">
 <?php
 $dbh = new PDO($dbSettings);
@@ -403,31 +401,31 @@ $dbh = null;
 ?>
         </select></p>
 
-        <p>Possible answer 1<br />
-        <input type="text" name="answer1"<?php echoIfValue($answer1Edit); ?> class="h" /></p>
+        <p>Possible answer 1<br>
+        <input type="text" name="answer1"<?php echoIfValue($answer1Edit); ?> class="h"></p>
 
-        <p>Possible answer 2<br />
-        <input type="text" name="answer2"<?php echoIfValue($answer2Edit); ?> class="h" /></p>
+        <p>Possible answer 2<br>
+        <input type="text" name="answer2"<?php echoIfValue($answer2Edit); ?> class="h"></p>
 
-        <p>Possible answer 3<br />
-        <input type="text" name="answer3"<?php echoIfValue($answer3Edit); ?> class="h" /></p>
+        <p>Possible answer 3<br>
+        <input type="text" name="answer3"<?php echoIfValue($answer3Edit); ?> class="h"></p>
 
-        <p>Possible answer 4<br />
-        <input type="text" name="answer4"<?php echoIfValue($answer4Edit); ?> class="h" /></p>
+        <p>Possible answer 4<br>
+        <input type="text" name="answer4"<?php echoIfValue($answer4Edit); ?> class="h"></p>
 
-        <p>Possible answer 5<br />
-        <input type="text" name="answer5"<?php echoIfValue($answer5Edit); ?> class="h" /></p>
+        <p>Possible answer 5<br>
+        <input type="text" name="answer5"<?php echoIfValue($answer5Edit); ?> class="h"></p>
 
-        <p>Possible answer 6<br />
-        <input type="text" name="answer6"<?php echoIfValue($answer6Edit); ?> class="h" /></p>
+        <p>Possible answer 6<br>
+        <input type="text" name="answer6"<?php echoIfValue($answer6Edit); ?> class="h"></p>
 
-        <p>Possible answer 7<br />
-        <input type="text" name="answer7"<?php echoIfValue($answer7Edit); ?> class="h" /></p>
+        <p>Possible answer 7<br>
+        <input type="text" name="answer7"<?php echoIfValue($answer7Edit); ?> class="h"></p>
 
-        <p>Possible answer 8<br />
-        <input type="text" name="answer8"<?php echoIfValue($answer8Edit); ?> class="h" /></p>
+        <p>Possible answer 8<br>
+        <input type="text" name="answer8"<?php echoIfValue($answer8Edit); ?> class="h"></p>
 
-        <p><input type="submit" class="button" name="update" value="Add / update" /> <input type="submit" class="button" name="reset" value="Reset" /></p>
+        <p><input type="submit" class="button" name="update" value="Add / update"> <input type="submit" class="button" name="reset" value="Reset"></p>
       </form>
     </main>
 
@@ -442,9 +440,9 @@ $stmt->execute([1]);
 foreach ($stmt as $row) {
     extract($row);
     echo '      <form class="wait" action="' . $uri . 'survey.php" method="post">' . "\n";
-    echo '        <p>' . html($headline) . "<br />\n";
-    echo '        <input name="idArticle" type="hidden" value="' . $idArticle . '" />' . "\n";
-    echo '        <input type="submit" class="button" value="Edit" name="edit" /></p>' . "\n";
+    echo '        <p>' . html($headline) . "<br>\n";
+    echo '        <input name="idArticle" type="hidden" value="' . $idArticle . '">' . "\n";
+    echo '        <input type="submit" class="button" value="Edit" name="edit"></p>' . "\n";
     echo '      </form>' . "\n\n";
 }
 $dbh = null;
@@ -459,9 +457,9 @@ $stmt->execute([1]);
 foreach ($stmt as $row) {
     extract($row);
     echo '      <form class="wait" action="' . $uri . 'survey.php" method="post">' . "\n";
-    echo '        <p>' . html($headline) . "<br />\n";
-    echo '        <input name="idArticle" type="hidden" value="' . $idArticle . '" />' . "\n";
-    echo '        <input type="submit" class="button" value="Edit" name="edit" /></p>' . "\n";
+    echo '        <p>' . html($headline) . "<br>\n";
+    echo '        <input name="idArticle" type="hidden" value="' . $idArticle . '">' . "\n";
+    echo '        <input type="submit" class="button" value="Edit" name="edit"></p>' . "\n";
     echo '      </form>' . "\n\n";
 }
 $dbh = null;

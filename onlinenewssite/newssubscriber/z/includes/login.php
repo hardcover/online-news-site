@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -42,6 +42,7 @@ $information = null;
 //
 // HTML
 //
+echo '    <div class="main">' . "\n";
 echoIfMessage($message);
 echo "      <h1>Log in / Register</h1>\n\n";
 $dbh = new PDO($dbSettings);
@@ -54,17 +55,19 @@ if ($row) {
     $temp = str_replace("\n", "\n\n      ", $temp);
     $information = '      ' . $temp . "\n\n";
     $temp = null;
-    echo $information;
 }
 ?>
       <form action="<?php echo $uri; ?>post.php" method="post">
-        <p><label for="email">Email</label><br />
-        <input id="email" name="email" type="email" class="wide" required /></p>
+        <p><label for="email">Email</label><br>
+        <input id="email" name="email" type="email" class="wide" required></p>
 
-        <p><label for="pass">Password</label><br />
-        <input id="pass" name="pass" type="password" class="wide" required /></p>
+        <p><label for="pass">Password</label><br>
+        <input id="pass" name="pass" type="password" class="wide" required></p>
 
-        <p><input type="submit" name="login" value="Log in" class="button" /> <input type="submit" name="register" value="Register" class="button" /></p>
+        <p><input type="submit" name="login" value="Log in" class="button"> <input type="submit" name="register" value="Register" class="button"></p>
       </form>
 
       <p><a href="<?php echo $uri; ?>?t=c">Forgot password?</a></p>
+
+      <?php echo $information; ?>
+    </div>

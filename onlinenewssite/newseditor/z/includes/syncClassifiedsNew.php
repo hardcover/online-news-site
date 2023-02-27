@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -56,8 +56,8 @@ foreach ($remotes as $remote) {
         if ($response['result'] === 'success' and isset($response['email'])) {
             extract($response);
             $dbh = new PDO($dbClassifieds);
-            $stmt = $dbh->prepare('INSERT INTO ads (email, title, description, categoryId, photos) VALUES (?, ?, ?, ?, ?)');
-            $stmt->execute([$email, $title, $description, $categoryId, $photos]);
+            $stmt = $dbh->prepare('INSERT INTO ads (email, title, description, categoryId, invoice, photos) VALUES (?, ?, ?, ?, ?, ?)');
+            $stmt->execute([$email, $title, $description, $categoryId, $invoice, $photos]);
             $idAdMain = $dbh->lastInsertId();
             $dbh = null;
             //

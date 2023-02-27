@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -38,10 +38,10 @@ $passTwoPost = inlinePost('passTwo');
 $verify = hash('sha1', mt_rand() . mt_rand() . mt_rand() . mt_rand());
 $verifyPost = inlinePost('verify');
 //
-$headers = 'From: noreply@' . $_SERVER["HTTP_HOST"] . "\r\n";
+//$headers = 'From: noreply@' . $_SERVER["HTTP_HOST"] . "\r\n";
 //
 // dev: Required in some test environments
-// $headers = 'From: noreply@hardcoverllc.com' . "\r\n";
+$headers = 'From: noreply@hardcoverllc.com' . "\r\n";
 //
 //
 $headers.= 'MIME-Version: 1.0' . "\r\n";
@@ -132,7 +132,7 @@ if ((isset($_POST['login'])
             $body.= $uri . '?t=l&v=' . $verify . "\r\n";
             $subject = 'Confirm email address at ' . $name . "\r\n";
             mail($emailPost . "\r\n", $subject, $body, $headers);
-            $message = 'Check your email for a message from us. Visit the link in the email to confirm the email address and continue registration.<br /><br />The website does not use cookies except for logged-in users. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.';
+            $message = 'Check your email for a message from us. Visit the link in the email to confirm the email address and continue registration.<br><br>The website does not use cookies except for logged-in users. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.';
         } else {
             //
             // Set message for failed log in attempt when the email is not found
@@ -175,7 +175,7 @@ if ((isset($_POST['login'])
         $subscribersVerified = '';
     }
     //
-    // Authentication
+    // Authenticate
     //
     if ((password_verify($passPost, $subscribersPass) or (password_verify($passPost, $subscribersNewPass))
         and ($subscribersVerified === '1' or $subscribersNewVerified === '1'))
@@ -245,7 +245,7 @@ if ((isset($_POST['login'])
             //
             // Set message for when a registration is begun again within the time limit for email confirmation
             //
-            $message = 'Check your email for a message from us. Visit the link in the email to confirm the email address and continue registration.<br /><br />The website does not use cookies except for logged-in users. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.';
+            $message = 'Check your email for a message from us. Visit the link in the email to confirm the email address and continue registration.<br><br>The website does not use cookies except for logged-in users. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.';
         } else {
             //
             // Set message for when the email is found but the password is incorrect in a log in

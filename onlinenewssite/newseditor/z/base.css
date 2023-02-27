@@ -93,7 +93,7 @@ h6.fn {
 }
 
 p.bw {
-    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 p.error {
@@ -105,7 +105,7 @@ p.error {
 }
 
 p.summary {
-    height: 6rem;
+    height: 6.3rem;
     overflow: hidden;
 }
 
@@ -147,7 +147,7 @@ input, select, textarea, a.m, a.s, a.button {
 }
 
 input.date {
-    width: 6rem;
+    width: 40%;
 }
 
 input.h, select.h, textarea.h {

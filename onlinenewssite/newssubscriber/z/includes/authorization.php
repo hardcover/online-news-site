@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -46,7 +46,7 @@ if (empty($_SESSION['auth'])
     or (strval(session_id()) !== strval($oldCookie))
     or (strval($_SESSION['auth']) !== strval(hash('sha256', $_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']) . $_SESSION['userID']))
 ) {
-    echo '<META HTTP-EQUIV="Refresh" Content="0; URL=' . $uri . '?t=l">';
+    echo '<meta http-equiv="refresh" content="0; url=' . $uri . '?t=l">';
     exit;
 }
 //

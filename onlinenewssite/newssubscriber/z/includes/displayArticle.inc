@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -42,6 +42,7 @@ if (strpos($database, 'archive') === false) {
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute([$aGet]);
         $row = $stmt->fetch();
+        $dbh = null;
         $row = array_map('strval', $row);
         extract($row);
         //
@@ -54,7 +55,7 @@ if (strpos($database, 'archive') === false) {
         foreach ($stmt as $row) {
             $sectionsOrder[] = $row['idSection'];
         }
-        $dbh = null;
+        $dbhSection = null;
         $articlesOrder = [];
         foreach ($sectionsOrder as $sectionOrder) {
             $dbh = new PDO($database);
@@ -116,7 +117,7 @@ if (strpos($database, 'archive') === false) {
         }
         $html.= '    <h1>' . html($headline) . "</h1>\n\n";
         if (!empty($standfirst)) {
-            $html.= '    <h3>' . html($standfirst) . '<br /><br /></h3>' . "\n\n";
+            $html.= '    <h3>' . html($standfirst) . '<br><br></h3>' . "\n\n";
         }
         if (!empty($hdImage)) {
             if ($photoName === 'third') {
@@ -159,6 +160,9 @@ if (strpos($database, 'archive') === false) {
         if (!empty($byline) or !empty($bylineDateTime)) {
             $html.= "</h5>\n\n";
         }
+        //
+        // Article text
+        //
         $temp = Parsedown::instance()->parse($text);
         $temp = str_replace("\n", "\n\n    ", $temp);
         $temp = str_replace('<p>', '<p class="a">', $temp);
@@ -166,7 +170,56 @@ if (strpos($database, 'archive') === false) {
         $temp = str_replace('<ol>', '<ol class="a">', $temp);
         $temp = str_replace('<ul>', '<ul class="a">', $temp);
         $temp = str_replace('<li>', '  <li>', $temp);
-        $html.= '    ' . $temp . "\n";
+        //
+        // Insert ads between paragraphs
+        //
+        $dbh = new PDO($dbSettings);
+        $stmt = $dbh->query('SELECT adMinParagraphs, adMaxAdverts FROM advertisements');
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $row = $stmt->fetch();
+        if ($row) {
+            extract($row);
+        } else {
+            $adMinParagraphs = 999;
+            $adMaxAdverts = 0;
+        }
+        if ($adMaxAdverts !== 0) {
+            $numParagraphs = substr_count($temp, '<p class="a">');
+            $maxAdsPara = round($numParagraphs / $adMinParagraphs);
+            if ($maxAdsPara > $adMaxAdverts) {
+                $maxAds = $adMaxAdverts;
+            } else {
+                $maxAds = $maxAdsPara;
+            }
+            if ($maxAds !== 0) {
+                $space = intval(round($numParagraphs / ($maxAds + 1)));
+                if ($space < $adMinParagraphs) {
+                    $space = $adMinParagraphs;
+                }
+            } else {
+                $space = 999;
+            }
+        }
+        $temp2 = $temp;
+        $paragraph = explode('<p class="a">', $temp);
+        foreach ($paragraph as $key => $value) {
+            $key = $key - 1;
+            if ($key === -1) {
+                $temp2 = '    ' . $value;
+            } else {
+                if ($key >= $space and $key <= $numParagraphs) {
+                    if (is_int($key / $space)) {
+                        $temp2.= advertisement();
+                        $temp2.= '    <p class="a">' . $value;
+                    } else {
+                        $temp2.= '<p class="a">' . $value;
+                    }
+                } else {
+                    $temp2.= '<p class="a">' . $value;
+                }
+            }
+        }
+        $html.= $temp2 . "\n";
         if ($survey === '1') {
             if ($use === 'news') {
                 //
@@ -174,16 +227,17 @@ if (strpos($database, 'archive') === false) {
                 //
                 if (empty($_POST['vote'])) {
                     $html.= '    <form class="wait" action="' . $uri . 'news.php?a=' . $aGet . '" method="post">' . "\n";
-                    $html.= '      <input name="idQuestion" type="hidden" value="' . $aGet . '" />' . "\n";
+                    $html.= '      <input name="idQuestion" type="hidden" value="' . $aGet . '">' . "\n";
                     $dbh = new PDO($dbSurvey);
                     $stmt = $dbh->prepare('SELECT idAnswer, sortOrder, answer FROM answers WHERE idArticle=? ORDER BY sortOrder');
                     $stmt->setFetchMode(PDO::FETCH_ASSOC);
                     $stmt->execute([$aGet]);
                     foreach ($stmt as $row) {
                         extract($row);
-                        $html.= '      <p class="a"><label for="' . $idAnswer . '"><input id="' . $idAnswer . '" name="answer" type="radio" value="' . $idAnswer . '" /> ' . $answer . '</label></p>' . "\n\n";
+                        $html.= '      <p class="a"><label for="' . $idAnswer . '"><input id="' . $idAnswer . '" name="answer" type="radio" value="' . $idAnswer . '"> ' . $answer . '</label></p>' . "\n\n";
                     }
-                    $html.= '      <p class="a"><input type="submit" class="button" value="Cast vote" name="vote" /></p>' . "\n";
+                    $dbh = null;
+                    $html.= '      <p class="a"><input type="submit" class="button" value="Cast vote" name="vote"></p>' . "\n";
                     $html.= "    </form>\n";
                 } else {
                     if (empty($_POST['answer'])) {
@@ -192,16 +246,17 @@ if (strpos($database, 'archive') === false) {
                         //
                         $html.= '    <p class="error">A selection is required.</p>' . "\n\n";
                         $html.= '    <form class="wait" action="' . $uri . 'news.php?a=' . $aGet . '" method="post">' . "\n";
-                        $html.= '      <input name="idQuestion" type="hidden" value="' . $aGet . '" />' . "\n";
+                        $html.= '      <input name="idQuestion" type="hidden" value="' . $aGet . '">' . "\n";
                         $dbh = new PDO($dbSurvey);
                         $stmt = $dbh->prepare('SELECT idAnswer, sortOrder, answer FROM answers WHERE idArticle=? ORDER BY sortOrder');
                         $stmt->setFetchMode(PDO::FETCH_ASSOC);
                         $stmt->execute([$aGet]);
                         foreach ($stmt as $row) {
                             extract($row);
-                            $html.= '    <p class="a"><label for="' . $sortOrder . '"><input id="' . $sortOrder . '" name="answer" type="radio" value="' . $sortOrder . '" /> ' . $answer . '</label></p>' . "\n\n";
+                            $html.= '    <p class="a"><label for="' . $sortOrder . '"><input id="' . $sortOrder . '" name="answer" type="radio" value="' . $sortOrder . '"> ' . $answer . '</label></p>' . "\n\n";
                         }
-                        $html.= '    <p class="a"><input type="submit" class="button" value="Cast vote" name="vote" /></p>' . "\n";
+                        $dbh = null;
+                        $html.= '    <p class="a"><input type="submit" class="button" value="Cast vote" name="vote"></p>' . "\n";
                         $html.= "    </form>\n";
                     } else {
                         //
@@ -285,7 +340,7 @@ if (strpos($database, 'archive') === false) {
         $html.= '    ' . $previous . '<a class="button" href="' . $uri . '">Index</a>' . $next . "\n";
         $html.= '  </nav>' . "\n";
     } else {
-        echo '<meta HTTP-EQUIV="REFRESH" content="2; url=' . $uri . '">';
+        echo '<meta http-equiv="refresh" content="0; url=' . $uri . '">';
     }
 } else {
     //
@@ -325,7 +380,7 @@ if (strpos($database, 'archive') === false) {
                 $dbh = null;
                 $html.= '    <h1>' . html($headline) . "</h1>\n\n";
                 if (isset($standfirst)) {
-                    $html.= '    <h3>' . html($standfirst) . '<br /><br /></h3>' . "\n\n";
+                    $html.= '    <h3>' . html($standfirst) . '<br><br></h3>' . "\n\n";
                 }
                 if (isset($hdImage)) {
                     if ($photoName === 'third') {
@@ -374,7 +429,56 @@ if (strpos($database, 'archive') === false) {
                 $temp = str_replace('<ol>', '<ol class="a">', $temp);
                 $temp = str_replace('<ul>', '<ul class="a">', $temp);
                 $temp = str_replace('<li>', '  <li>', $temp);
-                $html.= '    ' . $temp . "\n";
+                //
+                // Insert ads between paragraphs
+                //
+                $dbh = new PDO($dbSettings);
+                $stmt = $dbh->query('SELECT adMinParagraphs, adMaxAdverts FROM advertisements');
+                $stmt->setFetchMode(PDO::FETCH_ASSOC);
+                $row = $stmt->fetch();
+                if ($row) {
+                    extract($row);
+                } else {
+                    $adMinParagraphs = 999;
+                    $adMaxAdverts = 0;
+                }
+                if ($adMaxAdverts !== 0) {
+                    $numParagraphs = substr_count($temp, '<p class="a">');
+                    $maxAdsPara = round($numParagraphs / $adMinParagraphs);
+                    if ($maxAdsPara > $adMaxAdverts) {
+                        $maxAds = $adMaxAdverts;
+                    } else {
+                        $maxAds = $maxAdsPara;
+                    }
+                    if ($maxAds !== 0) {
+                        $space = intval(round($numParagraphs / ($maxAds + 1)));
+                        if ($space < $adMinParagraphs) {
+                            $space = $adMinParagraphs;
+                        }
+                    } else {
+                        $space = 999;
+                    }
+                }
+                $temp2 = $temp;
+                $paragraph = explode('<p class="a">', $temp);
+                foreach ($paragraph as $key => $value) {
+                    $key = $key - 1;
+                    if ($key === -1) {
+                        $temp2 = '    ' . $value;
+                    } else {
+                        if ($key >= $space and $key <= $numParagraphs) {
+                            if (is_int($key / $space)) {
+                                $temp2.= advertisement();
+                                $temp2.= '    <p class="a">' . $value;
+                            } else {
+                                $temp2.= '<p class="a">' . $value;
+                            }
+                        } else {
+                            $temp2.= '<p class="a">' . $value;
+                        }
+                    }
+                }
+                $html.= $temp2 . "\n";
                 if ($survey === '1') {
                     if ($use === 'news') {
                         //
@@ -382,16 +486,17 @@ if (strpos($database, 'archive') === false) {
                         //
                         if (empty($_POST['vote'])) {
                             $html.= '  <form class="wait" action="' . $uri . 'news.php?a=' . $aGet . '" method="post">' . "\n";
-                            $html.= '    <input name="idQuestion" type="hidden" value="' . $aGet . '" />' . "\n";
+                            $html.= '    <input name="idQuestion" type="hidden" value="' . $aGet . '">' . "\n";
                             $dbh = new PDO($dbSurvey);
                             $stmt = $dbh->prepare('SELECT idAnswer, sortOrder, answer FROM answers WHERE idArticle=? ORDER BY sortOrder');
                             $stmt->setFetchMode(PDO::FETCH_ASSOC);
                             $stmt->execute([$aGet]);
                             foreach ($stmt as $row) {
                                 extract($row);
-                                $html.= '  <p class="a"><label for="' . $idAnswer . '"><input id="' . $idAnswer . '" name="answer" type="radio" value="' . $idAnswer . '" /> ' . $answer . '</label></p>' . "\n\n";
+                                $html.= '  <p class="a"><label for="' . $idAnswer . '"><input id="' . $idAnswer . '" name="answer" type="radio" value="' . $idAnswer . '"> ' . $answer . '</label></p>' . "\n\n";
                             }
-                            $html.= '  <p class="a"><input type="submit" class="button" value="Cast vote" name="vote" /></p>' . "\n";
+                            $dbh = null;
+                            $html.= '  <p class="a"><input type="submit" class="button" value="Cast vote" name="vote"></p>' . "\n";
                             $html.= "  </form>\n";
                         } else {
                             if (empty($_POST['answer'])) {
@@ -400,16 +505,17 @@ if (strpos($database, 'archive') === false) {
                                 //
                                 $html.= '  <p class="error">A selection is required.</p>' . "\n\n";
                                 $html.= '  <form class="wait" action="' . $uri . 'news.php?a=' . $aGet . '" method="post">' . "\n";
-                                $html.= '    <input name="idQuestion" type="hidden" value="' . $aGet . '" />' . "\n";
+                                $html.= '    <input name="idQuestion" type="hidden" value="' . $aGet . '">' . "\n";
                                 $dbh = new PDO($dbSurvey);
                                 $stmt = $dbh->prepare('SELECT idAnswer, sortOrder, answer FROM answers WHERE idArticle=? ORDER BY sortOrder');
                                 $stmt->setFetchMode(PDO::FETCH_ASSOC);
                                 $stmt->execute([$aGet]);
                                 foreach ($stmt as $row) {
                                     extract($row);
-                                    $html.= '  <p class="a"><label for="' . $sortOrder . '"><input id="' . $sortOrder . '" name="answer" type="radio" value="' . $sortOrder . '" /> ' . $answer . '</label></p>' . "\n\n";
+                                    $html.= '  <p class="a"><label for="' . $sortOrder . '"><input id="' . $sortOrder . '" name="answer" type="radio" value="' . $sortOrder . '"> ' . $answer . '</label></p>' . "\n\n";
                                 }
-                                $html.= '  <p class="a"><input type="submit" class="button" value="Cast vote" name="vote" /></p>' . "\n";
+                                $dbh = null;
+                                $html.= '  <p class="a"><input type="submit" class="button" value="Cast vote" name="vote"></p>' . "\n";
                                 $html.= "  </form>\n";
                             } else {
                                 //

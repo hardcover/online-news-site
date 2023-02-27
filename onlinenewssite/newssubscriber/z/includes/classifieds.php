@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -18,7 +18,7 @@
 echo '    <div class="main">' . "\n";
 echo '      <h1><a href="' . $uri . '?m=classified-ads">Classified ads</a></h1>' . "\n\n";
 echo '      <p><a href="' . $uri . '?m=place-classified">Place a classified ad</a>.</p>' . "\n\n";
-echo "      <hr />\n\n";
+echo "      <hr>\n\n";
 if (isset($_GET['s'])) {
     //
     // List the ads for the selected subsection
@@ -88,7 +88,7 @@ if (isset($_GET['s'])) {
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         foreach ($stmt as $row) {
             extract($row);
-            echo '      <p><br />' . "\n    " . html($section) . "</p>\n\n";
+            echo '      <p><br>' . "\n    " . html($section) . "</p>\n\n";
             $stmt = $dbh->prepare('SELECT idSubsection, subsection FROM subsections WHERE parentId=? ORDER BY sortPrioritySubSection');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
             $stmt->execute([$idSection]);
@@ -138,12 +138,12 @@ if (isset($_GET['s'])) {
         extract($row);
         echo '      <h5>' . $section . ', <a href="' . $uri . '?m=classified-ads&amp;s=' . $categoryId . '">'. html($subsection) . "</a></h5>\n\n";
         echo '      <h2>' . $title . "</h2>\n\n";
-        echo "      <p><br />\n      " . $listingDescription . "</p>\n\n";
+        echo "      <p><br>\n      " . $listingDescription . "</p>\n\n";
         $i = 0;
         foreach ($photos as $photo) {
             $i++;
             if ($photo === '1') {
-                echo '      <p><img class="wide border" src="imagec.php?i=' . muddle($idAd) . $i . '" alt="" /></p>' . "\n";
+                echo '      <p><img class="wide border" src="imagec.php?i=' . muddle($idAd) . $i . '" alt=""></p>' . "\n";
             }
         }
     }

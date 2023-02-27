@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -27,6 +27,7 @@ require $includesPath . '/parsedown-master/Parsedown.php';
 //
 // Variables
 //
+$aGet = secure($_GET['a']);
 $anchorPath = null;
 $database = $dbPublished;
 $database2 = $dbPublished2;
@@ -57,13 +58,36 @@ if ($row) {
     $name = null;
 }
 //
+// Get article headline for SEO purposes
+//
+$headline = '';
+if (isset($_GET['a'])) {
+    $dbh = new PDO($dbPublished);
+    $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE idArticle=?');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $stmt->execute([$aGet]);
+    $row = $stmt->fetch();
+    $dbh = null;
+    if ($row) {
+        $dbh = new PDO($dbPublished);
+        $stmt = $dbh->prepare('SELECT headline FROM articles WHERE idArticle=?');
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute([$aGet]);
+        $row = $stmt->fetch();
+        $dbh = null;
+        $row = array_map('strval', $row);
+        extract($row);
+        $headline = $headline . ' - ';
+    }
+}
+//
 // HTML
 //
 require $includesPath . '/header1.inc';
-echo '  <title>' . $title . "</title>\n";
+echo '  <title>' . $headline . $title . "</title>\n";
 require $includesPath . '/header2.inc';
 if (file_exists('z/local.css')) {
-    echo '  <link rel="stylesheet" type="text/css" href="z/local.css" />' . "\n";
+    echo '  <link rel="stylesheet" type="text/css" href="z/local.css">' . "\n";
 }
 echo '</head>
 

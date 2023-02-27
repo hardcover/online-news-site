@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -171,7 +171,7 @@ function utf8($str)
 function echoIfMessage($str)
 {
     if (!empty($str)) {
-        echo "\n" . '  <p class="error">' . $str . "</p>\n";
+        echo "\n" . '      <p class="error">' . $str . "</p>\n";
     }
 }
 /**
@@ -302,5 +302,44 @@ function uploadFilesizeMaximum()
         $maxFileSize = '';
     }
     echo $maxFileSize;
+}
+/**
+ * Function to retrieve a random advertisement
+ *
+ * @return An advertisement
+ */
+function advertisement()
+{
+    global $dbAdvertising, $today, $adMinParagraphs, $adMaxAdverts;
+    $dbh = new PDO($dbAdvertising);
+    $stmt = $dbh->prepare('SELECT idAd FROM advertisements WHERE (? >= startDateAd AND ? <= endDateAd) ORDER BY sortOrderAd');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $stmt->execute([$today, $today]);
+    foreach ($stmt as $row) {
+        $idAds[] = $row['idAd'];
+    }
+    if (empty($idAds)) {
+        $idAd = '';
+        $adLink = '';
+    } else {
+        $adKey = array_rand($idAds);
+        $idAd = $idAds[$adKey];
+        $stmt = $dbh->prepare('SELECT link, linkAlt FROM advertisements WHERE idAd=?');
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute([$idAd]);
+        $row = $stmt->fetch();
+        if ($row) {
+            extract($row);
+            if (!empty($link)) {
+                $linkHtml1 = '<p><a href="' . $link . '" target="_blank" rel="nofollow">';
+                $linkHtml2 = '</a>';
+            } else {
+                $linkHtml1 = $linkHtml2 = null;
+            }
+            $adLink = $linkHtml1 . '<img class="ad border" src="imaged.php?i=' . muddle($idAd) . '" alt="' . $linkAlt . '">' . $linkHtml2 . '</p>' . "\n\n";
+        }
+    }
+    $dbh = null;
+    return $adLink;
 }
 ?>

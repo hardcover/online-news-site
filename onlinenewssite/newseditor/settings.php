@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -30,9 +30,11 @@ if ($_SESSION['username'] !== 'admin') {
 //
 // Variables
 //
+$adMaxAdvertsPost = inlinePost('adMaxAdverts');
+$adMinParagraphsPost = inlinePost('adMinParagraphs');
 $adminPassPost = inlinePost('adminPass');
-$emailClassifiedPost = inlinePost('emailClassified');
 $editPost = inlinePost('edit');
+$emailClassifiedPost = inlinePost('emailClassified');
 $idNamePost = inlinePost('idName');
 $idRemotePost = inlinePost('idRemote');
 $idSectionPost = inlinePost('idSection');
@@ -246,6 +248,28 @@ if (password_verify($adminPassPost, $row['pass'])) {
         }
     }
     //
+    // Button: Add / Advertisements in article text
+    //
+    if (isset($_POST['addUpdateAdvertisements'])) {
+        if (empty($adMinParagraphsPost) or empty($adMaxAdvertsPost)) {
+            $message = 'Advertisement form information is required.';
+        } else {
+            $dbh = new PDO($dbSettings);
+            $stmt = $dbh->query('DELETE FROM advertisements');
+            $stmt = $dbh->prepare('INSERT INTO advertisements (adMinParagraphs, adMaxAdverts) VALUES (?, ?)');
+            $stmt->execute([$adMinParagraphsPost, $adMaxAdvertsPost]);
+            $dbh = null;
+            //
+            // Update the remote databases
+            //
+            include $includesPath . '/syncSettings.php';
+            //
+            // Clear contact form information for display
+            //
+            $infoFormsPost = null;
+        }
+    }
+    //
     // Button: Add / update email alert for classifieds
     //
     if (isset($_POST['addUpdateEmailClassified'])) {
@@ -339,15 +363,15 @@ if (password_verify($adminPassPost, $row['pass'])) {
                 if (empty($response['result'])) {
                     $response['result'] = null;
                 }
-                $message.= '  ' . $remote . "<br /><br />\n";
+                $message.= '  ' . $remote . "<br><br>\n";
                 if ($response['result'] === strval('success')) {
-                    $message.= "  Result: success<br />\n";
+                    $message.= "  Result: success<br>\n";
                     //
                     // Update the remote databases
                     //
                     include $includesPath . '/syncSettings.php';
                 } else {
-                    $message.= "  Result: failure<br />\n";
+                    $message.= "  Result: failure<br>\n";
                 }
             }
         } else {
@@ -422,17 +446,17 @@ if (password_verify($adminPassPost, $row['pass'])) {
             $remotes[] = $row['remote'];
         }
         $dbh = null;
-        $message.= "Test connection result:<br /><br />\n";
+        $message.= "Test connection result:<br><br>\n";
         $request = [];
         $response = [];
         $request['task'] = 'test';
         foreach ($remotes as $remote) {
             $response = soa($remote . 'z/', $request);
-            $message.= '  ' . $remote . "<br /><br />\n";
+            $message.= '  ' . $remote . "<br><br>\n";
             if ($response['result'] === strval('success')) {
-                $message.= "  Result: success<br />\n";
+                $message.= "  Result: success<br>\n";
             } else {
-                $message.= "  Result: failure<br />\n";
+                $message.= "  Result: failure<br>\n";
             }
         }
     }
@@ -461,7 +485,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
             $character = $notRandom[$position];
             $gig.= $character;
         }
-        $message.= "Change remote passwords result:<br /><br />\n";
+        $message.= "Change remote passwords result:<br><br>\n";
         $request = [];
         $response = [];
         $request['task'] = 'setCrypt';
@@ -469,10 +493,10 @@ if (password_verify($adminPassPost, $row['pass'])) {
         $request['newGig'] = $gig;
         foreach ($remotes as $remote) {
             $response = soa($remote . 'z/', $request);
-            $message.= '  ' . $remote . "<br /><br />\n";
+            $message.= '  ' . $remote . "<br><br>\n";
             if ($response['result'] === strval('success')) {
                 $passHash = password_hash($newOnus, PASSWORD_DEFAULT);
-                $message.= "  Result: success<br />\n";
+                $message.= "  Result: success<br>\n";
                 $content = "<?php\n";
                 $content.= '$onus = \'' . $newOnus . '\';' . "\n";
                 $content.= '$hash = \'' . $passHash . '\';' . "\n";
@@ -480,7 +504,7 @@ if (password_verify($adminPassPost, $row['pass'])) {
                 $content.= '?>' . "\n";
                 file_put_contents($includesPath . '/crypt.php', $content);
             } else {
-                $message.= "  Result: failure<br />\n";
+                $message.= "  Result: failure<br>\n";
             }
         }
     }
@@ -532,82 +556,92 @@ require $includesPath . '/header2.inc';
       <form class="wait" action="<?php echo $uri; ?>settings.php" method="post">
         <p>The admin password is required for all settings maintenance.</p>
 
-        <p><label for="adminPass">Admin password</label><br />
-        <input id="adminPass" name="adminPass" type="password" class="h" autofocus required /></p>
+        <p><label for="adminPass">Admin password</label><br>
+        <input id="adminPass" name="adminPass" type="password" class="h" autofocus required></p>
 
         <h1>Newspaper name and description</h1>
 
-        <p><label for="newsName">Name</label><br />
-        <input id="newsName" name="newsName" type="text" class="h"<?php echoIfValue($newsNamePost); ?> /></p>
+        <p><label for="newsName">Name</label><br>
+        <input id="newsName" name="newsName" type="text" class="h"<?php echoIfValue($newsNamePost); ?>></p>
 
-        <p><label for="newsDescription">Description</label><br />
-        <input id="newsDescription" name="newsDescription" type="text" class="h"<?php echoIfValue($newsDescriptionPost); ?> /></p>
+        <p><label for="newsDescription">Description</label><br>
+        <input id="newsDescription" name="newsDescription" type="text" class="h"<?php echoIfValue($newsDescriptionPost); ?>></p>
 
-        <p><input type="submit" value="Add / update" name="addUpdateName" class="button" /> <input type="submit" value="Delete" name="deleteName" class="button" /><input type="hidden" name="existing"<?php echoIfValue($editPost); ?> /></p>
+        <p><input type="submit" value="Add / update" name="addUpdateName" class="button"> <input type="submit" value="Delete" name="deleteName" class="button"><input type="hidden" name="existing"<?php echoIfValue($editPost); ?>></p>
 
         <h1>Newspaper sections</h1>
 
-        <p><label for="section">Section name</label><br />
-        <input id="section" name="section" type="text" class="h"<?php echoIfValue($sectionPost); ?> /></p>
+        <p><label for="section">Section name</label><br>
+        <input id="section" name="section" type="text" class="h"<?php echoIfValue($sectionPost); ?>></p>
 
-        <p><label for="sortOrderSection">Section sort order</label><br />
-        <input id="sortOrderSection" name="sortOrderSection" type="text" class="h"<?php echoIfValue($sortOrderSectionPost); ?> /></p>
+        <p><label for="sortOrderSection">Section sort order</label><br>
+        <input id="sortOrderSection" name="sortOrderSection" type="text" class="h"<?php echoIfValue($sortOrderSectionPost); ?>></p>
 
-        <p><input type="submit" value="Add / update" name="addUpdateSection" class="button" /> <input type="submit" value="Delete" name="deleteSection" class="button" /><input name="idSection" type="hidden"<?php echoIfValue($idSectionPost); ?> /><input type="hidden" name="existing"<?php echoIfValue($editPost); ?> /></p>
+        <p><input type="submit" value="Add / update" name="addUpdateSection" class="button"> <input type="submit" value="Delete" name="deleteSection" class="button"><input name="idSection" type="hidden"<?php echoIfValue($idSectionPost); ?>><input type="hidden" name="existing"<?php echoIfValue($editPost); ?>></p>
 
         <h1>Registration information</h1>
 
-        <p><label for="information">Information (<a href="markdown.html" target="_blank">markdown syntax</a>)</label><br />
+        <p><label for="information">Information (<a href="markdown.html" target="_blank">markdown syntax</a>)</label><br>
         <textarea id="information" name="information" class="h"><?php echoIfText($informationPost); ?></textarea></p>
 
-        <p><input type="submit" value="Add / update" name="addUpdateRegistration" class="button" /></p>
+        <p><input type="submit" value="Add / update" name="addUpdateRegistration" class="button"></p>
 
         <h1>Contact form information</h1>
 
-        <p><label for="infoForms">Information (<a href="markdown.html" target="_blank">markdown syntax</a>)</label><br />
+        <p><label for="infoForms">Information (<a href="markdown.html" target="_blank">markdown syntax</a>)</label><br>
         <textarea id="infoForms" name="infoForms" class="h"><?php echoIfText($infoFormsPost); ?></textarea></p>
 
-        <p><input type="submit" value="Add / update" name="addUpdateContactForm" class="button" /></p>
+        <p><input type="submit" value="Add / update" name="addUpdateContactForm" class="button"></p>
 
         <h1>Email address for contact forms and alerts</h1>
 
         <p>Enter an email address to receive alerts when a classified ad requires review.</p>
 
-        <p><label for="emailClassified">Email</label><br />
-        <input id="emailClassified" name="emailClassified" type="email" class="h"<?php echoIfValue($emailClassifiedPost); ?> /></p>
+        <p><label for="emailClassified">Email</label><br>
+        <input id="emailClassified" name="emailClassified" type="email" class="h"<?php echoIfValue($emailClassifiedPost); ?>></p>
 
-        <p><input type="submit" value="Add / update" name="addUpdateEmailClassified" class="button" /> <input type="submit" value="Delete" name="deleteEmailClassified" class="button" /><input name="idRemote" type="hidden" <?php echoIfValue($idRemotePost); ?> /><input type="hidden" name="existing"<?php echoIfValue($editPost); ?> /></p>
+        <p><input type="submit" value="Add / update" name="addUpdateEmailClassified" class="button"> <input type="submit" value="Delete" name="deleteEmailClassified" class="button"><input name="idRemote" type="hidden" <?php echoIfValue($idRemotePost); ?>><input type="hidden" name="existing"<?php echoIfValue($editPost); ?>></p>
+
+        <h1>Advertisements in article text</h1>
+
+        <p><label for="adMaxAdverts">Maximum number of ads per article</label><br>
+        <input id="adMaxAdverts" name="adMaxAdverts" type="text" class="h"<?php echoIfValue($adMaxAdvertsPost); ?>></p>
+
+        <p><label for="adMinParagraphs">Minimum number of paragraphs between ads</label><br>
+        <input id="adMinParagraphs" name="adMinParagraphs" type="text" class="h"<?php echoIfValue($adMinParagraphsPost); ?>></p>
+
+        <p><input type="submit" value="Add / update" name="addUpdateAdvertisements" class="button"></p>
 
         <h1>Remote sites URIs</h1>
 
         <p>Enter the URIs of the remote sites with a trailing slash. For example: http://www.mysite.com/</p>
 
-        <p><label for="remote">URI</label><br />
-        <input id="remote" name="remote" type="url" class="h"<?php echoIfValue($remotePost); ?> /></p>
+        <p><label for="remote">URI</label><br>
+        <input id="remote" name="remote" type="url" class="h"<?php echoIfValue($remotePost); ?>></p>
 
-        <p><input type="submit" value="Add / update" name="addUpdateURI" class="button" /> <input type="submit" value="Delete" name="deleteURI" class="button" /><input name="idRemote" type="hidden" <?php echoIfValue($idRemotePost); ?> /><input type="hidden" name="existing"<?php echoIfValue($editPost); ?> /></p>
+        <p><input type="submit" value="Add / update" name="addUpdateURI" class="button"> <input type="submit" value="Delete" name="deleteURI" class="button"><input name="idRemote" type="hidden" <?php echoIfValue($idRemotePost); ?>><input type="hidden" name="existing"<?php echoIfValue($editPost); ?>></p>
 
         <h1>Test connections to remote sites</h1>
 
-        <p><input type="submit" value="Test remote connections" name="testConnections" class="button" /></p>
+        <p><input type="submit" value="Test remote connections" name="testConnections" class="button"></p>
 
         <h1>Change the password for remote sites</h1>
 
         <p>As with the admin password, the password for remote sites must be changed while the system is being set up. The system will choose a set of random passwords (authentication requires more than one). There is no recommendation for changing the passwords after that. A password change failure will require manual intervention to correct. Because the passwords incorporate the date in order to change daily, they will not work around midnight when the clocks on the systems are a little out of sync.</p>
 
-        <p><input type="submit" value="Change remote passwords" name="changeRemotePass" class="button" /></p>
+        <p><input type="submit" value="Change remote passwords" name="changeRemotePass" class="button"></p>
 
         <h1>Change the admin password</h1>
 
         <p>For security reasons, the admin password must be changed from the default during system set up.</p>
 
-        <p><label for="newAdminPassOne">New password</label><br />
-        <input id="newAdminPassOne" name="newAdminPassOne" type="password" class="h" /></p>
+        <p><label for="newAdminPassOne">New password</label><br>
+        <input id="newAdminPassOne" name="newAdminPassOne" type="password" class="h"></p>
 
-        <p><label for="newAdminPassTwo">Verify new password</label><br />
-        <input id="newAdminPassTwo" name="newAdminPassTwo" type="password" class="h" /></p>
+        <p><label for="newAdminPassTwo">Verify new password</label><br>
+        <input id="newAdminPassTwo" name="newAdminPassTwo" type="password" class="h"></p>
 
-        <p><input type="submit" value="Change admin password" name="changeAdminPass" class="button" /></p>
+        <p><input type="submit" value="Change admin password" name="changeAdminPass" class="button"></p>
       </form>
     </main>
 
@@ -622,9 +656,9 @@ $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
     echo '      <form action="' . $uri . 'settings.php" method="post">' . "\n";
-    echo '        <p>' . $row['name'] . "<br />\n";
-    echo '        ' . $row['description'] . "<br />\n";
-    echo '        <input type="hidden" name="idName" value="' . $row['idName'] . '" /><input type="submit" value="Edit" name="edit" class="button" /></p>' . "\n";
+    echo '        <p>' . $row['name'] . "<br>\n";
+    echo '        ' . $row['description'] . "<br>\n";
+    echo '        <input type="hidden" name="idName" value="' . $row['idName'] . '"><input type="submit" value="Edit" name="edit" class="button"></p>' . "\n";
     echo "      </form>\n\n";
 }
 ?>
@@ -636,8 +670,8 @@ $stmt = $dbh->query('SELECT idSection, section, sortOrderSection FROM sections O
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
     echo '      <form action="' . $uri . 'settings.php" method="post">' . "\n";
-    echo '        <p>' . $row['section'] . "<br />\n";
-    echo '        <input type="hidden" name="idSection" value="' . $row['idSection'] . '" /><input name="section" type="hidden" value="' . html($row['section']) . '" /><input name="sortOrderSection" type="hidden" value="' . html($row['sortOrderSection']) . '" /><input type="submit" value="Edit" name="edit" class="button" /></p>' . "\n";
+    echo '        <p>' . $row['section'] . "<br>\n";
+    echo '        <input type="hidden" name="idSection" value="' . $row['idSection'] . '"><input name="section" type="hidden" value="' . html($row['section']) . '"><input name="sortOrderSection" type="hidden" value="' . html($row['sortOrderSection']) . '"><input type="submit" value="Edit" name="edit" class="button"></p>' . "\n";
     echo "      </form>\n\n";
 }
 $dbh = null;
@@ -651,8 +685,8 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $row = $stmt->fetch();
 $dbh = null;
 echo '      <form action="' . $uri . 'settings.php" method="post">' . "\n";
-echo '        <p>' . $row['information'] . "<br />\n";
-echo '        <input type="hidden" name="idRegistration" value="' . $row['idRegistration'] . '" /><input type="hidden" name="information" value="' . $row['information'] . '" /><input type="submit" value="Edit" name="edit" class="button" /></p>' . "\n";
+echo '        <p>' . $row['information'] . "<br>\n";
+echo '        <input type="hidden" name="idRegistration" value="' . $row['idRegistration'] . '"><input type="hidden" name="information" value="' . $row['information'] . '"><input type="submit" value="Edit" name="edit" class="button"></p>' . "\n";
 echo "      </form>\n\n";
 ?>
       <h1>Contact form information</h1>
@@ -664,8 +698,8 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $row = $stmt->fetch();
 $dbh = null;
 echo '      <form action="' . $uri . 'settings.php" method="post">' . "\n";
-echo '        <p>' . $row['infoForms'] . "<br />\n";
-echo '        <input type="hidden" name="idForm" value="' . $row['idForm'] . '" /><input type="hidden" name="infoForms" value="' . $row['infoForms'] . '" /><input type="submit" value="Edit" name="edit" class="button" /></p>' . "\n";
+echo '        <p>' . $row['infoForms'] . "<br>\n";
+echo '        <input type="hidden" name="idForm" value="' . $row['idForm'] . '"><input type="hidden" name="infoForms" value="' . $row['infoForms'] . '"><input type="submit" value="Edit" name="edit" class="button"></p>' . "\n";
 echo "      </form>\n\n";
 ?>
       <h1>Email address for contact forms and alerts</h1>
@@ -682,8 +716,27 @@ if ($row === false) {
     $row['emailClassified'] = null;
 }
 echo '      <form action="' . $uri . 'settings.php" method="post">' . "\n";
-echo '        <p>' . $row['emailClassified'] . "<br />\n";
-echo '        <input type="hidden" name="idClassified" value="' . $row['idClassified'] . '" /><input type="hidden" name="emailClassified" value="' . $row['emailClassified'] . '" /><input type="submit" value="Edit" name="edit" class="button" /></p>' . "\n";
+echo '        <p>' . $row['emailClassified'] . "<br>\n";
+echo '        <input type="hidden" name="idClassified" value="' . $row['idClassified'] . '"><input type="hidden" name="emailClassified" value="' . $row['emailClassified'] . '"><input type="submit" value="Edit" name="edit" class="button"></p>' . "\n";
+echo "      </form>\n\n";
+?>
+      <h1>Advertisements in article text</h1>
+
+<?php
+$dbh = new PDO($dbSettings);
+$stmt = $dbh->query('SELECT adMinParagraphs, adMaxAdverts FROM advertisements');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+$row = $stmt->fetch();
+$dbh = null;
+if ($row === false) {
+    $row = [];
+    $row['adMinParagraphs'] = '';
+    $row['adMaxAdverts'] = '';
+}
+echo '      <form action="' . $uri . 'settings.php" method="post">' . "\n";
+echo '        <p>Maximum number of ads per article: ' . $row['adMaxAdverts'] . "<br>\n";
+echo '        <p>Minimum number of paragraphs between ads: ' . $row['adMinParagraphs'] . "<br>\n";
+echo '        <input type="hidden" name="adMaxAdverts" value="' . $row['adMaxAdverts'] . '"><input type="hidden" name="adMinParagraphs" value="' . $row['adMinParagraphs'] . '"><input type="submit" value="Edit" name="edit" class="button"></p>' . "\n";
 echo "      </form>\n\n";
 ?>
       <h1>Remote URIs</h1>
@@ -697,8 +750,8 @@ foreach ($stmt as $row) {
     extract($row);
     $rowcount++;
     echo '      <form class="wait" action="' . $uri . 'settings.php" method="post">' . "\n";
-    echo '        <p class="bw">' . html($row['remote']) . "<br />\n";
-    echo '        <input name="idRemote" type="hidden" value="' . html($row['idRemote']) . '" /><input name="remote" type="hidden" value="' . html($row['remote']) . '" /><input type="submit" value="Edit" name="edit" class="button" /></span></p>' . "\n";
+    echo '        <p class="bw">' . html($row['remote']) . "<br>\n";
+    echo '        <input name="idRemote" type="hidden" value="' . html($row['idRemote']) . '"><input name="remote" type="hidden" value="' . html($row['remote']) . '"><input type="submit" value="Edit" name="edit" class="button"></span></p>' . "\n";
     echo "      </form>\n\n";
 }
 $dbh = null;

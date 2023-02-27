@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -76,7 +76,7 @@ foreach ($remotes as $remote) {
     //
     foreach ($missingClassifieds as $idAd) {
         $dbh = new PDO($dbClassifieds);
-        $stmt = $dbh->prepare('SELECT email, title, description, categoryId, review, startDate, duration, photos FROM ads WHERE idAd=?');
+        $stmt = $dbh->prepare('SELECT email, title, description, categoryId, review, startDate, duration, invoice, photos FROM ads WHERE idAd=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute([$idAd]);
         $row = $stmt->fetch();
@@ -98,6 +98,7 @@ foreach ($remotes as $remote) {
             $request['review'] = $review;
             $request['startDate'] = $startDate;
             $request['duration'] = $duration;
+            $request['invoice'] = $invoice;
             $request['photos'] = $row['photos'];
             $response = soa($remote . 'z/', $request);
             if ($response['result'] = 'success') {

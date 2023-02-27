@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -103,17 +103,13 @@ if (isset($_POST['addUpdate'])) {
     // Apply update
     //
     if ($idAd !== null) {
-        $dbh = new PDO($dbAdvertising);
-        $stmt = $dbh->prepare('SELECT idAd, sortOrderAd FROM advertisements WHERE idAd=?');
-        $stmt->setFetchMode(PDO::FETCH_ASSOC);
-        $stmt->execute([$idAd]);
-        $row = $stmt->fetch();
-        if ($sortOrderAdPost > $row['sortOrderAd']) {
-            $sortOrderAdPost++;
+        if (empty($sortOrderAdPost)) {
+            $sortOrderAdPost = null;
         }
         if (empty($linkAltPost)) {
             $linkAltPost = $organizationPost;
         }
+        $dbh = new PDO($dbAdvertising);
         $stmt = $dbh->prepare('UPDATE advertisements SET startDateAd=?, endDateAd=?, sortOrderAd=?, sortPriority=?, organization=?, payStatus=?, link=?, linkAlt=?, enteredBy=?, note=? WHERE idAd=?');
         $stmt->execute([$startDateAdPost, $endDateAdPost, $sortOrderAdPost, 1, $organizationPost, $payStatusPost, $linkPost, $linkAltPost, $_SESSION['username'], $notePost, $idAd]);
         $dbh = null;
@@ -236,13 +232,10 @@ if (isset($_POST['edit'])) {
 require $includesPath . '/header1.inc';
 ?>
   <title>Advertising maintenance</title>
-  <link rel="icon" type="image/png" href="images/32.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="generator" content="Online News Site Software, https://onlinenewssite.com/" />
-  <link rel="stylesheet" type="text/css" href="z/jquery-ui.theme.css" />
-  <link rel="stylesheet" type="text/css" href="z/jquery-ui.structure.css" />
-  <link rel="stylesheet" type="text/css" href="z/base.css" />
-  <link rel="stylesheet" type="text/css" href="z/admin.css" />
+  <link rel="icon" type="image/png" href="images/32.png">
+  <link rel="stylesheet" type="text/css" href="z/jquery-ui.min.css">
+  <link rel="stylesheet" type="text/css" href="z/base.css">
+  <link rel="stylesheet" type="text/css" href="z/admin.css">
   <script src="z/jquery.min.js"></script>
   <script src="z/jquery-ui.min.js"></script>
   <script src="z/datepicker.js"></script>
@@ -266,37 +259,37 @@ require $includesPath . '/header1.inc';
 
         <p>Organization is required for add, update and delete. Publication dates determine what ads are currently published. Unless a sort order is specified, ad order is random and will change each time the page is loaded.</p>
 
-        <p><label for="startDateAd">Publication dates</label><br />
-        <input type="text" class="datepicker date" id="startDateAd" name="startDateAd" placeholder="Start date" <?php echoIfValue($startDateAdEdit); ?> /><br /><br />
-        <input type="text" class="datepicker date" name="endDateAd" placeholder="End date" <?php echoIfValue($endDateAdEdit); ?> /></p>
+        <p><label for="startDateAd">Publication dates, start date to end date</label><br>
+        <input type="text" class="datepicker date" id="startDateAd" name="startDateAd" <?php echoIfValue($startDateAdEdit); ?>><br><br>
+        <input type="text" class="datepicker date" name="endDateAd" <?php echoIfValue($endDateAdEdit); ?>></p>
 
-        <p><label for="sortOrderAd">Sort order (optional)</label><br />
-        <input id="sortOrderAd" name="sortOrderAd" type="text" class="h" <?php echoIfValue($sortOrderAdEdit); ?> /></p>
+        <p><label for="sortOrderAd">Sort order (optional)</label><br>
+        <input id="sortOrderAd" name="sortOrderAd" type="text" class="h" <?php echoIfValue($sortOrderAdEdit); ?>></p>
 
-        <p><label for="organization">Organization</label><br />
-        <input id="organization" name="organization" type="text" class="h" required<?php echoIfValue($organizationEdit); ?> /><input name="idAd" type="hidden"<?php echoIfValue($idAdEdit); ?> /></p>
+        <p><label for="organization">Organization</label><br>
+        <input id="organization" name="organization" type="text" class="h" required<?php echoIfValue($organizationEdit); ?>><input name="idAd" type="hidden"<?php echoIfValue($idAdEdit); ?>></p>
 
-        <p>Pay status<br />
+        <p>Pay status<br>
         <label>
-          <input name="payStatus" type="radio" value="1"<?php echoIfYes($paidEdit); ?> /> Paid<br>
+          <input name="payStatus" type="radio" value="1"<?php echoIfYes($paidEdit); ?>> Paid<br>
         </label>
         <label>
-        <input name="payStatus" type="radio" value="0"<?php echoIfYes($notPaidEdit); ?> /> Not paid
+        <input name="payStatus" type="radio" value="0"<?php echoIfYes($notPaidEdit); ?>> Not paid
         </label></p>
 
-        <p><label for="image">Ad image upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br />
-        <input type="file" class="h" accept="image/jpeg" id="image" name="image" /><br /></p>
+        <p><label for="image">Ad image upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br>
+        <input type="file" class="h" accept="image/jpeg" id="image" name="image"><br></p>
 
-        <p><label for="link">Link from ad (optional)</label><br />
-        <input id="link" name="link" type="text" class="h"<?php echoIfValue($linkEdit); ?> /></p>
+        <p><label for="link">Link from ad (optional)</label><br>
+        <input id="link" name="link" type="text" class="h"<?php echoIfValue($linkEdit); ?>></p>
 
-        <p><label for="linkAlt">Alternate text for ad image (if different from the organization name above)</label><br />
-        <input id="linkAlt" name="linkAlt" type="text" class="h" <?php echoIfValue($linkAltEdit); ?> /></p>
+        <p><label for="linkAlt">Alternate text for ad image (if different from the organization name above)</label><br>
+        <input id="linkAlt" name="linkAlt" type="text" class="h" <?php echoIfValue($linkAltEdit); ?>></p>
 
-        <p><label for="note">Note</label><br />
-        <input id="note" name="note" type="text" class="h"<?php echoIfValue($noteEdit); ?> /></p>
+        <p><label for="note">Note</label><br>
+        <input id="note" name="note" type="text" class="h"<?php echoIfValue($noteEdit); ?>></p>
 
-        <p><input type="submit" value="Add / update" name="addUpdate" class="button" /> <input type="submit" value="Delete" name="delete" class="button" /><input type="hidden" name="existing"<?php echoIfValue($edit); ?> /></p>
+        <p><input type="submit" value="Add / update" name="addUpdate" class="button"> <input type="submit" value="Delete" name="delete" class="button"><input type="hidden" name="existing"<?php echoIfValue($edit); ?>></p>
       </form>
 
       <p>The optimal image size for ads is 900 pixels or wider. Because ads contain text, the optimal image quality for ads is 100 percent to eliminate compression artifacts.</p>
@@ -319,15 +312,15 @@ foreach ($stmt as $row) {
     $width = (200 / $imageWidth) * $imageWidth;
     $height = round((200 / $imageWidth) * $imageHeight);
     echo '      <form class="wait" action="' . $uri . 'advertisingPublished.php" method="post">' . "\n";
-    echo '        <p><img class="b" src="imaged.php?i=' . muddle($idAd) . '" alt="" width="' . $width . '" height="' . $height . '" /><br />' . "\n";
-    echo '        ' . $organization . ', by ' . $enteredBy . ', expires: ' . $endDateAd . "<br />\n";
+    echo '        <p><img class="b" src="imaged.php?i=' . muddle($idAd) . '" alt="" width="' . $width . '" height="' . $height . '"><br>' . "\n";
+    echo '        ' . $organization . ', by ' . $enteredBy . ', expires: ' . $endDateAd . "<br>\n";
     if ($link !== null and $link !== '') {
-        echo '        <a href="' . html($link) . '" target="_blank">' . $linkAlt . "</a><br />\n";
+        echo '        <a href="' . html($link) . '" target="_blank">' . $linkAlt . "</a><br>\n";
     }
     if (!empty($note)) {
-        echo '    ' . $note . "<br />\n";
+        echo '    ' . $note . "<br>\n";
     }
-    echo '        <input name="idAd" type="hidden" value="' . $idAd . '" /><input type="submit" value="Edit" name="edit" class="button" /></p>' . "\n";
+    echo '        <input name="idAd" type="hidden" value="' . $idAd . '"><input type="submit" value="Edit" name="edit" class="button"></p>' . "\n";
     echo '      </form>' . "\n\n";
 }
 $dbh = null;

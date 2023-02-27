@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -108,11 +108,11 @@ if ($row) {
     $paperDescription = '';
 }
 //
-$loginButtons= '      <form method="post" action="post.php">
-        <span class="fr"><input name="email" type="email" class="slim" placeholder="Email" /> <input name="pass" type="password" class="slim" placeholder="Password" /> <input name="login" type="submit" class="button" value="Log in" /> <input name="register" type="submit" class="button" value="Register" /></span>
+$loginButtons= '      <form method="post" action="' . $uri . '?t=l">
+        <span class="fr"><input name="logInRegister" type="submit" class="button" value="Log in / Register"></span>
       </form>' . "\n\n";
 $logoutButtons= '      <form method="post" action="logout.php">
-        <span class="fr"><input type="submit" class="button" name="login" value="Log out" />&nbsp;</span>
+        <span class="fr"><input type="submit" class="button" name="login" value="Log out">&nbsp;</span>
       </form>' . "\n\n";
 //
 // Optional classifieds email alert, check for classified ads ready for review
@@ -181,39 +181,61 @@ if (isset($tGet)
     }
 }
 //
+// Get article headline for SEO purposes
+//
+$headline = '';
+if (isset($_GET['a'])) {
+    $dbh = new PDO($dbPublished);
+    $stmt = $dbh->prepare('SELECT idArticle FROM articles WHERE idArticle=?');
+    $stmt->setFetchMode(PDO::FETCH_ASSOC);
+    $stmt->execute([$aGet]);
+    $row = $stmt->fetch();
+    $dbh = null;
+    if ($row) {
+        $dbh = new PDO($dbPublished);
+        $stmt = $dbh->prepare('SELECT headline FROM articles WHERE idArticle=?');
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute([$aGet]);
+        $row = $stmt->fetch();
+        $dbh = null;
+        $row = array_map('strval', $row);
+        extract($row);
+        $headline = $headline . ' - ';
+    }
+}
+//
 // HTML
 //
 require $includesPath . '/header1.inc';
-echo '<title>' . $paperName . "</title>\n";
-echo '<meta name="description" content="' . $paperDescription . '" />' . "\n";
-echo '<meta name="application-name" content="Online News Site https://onlinenewssite.com/" />' . "\n";
+echo '  <title>' . $headline . $paperName . "</title>\n";
+echo '  <meta name="description" content="' . $paperDescription . '">' . "\n";
 require $includesPath . '/header2Two.inc';
 if (file_exists('z/local.css')) {
-    echo '<link rel="stylesheet" type="text/css" href="z/local.css" />' . "\n";
+    echo '<link rel="stylesheet" type="text/css" href="z/local.css">' . "\n";
 }
 echo '</head>
 
 <body>
   <header>
-    <nav>' . "\n";
+    <nav id="admin">' . "\n";
 if (!isset($_SESSION['auth'])) {
     echo $loginButtons;
 } else {
     echo $logoutButtons;
 }
-echo '      <div class="logo">
-        <a href="./"><img src="images/logo.png" class="logo" alt="'. $paperName . '" /></a>
+echo '      <a href="javascript:void(0);" onclick="cellMenu()"><svg id="cellMenu" class="button" width="41" height="41" viewbox="0 0 24 24" fill="none">
+      <path d="M4 17H20M4 12H20M4 7H20" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      </path></svg></a>
+
+      <div class="logo">
+        <a href="./"><img src="images/logo.png" class="logo" alt="'. $paperName . '"></a>
       </div>
     </nav>
   </header>' . "\n\n";
 //
 // Aside, menu
 //
-if (empty($_GET)) {
-    echo '  <aside>' . "\n";
-} else {
-    echo '  <aside>' . "\n";
-}
+echo '  <aside id="aside">' . "\n";
 echo '    <h5>' . $paperDescription . "</h5>\n\n";
 echo '    <nav>' . "\n      ";
 if (file_exists($includesPath . '/custom/programs/home.php')) {
@@ -223,7 +245,7 @@ if (isset($_SESSION['auth'])) {
     //
     // My account
     //
-    echo '<a class="n" href="' . $uri . '?m=my-account">My account</a><br />' . "\n";
+    echo '<a class="n" href="' . $uri . '?m=my-account">My account</a><br>' . "\n";
     //
     // Article contribution
     //
@@ -236,7 +258,7 @@ if (isset($_SESSION['auth'])) {
     if ($row) {
         $row = array_map('strval', $row);
         if ($row['contributor'] === '1') {
-            echo '      <a class="n" href="' . $uri . '?m=article-contribution">Article contribution</a><br />' . "\n";
+            echo '      <a class="n" href="' . $uri . '?m=article-contribution">Article contribution</a><br>' . "\n";
         }
     }
 }
@@ -248,10 +270,10 @@ $stmt = $dbh->query('SELECT menuName, menuPath, menuAuthorization FROM menu ORDE
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
     extract($row);
-    echo '      <a class="n" href="' . $uri . '?m=' . $menuPath . '">' . $menuName . '</a><br />' . "\n";
+    echo '      <a class="n" href="' . $uri . '?m=' . $menuPath . '">' . $menuName . '</a><br>' . "\n";
 }
 $dbh = null;
-echo "      <br />\n";
+echo "      <br>\n";
 echo "    </nav>\n\n";
 //
 // Aside, ads
@@ -304,7 +326,7 @@ foreach ($adSort as $idAd) {
         } else {
             $linkHtml1 = $linkHtml2 = null;
         }
-        echo '    ' . $linkHtml1 . '<img class="wide border" src="imaged.php?i=' . muddle($idAd) . '" alt="' . $linkAlt . '" />' . $linkHtml2 . '<br />' . "\n";
+        echo '    ' . $linkHtml1 . '<img class="wide border" src="imaged.php?i=' . muddle($idAd) . '" alt="' . $linkAlt . '">' . $linkHtml2 . '<br>' . "\n";
     }
 }
 $dbh = null;
@@ -411,16 +433,23 @@ if (empty($_GET)) {
     if (file_exists($includesPath . '/custom/programs/pay.php')) {
         include $includesPath . '/custom/programs/pay.php';
     }
-} else {
-    //
-    // Log in / Register
-    //
+}
+//
+// Log in / Register
+//
+if (isset($tGet) and $tGet === 'l') {
     include $includesPath . '/login.php';
 }
+if (isset($_POST['logInRegister']) and $_POST['logInRegister'] === 'Log in / Register') {
+    include $includesPath . '/login.php';
+}
+//
+// Optional footer
+//
 if (file_exists($includesPath . '/custom/programs/footer.php')) {
     include $includesPath . '/custom/programs/footer.php';
 }
-echo '  </main>' . "\n";
 ?>
+  </main>
 </body>
 </html>

@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -103,12 +103,10 @@ require $includesPath . '/syncClassifiedsNew.php';
 require $includesPath . '/header1.inc';
 ?>
   <title>Pending classifieds maintenance</title>
-  <link rel="icon" type="image/png" href="images/32.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="generator" content="Online News Site Software, https://onlinenewssite.com/" />
-  <link rel="stylesheet" type="text/css" href="z/jquery-ui.min.css" />
-  <link rel="stylesheet" type="text/css" href="z/base.css" />
-  <link rel="stylesheet" type="text/css" href="z/admin.css" />
+  <link rel="icon" type="image/png" href="images/32.png">
+  <link rel="stylesheet" type="text/css" href="z/jquery-ui.min.css">
+  <link rel="stylesheet" type="text/css" href="z/base.css">
+  <link rel="stylesheet" type="text/css" href="z/admin.css">
   <script src="z/jquery.min.js"></script>
   <script src="z/jquery-ui.min.js"></script>
   <script src="z/datepicker.js"></script>
@@ -134,9 +132,9 @@ $stmt = $dbh->query('SELECT count(idAd) FROM ads WHERE review IS NULL');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $row = $stmt->fetch();
 $dbRowCount = $row['count(idAd)'];
-echo '    <p>' . number_format($dbRowCount) . ' ad(s) pending.</p>' . "\n" . '    <hr />' . "\n\n";
+echo '    <p>' . number_format($dbRowCount) . ' ad(s) pending.</p>' . "\n" . '    <hr>' . "\n\n";
 $i = null;
-$stmt = $dbh->query('SELECT idAd, email, title, description, categoryId, startDate, duration, photos FROM ads WHERE review IS NULL ORDER BY email');
+$stmt = $dbh->query('SELECT idAd, email, title, description, categoryId, startDate, duration, invoice, photos FROM ads WHERE review IS NULL ORDER BY email');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
     $i++;
@@ -144,6 +142,7 @@ foreach ($stmt as $row) {
         extract($row);
         $rowcount++;
         $categoryIdEdit = $categoryId;
+        $invoiceEdit = $invoice;
         $durationEdit = '1';
         $email = plain($email);
         $photos = json_decode($photos, true);
@@ -156,20 +155,20 @@ foreach ($stmt as $row) {
             $startDateEdit = $startDate;
         }
         echo '    <form class="wait" action="' . $uri . 'classifieds.php" method="post">' . "\n";
-        echo '      <p>Submitted by<br />' . "\n";
+        echo '      <p>Submitted by<br>' . "\n";
         echo '      ' . $email . "</p>\n\n";
-        echo '      <p><label for="title">Title</label><br />' . "\n";
+        echo '      <p><label for="title">Title</label><br>' . "\n";
         echo '      <input type="text" class="wide" id="title" name="title" ';
         echoIfValue($titleEdit);
-        echo ' /></p>' . "\n\n";
-        echo '      <p><label for="description">Description</label><br />' . "\n";
+        echo '></p>' . "\n\n";
+        echo '      <p><label for="description">Description</label><br>' . "\n";
         echo '      <textarea class="wide" id="description" name="description" rows="9">';
         echo echoIfText($description);
         echo '</textarea></p>' . "\n\n";
         echo '      <p><label for="invoice"><input id="invoice" name="invoice" type="checkbox" value="1"';
         echoIfYes($invoiceEdit);
-        echo ' /> Send an invoice to also have the add in the print version of the paper.</label></p>' . "\n\n";
-        echo '      <p><label for="categoryId">Category (select a subcategory)</label><br />' . "\n";
+        echo '> Send an invoice to also have the add in the print version of the paper.</label></p>' . "\n\n";
+        echo '      <p><label for="categoryId">Category (select a subcategory)</label><br>' . "\n";
         echo '      <select size="1" id="categoryId" name="categoryId" required>' . "\n";
         $stmt = $dbh->query('SELECT idSection, section FROM sections ORDER BY sortOrderSection');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -183,7 +182,7 @@ foreach ($stmt as $row) {
             foreach ($stmt as $row) {
                 $row = array_map('strval', $row);
                 extract($row);
-                if ($idSubsection === $categoryIdEdit) {
+                if ($idSubsection === strval($categoryIdEdit)) {
                     $selected = ' selected';
                 } else {
                     $selected = null;
@@ -192,22 +191,22 @@ foreach ($stmt as $row) {
             }
         }
         echo '      </select></p>' . "\n\n";
-        echo '      <p><label for="startDate">Start date</label><br />' . "\n";
+        echo '      <p><label for="startDate">Start date</label><br>' . "\n";
         echo '      <input type="text" class="datepicker date" id="startDate" name="startDate" ';
         echo echoIfValue($startDateEdit);
-        echo ' /></p>' . "\n\n";
-        echo '      <p><label for="duration">Duration (weeks)</label><br />' . "\n";
+        echo '></p>' . "\n\n";
+        echo '      <p><label for="duration">Duration (weeks)</label><br>' . "\n";
         echo '      <input type="number" id="duration" name="duration" class="date" ';
         echo echoIfValue($durationEdit);
-        echo ' /></p>' . "\n\n";
+        echo '></p>' . "\n\n";
         $i = null;
         foreach ($photos as $photo) {
             $i++;
             if ($photo === '1') {
-                echo '      <p><img class="wide border" src="imagec.php?i=' . muddle($idAd) . $i . '" alt="" /></p>' . "\n";
+                echo '      <p><img class="wide border" src="imagec.php?i=' . muddle($idAd) . $i . '" alt=""></p>' . "\n";
             }
         }
-        echo '      <p><input type="submit" class="button" value="Publish" name="publish" /> <input type="submit" class="button" value="Delete" name="delete" /><input name="idAd" type="hidden" value="' . $idAd . '" /></p>' . "\n";
+        echo '      <p><input type="submit" class="button" value="Publish" name="publish"> <input type="submit" class="button" value="Delete" name="delete"><input name="idAd" type="hidden" value="' . $idAd . '"></p>' . "\n";
         echo '    </form>' . "\n\n";
     }
 }

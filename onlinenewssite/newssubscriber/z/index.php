@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -382,6 +382,7 @@ if ($task === 'downloadContribution4b') {
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute([$idPhoto]);
     $row = $stmt->fetch();
+    $dbh = null;
     if ($row) {
         $response['hdImage'] = $row['image'];
         $response['photoName'] = $row['photoName'];
@@ -477,7 +478,7 @@ if ($task === 'classifiedsNewCleanUp') {
 }
 if ($task === 'classifiedsNewDownload') {
     $dbh = new PDO($dbClassifiedsNew);
-    $stmt = $dbh->prepare('SELECT email, title, description, categoryId FROM ads WHERE idAd=?');
+    $stmt = $dbh->prepare('SELECT email, title, description, categoryId, invoice, photos FROM ads WHERE idAd=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute([$idAd]);
     $row = $stmt->fetch();
@@ -525,7 +526,8 @@ if ($task === 'classifiedsSync') {
     $response['result'] = 'success';
 }
 if ($task === 'classifiedsSyncNew') {
-    $fifteenMinutesAgo = time() - 900;
+    $fifteenMinutesAgo = time();
+    //$fifteenMinutesAgo = time() - 900;
     $classifieds = [];
     $dbh = new PDO($dbClassifiedsNew);
     $stmt = $dbh->prepare('SELECT idAd FROM ads WHERE review < ?');
@@ -644,6 +646,7 @@ if ($task === 'menuSync') {
 // Settings
 //
 if ($task === 'settingsUpdate') {
+    $advertisementsUpdate = isset($advertisementsUpdate) ? json_decode($advertisementsUpdate, true) : null;
     $alertClassified = isset($alertClassified) ? json_decode($alertClassified, true) : null;
     $archiveAccess = isset($archiveAccess) ? json_decode($archiveAccess, true) : null;
     $calendarAccess = isset($calendarAccess) ? json_decode($calendarAccess, true) : null;
@@ -653,6 +656,14 @@ if ($task === 'settingsUpdate') {
     $infoForms = isset($infoForms) ? json_decode($infoForms, true) : null;
     $name = isset($name) ? json_decode($name, true) : null;
     $sortOrder = isset($sortOrder) ? json_decode($sortOrder, true) : null;
+    //
+    $dbh = new PDO($dbSettings);
+    $stmt = $dbh->query('DELETE from advertisements');
+    if (is_array($advertisementsUpdate)) {
+        $stmt = $dbh->prepare('INSERT INTO advertisements (adMinParagraphs, adMaxAdverts) VALUES (?, ?)');
+        $stmt->execute($advertisementsUpdate);
+    }
+    $dbh = null;
     //
     $dbh = new PDO($dbSettings);
     $stmt = $dbh->query('DELETE from alertClassified');

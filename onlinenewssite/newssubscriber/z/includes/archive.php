@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -121,19 +121,19 @@ if (isset($_GET['a'])) {
       <p>Search by any of the following criteria. Enter complete words or the beginning of words followed by an asterisk, for example, either <i>the</i> or <i>th*</i>.</p>
 
       <form method="post" action="' . $uri . '?m=archive-search">
-        <p><label for="headline">Headline contains</label><br />
-        <input id="headline" name="headline" type="text" class="wide" /></p>
+        <p><label for="headline">Headline contains</label><br>
+        <input id="headline" name="headline" type="text" class="h"></p>
 
-        <p><label for="startDate">Publication date range search</label><br />
-        <input id="startDate" name="startDate" type="date" class="date" placeholder="Start date" /> <input name="endDate" type="date" class="date" placeholder="End date" /></p>
+        <p><label for="startDate">Publication date range search, start date to end date</label><br>
+        <input id="startDate" name="startDate" type="date" class="date"> <input name="endDate" type="date" class="date"></p>
 
-        <p><label for="byline">Byline contains</label><br />
-        <input id="byline" name="byline" type="text" class="wide" /></p>
+        <p><label for="byline">Byline contains</label><br>
+        <input id="byline" name="byline" type="text" class="h"></p>
 
-        <p><label for="text">Article contains</label><br />
-        <input id="text" name="text" type="text" class="wide" /></p>
+        <p><label for="text">Article contains</label><br>
+        <input id="text" name="text" type="text" class="h"></p>
 
-        <p><input type="submit" class="button" value="Search" name="search" />
+        <p><input type="submit" class="button" value="Search" name="search">
       </form>' . "\n";
     if (!empty($bylinePost) or !empty($headlinePost) or !empty($startDatePost) or !empty($textPost)) {
         $html = null;
@@ -165,7 +165,7 @@ if (isset($_GET['a'])) {
                         echoIfMessage('The query is taking too long. Please refine the search criteria to narrow the search results.');
                         break;
                     }
-                    $html.= "      <hr />\n\n";
+                    $html.= "      <hr>\n\n";
                     if (isset($headline)) {
                         $html.= '      <h2><a class="n" href="' . $uri . '?a=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
                     }

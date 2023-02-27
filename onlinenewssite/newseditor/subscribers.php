@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -199,12 +199,10 @@ if (isset($_POST['edit'])) {
 require $includesPath . '/header1.inc';
 ?>
   <title>Subscriber maintenance</title>
-  <link rel="icon" type="image/png" href="images/32.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="generator" content="Online News Site Software, https://onlinenewssite.com/" />
-  <link rel="stylesheet" type="text/css" href="z/jquery-ui.min.css" />
-  <link rel="stylesheet" type="text/css" href="z/base.css" />
-  <link rel="stylesheet" type="text/css" href="z/admin.css" />
+  <link rel="icon" type="image/png" href="images/32.png">
+  <link rel="stylesheet" type="text/css" href="z/jquery-ui.min.css">
+  <link rel="stylesheet" type="text/css" href="z/base.css">
+  <link rel="stylesheet" type="text/css" href="z/admin.css">
   <script src="z/jquery.min.js"></script>
   <script src="z/jquery-ui.min.js"></script>
   <script src="z/datepicker.js"></script>
@@ -229,39 +227,39 @@ require $includesPath . '/body.inc';
 
         <p>Email and password are required for add. Password is not required for an update unless the password is changing. The email address only is required for delete and to update the email address. Email addresses must be unique.</p>
 
-        <p><label for="email">Email</label><br />
-        <input id="email" name="email" type="text" class="h" required<?php echoIfValue($emailEdit); ?> /><input name="idUser" type="hidden" <?php echoIfValue($idUserEdit); ?> /></p>
+        <p><label for="email">Email</label><br>
+        <input id="email" name="email" type="text" class="h" required<?php echoIfValue($emailEdit); ?>><input name="idUser" type="hidden" <?php echoIfValue($idUserEdit); ?>></p>
 
-        <p><label for="pass">Password</label><br />
-        <input id="pass" name="pass" type="text" class="h" /></p>
+        <p><label for="pass">Password</label><br>
+        <input id="pass" name="pass" type="text" class="h"></p>
 
         <p><label>
-          <input name="deliver" type="checkbox" value="1"<?php echoIfYes($deliverEdit); ?> /> Deliver a printed paper<br />
+          <input name="deliver" type="checkbox" value="1"<?php echoIfYes($deliverEdit); ?>> Deliver a printed paper<br>
         </label>
         <label>
-          <input name="contributor" type="checkbox" value="1"<?php echoIfYes($contributorEdit); ?> /> Article contributor<br />
+          <input name="contributor" type="checkbox" value="1"<?php echoIfYes($contributorEdit); ?>> Article contributor<br>
         </label>
         <label>
-          <input name="classifiedOnly" type="checkbox" value="1"<?php echoIfYes($classifiedOnlyEdit); ?> /> Free reg. to enter classified ads
+          <input name="classifiedOnly" type="checkbox" value="1"<?php echoIfYes($classifiedOnlyEdit); ?>> Free reg. to enter classified ads
         </label></p>
 
-        <p><label for="payStatus">Paid through date<br />
-          <input id="payStatus" name="payStatus" type="text" <?php echoIfValue($payStatusEdit); ?>class="datepicker date" /></label></p>
+        <p><label for="payStatus">Paid through date<br>
+          <input id="payStatus" name="payStatus" type="text" <?php echoIfValue($payStatusEdit); ?>class="datepicker date"></label></p>
 
-        <p><label for="billingAddress">Billing address</label><br />
-        <input id="billingAddress" name="billingAddress" type="text" class="h" placeholder="Billing address" <?php echoIfValue($billingAddressEdit); ?> /><br />
-        <br />
-        <input name="bCityRegionPostal" type="text" class="h" placeholder="City Region Post Code" <?php echoIfValue($bCityRegionPostalEdit); ?> /></p>
+        <p><label for="billingAddress">Billing address</label><br>
+        <input id="billingAddress" name="billingAddress" type="text" class="h" placeholder="Billing address" <?php echoIfValue($billingAddressEdit); ?>><br>
+        <br>
+        <input name="bCityRegionPostal" type="text" class="h" placeholder="City Region Post Code" <?php echoIfValue($bCityRegionPostalEdit); ?>></p>
 
-        <p><label for="deliveryAddress">Delivery address (if different than billing address)</label><br />
-        <input id="deliveryAddress" name="deliveryAddress" type="text" class="h" placeholder="Delivery address" <?php echoIfValue($deliveryAddressEdit); ?> /><br />
-        <br />
-        <input name="dCityRegionPostal" type="text" class="h" placeholder="City Region Post Code" <?php echoIfValue($dCityRegionPostalEdit); ?> /></p>
+        <p><label for="deliveryAddress">Delivery address (if different than billing address)</label><br>
+        <input id="deliveryAddress" name="deliveryAddress" type="text" class="h" placeholder="Delivery address" <?php echoIfValue($deliveryAddressEdit); ?>><br>
+        <br>
+        <input name="dCityRegionPostal" type="text" class="h" placeholder="City Region Post Code" <?php echoIfValue($dCityRegionPostalEdit); ?>></p>
 
-        <p><label for="note">Note</label><br />
+        <p><label for="note">Note</label><br>
         <textarea id="note" name="note" class="h"><?php echoIfText($noteEdit); ?></textarea></p>
 
-        <p><input type="submit" class="button" value="Add / update" name="addUpdate" /> <input type="submit" class="button" value="Delete" name="delete" /><input type="hidden" name="existing"<?php echoIfValue($edit); ?> /></p>
+        <p><input type="submit" class="button" value="Add / update" name="addUpdate"> <input type="submit" class="button" value="Delete" name="delete"><input type="hidden" name="existing"<?php echoIfValue($edit); ?>></p>
       </form>
 <?php
 if (isset($_POST['edit'])) {
@@ -273,9 +271,9 @@ if (isset($_POST['edit'])) {
     $dbh = null;
     if ($row and !empty($row['payerEmail'])) {
         extract($row);
-        echo "\n  <p>Electronic payment information<br />\n";
-        echo '  Email: ' . plain($payerEmail) . "<br />\n";
-        echo '  First Last: ' . $payerFirstName . ' ' . $payerLastName . "<br />\n";
+        echo "\n  <p>Electronic payment information<br>\n";
+        echo '  Email: ' . plain($payerEmail) . "<br>\n";
+        echo '  First Last: ' . $payerFirstName . ' ' . $payerLastName . "<br>\n";
         echo '  Paid Date: ' . $paid . ' ' . date("Y-m-d", $paymentDate) . "</p>\n";
     }
 }
@@ -294,42 +292,42 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
     extract($row);
     $rowcount++;
-    $email = '        <p>' . plain($email) . "<br />\n";
+    $email = '        <p>' . plain($email) . "<br>\n";
     if (empty($pass)) {
-        $pass = "        The password is not set!<br />\n";
+        $pass = "        The password is not set!<br>\n";
     } else {
         $pass = null;
     }
     if (!empty($payStatus)) {
-        $payStatus = '        Paid to ' . date("Y-m-d", $payStatus) . "<br />\n";
+        $payStatus = '        Paid to ' . date("Y-m-d", $payStatus) . "<br>\n";
     } else {
-        $payStatus = "        Not paid<br />\n";
+        $payStatus = "        Not paid<br>\n";
     }
     if (!empty($deliver)) {
-        $deliver = "        Deliver a printed paper<br />\n";
+        $deliver = "        Deliver a printed paper<br>\n";
     } else {
-        $deliver = "        Web subscription only<br />\n";
+        $deliver = "        Web subscription only<br>\n";
     }
     if (!empty($contributor)) {
-        $contributor = "        Article contributor<br />\n";
+        $contributor = "        Article contributor<br>\n";
     }
     if (!empty($classifiedOnly)) {
-        $classifiedOnly = "        Free reg. to enter classified ads<br />\n";
+        $classifiedOnly = "        Free reg. to enter classified ads<br>\n";
     }
     if (!empty($note)) {
-        $note = '        ' . $note . "<br />";
+        $note = '        ' . $note . "<br>";
     }
     if (!empty($billingAddress)) {
-        $billingAddress = "        Billing address:<br />\n" . '        &nbsp;&nbsp;' . $billingAddress . "<br />\n";
+        $billingAddress = "        Billing address:<br>\n" . '        &nbsp;&nbsp;' . $billingAddress . "<br>\n";
     }
     if (!empty($bCityRegionPostal)) {
-        $bCityRegionPostal = '        &nbsp;&nbsp;' . $bCityRegionPostal . "<br />\n";
+        $bCityRegionPostal = '        &nbsp;&nbsp;' . $bCityRegionPostal . "<br>\n";
     }
     if (!empty($deliveryAddress)) {
-        $deliveryAddress = "        Delivery address:<br />\n" . '        &nbsp;&nbsp;' . $deliveryAddress . "<br />\n";
+        $deliveryAddress = "        Delivery address:<br>\n" . '        &nbsp;&nbsp;' . $deliveryAddress . "<br>\n";
     }
     if (!empty($dCityRegionPostal)) {
-        $dCityRegionPostal = '        &nbsp;&nbsp;' . $dCityRegionPostal . "<br />\n";
+        $dCityRegionPostal = '        &nbsp;&nbsp;' . $dCityRegionPostal . "<br>\n";
     }
     echo '      <form class="wait" action="' . $uri . 'subscribers.php" method="post">' . "\n";
     echo $email;
@@ -343,7 +341,7 @@ foreach ($stmt as $row) {
     echo $bCityRegionPostal;
     echo $deliveryAddress;
     echo $dCityRegionPostal;
-    echo '        <input name="idUser" type="hidden" value="' . $idUser . '" /><input type="submit" class="button" value="Edit" name="edit" /></p>' . "\n";
+    echo '        <input name="idUser" type="hidden" value="' . $idUser . '"><input type="submit" class="button" value="Edit" name="edit"></p>' . "\n";
     echo "      </form>\n\n";
 
     $patron[$rowcount]['email'] = $email;

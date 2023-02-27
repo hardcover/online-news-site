@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -203,12 +203,10 @@ if (isset($_POST['edit'])) {
 require $includesPath . '/header1.inc';
 echo '  <title>' . $title . "</title>\n";
 ?>
-  <link rel="icon" type="image/png" href="images/32.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="generator" content="Online News Site Software, https://onlinenewssite.com/" />
-  <link rel="stylesheet" type="text/css" href="z/jquery-ui.min.css" />
-  <link rel="stylesheet" type="text/css" href="z/base.css" />
-  <link rel="stylesheet" type="text/css" href="z/admin.css" />
+  <link rel="icon" type="image/png" href="images/32.png">
+  <link rel="stylesheet" type="text/css" href="z/jquery-ui.min.css">
+  <link rel="stylesheet" type="text/css" href="z/base.css">
+  <link rel="stylesheet" type="text/css" href="z/admin.css">
   <script src="z/jquery.min.js"></script>
   <script src="z/jquery-ui.min.js"></script>
   <script src="z/datepicker.js"></script>
@@ -237,19 +235,19 @@ if (isset($_GET['a'])) {
     <p>Search by any of the following criteria. Enter complete words or the beginning of words followed by an asterisk, for example, either <i>the</i> or <i>th*</i>.</p>
 
     <form action="' . $uri . 'archive.php" method="post" class="wait">
-      <p><label for="headline">Headline contains</label><br />
-      <input type="text" class="wide" id="headline" name="headline" autofocus /></p>
+      <p><label for="headline">Headline contains</label><br>
+      <input type="text" class="wide" id="headline" name="headline" autofocus></p>
 
-      <p><label for="startDate">Publication date range search</label><br />
-      <input type="text" class="datepicker date" id="startDate" name="startDate" placeholder="Start date" /> <input type="text" class="datepicker date" name="endDate" placeholder="End date" /></p>
+      <p><label for="startDate">Publication date range search, start date to end date</label><br>
+      <input type="text" class="datepicker date" id="startDate" name="startDate"> <input type="text" class="datepicker date" name="endDate"></p>
 
-      <p><label for="byline">Byline contains</label><br />
-      <input type="text" class="wide" id="byline" name="byline" /></p>
+      <p><label for="byline">Byline contains</label><br>
+      <input type="text" class="wide" id="byline" name="byline"></p>
 
-      <p><label for="text">Article contains</label><br />
-      <input type="text" class="wide" id="text" name="text" /></p>
+      <p><label for="text">Article contains</label><br>
+      <input type="text" class="wide" id="text" name="text"></p>
 
-      <p><input type="submit" class="button" value="Search" name="search" />
+      <p><input type="submit" class="button" value="Search" name="search">
     </form>' . "\n";
     if (!empty($bylinePost) or !empty($headlinePost) or !empty($startDatePost) or !empty($textPost)) {
         $html = null;
@@ -280,7 +278,7 @@ if (isset($_GET['a'])) {
                         echoIfMessage('The query is taking too long. Please refine the search criteria to narrow the search results.');
                         break;
                     }
-                    $html.= "    <hr />\n\n";
+                    $html.= "    <hr>\n\n";
                     if (isset($headline)) {
                         $html.= '    <h2><a class="n" href="' . $uri . $use . '.php?a=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
                     }
@@ -303,7 +301,7 @@ if (isset($_GET['a'])) {
                     }
                     if (isset($editorView) and $editorView === '1') {
                         $html.= "\n" . '    <form action="' . $uri . 'archive.php" method="post" class="wait">' . "\n";
-                        $html.= '      <p><input type="hidden" name="idArticle" value="' . $idArticle . '"><input type="submit" class="button" value="Delete" name="delete" /> <input type="submit" class="button" value="Return to edit" name="edit" /></p>' . "\n";
+                        $html.= '      <p><input type="hidden" name="idArticle" value="' . $idArticle . '"><input type="submit" class="button" value="Delete" name="delete"> <input type="submit" class="button" value="Return to edit" name="edit"></p>' . "\n";
                         $html.= "    </form>\n";
                     }
                 }

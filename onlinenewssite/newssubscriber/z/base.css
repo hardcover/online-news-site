@@ -99,7 +99,7 @@ h6.fn {
 }
 
 p.bw {
-    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 p.error {
@@ -168,7 +168,7 @@ input, select, textarea {
 }
 
 input.date {
-    width: 6rem;
+    width: 41%;
 }
 
 input.h, select.h, textarea.h {
@@ -183,12 +183,19 @@ img {
     border: 0;
 }
 
+img.ad {
+    display: block;
+    margin: auto;
+    width: 23rem;
+    max-width: 85%;
+}
+
 img.lead, img.wide, iframe, video {
     width: 100%;
 }
 
 img.fr, span.fr {
-    float: right;
+    float: right
 }
 
 img.fr {

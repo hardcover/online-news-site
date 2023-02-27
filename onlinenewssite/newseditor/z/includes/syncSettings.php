@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -31,6 +31,17 @@ $request = [];
 $response = [];
 $request['task'] = 'settingsUpdate';
 //
+// Update advertisements in article text
+//
+$dbh = new PDO($dbSettings);
+$stmt = $dbh->query('SELECT adMinParagraphs, adMaxAdverts FROM advertisements');
+$stmt->setFetchMode(PDO::FETCH_NUM);
+$row = $stmt->fetch();
+if ($row) {
+    $request['advertisementsUpdate'] = json_encode($row);
+}
+$dbh = null;
+//
 // Update archive access
 //
 $dbh = new PDO($dbSettings);
@@ -40,6 +51,7 @@ $row = $stmt->fetch();
 if ($row) {
     $request['archiveAccess'] = json_encode($row);
 }
+$dbh = null;
 //
 // Update calendar access
 //
@@ -50,6 +62,7 @@ $row = $stmt->fetch();
 if ($row) {
     $request['calendarAccess'] = json_encode($row);
 }
+$dbh = null;
 //
 // Update classified access
 //
@@ -60,6 +73,7 @@ $row = $stmt->fetch();
 if ($row) {
     $request['classifiedAccess'] = json_encode($row);
 }
+$dbh = null;
 //
 // Update contact form access
 //
@@ -70,6 +84,7 @@ $row = $stmt->fetch();
 if ($row) {
     $request['contactAccess'] = json_encode($row);
 }
+$dbh = null;
 //
 // Update email alert for classifieds
 //

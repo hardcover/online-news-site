@@ -10,13 +10,13 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 if (empty($_SESSION['userId'])) {
-    echo '<META HTTP-EQUIV="Refresh" Content="0; URL=' . $uri . '?t=l">';
+    echo '<meta http-equiv="refresh" content="0; url=' . $uri . '?t=l">';
     exit;
 }
 require $includesPath . '/authorization.php';
@@ -37,7 +37,7 @@ $photosReverse = array_reverse($photosOrdered);
 $photoAvailable = null;
 $titleEdit = null;
 $titlePost = inlinePost('title');
-$button = '      <p><input type="submit" class="button" name="addUpdate" value="Add / update"/> <input type="submit" class="button" name="reset" value="Reset" /></p>' . "\n";
+$button = '        <p><input type="submit" class="button" name="addUpdate" value="Add / update"/> <input type="submit" class="button" name="reset" value="Reset"></p>' . "\n";
 if (isset($idAdPost)) {
     $_POST['edit'] = 1;
 }
@@ -191,7 +191,7 @@ if (isset($_POST['edit']) and isset($idAdPost)) {
         $invoiceEdit = $row['invoice'];
         $titleEdit = $row['title'];
         if (!empty($row['photo1'])) {
-            $button = '      <p><input type="submit" class="button" name="addUpdate" value="Add / update"/> <input type="submit" class="button" name="photoDelete" value="Delete photos" /> <input type="submit" class="button" name="reset" value="Reset" /></p>'. "\n";
+            $button = '      <p><input type="submit" class="button" name="addUpdate" value="Add / update"/> <input type="submit" class="button" name="photoDelete" value="Delete photos"> <input type="submit" class="button" name="reset" value="Reset"></p>'. "\n";
         }
     }
     $dbh = null;
@@ -200,12 +200,13 @@ if (isset($_POST['edit']) and isset($idAdPost)) {
 // Button: Reset
 //
 if (isset($_POST['reset'])) {
-    header('Location: ' . $uri . '?m=place-classified');
+    echo ' <script> location.replace("' . $uri . '?m=place-classified"); </script>';
     exit;
 }
 //
 // HTML
 //
+echo '    <div class="main">' . "\n";
 echoIfMessage($message);
 //
 // List pending ads first
@@ -219,13 +220,13 @@ foreach ($stmt as $row) {
     extract($row);
     $i++;
     if ($i === 1) {
-        echo "    <h1>Ads pending review</h1>\n\n";
+        echo "      <h1>Ads pending review</h1>\n\n";
     }
-    echo '    <form action="' . $uri . '?m=place-classified" method="post">' . "\n";
-    echo '      <p>' . $title . '<input type="hidden" name="idAd" value="' . $idAd . '" /><input type="hidden" name="existing" value="1" /><br />' . "\n";
-    echo '      ' . $description . '<br />' . "\n";
-    echo '      <input type="submit" class="button" name="edit" value="Edit" /> <input type="submit" class="button" name="deletePending" value="Delete" /></p>' . "\n";
-    echo '    </form>' . "\n\n";
+    echo '      <form action="' . $uri . '?m=place-classified" method="post">' . "\n";
+    echo '        <p>' . $title . '<input type="hidden" name="idAd" value="' . $idAd . '"><input type="hidden" name="existing" value="1"><br>' . "\n";
+    echo '        ' . $description . '<br>' . "\n";
+    echo '        <input type="submit" class="button" name="edit" value="Edit"> <input type="submit" class="button" name="deletePending" value="Delete"></p>' . "\n";
+    echo '      </form>' . "\n\n";
 }
 $dbh = null;
 //
@@ -245,44 +246,44 @@ foreach ($stmt as $row) {
         $remove = null;
     }
     if ($ii === 1) {
-        echo "    <h1>Approved ads</h1>\n\n";
+        echo "      <h1>Approved ads</h1>\n\n";
     }
-    echo '    <form action="' . $uri . '?m=place-classified" method="post">' . "\n";
-    echo '      <p>' . $title . '<input type="hidden" name="idAd" value="' . $idAd . '" /><input type="hidden" name="existing" value="1" /><br />' . "\n";
-    echo '      Expires: ' . $review . $remove . '<br />' . "\n";
-    echo '      <input type="submit" class="button" name="deleteApproved" value="Request removal before expiration" /></p>' . "\n";
-    echo '    </form>' . "\n\n";
+    echo '      <form action="' . $uri . '?m=place-classified" method="post">' . "\n";
+    echo '        <p>' . $title . '<input type="hidden" name="idAd" value="' . $idAd . '"><input type="hidden" name="existing" value="1"><br>' . "\n";
+    echo '        Expires: ' . $review . $remove . '<br>' . "\n";
+    echo '        <input type="submit" class="button" name="deleteApproved" value="Request removal before expiration"></p>' . "\n";
+    echo '      </form>' . "\n\n";
 }
 $dbh = null;
 if (!empty($i) or !empty($ii)) {
-    echo "    <hr />\n\n";
+    echo "      <hr>\n\n";
 }
 //
 // The add / update ad form
 //
 ?>
-    <h1>Add / update a classified ad</h1>
+      <h1>Add / update a classified ad</h1>
 
-    <p>All edits should be complete within fifteen minutes of starting the ad. After fifteen minutes the ad is available for approval, after which it can no longer be edited.</p>
+      <p>All edits should be complete within fifteen minutes of starting the ad. After fifteen minutes the ad is available for approval, after which it can no longer be edited.</p>
 
-    <form action="<?php echo $uri; ?>?m=place-classified" method="post" enctype="multipart/form-data">
-      <p><label for="title">Title</label><br />
-      <input id="title" name="title" type="text" class="wide"<?php echoIfValue($titleEdit); ?> /><input type="hidden" name="idAd"<?php echoIfValue($idAdEdit); ?> /></p>
+      <form action="<?php echo $uri; ?>?m=place-classified" method="post" enctype="multipart/form-data">
+        <p><label for="title">Title</label><br>
+        <input id="title" name="title" type="text" class="wide"<?php echoIfValue($titleEdit); ?>><input type="hidden" name="idAd"<?php echoIfValue($idAdEdit); ?>></p>
 
-      <p><label for="description">Description</label><br />
-      <textarea id="description" name="description" class="wide"><?php echoIfText($descriptionEdit); ?></textarea><p>
+        <p><label for="description">Description</label><br>
+        <textarea id="description" name="description" class="wide"><?php echoIfText($descriptionEdit); ?></textarea><p>
 
-      <p><label for="invoice"><input id="invoice" name="invoice" type="checkbox" value="1"<?php echoIfYes($invoiceEdit); ?> /> Send an invoice to also have the add in the print version of the paper.</label></p>
+        <p><label for="invoice"><input id="invoice" name="invoice" type="checkbox" value="1"<?php echoIfYes($invoiceEdit); ?>> Send an invoice to also have the add in the print version of the paper.</label></p>
 
-      <p><label for="categoryId">Categories (select a subcategory)</label><br />
-      <select id="categoryId" name="categoryId" size="1" required>
+        <p><label for="categoryId">Categories (select a subcategory)</label><br>
+        <select id="categoryId" name="categoryId" size="1" required>
 <?php
 $dbh = new PDO($dbClassifieds);
 $stmt = $dbh->query('SELECT idSection, section FROM sections ORDER BY sortOrderSection');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
     extract($row);
-    echo '        <option value="">' . html($section) . "</option>\n";
+    echo '          <option value="">' . html($section) . "</option>\n";
     $stmt = $dbh->prepare('SELECT idSubsection, subsection FROM subsections WHERE parentId=? ORDER BY sortOrderSubsection');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute([$idSection]);
@@ -293,21 +294,21 @@ foreach ($stmt as $row) {
         } else {
             $selected = null;
         }
-        echo '        <option value="' . $idSubsection . '"' . $selected . '>&nbsp;&nbsp;&nbsp;' . html($subsection) . "</option>\n";
+        echo '          <option value="' . $idSubsection . '"' . $selected . '>&nbsp;&nbsp;&nbsp;' . html($subsection) . "</option>\n";
     }
 }
 $dbh = null;
 ?>
-      </select></p>
+        </select></p>
 
-      <p><label for="image">Photo upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br />
-      <input id="image" name="image" type="file" class="wide" accept="image/jpeg"></p>
+        <p><label for="image">Photo upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br>
+        <input id="image" name="image" type="file" class="wide" accept="image/jpeg"></p>
 
-      <p>Up to seven images may be included in an ad. Upload one image at a time. Edit the listing to add each additional image. JPG is the only permitted image format. The best image size is 2360 pixels or wider. Larger images are reduced to that width.</p>
+        <p>Up to seven images may be included in an ad. Upload one image at a time. Edit the listing to add each additional image. JPG is the only permitted image format. The best image size is 2360 pixels or wider. Larger images are reduced to that width.</p>
 
 <?php
 echo $button;
-echo "    </form>\n\n";
+echo "      </form>\n";
 if (isset($idAdEdit)) {
     foreach ($photosOrdered as $photo) {
         $dbh = new PDO($dbClassifiedsNew);
@@ -317,8 +318,9 @@ if (isset($idAdEdit)) {
         $row = $stmt->fetch();
         $dbh = null;
         if (!empty($row['0'])) {
-            echo '    <p><img class="wide border" src="imagen.php?i=' . muddle($idAdEdit) . $photo . '" alt="" /></p>' . "\n\n";
+            echo '      <p><img class="wide border" src="imagen.php?i=' . muddle($idAdEdit) . $photo . '" alt=""></p>' . "\n";
         }
     }
 }
+echo '    </div>' . "\n";
 ?>

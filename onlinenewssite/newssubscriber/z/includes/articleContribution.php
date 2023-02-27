@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -263,17 +263,17 @@ if (isset($_POST['edit'])) {
 // HTML
 //
 echo '    <div class="main">' . "\n";
-echo "      <h1>Article contribution</h1>\n";
 echoIfMessage($message);
+echo "      <h1>Article contribution</h1>\n";
 ?>
 
       <p>Fifteen minutes from the last edit, the article becomes available to be sent to the editor after which it will no longer be available to edit here.</p>
 
       <form class="wait" method="post" action="<?php echo $uri; ?>?m=article-contribution" enctype="multipart/form-data">
-        <p><label for="byline">Byline</label><br />
-        <input id="byline" name="byline" type="text" class="wide" <?php echoIfValue($bylineEdit); ?> /><input type="hidden" name="idArticle" value="<?php echo $idArticleEdit; ?>"></p>
+        <p><label for="byline">Byline</label><br>
+        <input id="byline" name="byline" type="text" class="wide" <?php echoIfValue($bylineEdit); ?>><input type="hidden" name="idArticle" value="<?php echo $idArticleEdit; ?>"></p>
 
-        <p><label for="idSection">Section</label><br />
+        <p><label for="idSection">Section</label><br>
         <select id="idSection" name="idSection">
 <?php
 $dbh = new PDO($dbSettings);
@@ -289,7 +289,7 @@ $dbh = null;
 
 <?php
 if ($use === 'published') {
-    echo '    <p><span class="rp">Sort order within section<br />' . "\n";
+    echo '    <p><span class="rp">Sort order within section<br>' . "\n";
     echo '    <select name="sortOrderArticle">' . "\n";
     $count = 1;
     $dbh = new PDO($dbPublished);
@@ -306,27 +306,27 @@ if ($use === 'published') {
     echo "    </select></span></p>\n\n";
 }
 ?>
-        <p><label for="headline">Headline</label><br />
-        <input id="headline" name="headline" type="text" class="wide" <?php echoIfValue($headlineEdit); ?> /></p>
+        <p><label for="headline">Headline</label><br>
+        <input id="headline" name="headline" type="text" class="wide" <?php echoIfValue($headlineEdit); ?>></p>
 
-        <p><label for="standfirst">Standfirst</label><br />
-        <input id="standfirst" name="standfirst" type="text" class="wide"<?php echoIfValue($standfirstEdit); ?> /></p>
+        <p><label for="standfirst">Standfirst</label><br>
+        <input id="standfirst" name="standfirst" type="text" class="wide"<?php echoIfValue($standfirstEdit); ?>></p>
 
-        <p><label for="text">Article text is entered in either HTML or the <a href="http://daringfireball.net/projects/markdown/syntax/" target="_blank">markdown syntax</a>. Enter iframe and video tags inside paragraph tags, for example, &lt;p&gt;&lt;iframe&gt;&lt;/iframe&gt;&lt;/p&gt;.</label><br />
+        <p><label for="text">Article text is entered in either HTML or the <a href="https://www.markdownguide.org/basic-syntax/" target="_blank">markdown syntax</a>. Enter iframe and video tags inside paragraph tags, for example, &lt;p&gt;&lt;iframe&gt;&lt;/iframe&gt;&lt;/p&gt;.</label><br>
         <textarea id="text" name="text" rows="9" class="wide"><?php echoIfText($textEdit); ?></textarea></p>
 
-        <p><label for="image">Photo upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br />
-        <input id="image" name="image" type="file" class="wide" accept="image/jpeg" /></p>
+        <p><label for="image">Photo upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br>
+        <input id="image" name="image" type="file" class="wide" accept="image/jpeg"></p>
 
         <p><label for="full"><input type="radio" name="width" id="full" value=""<?php echo $widthEditFull; ?>> Full width</label> <label for="third"><input type="radio" name="width" id="third" value="third"<?php echo $widthEditThird; ?>> One-third width</label></p>
 
-        <p><label for="photoCaption">Photo caption</label><br />
-        <input id="photoCaption" name="photoCaption" type="text" class="wide" autocomplete="on" /></p>
+        <p><label for="photoCaption">Photo caption</label><br>
+        <input id="photoCaption" name="photoCaption" type="text" class="wide" autocomplete="on"></p>
 
-        <p><label for="photoCredit">Photo credit</label><br />
-        <input id="photoCredit" name="photoCredit" type="text" class="wide" /></p>
+        <p><label for="photoCredit">Photo credit</label><br>
+        <input id="photoCredit" name="photoCredit" type="text" class="wide"></p>
 
-        <p><input type="submit" class="button" value="Add / update" name="addUpdate" /> <input type="submit" class="button" value="Delete photos" name="deletePhoto" /><input type="hidden" name="existing"<?php echoIfValue($edit); ?> /></p>
+        <p><input type="submit" class="button" value="Add / update" name="addUpdate"> <input type="submit" class="button" value="Delete photos" name="deletePhoto"><input type="hidden" name="existing"<?php echoIfValue($edit); ?>></p>
       </form>
 
       <p>When there are photos, upload the primary photo first. Then edit the article to upload additional photos one at a time. To correct any photo error — width, caption, credit, order — delete the photos and begin again.</p>
@@ -449,7 +449,7 @@ if (isset($_GET['t'])) {
             foreach ($stmt as $row) {
                 extract($row);
                 if (isset($count)) {
-                    $html.= "  <hr />\n\n";
+                    $html.= "  <hr>\n\n";
                 }
                 $count++;
                 $html.= '      <h2><a class="n" href="' . $uri . '?m=article-contribution&t=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
@@ -462,7 +462,7 @@ if (isset($_GET['t'])) {
                     $html.= '</a>' . html($summary) . "</p>\n";
                 }
                 $html.= "\n" . '      <form class="wait" action="' . $uri . '?m=article-contribution" method="post">' . "\n";
-                $html.= '        <p> <input type="hidden" name="idArticle" value="' . $idArticle . '"><input type="submit" class="button" value="Delete" name="delete" /> <input type="submit" class="button" value="Edit" name="edit" /></p>' . "\n";
+                $html.= '        <p> <input type="hidden" name="idArticle" value="' . $idArticle . '"><input type="submit" class="button" value="Delete" name="delete"> <input type="submit" class="button" value="Edit" name="edit"></p>' . "\n";
                 $html.= "      </form>\n";
             }
         }

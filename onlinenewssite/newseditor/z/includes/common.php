@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -176,7 +176,7 @@ function utf8($str)
 function echoIfMessage($str)
 {
     if (!empty($str)) {
-        echo "\n" . '  <p class="error">' . $str . "</p>\n";
+        echo "\n" . '    <p class="error">' . $str . "</p>\n";
     }
 }
 /**
@@ -269,6 +269,7 @@ function uploadFilesizeMaximum()
     }
     echo $maxFileSize;
 }
+
 /**
  * Function for HTML request/response RPC SOA, posts a request array and captures the response array
  *

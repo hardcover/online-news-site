@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -88,11 +88,9 @@ if ($row) {
 require $includesPath . '/header1.inc';
 ?>
   <title>Advertising maintenance</title>
-  <link rel="icon" type="image/png" href="images/32.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="generator" content="Online News Site Software, https://onlinenewssite.com/" />
-  <link rel="stylesheet" type="text/css" href="z/base.css" />
-  <link rel="stylesheet" type="text/css" href="z/admin.css" />
+  <link rel="icon" type="image/png" href="images/32.png">
+  <link rel="stylesheet" type="text/css" href="z/base.css">
+  <link rel="stylesheet" type="text/css" href="z/admin.css">
   <script src="z/wait.js"></script>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="images/192.png">
@@ -108,13 +106,13 @@ require $includesPath . '/header1.inc';
   <h1 id="waiting">Please wait.</h1>
 
   <div class="column">
-    <h1>Set the maximum number of ads to display simultaneously</h1>
+    <h1>Maximum number of ads</h1>
 
     <form class="wait" action="<?php echo $uri; ?>advertisingMax.php" method="post">
-      <p><label for="maxAds">Maximum number of ads</label><br />
-      <input type="number" id="maxAds" name="maxAds"<?php echoIfValue($maxAdsEdit); ?> /></p>
+      <p><label for="maxAds">Maximum displayed in the main menu</label><br>
+      <input type="number" id="maxAds" name="maxAds"<?php echoIfValue($maxAdsEdit); ?>></p>
 
-      <p><input type="submit" class="button" name="setMaximum" value="Set maximum" /></p>
+      <p><input type="submit" class="button" name="setMaximum" value="Set maximum"></p>
     </form>
   </div>
 </body>

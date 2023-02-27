@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -47,12 +47,10 @@ $use = 'preview';
 require $includesPath . '/header1.inc';
 echo '  <title>' . $title . "</title>\n";
 ?>
-  <link rel="icon" type="image/png" href="images/32.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="generator" content="Online News Site Software, https://onlinenewssite.com/" />
-  <link rel="stylesheet" type="text/css" href="z/jquery-ui.min.css" />
-  <link rel="stylesheet" type="text/css" href="z/base.css" />
-  <link rel="stylesheet" type="text/css" href="z/admin.css" />
+  <link rel="icon" type="image/png" href="images/32.png">
+  <link rel="stylesheet" type="text/css" href="z/jquery-ui.min.css">
+  <link rel="stylesheet" type="text/css" href="z/base.css">
+  <link rel="stylesheet" type="text/css" href="z/admin.css">
   <script src="z/jquery.min.js"></script>
   <script src="z/jquery-ui.min.js"></script>
   <script src="z/datepicker.js"></script>
@@ -67,8 +65,8 @@ echo '  <div class="column">' . "\n";
 echo '    <h1>' . $title . "</h1>\n\n";
 echoIfMessage($message);
 echo '    <form method="post" action="' . $uri . 'preview.php">' . "\n";
-echo '      <p><label for="date">Publication date</label><br />' . "\n";
-echo '      <input id="date" name="date" type="text" class="datepicker date" value="' . $datePost . '" /> <input type="submit" class="button" value="Select starting date" /></p>' . "\n";
+echo '      <p><label for="date">Publication date</label><br>' . "\n";
+echo '      <input id="date" name="date" type="text" class="datepicker date" value="' . $datePost . '"> <input type="submit" class="button" value="Select starting date"></p>' . "\n";
 echo "    </form>\n";
 require $includesPath . '/displayIndex.inc';
 echo '  </div>' . "\n";

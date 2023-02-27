@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -208,7 +208,8 @@ if (isset($_POST['updatePredefined'])) {
     $stmt = $dbh->prepare('INSERT INTO contactAccess (access) VALUES (?)');
     $stmt->execute([$contactEdit]);
     $dbh = null;
-    include $includesPath . '/syncSettings.php';    $dbh = new PDO($dbMenu);
+    include $includesPath . '/syncSettings.php';
+    $dbh = new PDO($dbMenu);
     $stmt = $dbh->prepare('DELETE FROM menu WHERE menuName = ? AND menuContent IS NULL');
     $stmt->execute(['Contact us']);
     $dbh = null;
@@ -247,22 +248,22 @@ require $includesPath . '/header2.inc';
 
     <form class="wait" action="<?php echo $uri; ?>menuPredefine.php" method="post">
       <p><label>
-        <input type="checkbox" name="archive"<?php echoIfYes($archiveEdit); ?> /> Enable archive search
+        <input type="checkbox" name="archive"<?php echoIfYes($archiveEdit); ?>> Enable archive search
       </label></p>
 
       <p><label>
-        <input type="checkbox" name="calendar"<?php echoIfYes($calendarEdit); ?> /> Enable calendar
+        <input type="checkbox" name="calendar"<?php echoIfYes($calendarEdit); ?>> Enable calendar
       </label></p>
 
       <p><label>
-        <input type="checkbox" name="classifieds"<?php echoIfYes($classifiedsEdit); ?> /> Enable classified ads
+        <input type="checkbox" name="classifieds"<?php echoIfYes($classifiedsEdit); ?>> Enable classified ads
       </label></p>
 
       <p><label>
-        <input type="checkbox" name="contact"<?php echoIfYes($contactEdit); ?> /> Enable contact form
+        <input type="checkbox" name="contact"<?php echoIfYes($contactEdit); ?>> Enable contact form
       </label></p>
 
-      <p><input type="submit" value="Update" name="updatePredefined" class="button" /></p>
+      <p><input type="submit" value="Update" name="updatePredefined" class="button"></p>
     </form>
   </div>
 </body>

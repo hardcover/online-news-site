@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -69,6 +69,7 @@ if (isset($_POST['search']) and isset($_POST['titleSearch'])) {
         extract($row);
         $searchResults[] = $row;
     }
+    $dbh = null;
 }
 //
 // Button: Update
@@ -245,12 +246,10 @@ if (isset($_POST['edit']) and isset($_POST['idAd'])) {
 require $includesPath . '/header1.inc';
 ?>
   <title>Edit a published classified ad</title>
-  <link rel="icon" type="image/png" href="images/32.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="generator" content="Online News Site Software, https://onlinenewssite.com/" />
-  <link rel="stylesheet" type="text/css" href="z/jquery-ui.min.css" />
-  <link rel="stylesheet" type="text/css" href="z/base.css" />
-  <link rel="stylesheet" type="text/css" href="z/admin.css" />
+  <link rel="icon" type="image/png" href="images/32.png">
+  <link rel="stylesheet" type="text/css" href="z/jquery-ui.min.css">
+  <link rel="stylesheet" type="text/css" href="z/base.css">
+  <link rel="stylesheet" type="text/css" href="z/admin.css">
   <script src="z/jquery.min.js"></script>
   <script src="z/jquery-ui.min.js"></script>
   <script src="z/datepicker.js"></script>
@@ -271,20 +270,20 @@ require $includesPath . '/header1.inc';
       <h1>Edit a published classified ad</h1>
 
       <form class="wait" action="<?php echo $uri; ?>classifiedEdit.php" method="post" enctype="multipart/form-data">
-        <p><label for="titleSearch">Search for an ad by title</label><br />
-        <input id="titleSearch" name="titleSearch" type="text" class="h"<?php echoIfValue($titleSearchPost); ?> /></p>
+        <p><label for="titleSearch">Search for an ad by title</label><br>
+        <input id="titleSearch" name="titleSearch" type="text" class="h"<?php echoIfValue($titleSearchPost); ?>></p>
 
-        <p><input type="submit" class="button" name="search" value="Search" /></p>
+        <p><input type="submit" class="button" name="search" value="Search"></p>
 
-        <p><label for="title">Title</label><br />
-        <input id="title" name="title" type="text" class="h"<?php echoIfValue($titleEdit); ?> /><input type="hidden" name="idAd"<?php echoIfValue($idAdEdit); ?> /></p>
+        <p><label for="title">Title</label><br>
+        <input id="title" name="title" type="text" class="h"<?php echoIfValue($titleEdit); ?>><input type="hidden" name="idAd"<?php echoIfValue($idAdEdit); ?>></p>
 
-        <p><label for="description">Description</label><br />
+        <p><label for="description">Description</label><br>
         <textarea id="description" name="description" class="h"><?php echoIfText($descriptionEdit); ?></textarea><p>
 
-        <p><label for="invoice"><input id="invoice" name="invoice" type="checkbox" value="1"<?php echoIfYes($invoiceEdit); ?> /> Send an invoice to also have the add in the print version of the paper.</label></p>
+        <p><label for="invoice"><input id="invoice" name="invoice" type="checkbox" value="1"<?php echoIfYes($invoiceEdit); ?>> Send an invoice to also have the add in the print version of the paper.</label></p>
 
-        <p><label for="categoryId">Categories (select a subcategory)</label><br />
+        <p><label for="categoryId">Categories (select a subcategory)</label><br>
           <select id="categoryId" name="categoryId" size="1" class="h">
 <?php
 $dbh = new PDO($dbClassifieds);
@@ -312,20 +311,20 @@ $dbh = null;
 ?>
           </select></p>
 
-        <p><label for="startDate">Start date</label><br />
-        <input type="text" class="datepicker date" id="startDate" name="startDate"<?php echoIfValue($startDateEdit); ?> /></p>
+        <p><label for="startDate">Start date</label><br>
+        <input type="text" class="datepicker date" id="startDate" name="startDate"<?php echoIfValue($startDateEdit); ?>></p>
 
-        <p><label for="duration">Duration (weeks)</label><br />
-        <input type="number" id="duration" name="duration" class="date"<?php echoIfValue($durationEdit); ?> /></p>
+        <p><label for="duration">Duration (weeks)</label><br>
+        <input type="number" id="duration" name="duration" class="date"<?php echoIfValue($durationEdit); ?>></p>
 
-        <p><label for="image">Photo upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br />
+        <p><label for="image">Photo upload (JPG image only<?php uploadFilesizeMaximum(); ?>)</label><br>
         <input id="image" name="image" type="file" class="h" accept="image/jpeg"></p>
 
         <p>Up to seven images may be included in an ad. Upload one image at a time. Edit the listing to add each additional image. JPG is the only permitted image format. The best image size is 2360 pixels or wider. Larger images are reduced to that width.</p>
 
         <p><input type="submit" class="button" name="update" value="Update"/></p>
 
-        <p><input type="submit" class="button" name="photoDelete" value="Delete photos" /> <input type="submit" class="button" name="delete" value="Delete ad" /></p>
+        <p><input type="submit" class="button" name="photoDelete" value="Delete photos"> <input type="submit" class="button" name="delete" value="Delete ad"></p>
       </form>
 
 <?php
@@ -338,7 +337,7 @@ if (isset($idAdEdit)) {
         $row = $stmt->fetch();
         $dbh = null;
         if (!empty($row['0'])) {
-            echo '      <p><img class="wide border" src="imagec.php?i=' . muddle($idAdEdit) . $photo . '" alt="" /></p>' . "\n\n";
+            echo '      <p><img class="wide border" src="imagec.php?i=' . muddle($idAdEdit) . $photo . '" alt=""></p>' . "\n\n";
         }
     }
 }
@@ -350,10 +349,10 @@ if (isset($idAdEdit)) {
 <?php
 foreach ($searchResults as $searchResult) {
     echo '        <form class="wait" action="' . $uri . 'classifiedEdit.php" method="post">' . "\n";
-    echo '          <p>' . $searchResult['title'] . " - Title<br />\n";
-    echo '          ' . plain($searchResult['email']) . " - By<br />\n";
-    echo '          ' . $searchResult['description'] . " - Description<br />\n";
-    echo '          <input name="idAd" type="hidden" value="' . $searchResult['idAd'] . '" /><input type="submit" value="Edit" name="edit" class="button" /></p>' . "\n";
+    echo '          <p>' . $searchResult['title'] . " - Title<br>\n";
+    echo '          ' . plain($searchResult['email']) . " - By<br>\n";
+    echo '          ' . $searchResult['description'] . " - Description<br>\n";
+    echo '          <input name="idAd" type="hidden" value="' . $searchResult['idAd'] . '"><input type="submit" value="Edit" name="edit" class="button"></p>' . "\n";
     echo "        </form>\n\n";
 }
 ?>

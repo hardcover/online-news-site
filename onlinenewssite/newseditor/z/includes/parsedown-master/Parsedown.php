@@ -1764,7 +1764,7 @@ class Parsedown
         }
         elseif ($hasName)
         {
-            $markup .= ' />';
+            $markup .= '>';
         }
 
         return $markup;

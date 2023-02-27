@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -66,7 +66,7 @@ if ($row) {
     }
 }
 if (empty($idArticle)) {
-    echo '<meta HTTP-EQUIV="REFRESH" content="2; url=' . $uri . '">';
+    echo '<meta http-equiv="refresh" content="0; url=' . $uri . '">';
     exit;
 }
 $dbh = new PDO($dbSettings);
@@ -83,7 +83,7 @@ if ($row) {
 //
 // HTML
 //
-$html = '    <div class="row">' . "\n";
+$html = '    <div class="main">' . "\n";
 $html.= '      <p><span class="fr"><a href="' . $uri . '?m=archive-search" class="n">Archive search</a></span></p>' . "\n\n";
 $bylineDateTime = isset($publicationDate) ? date("l, F j, Y", strtotime($publicationDate)) : null;
 $html.= '      <p><b>' . $section . "</b></p>\n\n";
@@ -177,7 +177,7 @@ while ($dbNumber2 !== -1) {
 }
 if ($survey === '1'
     and (strpos($database, 'archive') !== false)
-    ) {
+) {
     //
     // Display a survey in the archives
     //

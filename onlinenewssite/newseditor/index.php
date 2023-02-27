@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 01 09
+ * @version:  2023 02 27
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -164,7 +164,7 @@ foreach ($stmt as $row) {
 }
 $dbh = null;
 $request['phpversion'] = phpversion();
-$request['version'] = '2023 01 09';
+$request['version'] = '2023 02 27';
 $request= array_map('strval', $request);
 $request = http_build_query(array_map('base64_encode', $request));
 stream_context_set_default(['http' => ['user_agent' => 'PHP', 'method' => 'POST', 'header' => 'Content-Type: application/x-www-form-urlencoded', 'content' => $request]]);
@@ -178,31 +178,29 @@ if ($fp !== false) {
 require $includesPath . '/header1.inc';
 ?>
   <title>Online News Site</title>
-  <link rel="icon" type="image/png" href="images/32.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="generator" content="Online News Site Software, https://onlinenewssite.com/" />
-  <link rel="stylesheet" type="text/css" href="z/base.css" />
-  <link rel="stylesheet" type="text/css" href="z/admin.css" />
+  <link rel="icon" type="image/png" href="images/32.png">
+  <link rel="stylesheet" type="text/css" href="z/base.css">
+  <link rel="stylesheet" type="text/css" href="z/admin.css">
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="images/192.png">
 </head>
 
 <body>
   <div class="column">
-    <p class="a"><br />
-    <a href="https://onlinenewssite.com/"><img src="images/logo.png" class="wide" alt="Online News Site Software" /></a></p>
+    <p class="a"><br>
+    <a href="https://onlinenewssite.com/"><img src="images/logo.png" class="wide" alt="Online News Site Software"></a></p>
 
     <h1 class="a">News editor log in</h1>
 <?php echoIfMessage($message); ?>
 
     <form action="<?php echo $uri; ?>" method="post">
-      <p class="a"><label for="user">User</label><br />
-      <input id="user" name="user" type="text" class="h" maxlength="254" autofocus required /></p>
+      <p class="a"><label for="user">User</label><br>
+      <input id="user" name="user" type="text" class="h" maxlength="254" autofocus required></p>
 
-      <p class="a"><label for="pass">Password</label><br />
-      <input id="pass" name="pass" type="password" class="h" maxlength="254" required /></p>
+      <p class="a"><label for="pass">Password</label><br>
+      <input id="pass" name="pass" type="password" class="h" maxlength="254" required></p>
 
-      <p class="a"><input type="submit" name="login" class="button" value="Log in" /></p>
+      <p class="a"><input type="submit" name="login" class="button" value="Log in"></p>
     </form>
 
 <?php
@@ -220,7 +218,7 @@ if ($dbRowCount !== '0') {
     echo '    <p class="a">' . number_format($dbRowCount) . " classified ad(s) pending review.</p>\n\n";
 }
 ?>
-    <p class="a">Version 2023 01 09. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.</p>
+    <p class="a">Version 2023 02 27. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.</p>
   </div>
 </body>
 </html>
