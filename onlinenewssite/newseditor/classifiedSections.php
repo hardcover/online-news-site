@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 02 27
+ * @version:  2023 03 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -378,19 +378,17 @@ require $includesPath . '/header2.inc';
   </nav>
 <?php echoIfMessage($message); ?>
 
-  <h1 id="waiting">Please wait.</h1>
-
   <div class="flex">
     <main>
       <h1>Classified section maintenance</h1>
 
-      <form class="wait" action="<?php echo $uri; ?>classifiedSections.php" method="post">
+      <form action="<?php echo $uri; ?>classifiedSections.php" method="post">
         <p>The admin password is required for all classified section maintenance.</p>
 
         <p><label for="adminPass">Password</label><br>
         <input id="adminPass" name="adminPass" type="password" class="h" autofocus required></p>
 
-        <h1>Add, update and delete sections</h1>
+        <h2>Add, update and delete sections</h2>
 
         <p>Parent section level, section name and sort order are required for add and update. The section name only is required for delete. Section names must be unique.</p>
 
@@ -414,7 +412,7 @@ require $includesPath . '/header2.inc';
         </select></p>
 
         <p><label for="section">Section name</label><br>
-        <input id="section" name="section" type="text" class="h" required<?php echoIfValue($sectionEdit); ?>><input name="idSection" type="hidden" <?php echoIfValue($idSectionEdit); ?>></p>
+        <input id="section" name="section" class="h" required<?php echoIfValue($sectionEdit); ?>><input name="idSection" type="hidden" <?php echoIfValue($idSectionEdit); ?>></p>
 
         <p><label for="sortOrderSection">Sort order</label><br>
         <input id="sortOrderSection" name="sortOrderSection" type="number" class="h"<?php echoIfValue($sortOrderSectionEdit); ?>></p>
@@ -424,14 +422,14 @@ require $includesPath . '/header2.inc';
     </main>
 
     <aside>
-      <h1>Classified sections</h1>
+      <h2>Classified sections</h2>
 
 <?php
 $dbh = new PDO($dbClassifieds);
 $stmt = $dbh->query('SELECT idSection, section, sortOrderSection FROM sections ORDER BY sortOrderSection');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
-    echo '      <form class="wait" action="' . $uri . 'classifiedSections.php" method="post">' . "\n";
+    echo '      <form action="' . $uri . 'classifiedSections.php" method="post">' . "\n";
     echo '        <p>' . $row['section'] . ', sort order: ' . $row['sortOrderSection'] . "<br>\n";
     echo '        <input type="hidden" name="idSection" value="' . $row['idSection'] . '"><input name="section" type="hidden" value="' . html($row['section']) . '"><input name="sortOrderSection" type="hidden" value="' . html($row['sortOrderSection']) . '"><input type="submit" value="Edit" name="edit" class="button"></p>' . "\n";
     echo "      </form>\n\n";
@@ -439,7 +437,7 @@ foreach ($stmt as $row) {
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute([$row['idSection']]);
     foreach ($stmt as $row) {
-        echo '      <form class="wait" action="' . $uri . 'classifiedSections.php" method="post">' . "\n";
+        echo '      <form action="' . $uri . 'classifiedSections.php" method="post">' . "\n";
         echo '        <p> - ' . $row['subsection'] . ', sort order: ' . $row['sortOrderSubsection'] . "<br>\n";
         echo '        <input type="hidden" name="idSection" value="' . $row['idSubsection'] . '"><input name="section" type="hidden" value="' . html($row['subsection']) . '"><input name="subsectionFlag" type="hidden" value="1"><input name="sortOrderSection" type="hidden" value="' . html($row['sortOrderSubsection']) . '"><input type="submit" value="Edit" name="edit" class="button"></p>' . "\n";
         echo "      </form>\n\n";

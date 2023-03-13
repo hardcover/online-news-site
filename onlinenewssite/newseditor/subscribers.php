@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 02 27
+ * @version:  2023 03 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -218,20 +218,18 @@ require $includesPath . '/body.inc';
   </nav>
 <?php echoIfMessage($message); ?>
 
-  <h1 id="waiting">Please wait.</h1>
-
   <div class="flex">
     <main>
-      <form class="wait" action="<?php echo $uri; ?>subscribers.php" method="post">
+      <form action="<?php echo $uri; ?>subscribers.php" method="post">
         <h1>Add, update and delete users</h1>
 
         <p>Email and password are required for add. Password is not required for an update unless the password is changing. The email address only is required for delete and to update the email address. Email addresses must be unique.</p>
 
         <p><label for="email">Email</label><br>
-        <input id="email" name="email" type="text" class="h" required<?php echoIfValue($emailEdit); ?>><input name="idUser" type="hidden" <?php echoIfValue($idUserEdit); ?>></p>
+        <input id="email" name="email" class="h" required<?php echoIfValue($emailEdit); ?>><input name="idUser" type="hidden" <?php echoIfValue($idUserEdit); ?>></p>
 
         <p><label for="pass">Password</label><br>
-        <input id="pass" name="pass" type="text" class="h"></p>
+        <input id="pass" name="pass" class="h"></p>
 
         <p><label>
           <input name="deliver" type="checkbox" value="1"<?php echoIfYes($deliverEdit); ?>> Deliver a printed paper<br>
@@ -244,17 +242,17 @@ require $includesPath . '/body.inc';
         </label></p>
 
         <p><label for="payStatus">Paid through date<br>
-          <input id="payStatus" name="payStatus" type="text" <?php echoIfValue($payStatusEdit); ?>class="datepicker date"></label></p>
+          <input id="payStatus" name="payStatus" <?php echoIfValue($payStatusEdit); ?>class="datepicker date"></label></p>
 
         <p><label for="billingAddress">Billing address</label><br>
-        <input id="billingAddress" name="billingAddress" type="text" class="h" placeholder="Billing address" <?php echoIfValue($billingAddressEdit); ?>><br>
+        <input id="billingAddress" name="billingAddress" class="h" placeholder="Billing address" <?php echoIfValue($billingAddressEdit); ?>><br>
         <br>
-        <input name="bCityRegionPostal" type="text" class="h" placeholder="City Region Post Code" <?php echoIfValue($bCityRegionPostalEdit); ?>></p>
+        <input name="bCityRegionPostal" class="h" placeholder="City Region Post Code" <?php echoIfValue($bCityRegionPostalEdit); ?>></p>
 
         <p><label for="deliveryAddress">Delivery address (if different than billing address)</label><br>
-        <input id="deliveryAddress" name="deliveryAddress" type="text" class="h" placeholder="Delivery address" <?php echoIfValue($deliveryAddressEdit); ?>><br>
+        <input id="deliveryAddress" name="deliveryAddress" class="h" placeholder="Delivery address" <?php echoIfValue($deliveryAddressEdit); ?>><br>
         <br>
-        <input name="dCityRegionPostal" type="text" class="h" placeholder="City Region Post Code" <?php echoIfValue($dCityRegionPostalEdit); ?>></p>
+        <input name="dCityRegionPostal" class="h" placeholder="City Region Post Code" <?php echoIfValue($dCityRegionPostalEdit); ?>></p>
 
         <p><label for="note">Note</label><br>
         <textarea id="note" name="note" class="h"><?php echoIfText($noteEdit); ?></textarea></p>
@@ -281,7 +279,7 @@ if (isset($_POST['edit'])) {
     </main>
 
     <aside>
-      <h1>Subscribing users</h1>
+      <h2>Subscribing users</h2>
 
 <?php
 require $includesPath . '/syncSubscribers.php';
@@ -329,7 +327,7 @@ foreach ($stmt as $row) {
     if (!empty($dCityRegionPostal)) {
         $dCityRegionPostal = '        &nbsp;&nbsp;' . $dCityRegionPostal . "<br>\n";
     }
-    echo '      <form class="wait" action="' . $uri . 'subscribers.php" method="post">' . "\n";
+    echo '      <form action="' . $uri . 'subscribers.php" method="post">' . "\n";
     echo $email;
     echo $pass;
     echo $payStatus;

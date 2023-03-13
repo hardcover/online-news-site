@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 02 27
+ * @version:  2023 03 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -120,8 +120,6 @@ require $includesPath . '/header1.inc';
   </nav>
 <?php echoIfMessage($message); ?>
 
-  <h1 id="waiting">Please wait.</h1>
-
   <div class="column">
     <h1>Pending classified ads maintenance</h1>
 
@@ -154,11 +152,11 @@ foreach ($stmt as $row) {
         } else {
             $startDateEdit = $startDate;
         }
-        echo '    <form class="wait" action="' . $uri . 'classifieds.php" method="post">' . "\n";
+        echo '    <form action="' . $uri . 'classifieds.php" method="post">' . "\n";
         echo '      <p>Submitted by<br>' . "\n";
         echo '      ' . $email . "</p>\n\n";
         echo '      <p><label for="title">Title</label><br>' . "\n";
-        echo '      <input type="text" class="wide" id="title" name="title" ';
+        echo '      <input class="wide" id="title" name="title" ';
         echoIfValue($titleEdit);
         echo '></p>' . "\n\n";
         echo '      <p><label for="description">Description</label><br>' . "\n";
@@ -192,7 +190,7 @@ foreach ($stmt as $row) {
         }
         echo '      </select></p>' . "\n\n";
         echo '      <p><label for="startDate">Start date</label><br>' . "\n";
-        echo '      <input type="text" class="datepicker date" id="startDate" name="startDate" ';
+        echo '      <input class="datepicker date" id="startDate" name="startDate" ';
         echo echoIfValue($startDateEdit);
         echo '></p>' . "\n\n";
         echo '      <p><label for="duration">Duration (weeks)</label><br>' . "\n";
@@ -212,7 +210,7 @@ foreach ($stmt as $row) {
 }
 $dbh = null;
 if (is_null($i)) {
-    echo '    <form class="wait" action="' . $uri . 'classifieds.php" method="post">' . "\n";
+    echo '    <form action="' . $uri . 'classifieds.php" method="post">' . "\n";
     echo '    </form>' . "\n";
 }
 ?>

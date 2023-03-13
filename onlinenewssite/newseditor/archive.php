@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 02 27
+ * @version:  2023 03 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -218,7 +218,6 @@ echo '  <title>' . $title . "</title>\n";
 require $includesPath . '/body.inc';
 echo $menu . "\n";
 echo '  <div class="column">' . "\n";
-echo '    <h1 id="waiting">Please wait.</h1>' . "\n\n";
 echo '    <h1>' . $title . "</h1>\n";
 //
 // Article view displays an entire single article
@@ -236,16 +235,16 @@ if (isset($_GET['a'])) {
 
     <form action="' . $uri . 'archive.php" method="post" class="wait">
       <p><label for="headline">Headline contains</label><br>
-      <input type="text" class="wide" id="headline" name="headline" autofocus></p>
+      <input type="search" class="wide" id="headline" name="headline" autofocus></p>
 
       <p><label for="startDate">Publication date range search, start date to end date</label><br>
-      <input type="text" class="datepicker date" id="startDate" name="startDate"> <input type="text" class="datepicker date" name="endDate"></p>
+      <input type="date" class="datepicker date" id="startDate" name="startDate"> <input type="date" class="datepicker date" name="endDate"></p>
 
       <p><label for="byline">Byline contains</label><br>
-      <input type="text" class="wide" id="byline" name="byline"></p>
+      <input type="search" class="wide" id="byline" name="byline"></p>
 
       <p><label for="text">Article contains</label><br>
-      <input type="text" class="wide" id="text" name="text"></p>
+      <input type="search" class="wide" id="text" name="text"></p>
 
       <p><input type="submit" class="button" value="Search" name="search">
     </form>' . "\n";

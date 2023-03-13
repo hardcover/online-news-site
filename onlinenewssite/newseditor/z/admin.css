@@ -2,17 +2,6 @@
  * Do not modify this file as it will be overwritten by software updates.
  */
 
-h1#waiting {
-    position: absolute;
-    top: 0;
-    margin: 0;
-    border: 1px solid #ff0;
-    padding: 4em 0;
-    width: 100%;
-    text-align: center;
-    background: #ffc;
-}
-
 h4.m {
     display: -webkit-inline-box;
     display: -ms-inline-flexbox;
@@ -46,4 +35,3 @@ aside {
         margin-left: 19.1%
     }
 }
-

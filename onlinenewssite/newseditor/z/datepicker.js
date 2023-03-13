@@ -14,19 +14,12 @@ $(document).ready(function () {
     $(function () {
         $(".datepicker").datepicker();
     });
+
     //
-    // Please wait, message after submitting a form
+    // Wait cursor after submitting a form
     //
-    var elems = document.getElementsByClassName("wait");
-    var message = document.getElementById("waiting");
-    if (elems.length > 0 && message !== null) {
-        message.style.display = "none";
-        var callback = function () {
-            message.style.display = "";
-            window.top.scroll(0, 0);
-        };
-        for (var i = 0; i < elems.length; i++) {
-            elems[i].onsubmit = callback;
-        }
-    }
+    document.onsubmit = function() {
+        window.scrollTo({ behavior: "smooth", top: 0 });
+        document.body.style.cursor = "wait";
+    };
 });

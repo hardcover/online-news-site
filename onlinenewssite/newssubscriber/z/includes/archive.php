@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 02 27
+ * @version:  2023 03 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -122,16 +122,16 @@ if (isset($_GET['a'])) {
 
       <form method="post" action="' . $uri . '?m=archive-search">
         <p><label for="headline">Headline contains</label><br>
-        <input id="headline" name="headline" type="text" class="h"></p>
+        <input type="search" id="headline" name="headline" class="h"></p>
 
         <p><label for="startDate">Publication date range search, start date to end date</label><br>
-        <input id="startDate" name="startDate" type="date" class="date"> <input name="endDate" type="date" class="date"></p>
+        <input type="date" id="startDate" name="startDate" class="date"> <input type="date" name="endDate" class="date"></p>
 
         <p><label for="byline">Byline contains</label><br>
-        <input id="byline" name="byline" type="text" class="h"></p>
+        <input type="search" id="byline" name="byline" class="h"></p>
 
         <p><label for="text">Article contains</label><br>
-        <input id="text" name="text" type="text" class="h"></p>
+        <input type="search" id="text" name="text" class="h"></p>
 
         <p><input type="submit" class="button" value="Search" name="search">
       </form>' . "\n";

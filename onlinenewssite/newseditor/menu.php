@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 02 27
+ * @version:  2023 03 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -115,7 +115,7 @@ if (isset($_POST['addUpdate'])) {
             $menuSortOrderPost++;
         }
         //
-        $menuPath = strtolower($menuNamePost);
+        $menuPath = mb_strtolower($menuNamePost);
         $menuPath = str_replace(' ', '-', $menuPath);
         $menuPath = str_replace("'", '', $menuPath);
         $dbh = new PDO($dbMenu);
@@ -249,20 +249,18 @@ require $includesPath . '/header2.inc';
   </nav>
 <?php echoIfMessage($message); ?>
 
-  <h1 id="waiting">Please wait.</h1>
-
   <div class="flex">
     <main>
       <h1>Menu maintenance</h1>
 
-      <form class="wait" action="<?php echo $uri; ?>menu.php" method="post">
+      <form action="<?php echo $uri; ?>menu.php" method="post">
         <p>Add, update, order and delete menu items. The name and sort order fields are required to add or update a menu item. Menu names must be unique and may not contain ampersands (&amp;).</p>
 
         <p><label for="menuName">Name / page title</label><br>
-        <input id="menuName" name="menuName" type="text" class="h"<?php echoIfValue($menuNameEdit); ?>></p>
+        <input id="menuName" name="menuName" class="h"<?php echoIfValue($menuNameEdit); ?>></p>
 
         <p><label for="menuSortOrder">Sort order</label><br>
-        <input id="menuSortOrder" name="menuSortOrder" type="text" class="h"<?php echoIfValue($menuSortOrderEdit); ?>><input name="idMenu" type="hidden" <?php echoIfValue($idMenuEdit); ?>></p>
+        <input id="menuSortOrder" name="menuSortOrder" class="h"<?php echoIfValue($menuSortOrderEdit); ?>><input name="idMenu" type="hidden" <?php echoIfValue($idMenuEdit); ?>></p>
 
         <p><label for="menuContent">Page content is entered as <a href="markdown.html" target="_blank">markdown syntax</a>, HTML or a custom program. Enter iframe and video tags inside paragraph tags, for example, &lt;p&gt;&lt;iframe height="315"&gt;&lt;/iframe&gt;&lt;/p&gt;. Locate custom programs in the news subscriber directory includes/custom/programs. Reference them here with the word "require" and the name of the program in the page content field without quotes or punctuation, for example: require contact-form.php</label><br>
         <textarea id="menuContent" name="menuContent" class="h" rows="8"><?php echoIfText($menuContentEdit); ?></textarea></p>
@@ -272,7 +270,7 @@ require $includesPath . '/header2.inc';
     </main>
 
     <aside>
-      <h1>Menu</h1>
+      <h2>Menu</h2>
 
 <?php
 $rowcount = null;

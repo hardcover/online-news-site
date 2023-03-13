@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 02 27
+ * @version:  2023 03 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -184,7 +184,7 @@ if (strpos($database, 'archive') === false) {
             $adMaxAdverts = 0;
         }
         if ($adMaxAdverts !== 0) {
-            $numParagraphs = substr_count($temp, '<p class="a">');
+            $numParagraphs = mb_substr_count($temp, '<p class="a">');
             $maxAdsPara = round($numParagraphs / $adMinParagraphs);
             if ($maxAdsPara > $adMaxAdverts) {
                 $maxAds = $adMaxAdverts;
@@ -196,9 +196,13 @@ if (strpos($database, 'archive') === false) {
                 if ($space < $adMinParagraphs) {
                     $space = $adMinParagraphs;
                 }
-            } else {
-                $space = 999;
             }
+        }
+        if (empty($space)) {
+            $space = 999;
+        }
+        if (empty($numParagraphs)) {
+            $numParagraphs = 0;
         }
         $temp2 = $temp;
         $paragraph = explode('<p class="a">', $temp);
@@ -226,7 +230,7 @@ if (strpos($database, 'archive') === false) {
                 // Display a survey not yet in the archives
                 //
                 if (empty($_POST['vote'])) {
-                    $html.= '    <form class="wait" action="' . $uri . 'news.php?a=' . $aGet . '" method="post">' . "\n";
+                    $html.= '    <form action="' . $uri . 'news.php?a=' . $aGet . '" method="post">' . "\n";
                     $html.= '      <input name="idQuestion" type="hidden" value="' . $aGet . '">' . "\n";
                     $dbh = new PDO($dbSurvey);
                     $stmt = $dbh->prepare('SELECT idAnswer, sortOrder, answer FROM answers WHERE idArticle=? ORDER BY sortOrder');
@@ -245,7 +249,7 @@ if (strpos($database, 'archive') === false) {
                         // If no vote was cast
                         //
                         $html.= '    <p class="error">A selection is required.</p>' . "\n\n";
-                        $html.= '    <form class="wait" action="' . $uri . 'news.php?a=' . $aGet . '" method="post">' . "\n";
+                        $html.= '    <form action="' . $uri . 'news.php?a=' . $aGet . '" method="post">' . "\n";
                         $html.= '      <input name="idQuestion" type="hidden" value="' . $aGet . '">' . "\n";
                         $dbh = new PDO($dbSurvey);
                         $stmt = $dbh->prepare('SELECT idAnswer, sortOrder, answer FROM answers WHERE idArticle=? ORDER BY sortOrder');
@@ -443,7 +447,7 @@ if (strpos($database, 'archive') === false) {
                     $adMaxAdverts = 0;
                 }
                 if ($adMaxAdverts !== 0) {
-                    $numParagraphs = substr_count($temp, '<p class="a">');
+                    $numParagraphs = mb_substr_count($temp, '<p class="a">');
                     $maxAdsPara = round($numParagraphs / $adMinParagraphs);
                     if ($maxAdsPara > $adMaxAdverts) {
                         $maxAds = $adMaxAdverts;
@@ -455,9 +459,10 @@ if (strpos($database, 'archive') === false) {
                         if ($space < $adMinParagraphs) {
                             $space = $adMinParagraphs;
                         }
-                    } else {
-                        $space = 999;
                     }
+                }
+                if (empty($space)) {
+                    $space = 999;
                 }
                 $temp2 = $temp;
                 $paragraph = explode('<p class="a">', $temp);
@@ -485,7 +490,7 @@ if (strpos($database, 'archive') === false) {
                         // Display a survey not yet in the archives
                         //
                         if (empty($_POST['vote'])) {
-                            $html.= '  <form class="wait" action="' . $uri . 'news.php?a=' . $aGet . '" method="post">' . "\n";
+                            $html.= '  <form action="' . $uri . 'news.php?a=' . $aGet . '" method="post">' . "\n";
                             $html.= '    <input name="idQuestion" type="hidden" value="' . $aGet . '">' . "\n";
                             $dbh = new PDO($dbSurvey);
                             $stmt = $dbh->prepare('SELECT idAnswer, sortOrder, answer FROM answers WHERE idArticle=? ORDER BY sortOrder');
@@ -504,7 +509,7 @@ if (strpos($database, 'archive') === false) {
                                 // If no vote was cast
                                 //
                                 $html.= '  <p class="error">A selection is required.</p>' . "\n\n";
-                                $html.= '  <form class="wait" action="' . $uri . 'news.php?a=' . $aGet . '" method="post">' . "\n";
+                                $html.= '  <form action="' . $uri . 'news.php?a=' . $aGet . '" method="post">' . "\n";
                                 $html.= '    <input name="idQuestion" type="hidden" value="' . $aGet . '">' . "\n";
                                 $dbh = new PDO($dbSurvey);
                                 $stmt = $dbh->prepare('SELECT idAnswer, sortOrder, answer FROM answers WHERE idArticle=? ORDER BY sortOrder');

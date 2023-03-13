@@ -10,14 +10,14 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 02 27
+ * @version:  2023 03 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 echo '    <div class="main">' . "\n";
 echo '      <h1><a href="' . $uri . '?m=classified-ads">Classified ads</a></h1>' . "\n\n";
-echo '      <p><a href="' . $uri . '?m=place-classified">Place a classified ad</a>.</p>' . "\n\n";
+echo '      <p><a href="' . $uri . '?m=place-classified">Add / update a classified ad</a>.</p>' . "\n\n";
 echo "      <hr>\n\n";
 if (isset($_GET['s'])) {
     //
@@ -36,7 +36,7 @@ if (isset($_GET['s'])) {
     $row = $stmt->fetch();
     extract($row);
     echo '      <h3>' . $section . ', ' . $subsection . "</h3>\n\n";
-    $stmt = $dbh->prepare('SELECT idAd, title FROM ads WHERE categoryId=? ORDER BY title');
+    $stmt = $dbh->prepare('SELECT idAd, title FROM ads WHERE categoryId=? WHERE duration IS NOT NULL ORDER BY title');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute([$idSubsection]);
     foreach ($stmt as $row) {
@@ -58,7 +58,7 @@ if (isset($_GET['s'])) {
         $stmt = $dbh->prepare('DELETE FROM ads WHERE review < ?');
         $stmt->execute([$today]);
         $categoryIdPrior = null;
-        $stmt = $dbh->query('SELECT idAd, title, categoryId FROM ads ORDER BY categoryId, title');
+        $stmt = $dbh->query('SELECT idAd, title, categoryId FROM ads WHERE duration IS NOT NULL ORDER BY categoryId, title');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         foreach ($stmt as $row) {
             extract($row);
@@ -138,7 +138,7 @@ if (isset($_GET['s'])) {
         extract($row);
         echo '      <h5>' . $section . ', <a href="' . $uri . '?m=classified-ads&amp;s=' . $categoryId . '">'. html($subsection) . "</a></h5>\n\n";
         echo '      <h2>' . $title . "</h2>\n\n";
-        echo "      <p><br>\n      " . $listingDescription . "</p>\n\n";
+        echo "      <p><br>\n      " . nl2p($listingDescription) . "</p>\n\n";
         $i = 0;
         foreach ($photos as $photo) {
             $i++;

@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 02 27
+ * @version:  2023 03 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -103,12 +103,10 @@ require $includesPath . '/header1.inc';
   </nav>
 <?php echoIfMessage($message); ?>
 
-  <h1 id="waiting">Please wait.</h1>
-
   <div class="column">
     <h1>Maximum number of ads</h1>
 
-    <form class="wait" action="<?php echo $uri; ?>advertisingMax.php" method="post">
+    <form action="<?php echo $uri; ?>advertisingMax.php" method="post">
       <p><label for="maxAds">Maximum displayed in the main menu</label><br>
       <input type="number" id="maxAds" name="maxAds"<?php echoIfValue($maxAdsEdit); ?>></p>
 

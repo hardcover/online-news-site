@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 02 27
+ * @version:  2023 03 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -547,53 +547,51 @@ require $includesPath . '/header2.inc';
   </nav>
 <?php echoIfMessage($message); ?>
 
-  <h1 id="waiting">Please wait.</h1>
-
   <div class="flex">
     <main>
       <h1>Settings maintenance</h1>
 
-      <form class="wait" action="<?php echo $uri; ?>settings.php" method="post">
+      <form action="<?php echo $uri; ?>settings.php" method="post">
         <p>The admin password is required for all settings maintenance.</p>
 
         <p><label for="adminPass">Admin password</label><br>
         <input id="adminPass" name="adminPass" type="password" class="h" autofocus required></p>
 
-        <h1>Newspaper name and description</h1>
+        <h2>Newspaper name and description</h2>
 
         <p><label for="newsName">Name</label><br>
-        <input id="newsName" name="newsName" type="text" class="h"<?php echoIfValue($newsNamePost); ?>></p>
+        <input id="newsName" name="newsName" class="h"<?php echoIfValue($newsNamePost); ?>></p>
 
         <p><label for="newsDescription">Description</label><br>
-        <input id="newsDescription" name="newsDescription" type="text" class="h"<?php echoIfValue($newsDescriptionPost); ?>></p>
+        <input id="newsDescription" name="newsDescription" class="h"<?php echoIfValue($newsDescriptionPost); ?>></p>
 
         <p><input type="submit" value="Add / update" name="addUpdateName" class="button"> <input type="submit" value="Delete" name="deleteName" class="button"><input type="hidden" name="existing"<?php echoIfValue($editPost); ?>></p>
 
-        <h1>Newspaper sections</h1>
+        <h2>Newspaper sections</h2>
 
         <p><label for="section">Section name</label><br>
-        <input id="section" name="section" type="text" class="h"<?php echoIfValue($sectionPost); ?>></p>
+        <input id="section" name="section" class="h"<?php echoIfValue($sectionPost); ?>></p>
 
         <p><label for="sortOrderSection">Section sort order</label><br>
-        <input id="sortOrderSection" name="sortOrderSection" type="text" class="h"<?php echoIfValue($sortOrderSectionPost); ?>></p>
+        <input id="sortOrderSection" name="sortOrderSection" class="h"<?php echoIfValue($sortOrderSectionPost); ?>></p>
 
         <p><input type="submit" value="Add / update" name="addUpdateSection" class="button"> <input type="submit" value="Delete" name="deleteSection" class="button"><input name="idSection" type="hidden"<?php echoIfValue($idSectionPost); ?>><input type="hidden" name="existing"<?php echoIfValue($editPost); ?>></p>
 
-        <h1>Registration information</h1>
+        <h2>Registration information</h2>
 
         <p><label for="information">Information (<a href="markdown.html" target="_blank">markdown syntax</a>)</label><br>
         <textarea id="information" name="information" class="h"><?php echoIfText($informationPost); ?></textarea></p>
 
         <p><input type="submit" value="Add / update" name="addUpdateRegistration" class="button"></p>
 
-        <h1>Contact form information</h1>
+        <h2>Contact form information</h2>
 
         <p><label for="infoForms">Information (<a href="markdown.html" target="_blank">markdown syntax</a>)</label><br>
         <textarea id="infoForms" name="infoForms" class="h"><?php echoIfText($infoFormsPost); ?></textarea></p>
 
         <p><input type="submit" value="Add / update" name="addUpdateContactForm" class="button"></p>
 
-        <h1>Email address for contact forms and alerts</h1>
+        <h2>Email address for contact forms and alerts</h2>
 
         <p>Enter an email address to receive alerts when a classified ad requires review.</p>
 
@@ -602,17 +600,17 @@ require $includesPath . '/header2.inc';
 
         <p><input type="submit" value="Add / update" name="addUpdateEmailClassified" class="button"> <input type="submit" value="Delete" name="deleteEmailClassified" class="button"><input name="idRemote" type="hidden" <?php echoIfValue($idRemotePost); ?>><input type="hidden" name="existing"<?php echoIfValue($editPost); ?>></p>
 
-        <h1>Advertisements in article text</h1>
+        <h2>Advertisements in article text</h2>
 
         <p><label for="adMaxAdverts">Maximum number of ads per article</label><br>
-        <input id="adMaxAdverts" name="adMaxAdverts" type="text" class="h"<?php echoIfValue($adMaxAdvertsPost); ?>></p>
+        <input id="adMaxAdverts" name="adMaxAdverts" class="h"<?php echoIfValue($adMaxAdvertsPost); ?>></p>
 
         <p><label for="adMinParagraphs">Minimum number of paragraphs between ads</label><br>
-        <input id="adMinParagraphs" name="adMinParagraphs" type="text" class="h"<?php echoIfValue($adMinParagraphsPost); ?>></p>
+        <input id="adMinParagraphs" name="adMinParagraphs" class="h"<?php echoIfValue($adMinParagraphsPost); ?>></p>
 
         <p><input type="submit" value="Add / update" name="addUpdateAdvertisements" class="button"></p>
 
-        <h1>Remote sites URIs</h1>
+        <h2>Remote sites URIs</h2>
 
         <p>Enter the URIs of the remote sites with a trailing slash. For example: http://www.mysite.com/</p>
 
@@ -621,17 +619,17 @@ require $includesPath . '/header2.inc';
 
         <p><input type="submit" value="Add / update" name="addUpdateURI" class="button"> <input type="submit" value="Delete" name="deleteURI" class="button"><input name="idRemote" type="hidden" <?php echoIfValue($idRemotePost); ?>><input type="hidden" name="existing"<?php echoIfValue($editPost); ?>></p>
 
-        <h1>Test connections to remote sites</h1>
+        <h2>Test connections to remote sites</h2>
 
         <p><input type="submit" value="Test remote connections" name="testConnections" class="button"></p>
 
-        <h1>Change the password for remote sites</h1>
+        <h2>Change the password for remote sites</h2>
 
         <p>As with the admin password, the password for remote sites must be changed while the system is being set up. The system will choose a set of random passwords (authentication requires more than one). There is no recommendation for changing the passwords after that. A password change failure will require manual intervention to correct. Because the passwords incorporate the date in order to change daily, they will not work around midnight when the clocks on the systems are a little out of sync.</p>
 
         <p><input type="submit" value="Change remote passwords" name="changeRemotePass" class="button"></p>
 
-        <h1>Change the admin password</h1>
+        <h2>Change the admin password</h2>
 
         <p>For security reasons, the admin password must be changed from the default during system set up.</p>
 
@@ -646,7 +644,7 @@ require $includesPath . '/header2.inc';
     </main>
 
     <aside>
-      <h1>Newspaper name and description</h1>
+      <h2>Newspaper name and description</h2>
 
 <?php
 $dbh = new PDO($dbSettings);
@@ -662,7 +660,7 @@ if ($row) {
     echo "      </form>\n\n";
 }
 ?>
-      <h1>Newspaper sections</h1>
+      <h2>Newspaper sections</h2>
 
 <?php
 $dbh = new PDO($dbSettings);
@@ -676,7 +674,7 @@ foreach ($stmt as $row) {
 }
 $dbh = null;
 ?>
-      <h1>Registration information</h1>
+      <h2>Registration information</h2>
 
 <?php
 $dbh = new PDO($dbSettings);
@@ -689,7 +687,7 @@ echo '        <p>' . $row['information'] . "<br>\n";
 echo '        <input type="hidden" name="idRegistration" value="' . $row['idRegistration'] . '"><input type="hidden" name="information" value="' . $row['information'] . '"><input type="submit" value="Edit" name="edit" class="button"></p>' . "\n";
 echo "      </form>\n\n";
 ?>
-      <h1>Contact form information</h1>
+      <h2>Contact form information</h2>
 
 <?php
 $dbh = new PDO($dbSettings);
@@ -702,7 +700,7 @@ echo '        <p>' . $row['infoForms'] . "<br>\n";
 echo '        <input type="hidden" name="idForm" value="' . $row['idForm'] . '"><input type="hidden" name="infoForms" value="' . $row['infoForms'] . '"><input type="submit" value="Edit" name="edit" class="button"></p>' . "\n";
 echo "      </form>\n\n";
 ?>
-      <h1>Email address for contact forms and alerts</h1>
+      <h2>Email address for contact forms and alerts</h2>
 
 <?php
 $dbh = new PDO($dbSettings);
@@ -720,7 +718,7 @@ echo '        <p>' . $row['emailClassified'] . "<br>\n";
 echo '        <input type="hidden" name="idClassified" value="' . $row['idClassified'] . '"><input type="hidden" name="emailClassified" value="' . $row['emailClassified'] . '"><input type="submit" value="Edit" name="edit" class="button"></p>' . "\n";
 echo "      </form>\n\n";
 ?>
-      <h1>Advertisements in article text</h1>
+      <h2>Advertisements in article text</h2>
 
 <?php
 $dbh = new PDO($dbSettings);
@@ -739,7 +737,7 @@ echo '        <p>Minimum number of paragraphs between ads: ' . $row['adMinParagr
 echo '        <input type="hidden" name="adMaxAdverts" value="' . $row['adMaxAdverts'] . '"><input type="hidden" name="adMinParagraphs" value="' . $row['adMinParagraphs'] . '"><input type="submit" value="Edit" name="edit" class="button"></p>' . "\n";
 echo "      </form>\n\n";
 ?>
-      <h1>Remote URIs</h1>
+      <h2>Remote URIs</h2>
 
 <?php
 $rowcount = 0;
@@ -749,7 +747,7 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
     extract($row);
     $rowcount++;
-    echo '      <form class="wait" action="' . $uri . 'settings.php" method="post">' . "\n";
+    echo '      <form action="' . $uri . 'settings.php" method="post">' . "\n";
     echo '        <p class="bw">' . html($row['remote']) . "<br>\n";
     echo '        <input name="idRemote" type="hidden" value="' . html($row['idRemote']) . '"><input name="remote" type="hidden" value="' . html($row['remote']) . '"><input type="submit" value="Edit" name="edit" class="button"></span></p>' . "\n";
     echo "      </form>\n\n";

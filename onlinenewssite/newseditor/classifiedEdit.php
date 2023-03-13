@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 02 27
+ * @version:  2023 03 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -263,20 +263,18 @@ require $includesPath . '/header1.inc';
   </nav>
 <?php echoIfMessage($message); ?>
 
-  <h1 id="waiting">Please wait.</h1>
-
   <div class="flex">
     <main>
       <h1>Edit a published classified ad</h1>
 
-      <form class="wait" action="<?php echo $uri; ?>classifiedEdit.php" method="post" enctype="multipart/form-data">
+      <form action="<?php echo $uri; ?>classifiedEdit.php" method="post" enctype="multipart/form-data">
         <p><label for="titleSearch">Search for an ad by title</label><br>
-        <input id="titleSearch" name="titleSearch" type="text" class="h"<?php echoIfValue($titleSearchPost); ?>></p>
+        <input id="titleSearch" name="titleSearch" class="h"<?php echoIfValue($titleSearchPost); ?>></p>
 
         <p><input type="submit" class="button" name="search" value="Search"></p>
 
         <p><label for="title">Title</label><br>
-        <input id="title" name="title" type="text" class="h"<?php echoIfValue($titleEdit); ?>><input type="hidden" name="idAd"<?php echoIfValue($idAdEdit); ?>></p>
+        <input id="title" name="title" class="h"<?php echoIfValue($titleEdit); ?>><input type="hidden" name="idAd"<?php echoIfValue($idAdEdit); ?>></p>
 
         <p><label for="description">Description</label><br>
         <textarea id="description" name="description" class="h"><?php echoIfText($descriptionEdit); ?></textarea><p>
@@ -312,7 +310,7 @@ $dbh = null;
           </select></p>
 
         <p><label for="startDate">Start date</label><br>
-        <input type="text" class="datepicker date" id="startDate" name="startDate"<?php echoIfValue($startDateEdit); ?>></p>
+        <input class="datepicker date" id="startDate" name="startDate"<?php echoIfValue($startDateEdit); ?>></p>
 
         <p><label for="duration">Duration (weeks)</label><br>
         <input type="number" id="duration" name="duration" class="date"<?php echoIfValue($durationEdit); ?>></p>
@@ -322,7 +320,7 @@ $dbh = null;
 
         <p>Up to seven images may be included in an ad. Upload one image at a time. Edit the listing to add each additional image. JPG is the only permitted image format. The best image size is 2360 pixels or wider. Larger images are reduced to that width.</p>
 
-        <p><input type="submit" class="button" name="update" value="Update"/></p>
+        <p><input type="submit" class="button" name="update" value="Update"></p>
 
         <p><input type="submit" class="button" name="photoDelete" value="Delete photos"> <input type="submit" class="button" name="delete" value="Delete ad"></p>
       </form>
@@ -345,10 +343,10 @@ if (isset($idAdEdit)) {
     </main>
 
     <aside>
-      <h1>Search results</h1>
+      <h2>Search results</h2>
 <?php
 foreach ($searchResults as $searchResult) {
-    echo '        <form class="wait" action="' . $uri . 'classifiedEdit.php" method="post">' . "\n";
+    echo '        <form action="' . $uri . 'classifiedEdit.php" method="post">' . "\n";
     echo '          <p>' . $searchResult['title'] . " - Title<br>\n";
     echo '          ' . plain($searchResult['email']) . " - By<br>\n";
     echo '          ' . $searchResult['description'] . " - Description<br>\n";

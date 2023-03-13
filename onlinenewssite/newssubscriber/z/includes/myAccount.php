@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 02 27
+ * @version:  2023 03 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -117,13 +117,13 @@ echo "        <p><label>\n";
 echo '            <input type="checkbox" name="deliver" value="1"' . $deliverEdit . '> Send a print edition to the delivery address below' . "\n";
 echo "        </label></p>\n\n";
 echo '        <p><label for="deliveryAddress">Delivery address</label><br>' . "\n";
-echo '        <input id="deliveryAddress" name="deliveryAddress" type="text" class="wide"' . $deliveryAddressEdit . '></p>' . "\n\n";
+echo '        <input id="deliveryAddress" name="deliveryAddress" class="wide"' . $deliveryAddressEdit . '></p>' . "\n\n";
 echo '        <p><label for="dCityRegionPostal">Delivery city region postal code</label><br>' . "\n";
-echo '        <input id="dCityRegionPostal" name="dCityRegionPostal" type="text" class="wide"' . $dCityRegionPostalEdit . '></p>' . "\n\n";
+echo '        <input id="dCityRegionPostal" name="dCityRegionPostal" class="wide"' . $dCityRegionPostalEdit . '></p>' . "\n\n";
 echo '        <p><label for="billingAddress">Billing address (if different from the delivery address)</label><br>' . "\n";
-echo '        <input id="billingAddress" name="billingAddress" type="text" class="wide"' . $billingAddressEdit . '></p>' . "\n\n";
+echo '        <input id="billingAddress" name="billingAddress" class="wide"' . $billingAddressEdit . '></p>' . "\n\n";
 echo '        <p><label for="bCityRegionPostal">Billing city region postal code</label><br>' . "\n";
-echo '        <input id="bCityRegionPostal" name="bCityRegionPostal" type="text" class="wide"' . $bCityRegionPostalEdit . '></p>' . "\n\n";
+echo '        <input id="bCityRegionPostal" name="bCityRegionPostal" class="wide"' . $bCityRegionPostalEdit . '></p>' . "\n\n";
 echo '        <p><input type="submit" name="submit" class="button" value="Send preferences"><input type="hidden" name="idUser" value="' . $idUserEdit . '"></p>' . "\n";
 echo "      </form>\n";
 echo '    </div>' . "\n";

@@ -3,7 +3,7 @@
  * Do not modify this file as it will be overwritten by software updates.
  */
 
-input.paypal {
+.paypal {
     margin: 0;
     border: 0;
     padding: 0 0 0 1%;
@@ -21,32 +21,32 @@ aside {
     margin: 0 1rem 1rem 1rem;
     border-bottom: 1px solid #aaa;
     border-left: 1px solid #aaa;
+    display: none;
 }
 
 div.main, div.row {
+    display: -ms-grid;
     display: grid;
 }
 
 div.column {
+    -webkit-box-flex: 61.8%;
+    -ms-flex: 61.8%;
+    flex: 61.8%;
+}
+
+div.column {
+    -webkit-box-flex: 61.8%;
+    -ms-flex: 61.8%;
     flex: 61.8%;
 }
 
 svg {
     margin-top: .5rem;
+    display: inline;
 }
 
-@media (max-width: 650px) {
-
-    aside {
-        display: none;
-    }
-
-    svg {
-        display: inline;
-    }
-}
-
-@media (min-width: 651px) {
+@media (min-width: 601px) {
     aside {
         display: inline;
     }

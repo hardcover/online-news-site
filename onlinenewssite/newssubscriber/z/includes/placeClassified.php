@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 02 27
+ * @version:  2023 03 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -26,7 +26,7 @@ require $includesPath . '/authorization.php';
 $categoryIdEdit = null;
 $categoryIdPost = inlinePost('categoryId');
 $descriptionEdit = null;
-$descriptionPost = inlinePost('description');
+$descriptionPost = securePost('description');
 $idAdEdit = null;
 $idAdPost = inlinePost('idAd');
 $invoiceEdit = null;
@@ -37,7 +37,7 @@ $photosReverse = array_reverse($photosOrdered);
 $photoAvailable = null;
 $titleEdit = null;
 $titlePost = inlinePost('title');
-$button = '        <p><input type="submit" class="button" name="addUpdate" value="Add / update"/> <input type="submit" class="button" name="reset" value="Reset"></p>' . "\n";
+$button = '        <p><input type="submit" class="button" name="addUpdate" value="Add / update"> <input type="submit" class="button" name="reset" value="Reset"></p>' . "\n";
 if (isset($idAdPost)) {
     $_POST['edit'] = 1;
 }
@@ -167,7 +167,7 @@ if (isset($_POST['photoDelete']) and isset($idAdPost)) {
     $dbh = null;
 }
 //
-// Button: Request removal before expiration
+// Button: Remove ad before expiration
 //
 if (isset($_POST['deleteApproved']) and isset($idAdPost)) {
     $dbh = new PDO($dbClassifieds);
@@ -191,7 +191,7 @@ if (isset($_POST['edit']) and isset($idAdPost)) {
         $invoiceEdit = $row['invoice'];
         $titleEdit = $row['title'];
         if (!empty($row['photo1'])) {
-            $button = '      <p><input type="submit" class="button" name="addUpdate" value="Add / update"/> <input type="submit" class="button" name="photoDelete" value="Delete photos"> <input type="submit" class="button" name="reset" value="Reset"></p>'. "\n";
+            $button = '      <p><input type="submit" class="button" name="addUpdate" value="Add / update"> <input type="submit" class="button" name="photoDelete" value="Delete photos"> <input type="submit" class="button" name="reset" value="Reset"></p>'. "\n";
         }
     }
     $dbh = null;
@@ -224,7 +224,7 @@ foreach ($stmt as $row) {
     }
     echo '      <form action="' . $uri . '?m=place-classified" method="post">' . "\n";
     echo '        <p>' . $title . '<input type="hidden" name="idAd" value="' . $idAd . '"><input type="hidden" name="existing" value="1"><br>' . "\n";
-    echo '        ' . $description . '<br>' . "\n";
+    echo '        ' . nl2p($description) . '<br>' . "\n";
     echo '        <input type="submit" class="button" name="edit" value="Edit"> <input type="submit" class="button" name="deletePending" value="Delete"></p>' . "\n";
     echo '      </form>' . "\n\n";
 }
@@ -234,24 +234,19 @@ $dbh = null;
 //
 $ii = null;
 $dbh = new PDO($dbClassifieds);
-$stmt = $dbh->prepare('SELECT idAd, title, description, review, startDate, duration FROM ads WHERE email=? ORDER BY title');
+$stmt = $dbh->prepare('SELECT idAd, title, description, review, startDate, duration FROM ads WHERE email=? and duration IS NOT NULL ORDER BY title');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([$email]);
 foreach ($stmt as $row) {
     extract($row);
     $ii++;
-    if (is_null($duration)) {
-        $remove = ' <b> (early removal pending)</b>';
-    } else {
-        $remove = null;
-    }
     if ($ii === 1) {
         echo "      <h1>Approved ads</h1>\n\n";
     }
     echo '      <form action="' . $uri . '?m=place-classified" method="post">' . "\n";
     echo '        <p>' . $title . '<input type="hidden" name="idAd" value="' . $idAd . '"><input type="hidden" name="existing" value="1"><br>' . "\n";
-    echo '        Expires: ' . $review . $remove . '<br>' . "\n";
-    echo '        <input type="submit" class="button" name="deleteApproved" value="Request removal before expiration"></p>' . "\n";
+    echo '        Expires: ' . $review . '<br>' . "\n";
+    echo '        <input type="submit" class="button" name="deleteApproved" value="Remove ad before expiration"></p>' . "\n";
     echo '      </form>' . "\n\n";
 }
 $dbh = null;
@@ -264,14 +259,14 @@ if (!empty($i) or !empty($ii)) {
 ?>
       <h1>Add / update a classified ad</h1>
 
-      <p>All edits should be complete within fifteen minutes of starting the ad. After fifteen minutes the ad is available for approval, after which it can no longer be edited.</p>
+      <p>After fifteen minutes from the last edit, the ad is available for approval. After approval, the ad can no longer be edited. To remove an approved ad, log in and return to <a href="<?php echo $uri; ?>?m=place-classified">Add / update a classified ad</a>.</p>
 
       <form action="<?php echo $uri; ?>?m=place-classified" method="post" enctype="multipart/form-data">
         <p><label for="title">Title</label><br>
-        <input id="title" name="title" type="text" class="wide"<?php echoIfValue($titleEdit); ?>><input type="hidden" name="idAd"<?php echoIfValue($idAdEdit); ?>></p>
+        <input id="title" name="title" class="wide"<?php echoIfValue($titleEdit); ?>><input type="hidden" name="idAd"<?php echoIfValue($idAdEdit); ?>></p>
 
         <p><label for="description">Description</label><br>
-        <textarea id="description" name="description" class="wide"><?php echoIfText($descriptionEdit); ?></textarea><p>
+        <textarea id="description" name="description" class="wide" rows="9"><?php echoIfText($descriptionEdit); ?></textarea><p>
 
         <p><label for="invoice"><input id="invoice" name="invoice" type="checkbox" value="1"<?php echoIfYes($invoiceEdit); ?>> Send an invoice to also have the add in the print version of the paper.</label></p>
 

@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 02 27
+ * @version:  2023 03 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -368,17 +368,15 @@ require $includesPath . '/header1.inc';
   </nav>
 <?php echoIfMessage($message); ?>
 
-  <h1 id="waiting">Please wait.</h1>
-
   <div class="flex">
     <main>
       <h1>Calendar maintenance</h1>
 
-      <form class="wait" action="<?php echo $uri; ?>menuCalendar.php" method="post">
+      <form action="<?php echo $uri; ?>menuCalendar.php" method="post">
     <?php
     if (empty($datePost)) {
         echo '    <p><label for="date">Date</label><br>' . "\n";
-        echo '        <input id="date" name="date" type="text" class="datepicker date" required></p>' . "\n\n";
+        echo '        <input id="date" name="date" class="datepicker date" required></p>' . "\n\n";
         echo '        <p><input type="submit" value="Select" name="select" class="button"></p>' . "\n";
     } else {
         echo '    <input id="idOneTimeEvent" name="idOneTimeEvent" type="hidden" value="' . $idOneTimeEventEdit . '"><input id="date" name="date" type="hidden" value="' . $datePost . '">' . "\n\n";
@@ -410,7 +408,7 @@ require $includesPath . '/header1.inc';
     </main>
 
     <aside>
-      <h1>Calendar, 53 weeks</h1>
+      <h2>Calendar, 53 weeks</h2>
 
 <?php
 $selectTime = time();

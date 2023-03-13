@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 02 27
+ * @version:  2023 03 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -164,7 +164,7 @@ foreach ($stmt as $row) {
 }
 $dbh = null;
 $request['phpversion'] = phpversion();
-$request['version'] = '2023 02 27';
+$request['version'] = '2023 03 13';
 $request= array_map('strval', $request);
 $request = http_build_query(array_map('base64_encode', $request));
 stream_context_set_default(['http' => ['user_agent' => 'PHP', 'method' => 'POST', 'header' => 'Content-Type: application/x-www-form-urlencoded', 'content' => $request]]);
@@ -195,7 +195,7 @@ require $includesPath . '/header1.inc';
 
     <form action="<?php echo $uri; ?>" method="post">
       <p class="a"><label for="user">User</label><br>
-      <input id="user" name="user" type="text" class="h" maxlength="254" autofocus required></p>
+      <input id="user" name="user" class="h" maxlength="254" autofocus required></p>
 
       <p class="a"><label for="pass">Password</label><br>
       <input id="pass" name="pass" type="password" class="h" maxlength="254" required></p>
@@ -204,6 +204,10 @@ require $includesPath . '/header1.inc';
     </form>
 
 <?php
+//
+// Delete classifieds pending removal
+//
+require $includesPath . '/syncClassifieds.php';
 //
 // Alert for classified ads requiring review
 //
@@ -218,7 +222,7 @@ if ($dbRowCount !== '0') {
     echo '    <p class="a">' . number_format($dbRowCount) . " classified ad(s) pending review.</p>\n\n";
 }
 ?>
-    <p class="a">Version 2023 02 27. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.</p>
+    <p class="a">Version 2023 03 13. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.</p>
   </div>
 </body>
 </html>

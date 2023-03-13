@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 02 27
+ * @version:  2023 03 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -370,22 +370,20 @@ require $includesPath . '/body.inc';
     <h4 class="m"><a class="m" href="edit.php">Edit</a><a class="m" href="published.php">Published</a><a class="m" href="preview.php">Preview</a><a class="m" href="archive.php">Archives</a></h4>
   </nav>
 
-  <h1 id="waiting">Please wait.</h1>
-
   <div class="flex">
     <main>
       <h1>Create and edit surveys</h1>
 
-      <form class="wait" method="post" action="survey.php">
+      <form method="post" action="survey.php">
         <input type="hidden" name="idArticle"<?php echoIfValue($idArticleEdit); ?>>
         <p>Question<br>
         <textarea id="question" name="question" class="h"><?php echoIfText($questionEdit); ?></textarea></p>
 
         <p>Start date<br>
-        <input id="publicationDate" name="publicationDate" type="text" class="datepicker date"<?php echoIfValue($publicationDateEdit); ?>></p>
+        <input id="publicationDate" name="publicationDate" class="datepicker date"<?php echoIfValue($publicationDateEdit); ?>></p>
 
         <p>End date<br>
-        <input name="endDate" type="text" class="datepicker date" <?php echoIfValue($endDateEdit); ?>></p>
+        <input name="endDate" class="datepicker date" <?php echoIfValue($endDateEdit); ?>></p>
 
         <p><label for="idSection">Section</label><br>
         <select id="idSection" name="idSection">
@@ -402,35 +400,35 @@ $dbh = null;
         </select></p>
 
         <p>Possible answer 1<br>
-        <input type="text" name="answer1"<?php echoIfValue($answer1Edit); ?> class="h"></p>
+        <input name="answer1"<?php echoIfValue($answer1Edit); ?> class="h"></p>
 
         <p>Possible answer 2<br>
-        <input type="text" name="answer2"<?php echoIfValue($answer2Edit); ?> class="h"></p>
+        <input name="answer2"<?php echoIfValue($answer2Edit); ?> class="h"></p>
 
         <p>Possible answer 3<br>
-        <input type="text" name="answer3"<?php echoIfValue($answer3Edit); ?> class="h"></p>
+        <input name="answer3"<?php echoIfValue($answer3Edit); ?> class="h"></p>
 
         <p>Possible answer 4<br>
-        <input type="text" name="answer4"<?php echoIfValue($answer4Edit); ?> class="h"></p>
+        <input name="answer4"<?php echoIfValue($answer4Edit); ?> class="h"></p>
 
         <p>Possible answer 5<br>
-        <input type="text" name="answer5"<?php echoIfValue($answer5Edit); ?> class="h"></p>
+        <input name="answer5"<?php echoIfValue($answer5Edit); ?> class="h"></p>
 
         <p>Possible answer 6<br>
-        <input type="text" name="answer6"<?php echoIfValue($answer6Edit); ?> class="h"></p>
+        <input name="answer6"<?php echoIfValue($answer6Edit); ?> class="h"></p>
 
         <p>Possible answer 7<br>
-        <input type="text" name="answer7"<?php echoIfValue($answer7Edit); ?> class="h"></p>
+        <input name="answer7"<?php echoIfValue($answer7Edit); ?> class="h"></p>
 
         <p>Possible answer 8<br>
-        <input type="text" name="answer8"<?php echoIfValue($answer8Edit); ?> class="h"></p>
+        <input name="answer8"<?php echoIfValue($answer8Edit); ?> class="h"></p>
 
         <p><input type="submit" class="button" name="update" value="Add / update"> <input type="submit" class="button" name="reset" value="Reset"></p>
       </form>
     </main>
 
     <aside>
-      <h1>Surveys in edit</h1>
+      <h2>Surveys in edit</h2>
 
 <?php
 $dbh = new PDO($dbEdit);
@@ -439,7 +437,7 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([1]);
 foreach ($stmt as $row) {
     extract($row);
-    echo '      <form class="wait" action="' . $uri . 'survey.php" method="post">' . "\n";
+    echo '      <form action="' . $uri . 'survey.php" method="post">' . "\n";
     echo '        <p>' . html($headline) . "<br>\n";
     echo '        <input name="idArticle" type="hidden" value="' . $idArticle . '">' . "\n";
     echo '        <input type="submit" class="button" value="Edit" name="edit"></p>' . "\n";
@@ -447,7 +445,7 @@ foreach ($stmt as $row) {
 }
 $dbh = null;
 ?>
-      <h1>Published surveys</h1>
+      <h2>Published surveys</h2>
 
 <?php
 $dbh = new PDO($dbPublished);
@@ -456,7 +454,7 @@ $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([1]);
 foreach ($stmt as $row) {
     extract($row);
-    echo '      <form class="wait" action="' . $uri . 'survey.php" method="post">' . "\n";
+    echo '      <form action="' . $uri . 'survey.php" method="post">' . "\n";
     echo '        <p>' . html($headline) . "<br>\n";
     echo '        <input name="idArticle" type="hidden" value="' . $idArticle . '">' . "\n";
     echo '        <input type="submit" class="button" value="Edit" name="edit"></p>' . "\n";

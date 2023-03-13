@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 02 27
+ * @version:  2023 03 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -246,24 +246,22 @@ require $includesPath . '/header1.inc';
   </nav>
 <?php echoIfMessage($message); ?>
 
-  <h1 id="waiting">Please wait.</h1>
-
   <div class="flex">
     <main>
-      <form class="wait" action="<?php echo $uri; ?>advertisingEdit.php" method="post" enctype="multipart/form-data">
+      <form action="<?php echo $uri; ?>advertisingEdit.php" method="post" enctype="multipart/form-data">
         <h1>Add, update and delete ads not currently published</h1>
 
         <p>Organization is required for add, update and delete. Publication dates determine what ads are currently published. Unless a sort order is specified, ad order is random and will change each time the page is loaded.</p>
 
         <p><label for="startDateAd">Publication dates, start date to end date</label><br>
-        <input type="text" class="datepicker date" id="startDateAd" name="startDateAd" <?php echoIfValue($startDateAdEdit); ?>><br><br>
-        <input type="text" class="datepicker date" name="endDateAd" <?php echoIfValue($endDateAdEdit); ?>></p>
+        <input class="datepicker date" id="startDateAd" name="startDateAd" <?php echoIfValue($startDateAdEdit); ?>><br><br>
+        <input class="datepicker date" name="endDateAd" <?php echoIfValue($endDateAdEdit); ?>></p>
 
         <p><label for="sortOrderAd">Sort order (optional)</label><br>
-        <input id="sortOrderAd" name="sortOrderAd" type="text" class="h" <?php echoIfValue($sortOrderAdEdit); ?>></p>
+        <input id="sortOrderAd" name="sortOrderAd" class="h" <?php echoIfValue($sortOrderAdEdit); ?>></p>
 
         <p><label for="organization">Organization</label><br>
-        <input id="organization" name="organization" type="text" class="h" required<?php echoIfValue($organizationEdit); ?>><input name="idAd" type="hidden"<?php echoIfValue($idAdEdit); ?>></p>
+        <input id="organization" name="organization" class="h" required<?php echoIfValue($organizationEdit); ?>><input name="idAd" type="hidden"<?php echoIfValue($idAdEdit); ?>></p>
 
         <p>Pay status<br>
         <label>
@@ -277,10 +275,10 @@ require $includesPath . '/header1.inc';
         <input type="file" class="h" accept="image/jpeg" id="image" name="image"><br></p>
 
         <p><label for="link">Link from ad (optional)</label><br>
-        <input id="link" name="link" type="text" class="h" <?php echoIfValue($linkEdit); ?>></p>
+        <input id="link" name="link" class="h" <?php echoIfValue($linkEdit); ?>></p>
 
         <p><label for="linkAlt">Alternate text for ad image  (if different from the organization name above)</label><br>
-        <input id="linkAlt" name="linkAlt" type="text" class="h" <?php echoIfValue($linkAltEdit); ?>></p>
+        <input id="linkAlt" name="linkAlt" class="h" <?php echoIfValue($linkAltEdit); ?>></p>
 
         <p><label for="note">Note</label><br>
         <textarea id="note" name="note" class="h"><?php echoIfText($noteEdit); ?></textarea></p>
@@ -290,7 +288,7 @@ require $includesPath . '/header1.inc';
     </main>
 
     <aside>
-      <h1>Ads not currently published</h1>
+      <h2>Ads not currently published</h2>
 
 <?php
 $rowcount = null;
@@ -305,7 +303,7 @@ foreach ($stmt as $row) {
     }
     $width = (200 / $imageWidth) * $imageWidth;
     $height = round((200 / $imageWidth) * $imageHeight);
-    echo '      <form class="wait" action="' . $uri . 'advertisingEdit.php" method="post">' . "\n";
+    echo '      <form action="' . $uri . 'advertisingEdit.php" method="post">' . "\n";
     echo '        <p><img class="b" src="imaged.php?i=' . muddle($idAd) . '" alt="" width="' . $width . '" height="' . $height . '"><br>' . "\n";
     echo '        ' . $organization . ', by ' . $enteredBy . "<br>\n";
     if ($link !== null and $link !== '') {

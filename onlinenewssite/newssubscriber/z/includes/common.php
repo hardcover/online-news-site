@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 02 27
+ * @version:  2023 03 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -83,6 +83,9 @@ $today = date("Y-m-d");
  */
 function secure($str)
 {
+    if (empty($str)) {
+        $str = '';
+    }
     $str = stripslashes($str);                             // Magic quotes
     $str = html_entity_decode($str);                       // HTML chars
     $str = preg_replace('{^\xEF\xBB\xBF|\x1A}', '', $str); // UTF-8 BOM
@@ -146,7 +149,7 @@ function nl2p($str)
 {
     $str = preg_replace("'\s+'", ' ', html($str));
     $str = str_replace('&NewLine; &NewLine;', '&NewLine;&NewLine;', $str);
-    $str = str_replace('&NewLine;&NewLine;', "</p>\n\n  <p>", $str);
+    $str = str_replace('&NewLine;&NewLine;', "</p>\n\n      <p>", $str);
     return $str;
 }
 /**
@@ -160,7 +163,6 @@ function utf8($str)
 {
     return mb_convert_encoding($str, "UTF-8", mb_detect_encoding($str, "UTF-8, ISO-8859-1, ISO-8859-15", true));
 }
-
 /**
  * Function to echo information and error messages, when they exist
  *

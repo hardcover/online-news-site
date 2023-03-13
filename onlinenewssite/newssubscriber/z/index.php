@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 02 27
+ * @version:  2023 03 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -526,8 +526,7 @@ if ($task === 'classifiedsSync') {
     $response['result'] = 'success';
 }
 if ($task === 'classifiedsSyncNew') {
-    $fifteenMinutesAgo = time();
-    //$fifteenMinutesAgo = time() - 900;
+    $fifteenMinutesAgo = time() - 900;
     $classifieds = [];
     $dbh = new PDO($dbClassifiedsNew);
     $stmt = $dbh->prepare('SELECT idAd FROM ads WHERE review < ?');
@@ -819,7 +818,7 @@ if ($task === 'sitemap') {
         $h = preg_replace('/[\s\W]+/', '-', $h);
         $h = preg_replace('/^[\-]+/', '', $h);
         $h = preg_replace('/[\-]+$/', '', $h);
-        $headline = strtolower($h);
+        $headline = mb_strtolower($h);
         fwrite($fp, utf8('  <url><loc>' . $uri . '?a=' . $page['0'] . '+' . $headline . '</loc><lastmod>' . $page[1] . '</lastmod></url>' . "\n"));
     }
     //
@@ -951,7 +950,7 @@ if ($task === 'sitemap') {
                     $h = preg_replace('/[\s\W]+/', '-', $h);
                     $h = preg_replace('/^[\-]+/', '', $h);
                     $h = preg_replace('/[\-]+$/', '', $h);
-                    $headlineSEO = strtolower($h);
+                    $headlineSEO = mb_strtolower($h);
                     //
                     $str = str_replace('&', '&amp;', $headline);
                     $str = str_replace("\'", '&apos;', $str);

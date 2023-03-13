@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 02 27
+ * @version:  2023 03 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -65,14 +65,18 @@ $imagePath2 = 'imagee2.php';
 if (!isset($_FILES['image'])) {
     $_FILES['image'] = null;
 }
-if (strlen($textPost) > 500) {
-    $summaryPost = substr(preg_replace("'\s+'", ' ', $textPost), 0, 500);
-    $summaryPost = str_replace(strrchr($summaryPost, ' '), ' ', $summaryPost);
+if (mb_strlen($textPost) > 500) {
+    $summaryPost = mb_substr(preg_replace("'\s+'", ' ', $textPost), 0, 500);
+    $summaryPost = str_replace(mb_strrchr($summaryPost, ' '), ' ', $summaryPost);
 } else {
     $summaryPost = $textPost;
 }
-if (strpos($summaryPost, '<') === false and strlen($summaryPost) > 1) {
-    $summaryPost = $summaryPost . ' (continued)';
+if (mb_strpos($summaryPost, '<') === false and mb_strlen($summaryPost) > 1) {
+    if (mb_substr($summaryPost, -1) === '.'){
+        $summaryPost = $summaryPost . '...';
+    } else {
+        $summaryPost = $summaryPost . '....';
+    }
 } else {
     $summaryPost = null;
 }
@@ -269,9 +273,9 @@ echo "      <h1>Article contribution</h1>\n";
 
       <p>Fifteen minutes from the last edit, the article becomes available to be sent to the editor after which it will no longer be available to edit here.</p>
 
-      <form class="wait" method="post" action="<?php echo $uri; ?>?m=article-contribution" enctype="multipart/form-data">
+      <form method="post" action="<?php echo $uri; ?>?m=article-contribution" enctype="multipart/form-data">
         <p><label for="byline">Byline</label><br>
-        <input id="byline" name="byline" type="text" class="wide" <?php echoIfValue($bylineEdit); ?>><input type="hidden" name="idArticle" value="<?php echo $idArticleEdit; ?>"></p>
+        <input id="byline" name="byline" class="wide" <?php echoIfValue($bylineEdit); ?>><input type="hidden" name="idArticle" value="<?php echo $idArticleEdit; ?>"></p>
 
         <p><label for="idSection">Section</label><br>
         <select id="idSection" name="idSection">
@@ -307,10 +311,10 @@ if ($use === 'published') {
 }
 ?>
         <p><label for="headline">Headline</label><br>
-        <input id="headline" name="headline" type="text" class="wide" <?php echoIfValue($headlineEdit); ?>></p>
+        <input id="headline" name="headline" class="wide" <?php echoIfValue($headlineEdit); ?>></p>
 
         <p><label for="standfirst">Standfirst</label><br>
-        <input id="standfirst" name="standfirst" type="text" class="wide"<?php echoIfValue($standfirstEdit); ?>></p>
+        <input id="standfirst" name="standfirst" class="wide"<?php echoIfValue($standfirstEdit); ?>></p>
 
         <p><label for="text">Article text is entered in either HTML or the <a href="https://www.markdownguide.org/basic-syntax/" target="_blank">markdown syntax</a>. Enter iframe and video tags inside paragraph tags, for example, &lt;p&gt;&lt;iframe&gt;&lt;/iframe&gt;&lt;/p&gt;.</label><br>
         <textarea id="text" name="text" rows="9" class="wide"><?php echoIfText($textEdit); ?></textarea></p>
@@ -321,10 +325,10 @@ if ($use === 'published') {
         <p><label for="full"><input type="radio" name="width" id="full" value=""<?php echo $widthEditFull; ?>> Full width</label> <label for="third"><input type="radio" name="width" id="third" value="third"<?php echo $widthEditThird; ?>> One-third width</label></p>
 
         <p><label for="photoCaption">Photo caption</label><br>
-        <input id="photoCaption" name="photoCaption" type="text" class="wide" autocomplete="on"></p>
+        <input id="photoCaption" name="photoCaption" class="wide" autocomplete="on"></p>
 
         <p><label for="photoCredit">Photo credit</label><br>
-        <input id="photoCredit" name="photoCredit" type="text" class="wide"></p>
+        <input id="photoCredit" name="photoCredit" class="wide"></p>
 
         <p><input type="submit" class="button" value="Add / update" name="addUpdate"> <input type="submit" class="button" value="Delete photos" name="deletePhoto"><input type="hidden" name="existing"<?php echoIfValue($edit); ?>></p>
       </form>
@@ -461,7 +465,7 @@ if (isset($_GET['t'])) {
                     $summary = str_replace('*', '', $summary);
                     $html.= '</a>' . html($summary) . "</p>\n";
                 }
-                $html.= "\n" . '      <form class="wait" action="' . $uri . '?m=article-contribution" method="post">' . "\n";
+                $html.= "\n" . '      <form action="' . $uri . '?m=article-contribution" method="post">' . "\n";
                 $html.= '        <p> <input type="hidden" name="idArticle" value="' . $idArticle . '"><input type="submit" class="button" value="Delete" name="delete"> <input type="submit" class="button" value="Edit" name="edit"></p>' . "\n";
                 $html.= "      </form>\n";
             }

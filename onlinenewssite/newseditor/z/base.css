@@ -54,7 +54,7 @@ h1 {
 }
 
 h2, h3 {
-    margin: .5rem 0;
+    margin: 0.5rem 0;
 }
 
 h2 {
@@ -64,7 +64,7 @@ h2 {
 }
 
 h2.section {
-    padding: .3rem;
+    padding: 0.3rem;
     color: #000;
 }
 
@@ -84,8 +84,8 @@ h5 {
 }
 
 h6 {
-    font-size: .9rem;
-    margin-top: -.45rem;
+    font-size: 0.9rem;
+    margin-top: -0.45rem;
 }
 
 h6.fn {
@@ -142,7 +142,7 @@ input, select, textarea, p.error, .button {
 }
 
 input, select, textarea, a.m, a.s, a.button {
-    padding: .4rem;
+    padding: 0.4rem;
     color: #000;
 }
 
@@ -171,7 +171,7 @@ img.fr, span.fr {
 }
 
 img.fr {
-    margin: .4rem 0 1rem 2%;
+    margin: 0.4rem 0 1rem 2%;
 }
 
 img.lead, img.lead2, img.lead3, img.lead4, img.third {
@@ -226,7 +226,7 @@ a.n:active, a.n:focus {
 }
 
 .button, input.date {
-    margin-right: .4rem;
+    margin-right: 0.4rem;
 }
 
 div.column, div.flex, header {
@@ -234,19 +234,23 @@ div.column, div.flex, header {
 }
 
 div.flex {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
 }
 
 div.logo, span.fr {
     clear: both;
-    padding-top: .5rem;
+    padding-top: 0.5rem;
 }
 
 /* color */
 
 header {
     background: #def;
-    padding-top: .4rem;
+    padding-top: 0.4rem;
+    background: -webkit-gradient(linear, left top, left bottom, from(#cde), to(#fff));
+    background: -o-linear-gradient(#cde, #fff);
     background: linear-gradient(#cde, #fff);
 }
 
@@ -264,17 +268,23 @@ a:visited {
 
 a.m:link, a.m:visited, h4, nav.n, .button, h2.section {
     background: #bce;
+    background: -webkit-gradient(linear, left top, left bottom, from(#def), to(#abc));
+    background: -o-linear-gradient(#def, #abc);
     background: linear-gradient(#def, #abc);
 }
 
 a.m:active, a.s:link, a.s:visited, a.s:active, .button:active {
     color: #000;
     background: #def;
+    background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#def));
+    background: -o-linear-gradient(#fff, #def);
     background: linear-gradient(#fff, #def);
 }
 
 a.m:focus, a.s:focus, .button:focus {
     background: #def;
+    background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#def));
+    background: -o-linear-gradient(#fff, #def);
     background: linear-gradient(#fff, #def);
 }
 
@@ -285,6 +295,8 @@ nav.n {
 
 input, select, textarea {
     background: #f5f5f9;
+    background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#f5f5f9));
+    background: -o-linear-gradient(#fff, #f5f5f9);
     background: linear-gradient(#fff, #f5f5f9);
 }
 
@@ -295,7 +307,7 @@ input, select, textarea, .button, h2.section, a.m, a.s, img.border, iframe, vide
 hr {
     border-top: 1px solid #9ab;
     border-bottom: 0;
-    height: 0px;
+    height: 0;
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -306,6 +318,8 @@ hr {
 
     a.m:hover, a.s:hover, .button:hover {
         background: #abc;
+        background: -webkit-gradient(linear, left top, left bottom, from(#cde), to(#9ab));
+        background: -o-linear-gradient(#cde, #9ab);
         background: linear-gradient(#cde, #9ab);
     }
 }

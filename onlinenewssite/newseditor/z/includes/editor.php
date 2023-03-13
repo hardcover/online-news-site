@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 02 27
+ * @version:  2023 03 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -89,7 +89,7 @@ if ($use === 'edit') {
     $database2 = $dbEdit2;
     $imagePath = 'imagee.php';
     $imagePath2 = 'imagee2.php';
-    $required = null;
+    $required = '';
 } elseif ($use === 'published') {
     $database = $dbPublished;
     $database2 = $dbPublished2;
@@ -100,16 +100,20 @@ if ($use === 'edit') {
 if (!isset($_FILES['image'])) {
     $_FILES['image'] = null;
 }
-if (strlen($textPost) > 500) {
+if (mb_strlen($textPost) > 500) {
     $summaryPost = preg_replace("'\s+'", ' ', $textPost);
-    $summaryPost = substr($summaryPost, 0, 500);
-    $tail = strrchr($summaryPost, ' ');
+    $summaryPost = mb_substr($summaryPost, 0, 500);
+    $tail = mb_strrchr($summaryPost, ' ');
     $summaryPost = rtrim($summaryPost, $tail);
 } else {
     $summaryPost = $textPost;
 }
-if (strpos($summaryPost, '<') === false and strlen($summaryPost) > 1) {
-    $summaryPost = $summaryPost . ' (continued)';
+if (mb_strpos($summaryPost, '<') === false and mb_strlen($summaryPost) > 1) {
+    if (mb_substr($summaryPost, -1) === '.'){
+        $summaryPost = $summaryPost . '...';
+    } else {
+        $summaryPost = $summaryPost . '....';
+    }
 } else {
     $summaryPost = null;
 }
@@ -545,15 +549,14 @@ echo '  <title>' . $title . "</title>\n";
 <?php
 require $includesPath . '/body.inc';
 echo $menu;
-echo '  <h1 id="waiting">Please wait.</h1>' . "\n\n";
 echo '  <div class="column">' . "\n";
 echo '    <h1>' . $title . "</h1>\n";
 echoIfMessage($message);
 ?>
 
-    <form class="wait" method="post" action="<?php echo $uri . $use; ?>.php" enctype="multipart/form-data">
+    <form method="post" action="<?php echo $uri . $use; ?>.php" enctype="multipart/form-data">
       <p><label for="byline">Byline</label><br>
-      <input id="byline" name="byline" type="text" class="wide" list="bylineList"<?php echoIfValue($bylineEdit); ?>><input type="hidden" name="idArticle" value="<?php echo $idArticleEdit; ?>"></p>
+      <input id="byline" name="byline" class="wide" list="bylineList"<?php echoIfValue($bylineEdit); ?>><input type="hidden" name="idArticle" value="<?php echo $idArticleEdit; ?>"></p>
       <datalist id="bylineList">
 <?php
 $dbh = new PDO($dbEditors);
@@ -571,7 +574,7 @@ $dbh = null;
       </datalist>
 
       <p><label for="publicationDate">Publication dates, start date to end date (expired articles move to the archives)</label><br>
-      <input id="publicationDate" name="publicationDate" type="text" class="datepicker date"<?php echoIfValue($publicationDateEdit); echo $required; ?>> <input name="endDate" type="text" class="datepicker date"<?php echoIfValue($endDateEdit); echo $required; ?>></p>
+      <input id="publicationDate" name="publicationDate" class="datepicker date"<?php echoIfValue($publicationDateEdit); echo $required; ?>> <input name="endDate" class="datepicker date"<?php echoIfValue($endDateEdit); echo $required; ?>></p>
 
       <p><label for="idSection">Section</label><br>
       <select id="idSection" name="idSection">
@@ -607,10 +610,10 @@ if ($use === 'published') {
 }
 ?>
       <p><label for="headline">Headline</label><br>
-      <input id="headline" name="headline" type="text" class="wide" <?php echoIfValue($headlineEdit); ?>></p>
+      <input id="headline" name="headline" class="wide" <?php echoIfValue($headlineEdit); ?>></p>
 
       <p><label for="standfirst">Standfirst</label><br>
-      <input id="standfirst" name="standfirst" type="text" class="wide"<?php echoIfValue($standfirstEdit); ?>></p>
+      <input id="standfirst" name="standfirst" class="wide"<?php echoIfValue($standfirstEdit); ?>></p>
 
       <p><label for="text">Article text is entered in either HTML or the <a href="markdown.html" target="_blank">markdown syntax</a>. Enter iframe and video tags inside paragraph tags, for example, &lt;p&gt;&lt;iframe height="315"&gt;&lt;/iframe&gt;&lt;/p&gt;. Do not enter a width attribute.</label><br>
       <textarea id="text" name="text" rows="9" class="wide"><?php echoIfText($textEdit); ?></textarea></p>
@@ -621,10 +624,10 @@ if ($use === 'published') {
       <p><label for="full"><input type="radio" name="width" id="full" value=""<?php echo $widthEditFull; ?>> Full width</label> <label for="third"><input type="radio" name="width" id="third" value="third"<?php echo $widthEditThird; ?>> One-third width</label></p>
 
       <p><label for="photoCaption">Photo caption</label><br>
-      <input id="photoCaption" name="photoCaption" type="text" class="wide" autocomplete="on"></p>
+      <input id="photoCaption" name="photoCaption" class="wide" autocomplete="on"></p>
 
       <p><label for="photoCredit">Photo credit</label><br>
-      <input id="photoCredit" name="photoCredit" type="text" class="wide"></p>
+      <input id="photoCredit" name="photoCredit" class="wide"></p>
 
       <p><input type="submit" class="button" value="Add / update" name="addUpdate"> <input type="submit" class="button" value="Delete photos" name="deletePhoto"><input type="hidden" name="existing"<?php echoIfValue($edit); ?>>&nbsp;&nbsp;&nbsp;&nbsp;<a href="<?php echo $uri; ?>survey.php" target="_blank">Create or edit a survey</a></p>
     </form>

@@ -6,6 +6,7 @@ window.onresize = function() {
     if (window.innerWidth > 600) {
         x.style = null;
     }
+
 };
 
 function cellMenu() {
@@ -28,3 +29,11 @@ function cellMenu() {
         x.style.borderColor = "#aaa";
     }
 }
+
+document.onsubmit = function() {
+    //
+    // Wait cursor after submitting a form
+    //
+    window.scrollTo({ behavior: "smooth", top: 0 });
+    document.body.style.cursor = "wait";
+};

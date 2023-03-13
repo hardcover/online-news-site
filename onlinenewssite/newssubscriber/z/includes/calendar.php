@@ -10,7 +10,7 @@
  * @copyright 2021 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
  *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2023 02 27
+ * @version:  2023 03 13
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -66,7 +66,7 @@ for ($i = 0; $i < 31; $i++) {
     }
     $stmt = $dbh->prepare('SELECT description FROM annual WHERE date=?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $stmt->execute([substr($selectDate, -5)]);
+    $stmt->execute([mb_substr($selectDate, -5)]);
     $row = $stmt->fetch();
     if (isset($row['description'])) {
         $temp = Parsedown::instance()->parse($row['description']);
@@ -112,8 +112,8 @@ if (!empty($row['description'])) {
     $temp = Parsedown::instance()->parse($row['description']);
     $temp = str_replace("\n", "\n\n      ", $temp);
     echo '      <p><br>' . "\n";
-    echo '      <span>Notes' . "</span><br>\n";
-    echo '      ' . $temp . "</p>\n\n";
+    echo '      <span>Notes' . "</span></p>\n";
+    echo '      ' . $temp . "\n\n";
 }
 echo '    </div>' . "\n";
 ?>
