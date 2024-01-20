@@ -1,0 +1,106 @@
+/**
+ * Add custom styles to a file named local.css in the same directory.
+ * Do not modify this file as it will be overwritten by software updates.
+ */
+
+.paypal {
+    margin: 0;
+    border: 0;
+    padding: 0 0 0 1%;
+    vertical-align: text-bottom;
+}
+
+main {
+    margin: 0 1rem 1rem 1rem;
+}
+
+aside {
+    float: right;
+    width: 32.2%;
+    padding: 0 0 1rem 1rem;
+    margin: 0 1rem 1rem 1rem;
+    border-bottom: 1px solid #aaa;
+    border-left: 1px solid #aaa;
+    display: none;
+}
+
+div.main, div.row {
+    display: -ms-grid;
+    display: grid;
+}
+
+div.column {
+    -webkit-box-flex: 61.8%;
+    -ms-flex: 61.8%;
+    flex: 61.8%;
+}
+
+div.column {
+    -webkit-box-flex: 61.8%;
+    -ms-flex: 61.8%;
+    flex: 61.8%;
+}
+
+svg {
+    margin-top: .5rem;
+    display: inline;
+}
+
+@media (min-width: 601px) {
+    aside {
+        display: inline;
+    }
+
+    svg {
+        display: none;
+    }
+}
+
+@media (min-width: 1270px) {
+
+    header, main {
+        padding-left: 19.1%;
+    }
+
+    header, aside {
+        padding-right: 19.1%;
+    }
+
+    main {
+        -ms-flex-preferred-size: 76.4%;
+        flex-basis: 76.4%;
+        padding-left: 0;
+    }
+
+    aside {
+        width: 23.6%;
+        padding-right: 0;
+    }
+
+    div.row {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+    }
+
+    div.main {
+        padding-left: 19.1%;
+        padding-right: 19.1%;
+    }
+
+    div.right, div.left {
+        width: 49%;
+    }
+
+    div.right {
+        padding: 0 0 0 1rem;
+        border-left: 1px solid #aaa;
+    }
+
+    div.left {
+        padding: 0 1rem 0 0;
+    }
+}
