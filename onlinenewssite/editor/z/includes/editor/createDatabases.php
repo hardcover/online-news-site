@@ -9,8 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2024 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2024 01 19
+ * @version:  2024 07 30
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -25,7 +24,7 @@ $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "advertisements" ("idAd" INTEGER
 $dbh = null;
 //
 $dbh = new PDO($dbArchive);
-$stmt = $dbh->query('CREATE VIRTUAL TABLE IF NOT EXISTS "articles" USING fts4 ("idArticle", "publicationDate", "publicationTime", "endDate", "survey", "genre", "keywords", "idSection", "sortOrderArticle", "sortPriority", "byline", "headline", "standfirst", "text", "summary", "evolve", "expand", "extend", "photoName", "photoCredit", "photoCaption", "originalImageWidth", "originalImageHeight", "thumbnailImage", "thumbnailImageWidth", "thumbnailImageHeight", "hdImage", "hdImageWidth", "hdImageHeight")');
+$stmt = $dbh->query('CREATE VIRTUAL TABLE IF NOT EXISTS "articles" USING fts4 ("idArticle", "publicationDate", "publicationTime", "endDate", "survey", "genre", "keywords", "idSection", "sortOrderArticle", "sortPriority", "byline", "headline", "standfirst", "text", "summary", "link", "evolve", "expand", "extend", "photoName", "photoCredit", "photoCaption", "originalImageWidth", "originalImageHeight", "thumbnailImage", "thumbnailImageWidth", "thumbnailImageHeight", "hdImage", "hdImageWidth", "hdImageHeight")');
 $dbh = null;
 //
 $dbh = new PDO($dbArchive2);
@@ -130,6 +129,7 @@ $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "contactAccess" ("idContactAcces
 $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "names" ("idName" INTEGER PRIMARY KEY, "name", "description")');
 $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "sections" ("idSection" INTEGER PRIMARY KEY, "section", "sortOrderSection" INTEGER, "sortPriority" INTEGER NOT NULL DEFAULT (2))');
 $stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "forms" ("idForm" INTEGER PRIMARY KEY, "infoForms")');
+$stmt = $dbh->query('CREATE TABLE IF NOT EXISTS "getSecurity" ("idAuthorization" INTEGER PRIMARY KEY, "getAuthorization")');
 $stmt = $dbh->query('SELECT idForm FROM forms');
 $row = $stmt->fetch();
 if ($row === false) {

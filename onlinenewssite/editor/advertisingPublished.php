@@ -9,8 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2024 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2024 01 19
+ * @version:  2024 07 30
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/

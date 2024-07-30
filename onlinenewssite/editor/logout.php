@@ -9,17 +9,21 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2024 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2024 01 19
+ * @version:  2024 07 30
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 @session_start();
+$getAuthorization = $_SESSION['getAuthorization'];
 $_SESSION = [];
 session_destroy();
 setcookie(session_name(), '', time() -90000);
 require 'z/system/configuration.php';
-$uri = $uriScheme . '://' . $_SERVER["HTTP_HOST"] . rtrim(dirname($_SERVER['PHP_SELF']), "/\\") . '/';
+if (empty($getAuthorization)) {
+    $uri = $uriScheme . '://' . $_SERVER["HTTP_HOST"] . rtrim(dirname($_SERVER['PHP_SELF']), "/\\") . '/';
+} else {
+    $uri = $uriScheme . '://' . $_SERVER["HTTP_HOST"] . rtrim(dirname($_SERVER['PHP_SELF']), "/\\") . '/?' . $getAuthorization;
+}
 header('Location: ' . $uri);
 ?>

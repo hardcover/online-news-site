@@ -9,8 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2024 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2024 01 19
+ * @version:  2024 07 30
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -49,6 +48,7 @@ if (isset($_GET['a'])) {
             // Pull all articles in editing, by date range in published
             //
             $i = 0;
+            $j = 0;
             if (is_null($editorView)) {
                 $stmt = $dbh->prepare('SELECT idArticle, sortOrderArticle, headline, standfirst, summary, thumbnailImageWidth, photoName FROM articles WHERE idSection = ? AND publicationDate <= "' . $datePost . '" AND "' . $datePost . '" <= endDate ORDER BY sortOrderArticle');
             } else {

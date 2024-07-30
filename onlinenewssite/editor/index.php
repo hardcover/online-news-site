@@ -9,8 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2024 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2024 01 19
+ * @version:  2024 07 30
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -28,25 +27,6 @@ if (!file_exists('z/system/configuration.php')) {
 //
 require 'z/system/configuration.php';
 $includesPath = '../' . $includesPath;
-//////////////////////////////////////////////////////////////////////////////////////
-//
-// Optional $_GET authorization
-//
-if (empty($_POST['login']) or $_POST['login'] !== 'Log in') {
-    if (file_exists($includesPath . '/custom/programs/getAuthorization.php')) {
-        include $includesPath . '/custom/programs/getAuthorization.php';
-        if (isset($_GET['k'])) {
-            $kGet = filter_var($_GET['k'], FILTER_SANITIZE_STRING);
-        } else {
-            $kGet = null;
-        }
-        if ($kGet !== $getAuthorization) {
-            header_remove();
-            http_response_code(404);
-            exit;
-        }
-    }
-}
 //
 // Log out if logged in
 //
@@ -59,16 +39,38 @@ if (isset($_SESSION['auth'])) {
 // Requires
 //
 require $includesPath . '/editor/common.php';
+require $includesPath . '/editor/createDatabases.php';
 //
 // Variables
 //
 $message = '';
 $passPost = inlinePost('pass');
 $userPost = inlinePost('user');
+$dbh = new PDO($dbSettings);
+$stmt = $dbh->query('SELECT getAuthorization FROM getSecurity');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+$row = $stmt->fetch();
+$dbh = null;
+if ($row) {
+    extract($row);
+    $uriPost = $uri . '?' . $getAuthorization;
+} else {
+    $getAuthorization = '';
+    $uriPost = $uri;
+}
 //
-// Create the databases on the first run
+// Optional $_GET authorization
 //
-require $includesPath . '/editor/createDatabases.php';
+if (!empty($getAuthorization)
+    and !isset($_GET[$getAuthorization])
+) {
+    if (isset($_SERVER['HTTP_COOKIE'])) {
+        setcookie(session_name(), '', time() - 90000);
+        unset($_SERVER['HTTP_COOKIE']);
+    }
+    http_response_code(404);
+    exit;
+}
 //
 // Authenticate
 //
@@ -94,6 +96,7 @@ if (isset($_POST['login'], $userPost, $passPost)) {
             $stmt->execute([null, $userPost]);
             $dbh = null;
             $_SESSION['auth'] = hash('sha256', $_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT']) . hash('sha512', $row['user'] . $row['idUser']);
+            $_SESSION['getAuthorization'] = $getAuthorization;
             $_SESSION['userID'] = hash('sha512', $row['user'] . $row['idUser']);
             $_SESSION['userId'] = $row['idUser'];
             $_SESSION['username'] = $row['user'];
@@ -154,7 +157,7 @@ if ($row === false) {
 $request['name'] = $row['name'];
 $request['uri'] = $uriScheme . '://' . $_SERVER["HTTP_HOST"] . '/';
 $request['phpversion'] = phpversion();
-$request['version'] = '2024 01 19';
+$request['version'] = '2024 07 30';
 $request = http_build_query($request);
 stream_context_set_default(['http' => ['user_agent' => 'PHP', 'method' => 'POST', 'header' => 'Content-Type: application/x-www-form-urlencoded', 'content' => $request]]);
 $fp = @fopen('https://onlinenewssite.com/v/', 'rb', false);
@@ -182,7 +185,7 @@ require $includesPath . '/editor/header1.inc';
     <h1 class="a">Editor log in</h1>
 <?php echoIfMessage($message); ?>
 
-    <form action="<?php echo $uri; ?>" method="post">
+    <form action="<?php echo $uriPost; ?>" method="post">
       <p class="a"><label for="user">User</label><br>
       <input id="user" name="user" class="h" maxlength="254" autofocus required></p>
 
@@ -207,7 +210,7 @@ if ($dbRowCount !== '0') {
     echo '    <p class="a">' . number_format($dbRowCount) . " classified ad(s) pending review.</p>\n\n";
 }
 ?>
-    <p class="a">Version 2024 01 19. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.</p>
+    <p class="a">Version 2024 07 30. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.</p>
   </div>
 </body>
 </html>

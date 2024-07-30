@@ -9,8 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2024 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2024 01 19
+ * @version:  2024 07 30
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -35,6 +34,7 @@ $adMinParagraphsPost = inlinePost('adMinParagraphs');
 $adminPassPost = inlinePost('adminPass');
 $editPost = inlinePost('edit');
 $emailClassifiedPost = inlinePost('emailClassified');
+$getAuthorizationPost = inlinePost('getAuthorization');
 $idNamePost = inlinePost('idName');
 $idSectionPost = inlinePost('idSection');
 $infoFormsPost = securePost('infoForms');
@@ -280,6 +280,22 @@ if (password_verify($adminPassPost, $row['pass'])) {
             $message = 'The admin password was changed.';
         }
     }
+    //
+    // Button: Set security key
+    //
+    if (isset($_POST['addUpdateGetAuthorization']) and strval($_POST['addUpdateGetAuthorization']) === strval('Set security key')) {
+        $dbh = new PDO($dbSettings);
+        $stmt = $dbh->query('DELETE FROM getSecurity');
+        if (!empty($getAuthorizationPost)) {
+            $stmt = $dbh->prepare('INSERT INTO getSecurity (getAuthorization) VALUES (?)');
+            $stmt->execute([$getAuthorizationPost]);
+            $_SESSION['getAuthorization'] = $getAuthorizationPost;
+        } else {
+            $_SESSION['getAuthorization'] = '';
+        }
+        $dbh = null;
+        $message = 'The editor log in security key was changed.';
+    }
 } elseif (isset($_POST['addUpdate']) or isset($_POST['delete'])) {
     if (empty($_POST['adminPass'])) {
         $message = 'The admin password is required for all user maintenance.';
@@ -393,6 +409,15 @@ require $includesPath . '/editor/header2.inc';
         <input id="newAdminPassTwo" name="newAdminPassTwo" type="password" class="h"></p>
 
         <p><input type="submit" value="Change admin password" name="changeAdminPass" class="button"></p>
+
+        <h2>Optional editor log in security key</h2>
+
+        <p>As an optional security layer, a key can be required to load the editor log in screen.</p>
+
+        <p><label for="getAuthorization">Security key</label><br>
+        <input id="getAuthorization" name="getAuthorization" class="h" <?php echoIfValue($getAuthorizationPost); ?>></p>
+
+        <p><input type="submit" value="Set security key" name="addUpdateGetAuthorization" class="button"></p>
       </form>
     </main>
 
@@ -490,6 +515,29 @@ echo '        <p>Minimum number of paragraphs between ads: ' . $row['adMinParagr
 echo '        <input type="hidden" name="adMaxAdverts" value="' . $row['adMaxAdverts'] . '"><input type="hidden" name="adMinParagraphs" value="' . $row['adMinParagraphs'] . '"><input type="submit" value="Edit" name="edit" class="button"></p>' . "\n";
 echo "      </form>\n\n";
 ?>
+      <h2>Optional editor log in security key</h2>
+
+<?php
+$dbh = new PDO($dbSettings);
+$stmt = $dbh->query('SELECT idAuthorization, getAuthorization FROM getSecurity');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+$row = $stmt->fetch();
+$dbh = null;
+if ($row === false) {
+    $row = [];
+    $row['getAuthorization'] = '';
+    $row['idAuthorization'] = '';
+    $uriAuth = "\n";
+} else {
+    $uriAuth = 'Do not click but bookmark:<br>' . "\n";
+    $uriAuth.= '        <a href="' . $uri . '?' . $row['getAuthorization'] . '">' . $uri . '?' . $row['getAuthorization'] . "</a><br>\n";
+}
+echo '      <form action="' . $uri . 'settings.php" method="post">' . "\n";
+echo '        <p>' . $uriAuth;
+echo '        <input type="hidden" name="idAuthorization" value="' . $row['idAuthorization'] . '"><input type="hidden" name="getAuthorization" value="' . $row['getAuthorization'] . '"><input type="submit" value="Edit" name="edit" class="button"></p>' . "\n";
+echo "      </form>";
+?>
+
     </aside>
   </div>
 </body>

@@ -9,8 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2024 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- *            https://hardcoverwebdesign.com/gpl-2.0  GNU General Public License, Version 2
- * @version:  2024 01 19
+ * @version:  2024 07 30
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -57,7 +56,7 @@ if ($row) {
 //
 // Build the SQL query
 //
-$sql1 = 'SELECT idArticle, publicationDate, byline, headline, summary FROM articles WHERE ';
+$sql1 = 'SELECT idArticle, publicationDate, byline, headline, summary, link FROM articles WHERE ';
 $sql2 = null;
 if (!empty($bylinePost)) {
     $sql1.= 'byline MATCH ?';
@@ -166,7 +165,21 @@ if (isset($_GET['a'])) {
                     }
                     $html.= "      <hr>\n\n";
                     if (isset($headline)) {
-                        $html.= '      <h2><a class="n" href="' . $uri . '?a=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
+                        if (empty($link)) {
+                            //
+                            // Database archive
+                            //
+                            $html.= '    <h2><a class="n" href="' . $uri . $use . '.php?a=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
+                        } else {
+                            //
+                            // HTML and PDF archives
+                            //
+                            if (substr($link, -5) === '.html'
+                                or substr($link, -4) === '.pdf'
+                            ) {
+                                $html.= '    <h2><a class="n" href="' . $uri . $link . '" target="_blank">' . html($headline) . "</a></h2>\n\n";
+                            }
+                        }
                     }
                     $bylineDateTime = isset($publicationDate) ? date("l, F j, Y", strtotime($publicationDate)) : null;
                     if (!empty($bylineDateTime)) {
