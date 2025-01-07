@@ -7,9 +7,9 @@
  * @category  Publishing
  * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2024 Hardcover LLC
+ * @copyright 2025 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2024 07 30
+ * @version:  2025 01 07
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -118,6 +118,26 @@ if (strpos($database, 'archive') === false) {
         if (!empty($standfirst)) {
             $html.= '    <h3>' . html($standfirst) . '<br><br></h3>' . "\n\n";
         }
+        if (empty($text)) {
+            //
+            // Byline for when there is no text
+            //
+            if (!empty($byline) or !empty($bylineDateTime)) {
+                $html.= '    <h5>';
+            }
+            if (!empty($byline)) {
+                $html.= 'By ' . $byline;
+            }
+            if (!empty($byline) and !empty($bylineDateTime)) {
+                $html.= ', ';
+            }
+            if (!empty($bylineDateTime)) {
+                $html.= html($bylineDateTime);
+            }
+            if (!empty($byline) or !empty($bylineDateTime)) {
+                $html.= "</h5>\n    <br><br>\n\n";
+            }
+        }
         if (!empty($hdImage)) {
             if ($photoName === 'third') {
                 $html.= '    <p class="a"><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="third border mb" alt=""></p>' . "\n\n";
@@ -144,20 +164,25 @@ if (strpos($database, 'archive') === false) {
                 $html.= '    <h6>(' . $photoCredit . ")</h6>\n\n";
             }
         }
-        if (!empty($byline) or !empty($bylineDateTime)) {
-            $html.= '    <h5 class="a">';
-        }
-        if (!empty($byline)) {
-            $html.= 'By ' . $byline;
-        }
-        if (!empty($byline) and !empty($bylineDateTime)) {
-            $html.= ', ';
-        }
-        if (!empty($bylineDateTime)) {
-            $html.= html($bylineDateTime);
-        }
-        if (!empty($byline) or !empty($bylineDateTime)) {
-            $html.= "</h5>\n\n";
+        if (!empty($text)) {
+            //
+            // Byline for when there is text
+            //
+            if (!empty($byline) or !empty($bylineDateTime)) {
+                $html.= '    <h5 class="a">';
+            }
+            if (!empty($byline)) {
+                $html.= 'By ' . $byline;
+            }
+            if (!empty($byline) and !empty($bylineDateTime)) {
+                $html.= ', ';
+            }
+            if (!empty($bylineDateTime)) {
+                $html.= html($bylineDateTime);
+            }
+            if (!empty($byline) or !empty($bylineDateTime)) {
+                $html.= "</h5>\n\n";
+            }
         }
         //
         // Article text

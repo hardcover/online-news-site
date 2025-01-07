@@ -7,9 +7,9 @@
  * @category  Publishing
  * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2024 Hardcover LLC
+ * @copyright 2025 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2024 07 30
+ * @version:  2025 01 07
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/

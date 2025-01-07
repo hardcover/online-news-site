@@ -7,9 +7,9 @@
  * @category  Publishing
  * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2024 Hardcover LLC
+ * @copyright 2025 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2024 07 30
+ * @version:  2025 01 07
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -58,6 +58,8 @@ if (isset($_GET['a'])) {
             $stmt->execute([$idSection]);
             foreach ($stmt as $row) {
                 extract($row);
+                $summary = html($summary);
+                $summary = @Parsedown::instance()->parse($summary);
                 $i++;
                 if ($i === 1) {
                     $html.= '    <div class="row">' . "\n";
@@ -75,10 +77,10 @@ if (isset($_GET['a'])) {
                     } else {
                         $html.= '        <p><a href="' . $use . '.php?a=' . $idArticle . '"><img class="lead b mb" src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" alt=""></a></p>' . "\n";
                     }
-                    $html.= '        <p>' . html($summary) . "</p>\n";
+                    $html.= '        ' . $summary . "\n";
                 } else {
                     if (!empty($summary)) {
-                        $html.= '        <p>' . html($summary) . "</p>\n";
+                        $html.= '        ' . $summary . "\n";
                     }
                 }
                 $html.= '      </div>' . "\n";

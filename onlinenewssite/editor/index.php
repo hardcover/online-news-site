@@ -7,9 +7,9 @@
  * @category  Publishing
  * @package   Online_News_Site
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2024 Hardcover LLC
+ * @copyright 2025 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2024 07 30
+ * @version:  2025 01 07
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -157,7 +157,7 @@ if ($row === false) {
 $request['name'] = $row['name'];
 $request['uri'] = $uriScheme . '://' . $_SERVER["HTTP_HOST"] . '/';
 $request['phpversion'] = phpversion();
-$request['version'] = '2024 07 30';
+$request['version'] = '2025 01 07';
 $request = http_build_query($request);
 stream_context_set_default(['http' => ['user_agent' => 'PHP', 'method' => 'POST', 'header' => 'Content-Type: application/x-www-form-urlencoded', 'content' => $request]]);
 $fp = @fopen('https://onlinenewssite.com/v/', 'rb', false);
@@ -210,7 +210,7 @@ if ($dbRowCount !== '0') {
     echo '    <p class="a">' . number_format($dbRowCount) . " classified ad(s) pending review.</p>\n\n";
 }
 ?>
-    <p class="a">Version 2024 07 30. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.</p>
+    <p class="a">Version 2025 01 07. By logging in, visitors consent to a cookie placed for the purpose of retaining the log in during website navigation.</p>
   </div>
 </body>
 </html>
