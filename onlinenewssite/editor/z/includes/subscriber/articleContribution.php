@@ -9,7 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2025 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2025 01 07
+ * @version:  2025 02 03
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -17,6 +17,7 @@
 //
 // Variables
 //
+$altPost = inlinePost('alt');
 $bylineEdit = null;
 $bylinePost = inlinePost('byline');
 $dbFrom = null;
@@ -173,9 +174,12 @@ if (isset($_POST['addUpdate'])) {
                     imagedestroy($hd);
                     $hdImage = ob_get_contents();
                     ob_end_clean();
+                    if (empty($altPost)) {
+                        $altPost = $photoCaptionPost;
+                    }
                     $dbh = new PDO($dbEdit);
-                    $stmt = $dbh->prepare('UPDATE articles SET photoCredit=?, photoCaption=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
-                    $stmt->execute([$photoCreditPost, $photoCaptionPost, $hdImage, $widthHD, $heightHD, $idArticle]);
+                    $stmt = $dbh->prepare('UPDATE articles SET photoCredit=?, photoCaption=?, alt=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
+                    $stmt->execute([$photoCreditPost, $photoCaptionPost, $altPost, $hdImage, $widthHD, $heightHD, $idArticle]);
                     $dbh = null;
                 } else {
                     //
@@ -192,12 +196,15 @@ if (isset($_POST['addUpdate'])) {
                     imagedestroy($hd);
                     $hdImage = ob_get_contents();
                     ob_end_clean();
+                    if (empty($altPost)) {
+                        $altPost = $photoCaptionPost;
+                    }
                     $dbh = new PDO($dbEdit2);
                     $stmt = $dbh->prepare('INSERT INTO imageSecondary (idPhoto) VALUES (?)');
                     $stmt->execute([null]);
                     $idPhoto = $dbh->lastInsertId();
-                    $stmt = $dbh->prepare('UPDATE imageSecondary SET idPhoto=?, idArticle=?, image=?, photoName=?, photoCredit=?, photoCaption=?, time=? WHERE  rowid=?');
-                    $stmt->execute([$idPhoto, $idArticle, $hdImage, $widthPost, $photoCreditPost, $photoCaptionPost, time(), $idPhoto]);
+                    $stmt = $dbh->prepare('UPDATE imageSecondary SET idPhoto=?, idArticle=?, image=?, photoName=?, photoCredit=?, photoCaption=?, alt=?, time=? WHERE  rowid=?');
+                    $stmt->execute([$idPhoto, $idArticle, $hdImage, $widthPost, $photoCreditPost, $photoCaptionPost, $altPost, time(), $idPhoto]);
                     $dbh = null;
                 }
             } else {
@@ -222,8 +229,8 @@ if (isset($_POST['addUpdate'])) {
 //
 if (isset($_POST['deletePhoto']) and isset($idArticle)) {
     $dbh = new PDO($dbEdit);
-    $stmt = $dbh->prepare('UPDATE articles SET photoName=?, photoCredit=?, photoCaption=?, originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
-    $stmt->execute([null, null, null, null, null, null, null, null, null, null, null, $idArticle]);
+    $stmt = $dbh->prepare('UPDATE articles SET photoName=?, photoCredit=?, photoCaption=?, alt=?, originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
+    $stmt->execute([null, null, null, null, null, null, null, null, null, null, null, null, $idArticle]);
     $dbh = null;
     $dbh = new PDO($dbEdit2);
     $stmt = $dbh->prepare('DELETE FROM imageSecondary WHERE idArticle=?');
@@ -326,6 +333,9 @@ if ($use === 'published') {
         <p><label for="photoCaption">Photo caption</label><br>
         <input id="photoCaption" name="photoCaption" class="wide" autocomplete="on"></p>
 
+        <p><label for="alt">Alt text (if different from the caption)</label><br>
+        <input id="alt" name="alt" class="wide" autocomplete="on"></p>
+
         <p><label for="photoCredit">Photo credit</label><br>
         <input id="photoCredit" name="photoCredit" class="wide"></p>
 
@@ -340,7 +350,7 @@ if (isset($_GET['t'])) {
     // Display article
     //
     $dbh = new PDO($dbEdit);
-    $stmt = $dbh->prepare('SELECT idArticle, survey, idSection, byline, headline, standfirst, text, photoName, photoCredit, photoCaption, hdImage FROM articles WHERE idArticle = ?');
+    $stmt = $dbh->prepare('SELECT idArticle, survey, idSection, byline, headline, standfirst, text, photoName, photoCredit, photoCaption, alt, hdImage FROM articles WHERE idArticle = ?');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute([$tGet]);
     $row = $stmt->fetch();
@@ -352,9 +362,9 @@ if (isset($_GET['t'])) {
         }
         if (isset($hdImage)) {
             if ($photoName === 'third') {
-                $html.= '      <p class="a"><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="third border mb" alt=""></p>' . "\n\n";
+                $html.= '      <p class="a"><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="third border mb" alt="' . $alt . '"></p>' . "\n\n";
             } else {
-                $html.= '      <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="wide border" alt=""></p>' . "\n\n";
+                $html.= '      <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="wide border" alt="' . $alt . '"></p>' . "\n\n";
             }
         }
         if (!empty($photoCaption) and !empty($photoCredit)) {
@@ -395,15 +405,15 @@ if (isset($_GET['t'])) {
         $temp = str_replace("\n", "\n\n  ", $temp);
         $html.= '      ' . $temp . "\n\n";
         $dbhEdit2 = new PDO($dbEdit2);
-        $stmt = $dbhEdit2->prepare('SELECT idPhoto, photoName, photoCredit, photoCaption FROM imageSecondary WHERE idArticle=? ORDER BY time');
+        $stmt = $dbhEdit2->prepare('SELECT idPhoto, photoName, photoCredit, photoCaption, alt FROM imageSecondary WHERE idArticle=? ORDER BY time');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute([$idArticle]);
         foreach ($stmt as $row) {
             extract($row);
             if ($photoName === 'third') {
-                $html.= '      <p class="a"><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="third border mb" alt=""></p>' . "\n\n";
+                $html.= '      <p class="a"><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="third border mb" alt="' . $alt . '"></p>' . "\n\n";
             } else {
-                $html.= '      <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="wide border" alt=""></p>' . "\n\n";
+                $html.= '      <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="wide border" alt="' . $alt . '"></p>' . "\n\n";
             }
             if (!empty($photoCaption) and !empty($photoCredit)) {
                 if ($photoName === 'third') {
@@ -459,7 +469,7 @@ if (isset($_GET['t'])) {
                 if (!empty($summary)) {
                     $html.= '      <p class="summary"><a href="' . $uri . '?m=article-contribution&t=' . $idArticle . '">';
                     if (!empty($thumbnailImageWidth)) {
-                        $html.= '<img class="fr b" src="' . $imagePath . '?i=' . muddle($idArticle) . 't" width="' . $thumbnailImageWidth . '" height="' . $thumbnailImageHeight . '" alt="">';
+                        $html.= '<img class="fr b" src="' . $imagePath . '?i=' . muddle($idArticle) . 't" width="' . $thumbnailImageWidth . '" height="' . $thumbnailImageHeight . '" alt="' . $alt . '">';
                     }
                     $summary = str_replace('*', '', $summary);
                     $html.= '</a>' . html($summary) . "</p>\n";

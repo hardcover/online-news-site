@@ -9,7 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2025 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2025 01 07
+ * @version:  2025 02 03
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -52,7 +52,7 @@ if ($dbFrom === $dbEdit) {
 // Move the non-image information
 //
 $dbh = new PDO($dbFrom);
-$stmt = $dbh->prepare('SELECT publicationDate, publicationTime, endDate, survey, genre, keywords, idSection, sortOrderArticle, byline, headline, standfirst, text, summary, evolve, expand, extend, photoName, photoCredit, photoCaption FROM articles WHERE idArticle=?');
+$stmt = $dbh->prepare('SELECT publicationDate, publicationTime, endDate, survey, genre, keywords, idSection, sortOrderArticle, byline, headline, standfirst, text, summary, evolve, expand, extend, photoName, photoCredit, photoCaption, alt FROM articles WHERE idArticle=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([$idArticle]);
 $row = $stmt->fetch();
@@ -98,8 +98,8 @@ if ($row) {
         }
     }
     $dbh = new PDO($dbTo);
-    $stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, publicationTime=?, endDate=?, survey=?, genre=?, keywords=?, idSection=?, byline=?, headline=?, standfirst=?, text=?, summary=?, evolve=?, expand=?, extend=?, photoName=?, photoCredit=?, photoCaption=? WHERE idArticle=?');
-    $stmt->execute([$publicationDate, $publicationTime, $endDate, $survey, $genre, $keywords, $idSection, $byline, $headline, $standfirst, $text, $summary, $evolve, $expand, $extend, $photoName, $photoCredit, $photoCaption, $idArticle]);
+    $stmt = $dbh->prepare('UPDATE articles SET publicationDate=?, publicationTime=?, endDate=?, survey=?, genre=?, keywords=?, idSection=?, byline=?, headline=?, standfirst=?, text=?, summary=?, evolve=?, expand=?, extend=?, photoName=?, photoCredit=?, photoCaption=?, alt=? WHERE idArticle=?');
+    $stmt->execute([$publicationDate, $publicationTime, $endDate, $survey, $genre, $keywords, $idSection, $byline, $headline, $standfirst, $text, $summary, $evolve, $expand, $extend, $photoName, $photoCredit, $photoCaption, $alt, $idArticle]);
     $dbh = null;
     //
     // Check for an image
@@ -143,13 +143,13 @@ if ($row) {
         // Move the secondary images
         //
         $dbhF = new PDO($dbFrom2);
-        $stmt = $dbhF->prepare('SELECT idPhoto, image, photoName, photoCredit, photoCaption, time FROM imageSecondary WHERE idArticle=? ORDER BY time');
+        $stmt = $dbhF->prepare('SELECT idPhoto, image, photoName, photoCredit, photoCaption, alt, time FROM imageSecondary WHERE idArticle=? ORDER BY time');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $stmt->execute([$idArticle]);
         foreach ($stmt as $row) {
             $dbh = new PDO($dbTo2);
-            $stmt = $dbh->prepare('INSERT INTO imageSecondary (idPhoto, idArticle, image, photoName, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?, ?, ?)');
-            $stmt->execute([$row['idPhoto'], $idArticle, $row['image'], $row['photoName'], $row['photoCredit'], $row['photoCaption'], $row['time']]);
+            $stmt = $dbh->prepare('INSERT INTO imageSecondary (idPhoto, idArticle, image, photoName, photoCredit, photoCaption, alt, time) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+            $stmt->execute([$row['idPhoto'], $idArticle, $row['image'], $row['photoName'], $row['photoCredit'], $row['photoCaption'], $row['alt'], $row['time']]);
             $dbh = null;
         }
         $dbhF = null;

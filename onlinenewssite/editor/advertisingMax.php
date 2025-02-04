@@ -9,7 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2025 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2025 01 07
+ * @version:  2025 02 03
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -35,34 +35,41 @@ if (empty($row['userType']) or strval($row['userType']) !== '3') {
 //
 // Variables
 //
+$adMaxAdvertsEdit = null;
+$adMaxAdvertsPost = inlinePost('adMaxAdverts');
+$adMinParagraphsEdit = null;
+$adMinParagraphsPost = inlinePost('adMinParagraphs');
 $maxAdsEdit = null;
 $maxAdsPost = inlinePost('maxAds');
 $message = '';
 //
-// Button: Add / update
+// Button: Update
 //
-//
-// Button: Set maximum
-//
-if (isset($_POST['setMaximum']) and isset($maxAdsPost)) {
+if (isset($_POST['update'])) {
     $dbh = new PDO($dbAdvertising);
     $stmt = $dbh->query('DELETE FROM maxAd');
-    $stmt = $dbh->prepare('INSERT INTO maxAd (maxAds) VALUES (?)');
-    $stmt->execute([$maxAdsPost]);
+    if (isset($maxAdsPost)) {
+        $stmt = $dbh->prepare('INSERT INTO maxAd (maxAds, adMinParagraphs, adMaxAdverts) VALUES (?, ?, ?)');
+        $stmt->execute([$maxAdsPost, $adMinParagraphsPost, $adMaxAdvertsPost]);
+
+    }
     $dbh = null;
 }
 //
-// Set maxAds
+// Get prior ad settings
 //
 $dbh = new PDO($dbAdvertising);
-$stmt = $dbh->prepare('SELECT maxAds FROM maxAd WHERE idMaxAds=?');
+$stmt = $dbh->prepare('SELECT maxAds, adMinParagraphs, adMaxAdverts FROM maxAd WHERE idMaxAds=?');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 $stmt->execute([1]);
 $row = $stmt->fetch();
 $dbh = null;
 if ($row) {
     $maxAdsEdit = $row['maxAds'];
+    $adMinParagraphsEdit = $row['adMinParagraphs'];
+    $adMaxAdvertsEdit = $row['adMaxAdverts'];
 }
+$dbh = null;
 //
 // HTML
 //
@@ -80,18 +87,24 @@ require $includesPath . '/editor/header1.inc';
 <?php require $includesPath . '/editor/body.inc';?>
 
   <nav class="n">
-    <h4 class="m"><a class="m" href="advertisingPublished.php">Published ads</a><a class="m" href="advertisingEdit.php">Edit ads</a><a class="s" href="advertisingMax.php">Ads max</a></h4>
+    <h4 class="m"><a class="m" href="advertisingPublished.php">Published ads</a><a class="m" href="advertisingEdit.php">Edit ads</a><a class="s" href="advertisingMax.php">Settings</a></h4>
   </nav>
 <?php echoIfMessage($message); ?>
 
   <div class="column">
-    <h1>Maximum number of ads</h1>
+    <h1>Settings</h1>
 
     <form action="<?php echo $uri; ?>advertisingMax.php" method="post">
-      <p><label for="maxAds">Maximum displayed in the main menu</label><br>
+      <p><label for="maxAds">Maximum ads displayed in the main menu</label><br>
       <input type="number" id="maxAds" name="maxAds"<?php echoIfValue($maxAdsEdit); ?>></p>
 
-      <p><input type="submit" class="button" name="setMaximum" value="Set maximum"></p>
+      <p><label for="adMaxAdverts">Maximum number of ads per article</label><br>
+      <input type="number" id="adMaxAdverts" name="adMaxAdverts"<?php echoIfValue($adMaxAdvertsEdit); ?>></p>
+
+      <p><label for="adMinParagraphs">Minimum number of paragraphs between ads</label><br>
+      <input type="number" id="adMinParagraphs" name="adMinParagraphs"<?php echoIfValue($adMinParagraphsEdit); ?>></p>
+
+      <p><input type="submit" class="button" name="update" value="Update"></p>
     </form>
   </div>
 </body>

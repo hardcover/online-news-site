@@ -9,7 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2025 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2025 01 07
+ * @version:  2025 02 03
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -197,7 +197,7 @@ require $includesPath . '/editor/header1.inc';
 <?php require $includesPath . '/editor/body.inc';?>
 
   <nav class="n">
-    <h4 class="m"><a class="m" href="advertisingPublished.php">Published ads</a><a class="s" href="advertisingEdit.php">Edit ads</a><a class="m" href="advertisingMax.php">Ads max</a></h4>
+    <h4 class="m"><a class="m" href="advertisingPublished.php">Published ads</a><a class="s" href="advertisingEdit.php">Edit ads</a><a class="m" href="advertisingMax.php">Settings</a></h4>
   </nav>
 <?php echoIfMessage($message); ?>
 

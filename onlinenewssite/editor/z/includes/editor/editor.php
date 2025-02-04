@@ -9,7 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2025 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2025 01 07
+ * @version:  2025 02 03
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -17,6 +17,7 @@
 //
 // Variables
 //
+$altPost = inlinePost('alt');
 $bylineEdit = null;
 $bylinePost = inlinePost('byline');
 $dbFrom = null;
@@ -255,9 +256,12 @@ if (isset($_POST['addUpdate'])) {
                     imagedestroy($hd);
                     $hdImage = ob_get_contents();
                     ob_end_clean();
+                    if (empty($altPost)) {
+                        $altPost = $photoCaptionPost;
+                    }
                     $dbh = new PDO($database);
-                    $stmt = $dbh->prepare('UPDATE articles SET photoCredit=?, photoCaption=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
-                    $stmt->execute([$photoCreditPost, $photoCaptionPost, $hdImage, $widthHD, $heightHD, $idArticle]);
+                    $stmt = $dbh->prepare('UPDATE articles SET photoCredit=?, photoCaption=?, alt=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
+                    $stmt->execute([$photoCreditPost, $photoCaptionPost, $altPost, $hdImage, $widthHD, $heightHD, $idArticle]);
                     $dbh = null;
                 } else {
                     //
@@ -281,9 +285,12 @@ if (isset($_POST['addUpdate'])) {
                     $stmt = $dbh->prepare('UPDATE photos SET idPhoto=? WHERE rowid=?');
                     $stmt->execute([$idPhoto, $idPhoto]);
                     $dbh = null;
+                    if (empty($altPost)) {
+                        $altPost = $photoCaptionPost;
+                    }
                     $dbh = new PDO($database2);
-                    $stmt = $dbh->prepare('INSERT INTO imageSecondary (idPhoto, idArticle, image, photoName, photoCredit, photoCaption, time) VALUES (?, ?, ?, ?, ?, ?, ?)');
-                    $stmt->execute([$idPhoto, $idArticle, $hdImage, $widthPost, $photoCreditPost, $photoCaptionPost, time()]);
+                    $stmt = $dbh->prepare('INSERT INTO imageSecondary (idPhoto, idArticle, image, photoName, photoCredit, photoCaption, alt, time) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+                    $stmt->execute([$idPhoto, $idArticle, $hdImage, $widthPost, $photoCreditPost, $photoCaptionPost, $altPost, time()]);
                     $dbh = null;
                 }
             } else {
@@ -316,8 +323,8 @@ if (isset($_POST['addUpdate'])) {
 //
 if (isset($_POST['deletePhoto']) and isset($idArticle)) {
     $dbh = new PDO($database);
-    $stmt = $dbh->prepare('UPDATE articles SET photoName=?, photoCredit=?, photoCaption=?, originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
-    $stmt->execute([null, null, null, null, null, null, null, null, null, null, null, $idArticle]);
+    $stmt = $dbh->prepare('UPDATE articles SET photoName=?, photoCredit=?, photoCaption=?, alt=?, originalImageWidth=?, originalImageHeight=?, thumbnailImage=?, thumbnailImageWidth=?, thumbnailImageHeight=?, hdImage=?, hdImageWidth=?, hdImageHeight=? WHERE idArticle=?');
+    $stmt->execute([null, null, null, null, null, null, null, null, null, null, null, null, $idArticle]);
     $dbh = null;
     $dbh = new PDO($database2);
     $stmt = $dbh->prepare('DELETE FROM imageSecondary WHERE idArticle=?');
@@ -528,6 +535,9 @@ if ($use === 'published') {
 
       <p><label for="photoCaption">Photo caption</label><br>
       <input id="photoCaption" name="photoCaption" class="wide" autocomplete="on"></p>
+
+      <p><label for="alt">Alt text (if different from the caption)</label><br>
+      <input id="alt" name="alt" class="wide" autocomplete="on"></p>
 
       <p><label for="photoCredit">Photo credit</label><br>
       <input id="photoCredit" name="photoCredit" class="wide"></p>

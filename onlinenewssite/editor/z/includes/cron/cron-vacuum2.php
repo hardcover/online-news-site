@@ -9,7 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2025 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2025 01 07
+ * @version:  2025 02 03
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -64,7 +64,7 @@ if ($row['count(rowid)'] > 100) {
             $articles[] = $idArticle;
         } else {
             $dbhNew = new PDO(str_replace('archive', 'archive-' . $dbNumber, 'sqlite:' . $database));
-            $stmt = $dbhNew->query('CREATE VIRTUAL TABLE IF NOT EXISTS "articles" USING fts4 ("idArticle", "publicationDate", "publicationTime", "endDate", "survey", "genre", "keywords", "idSection", "sortOrderArticle", "sortPriority", "byline", "headline", "standfirst", "text", "summary", "evolve", "expand", "extend", "photoName", "photoCredit", "photoCaption", "originalImageWidth", "originalImageHeight", "thumbnailImage", "thumbnailImageWidth", "thumbnailImageHeight", "hdImage", "hdImageWidth", "hdImageHeight")');
+            $stmt = $dbhNew->query('CREATE VIRTUAL TABLE IF NOT EXISTS "articles" USING fts4 ("idArticle", "publicationDate", "publicationTime", "endDate", "survey", "genre", "keywords", "idSection", "sortOrderArticle", "sortPriority", "byline", "headline", "standfirst", "text", "summary", "evolve", "expand", "extend", "photoName", "photoCredit", "photoCaption", "alt", "originalImageWidth", "originalImageHeight", "thumbnailImage", "thumbnailImageWidth", "thumbnailImageHeight", "hdImage", "hdImageWidth", "hdImageHeight")');
             foreach ($articles as $article) {
                 $stmt = $dbh->prepare('SELECT * FROM articles WHERE idArticle=?');
                 $stmt->setFetchMode(PDO::FETCH_NUM);
@@ -80,7 +80,7 @@ if ($row['count(rowid)'] > 100) {
                 $stmt->execute([$article]);
             }
             $dbhNew = new PDO(str_replace('archive2', 'archive2-' . $dbNumber, 'sqlite:' . $database2));
-            $stmt = $dbhNew->query('CREATE TABLE IF NOT EXISTS "imageSecondary" ("idPhoto" INTEGER UNIQUE, "idArticle" INTEGER, "image", "photoName", "photoCredit", "photoCaption", "time" INTEGER)');
+            $stmt = $dbhNew->query('CREATE TABLE IF NOT EXISTS "imageSecondary" ("idPhoto" INTEGER UNIQUE, "idArticle" INTEGER, "image", "photoName", "photoCredit", "photoCaption", "alt", "time" INTEGER)');
             $stmt = $dbhNew->query('CREATE INDEX IF NOT EXISTS "main"."imageSecondaryIndex" ON "imageSecondary" ("idPhoto" ASC);');
             $dbhArchive2 = new PDO('sqlite:' . $database2);
             foreach ($articles as $article) {

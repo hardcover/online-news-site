@@ -9,7 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2025 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2025 01 07
+ * @version:  2025 02 03
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -64,9 +64,9 @@ if (strpos($database, 'archive') === false) {
         }
         if (!empty($hdImage)) {
             if ($photoName === 'third') {
-                $html.= '    <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="third border mb" alt=""></p>' . "\n\n";
+                $html.= '    <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="third border mb" alt="' . $alt . '"></p>' . "\n\n";
             } else {
-                $html.= '    <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="wide border" alt=""></p>' . "\n\n";
+                $html.= '    <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="wide border" alt="' . $alt . '"></p>' . "\n\n";
             }
         }
         if (!empty($photoCaption) and !empty($photoCredit)) {
@@ -138,15 +138,15 @@ if (strpos($database, 'archive') === false) {
             $dbh = null;
         } else {
             $dbh = new PDO($database2);
-            $stmt = $dbh->prepare('SELECT idPhoto, photoName, photoCredit, photoCaption FROM imageSecondary WHERE idArticle=? ORDER BY time');
+            $stmt = $dbh->prepare('SELECT idPhoto, photoName, photoCredit, photoCaption, alt FROM imageSecondary WHERE idArticle=? ORDER BY time');
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
             $stmt->execute([$idArticle]);
             foreach ($stmt as $row) {
                 extract($row);
                 if ($photoName === 'third') {
-                    $html.= '    <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="third border mb" alt=""></p>' . "\n\n";
+                    $html.= '    <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="third border mb" alt="' . $alt . '"></p>' . "\n\n";
                 } else {
-                    $html.= '    <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="wide border" alt=""></p>' . "\n\n";
+                    $html.= '    <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="wide border" alt="' . $alt . '"></p>' . "\n\n";
                 }
                 if (!empty($photoCaption) and !empty($photoCredit)) {
                     if ($photoName === 'third') {
@@ -216,9 +216,9 @@ if (strpos($database, 'archive') === false) {
                 }
                 if (isset($hdImage)) {
                     if ($photoName === 'third') {
-                        $html.= '    <p class="a"><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="third border mb" alt=""></p>' . "\n\n";
+                        $html.= '    <p class="a"><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="third border mb" alt="' . $alt . '"></p>' . "\n\n";
                     } else {
-                        $html.= '    <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="wide border" alt=""></p>' . "\n\n";
+                        $html.= '    <p><img src="' . $imagePath . '?i=' . muddle($idArticle) . 'h" class="wide border" alt="' . $alt . '"></p>' . "\n\n";
                     }
                 }
                 if (!empty($photoCaption) and !empty($photoCredit)) {
@@ -399,9 +399,9 @@ if (strpos($database, 'archive') === false) {
                                     extract($row);
                                     $dbNumber2 = -1;
                                     if ($photoName === 'third') {
-                                        $html.= '    <p class="a"><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="third border mb" alt=""></p>' . "\n\n";
+                                        $html.= '    <p class="a"><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="third border mb" alt="' . $alt . '"></p>' . "\n\n";
                                     } else {
-                                        $html.= '    <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="wide border" alt=""></p>' . "\n\n";
+                                        $html.= '    <p><img src="' . $imagePath2 . '?i=' . muddle($idPhoto) . 'h" class="wide border" alt="' . $alt . '"></p>' . "\n\n";
                                     }
                                     if (!empty($photoCaption) and !empty($photoCredit)) {
                                         if ($photoName === 'third') {

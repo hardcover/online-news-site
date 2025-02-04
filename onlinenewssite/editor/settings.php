@@ -9,7 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2025 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2025 01 07
+ * @version:  2025 02 03
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -29,8 +29,6 @@ if ($_SESSION['username'] !== 'admin') {
 //
 // Variables
 //
-$adMaxAdvertsPost = inlinePost('adMaxAdverts');
-$adMinParagraphsPost = inlinePost('adMinParagraphs');
 $adminPassPost = inlinePost('adminPass');
 $editPost = inlinePost('edit');
 $emailClassifiedPost = inlinePost('emailClassified');
@@ -216,24 +214,6 @@ if (password_verify($adminPassPost, $row['pass'])) {
         }
     }
     //
-    // Button: Add / Advertisements in article text
-    //
-    if (isset($_POST['addUpdateAdvertisements'])) {
-        if (empty($adMinParagraphsPost) or empty($adMaxAdvertsPost)) {
-            $message = 'Advertisement form information is required.';
-        } else {
-            $dbh = new PDO($dbSettings);
-            $stmt = $dbh->query('DELETE FROM advertisements');
-            $stmt = $dbh->prepare('INSERT INTO advertisements (adMinParagraphs, adMaxAdverts) VALUES (?, ?)');
-            $stmt->execute([$adMinParagraphsPost, $adMaxAdvertsPost]);
-            $dbh = null;
-            //
-            // Clear contact form information for display
-            //
-            $infoFormsPost = null;
-        }
-    }
-    //
     // Button: Add / update email alert for classifieds
     //
     if (isset($_POST['addUpdateEmailClassified'])) {
@@ -388,16 +368,6 @@ require $includesPath . '/editor/header2.inc';
 
         <p><input type="submit" value="Add / update" name="addUpdateEmailClassified" class="button"> <input type="submit" value="Delete" name="deleteEmailClassified" class="button"><input type="hidden" name="existing"<?php echoIfValue($editPost); ?>></p>
 
-        <h2>Advertisements in article text</h2>
-
-        <p><label for="adMaxAdverts">Maximum number of ads per article</label><br>
-        <input id="adMaxAdverts" name="adMaxAdverts" class="h"<?php echoIfValue($adMaxAdvertsPost); ?>></p>
-
-        <p><label for="adMinParagraphs">Minimum number of paragraphs between ads</label><br>
-        <input id="adMinParagraphs" name="adMinParagraphs" class="h"<?php echoIfValue($adMinParagraphsPost); ?>></p>
-
-        <p><input type="submit" value="Add / update" name="addUpdateAdvertisements" class="button"></p>
-
         <h2>Change the admin password</h2>
 
         <p>For security reasons, the admin password must be changed from the default during system set up.</p>
@@ -494,25 +464,6 @@ if ($row === false) {
 echo '      <form action="' . $uri . 'settings.php" method="post">' . "\n";
 echo '        <p>' . $row['emailClassified'] . "<br>\n";
 echo '        <input type="hidden" name="idClassified" value="' . $row['idClassified'] . '"><input type="hidden" name="emailClassified" value="' . $row['emailClassified'] . '"><input type="submit" value="Edit" name="edit" class="button"></p>' . "\n";
-echo "      </form>\n\n";
-?>
-      <h2>Advertisements in article text</h2>
-
-<?php
-$dbh = new PDO($dbSettings);
-$stmt = $dbh->query('SELECT adMinParagraphs, adMaxAdverts FROM advertisements');
-$stmt->setFetchMode(PDO::FETCH_ASSOC);
-$row = $stmt->fetch();
-$dbh = null;
-if ($row === false) {
-    $row = [];
-    $row['adMinParagraphs'] = '';
-    $row['adMaxAdverts'] = '';
-}
-echo '      <form action="' . $uri . 'settings.php" method="post">' . "\n";
-echo '        <p>Maximum number of ads per article: ' . $row['adMaxAdverts'] . "<br>\n";
-echo '        <p>Minimum number of paragraphs between ads: ' . $row['adMinParagraphs'] . "<br>\n";
-echo '        <input type="hidden" name="adMaxAdverts" value="' . $row['adMaxAdverts'] . '"><input type="hidden" name="adMinParagraphs" value="' . $row['adMinParagraphs'] . '"><input type="submit" value="Edit" name="edit" class="button"></p>' . "\n";
 echo "      </form>\n\n";
 ?>
       <h2>Optional editor log in security key</h2>

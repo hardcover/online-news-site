@@ -9,7 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2025 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2025 01 07
+ * @version:  2025 02 03
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -56,13 +56,13 @@ $filename = strrchr($database, '/');
 $dbh = new PDO('sqlite:../databases/archive.sqlite');
 $dbhBACKUP = new PDO('sqlite:../databases/backup/' . $today . '/archive.sqlite');
 $dbhBACKUP->beginTransaction();
-$stmt = $dbhBACKUP->query('CREATE VIRTUAL TABLE IF NOT EXISTS "articles" USING fts4 ("idArticle", "publicationDate", "publicationTime", "endDate", "survey", "genre", "keywords", "idSection", "sortOrderArticle", "sortPriority", "byline", "headline", "standfirst", "text", "summary", "evolve", "expand", "extend", "photoName", "photoCredit", "photoCaption", "originalImageWidth", "originalImageHeight", "thumbnailImage", "thumbnailImageWidth", "thumbnailImageHeight", "hdImage", "hdImageWidth", "hdImageHeight")');
+$stmt = $dbhBACKUP->query('CREATE VIRTUAL TABLE IF NOT EXISTS "articles" USING fts4 ("idArticle", "publicationDate", "publicationTime", "endDate", "survey", "genre", "keywords", "idSection", "sortOrderArticle", "sortPriority", "byline", "headline", "standfirst", "text", "summary", "evolve", "expand", "extend", "photoName", "photoCredit", "photoCaption", "alt", "originalImageWidth", "originalImageHeight", "thumbnailImage", "thumbnailImageWidth", "thumbnailImageHeight", "hdImage", "hdImageWidth", "hdImageHeight")');
 $stmt = $dbh->query('SELECT * FROM articles');
 $stmt->setFetchMode(PDO::FETCH_ASSOC);
 foreach ($stmt as $row) {
     extract($row);
-    $stmt = $dbhBACKUP->prepare('INSERT INTO articles (rowid, idArticle, publicationDate, publicationTime, endDate, survey, genre, keywords, idSection, sortOrderArticle, sortPriority, byline, headline, standfirst, text, summary, evolve, expand, extend, photoName, photoCredit, photoCaption, originalImageWidth, originalImageHeight, thumbnailImage, thumbnailImageWidth, thumbnailImageHeight, hdImage, hdImageWidth, hdImageHeight) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-    $stmt->execute([$idArticle, $idArticle, $publicationDate, $publicationTime, $endDate, $survey, $genre, $keywords, $idSection, $sortOrderArticle, $sortPriority, $byline, $headline, $standfirst, $text, $summary, $evolve, $expand, $extend, $photoName, $photoCredit, $photoCaption, $originalImageWidth, $originalImageHeight, $thumbnailImage, $thumbnailImageWidth, $thumbnailImageHeight, $hdImage, $hdImageWidth, $hdImageHeight]);
+    $stmt = $dbhBACKUP->prepare('INSERT INTO articles (rowid, idArticle, publicationDate, publicationTime, endDate, survey, genre, keywords, idSection, sortOrderArticle, sortPriority, byline, headline, standfirst, text, summary, evolve, expand, extend, photoName, photoCredit, photoCaption, alt originalImageWidth, originalImageHeight, thumbnailImage, thumbnailImageWidth, thumbnailImageHeight, hdImage, hdImageWidth, hdImageHeight) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+    $stmt->execute([$idArticle, $idArticle, $publicationDate, $publicationTime, $endDate, $survey, $genre, $keywords, $idSection, $sortOrderArticle, $sortPriority, $byline, $headline, $standfirst, $text, $summary, $evolve, $expand, $extend, $photoName, $photoCredit, $photoCaption, $alt, $originalImageWidth, $originalImageHeight, $thumbnailImage, $thumbnailImageWidth, $thumbnailImageHeight, $hdImage, $hdImageWidth, $hdImageHeight]);
 }
 $dbh = null;
 $dbhBACKUP->commit();

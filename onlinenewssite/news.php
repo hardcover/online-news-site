@@ -9,7 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2025 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2025 01 07
+ * @version:  2025 02 03
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -26,8 +26,9 @@ require $includesPath . '/parsedown-master/Parsedown.php';
 //
 // Variables
 //
-$aGet = secure($_GET['a']);
-if (empty($_GET['a'])) {
+if (!empty($_GET['a'])) {
+    $aGet = secure($_GET['a']);
+} else {
     header('Location: ' . $uri);
     exit;
 }

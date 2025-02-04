@@ -9,7 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2025 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2025 01 07
+ * @version:  2025 02 03
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -169,7 +169,7 @@ if (isset($_GET['a'])) {
                             //
                             // Database archive
                             //
-                            $html.= '    <h2><a class="n" href="' . $uri . $use . '.php?a=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
+                            $html.= '    <h2><a class="n" href="' . $uri . $use . '&a=' . $idArticle . '">' . html($headline) . "</a></h2>\n\n";
                         } else {
                             //
                             // HTML and PDF archives
