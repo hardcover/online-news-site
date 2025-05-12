@@ -9,7 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2025 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2025 02 03
+ * @version:  2025 05 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -133,11 +133,73 @@ if (!empty($byline) or !empty($bylineDateTime)) {
 }
 $temp = Parsedown::instance()->parse($text);
 $temp = str_replace("\n", "\n\n    ", $temp);
+$temp = str_replace('<h1>', '<h1 class="a">', $temp);
+$temp = str_replace('<h2>', '<h2 class="a">', $temp);
+$temp = str_replace('<h3>', '<h3 class="a">', $temp);
 $temp = str_replace('<p>', '<p class="a">', $temp);
 $temp = str_replace('<ol>', '<ol class="a">', $temp);
 $temp = str_replace('<ul>', '<ul class="a">', $temp);
 $temp = str_replace('<li>', '  <li>', $temp);
-$html.= '    ' . $temp . "\n";
+//
+// Insert ads between paragraphs
+//
+$dbh = new PDO($dbAdvertising);
+$stmt = $dbh->query('SELECT adMinParagraphs, adMaxAdverts FROM maxAd');
+$stmt->setFetchMode(PDO::FETCH_ASSOC);
+$row = $stmt->fetch();
+if ($row) {
+    extract($row);
+    if (empty($adMinParagraphs)) {
+        $adMinParagraphs = 999;
+    }
+    if (empty($adMaxAdverts)) {
+        $adMaxAdverts = 0;
+    }
+} else {
+    $adMinParagraphs = 999;
+    $adMaxAdverts = 0;
+}
+if ($adMaxAdverts !== 0) {
+    $numParagraphs = mb_substr_count($temp, '<p class="a">');
+    $maxAdsPara = round($numParagraphs / $adMinParagraphs);
+    if ($maxAdsPara > $adMaxAdverts) {
+        $maxAds = $adMaxAdverts;
+    } else {
+        $maxAds = $maxAdsPara;
+    }
+    if ($maxAds !== 0) {
+        $space = intval(round($numParagraphs / ($maxAds + 1)));
+        if ($space < $adMinParagraphs) {
+            $space = $adMinParagraphs;
+        }
+    }
+}
+if (empty($space)) {
+    $space = 999;
+}
+if (empty($numParagraphs)) {
+    $numParagraphs = 0;
+}
+$temp2 = $temp;
+$paragraph = explode('<p class="a">', $temp);
+foreach ($paragraph as $key => $value) {
+    $key = $key - 1;
+    if ($key === -1) {
+        $temp2 = '    ' . $value;
+    } else {
+        if ($key >= $space and $key <= $numParagraphs) {
+            if (is_int($key / $space)) {
+                $temp2.= advertisement();
+                $temp2.= '      <p class="a">' . $value;
+            } else {
+                $temp2.= '  <p class="a">' . $value;
+            }
+        } else {
+            $temp2.= '  <p class="a">' . $value;
+        }
+    }
+}
+$html.= '    ' . $temp2 . "\n";
 $dbNumber2 = 0;
 while ($dbNumber2 !== -1) {
     $db = str_replace('archive2', 'archive2-' . $dbNumber2, $dbArchive2);

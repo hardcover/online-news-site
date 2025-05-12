@@ -36,19 +36,6 @@ p, blockquote, ol, ul {
     font-size: 1.11rem;
 }
 
-h1.a, h5.a, h6.a, p.a, blockquote.a, ol.a, ul.a {
-    margin-right: auto;
-    margin-left: auto;
-}
-
-h1.a, h5.a, h6.a, p.a {
-    max-width: 29rem;
-}
-
-blockquote.a, ol.a, ul.a {
-    max-width: 25rem;
-}
-
 h1, h2, h3, h5, h6, span {
     color: #666;
 }
@@ -69,10 +56,6 @@ h2 {
 
 h2.section {
     text-transform: uppercase;
-}
-
-h2, h5 {
-    line-height: 1em;
 }
 
 h3 {
@@ -113,6 +96,16 @@ p.error {
 p.summary {
     height: 6.67rem;
     overflow: hidden;
+}
+
+h1.a, h2.a, h3.a, h5.a, h6.a, p.a {
+    max-width: 29rem;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+blockquote.a, ol.a, ul.a {
+    max-width: 25rem;
 }
 
 ol {

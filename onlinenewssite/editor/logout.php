@@ -9,13 +9,17 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2025 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2025 02 03
+ * @version:  2025 05 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
  */
 @session_start();
-$getAuthorization = $_SESSION['getAuthorization'];
+if (isset($_SESSION['getAuthorization'])) {
+    $getAuthorization = $_SESSION['getAuthorization'];
+} else {
+    $getAuthorization = '';
+}
 $_SESSION = [];
 session_destroy();
 setcookie(session_name(), '', time() -90000);

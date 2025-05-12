@@ -9,7 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2025 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2025 02 03
+ * @version:  2025 05 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -21,6 +21,7 @@ date_default_timezone_set('America/Los_Angeles');
 $startTime = time();
 $today = date("Y-m-d");
 $prior = null;
+$adRotate = '../adRotate/';
 $databases = [
     '../databases/advertising.sqlite',
     '../databases/articleId.sqlite',
@@ -39,6 +40,15 @@ $databases = [
     '../databases/subscribers.sqlite',
     '../databases/survey.sqlite'
 ];
+//
+// Delete files from the adRotate folder
+//
+$files = glob($adRotate . '*');
+foreach ($files as $file) {
+    if (is_file($file)) {
+        unlink($file);
+    }
+}
 //
 // Vacuum the database
 //

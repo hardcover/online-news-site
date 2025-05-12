@@ -9,7 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2025 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2025 02 03
+ * @version:  2025 05 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -34,8 +34,8 @@ if (isset($_GET['s'])) {
     $stmt->execute([$parentId]);
     $row = $stmt->fetch();
     extract($row);
-    echo '      <h3>' . $section . ', ' . $subsection . "</h3>\n\n";
-    $stmt = $dbh->prepare('SELECT idAd, title FROM ads WHERE categoryId=? WHERE duration IS NOT NULL ORDER BY title');
+    echo '      <h3>' . $section . ' --> ' . $subsection . "</h3>\n\n";
+    $stmt = $dbh->prepare('SELECT idAd, title FROM ads WHERE categoryId=? AND endDate IS NOT NULL ORDER BY title');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
     $stmt->execute([$idSubsection]);
     foreach ($stmt as $row) {
@@ -57,7 +57,7 @@ if (isset($_GET['s'])) {
         $stmt = $dbh->prepare('DELETE FROM ads WHERE endDate < ?');
         $stmt->execute([$today]);
         $categoryIdPrior = null;
-        $stmt = $dbh->query('SELECT idAd, title, categoryId FROM ads WHERE duration IS NOT NULL ORDER BY categoryId, title');
+        $stmt = $dbh->query('SELECT idAd, title, categoryId FROM ads WHERE endDate IS NOT NULL ORDER BY categoryId, title');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         foreach ($stmt as $row) {
             extract($row);
@@ -72,7 +72,7 @@ if (isset($_GET['s'])) {
                 $stmt->execute([$parentId]);
                 $row = $stmt->fetch();
                 extract($row);
-                echo '      <h3>' . $section . ', ' . $subsection . "</h3>\n\n";
+                echo '      <h3>' . $section . ' --> ' . $subsection . "</h3>\n\n";
                 $categoryIdPrior = $categoryId;
             }
             echo '      <p><a href="' . $uri . '?m=classified-ads&amp;c=' . $idAd . '">' . $title . "</a></p>\n\n";
@@ -124,7 +124,7 @@ if (isset($_GET['s'])) {
         $listingDescription = $description;
         $listingDescription = Parsedown::instance()->parse($listingDescription);
         $description = $paperDescription;
-        if (!empty($photo)) {
+        if (!empty($photos)) {
             $photos = json_decode($photos, true);
             $photos = array_map('strval', $photos);
         } else {
@@ -140,9 +140,9 @@ if (isset($_GET['s'])) {
         $stmt->execute([$parentId]);
         $row = $stmt->fetch();
         extract($row);
-        echo '      <h5>' . $section . ', <a href="' . $uri . '?m=classified-ads&amp;s=' . $categoryId . '">'. html($subsection) . "</a></h5>\n\n";
+        echo '      <h5>' . $section . ' --> <a href="' . $uri . '?m=classified-ads&amp;s=' . $categoryId . '">'. html($subsection) . "</a></h5>\n\n";
         echo '      <h2>' . $title . "</h2>\n\n";
-        echo "      <p><br>\n      " . $listingDescription . "</p>\n\n";
+        echo "      <br>\n      " . $listingDescription . "\n\n";
         $i = 0;
         foreach ($photos as $photo) {
             $i++;

@@ -9,7 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2025 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2025 02 03
+ * @version:  2025 05 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -60,6 +60,8 @@ if (isset($_GET['a'])) {
                 extract($row);
                 $summary = html($summary);
                 $summary = @Parsedown::instance()->parse($summary);
+                $summary = strip_tags($summary);
+                $summary = str_replace(['*', '>'], '', $summary);
                 $i++;
                 if ($i === 1) {
                     $html.= '    <div class="row">' . "\n";

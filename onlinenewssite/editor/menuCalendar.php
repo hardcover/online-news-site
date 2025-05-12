@@ -9,7 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2025 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2025 02 03
+ * @version:  2025 05 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -269,6 +269,7 @@ if (isset($_POST['update']) and isset($datePost)) {
     //
     // Note
     //
+    $message = $notePost;
     $dbh = new PDO($dbCalendar);
     $stmt = $dbh->query('DELETE FROM note');
     $stmt = $dbh->prepare('INSERT INTO note (description) VALUES (?)');

@@ -9,7 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2025 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2025 02 03
+ * @version:  2025 05 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -189,6 +189,9 @@ if (strpos($database, 'archive') === false) {
         //
         $temp = Parsedown::instance()->parse($text);
         $temp = str_replace("\n", "\n\n    ", $temp);
+        $temp = str_replace('<h1>', '<h1 class="a">', $temp);
+        $temp = str_replace('<h2>', '<h2 class="a">', $temp);
+        $temp = str_replace('<h3>', '<h3 class="a">', $temp);
         $temp = str_replace('<p>', '<p class="a">', $temp);
         $temp = str_replace('<blockquote>', '<blockquote class="a">', $temp);
         $temp = str_replace('<ol>', '<ol class="a">', $temp);

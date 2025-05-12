@@ -9,7 +9,7 @@
  * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
  * @copyright 2025 Hardcover LLC
  * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2025 02 03
+ * @version:  2025 05 12
  * @link      https://hardcoverwebdesign.com/
  * @link      https://onlinenewssite.com/
  * @link      https://github.com/hardcover/
@@ -300,7 +300,7 @@ function returnIfYes($str)
  */
 function advertisement()
 {
-    global $dbAdvertising, $today, $adMinParagraphs, $adMaxAdverts;
+    global $includesPath, $dbAdvertising, $today, $adMinParagraphs, $adMaxAdverts;
     $dbh = new PDO($dbAdvertising);
     $stmt = $dbh->prepare('SELECT idAd FROM advertisements WHERE (? >= startDateAd AND ? <= endDateAd) ORDER BY sortOrderAd');
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -312,8 +312,38 @@ function advertisement()
         $idAd = '';
         $adLink = '';
     } else {
-        $idAds = array_unique($idAds);
+        //
+        // Randomly cycle all ads before repeating
+        //
+        $adsPrior = [];
+        $adsTotal = count($idAds);
+        if (file_exists($includesPath . '/adRotate/' . $_SERVER['REMOTE_ADDR'])) {
+            $adsPrior = file($includesPath . '/adRotate/' . $_SERVER['REMOTE_ADDR']);
+            $adsDisplayed = count($adsPrior);
+        } else {
+            $adsDisplayed = 0;
+        }
+        if ($adsDisplayed >= $adsTotal) {
+            $adsPrior = [];
+        }
         $adKey = array_rand($idAds);
+        for ($i = 1; $i < $adsTotal; $i++) {
+            if (in_array($adKey, $adsPrior)) {
+                $adKey = array_rand($idAds);
+            } else {
+                break;
+            }
+        }
+        $logDisplayed = '';
+        foreach ($adsPrior as $key) {
+            $key = str_replace("\n", '', $key);
+            $logDisplayed.= $key . "\n";
+        }
+        $logDisplayed.= $adKey;
+        file_put_contents($includesPath . '/adRotate/' . $_SERVER['REMOTE_ADDR'], $logDisplayed);
+        //
+        // Select the ad
+        //
         $idAd = $idAds[$adKey];
         $stmt = $dbh->prepare('SELECT link, linkAlt FROM advertisements WHERE idAd=?');
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -322,10 +352,11 @@ function advertisement()
         if ($row) {
             extract($row);
             if (!empty($link)) {
-                $linkHtml1 = '<p><a href="' . $link . '" target="_blank" rel="nofollow">';
+                $linkHtml1 = '  <p class="a"><a href="' . $link . '" target="_blank" rel="nofollow">';
                 $linkHtml2 = '</a>';
             } else {
-                $linkHtml1 = $linkHtml2 = null;
+                $linkHtml1 = '  <p class="a">';
+                $linkHtml2 = '';
             }
             $adLink = $linkHtml1 . '<img class="ad border" src="imaged.php?i=' . muddle($idAd) . '" alt="' . $linkAlt . '">' . $linkHtml2 . '</p>' . "\n\n";
         }
