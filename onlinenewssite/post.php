@@ -6,13 +6,12 @@
  *
  * @category  Publishing
  * @package   Online_News_Site
- * @author    Hardcover LLC <useTheContactForm@hardcoverwebdesign.com>
- * @copyright 2025 Hardcover LLC
- * @license   https://hardcoverwebdesign.com/license  MIT License
- * @version:  2025 05 12
- * @link      https://hardcoverwebdesign.com/
+ * @author    Online News <useTheContactForm@onlinenewssite.com>
+ * @copyright 2025 Online News
+ * @license   https://onlinenewssite.com/license.html
+ * @version   2025 05 12
  * @link      https://onlinenewssite.com/
- * @link      https://github.com/hardcover/
+ * @link      https://github.com/onlinenewsllc/online-news-site
  */
 session_start();
 session_regenerate_id(true);
@@ -38,7 +37,7 @@ $verify = hash('sha1', mt_rand() . mt_rand() . mt_rand() . mt_rand());
 $verifyPost = inlinePost('verify');
 //
 $headers = 'From: noreply@' . $_SERVER["HTTP_HOST"] . "\r\n";
-$headers.= 'MIME-Version: 1.0' . "\r\n";
+$headers.= 'MIME-version  1.0' . "\r\n";
 $headers.= 'Content-Type: text/plain; charset=utf-8; format=flowed' . "\r\n";
 $headers.= 'Content-Transfer-Encoding: 7bit' . "\r\n";
 //
